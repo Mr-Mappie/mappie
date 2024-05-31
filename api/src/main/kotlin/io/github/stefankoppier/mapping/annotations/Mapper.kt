@@ -8,6 +8,9 @@ abstract class Mapper<FROM, TO> {
     protected fun mapping(builder: Mapper<FROM, TO>.() -> Unit = { }): TO =
         error("Will be generated")
 
-    protected infix fun <FROM_TYPE, TO_TYPE> KProperty1<FROM, FROM_TYPE>.mappedTo(rhs: KProperty1<TO, TO_TYPE>): Mapper<FROM, TO> =
+    protected infix fun <FROM_TYPE, TO_TYPE> KProperty1<FROM, FROM_TYPE>.mappedTo(target: KProperty1<TO, TO_TYPE>): Mapper<FROM, TO> =
+        error("Will be generated")
+
+    protected infix fun <TO_TYPE> TO_TYPE.mappedTo(target: KProperty1<TO, TO_TYPE>): Mapper<FROM, TO> =
         error("Will be generated")
 }
