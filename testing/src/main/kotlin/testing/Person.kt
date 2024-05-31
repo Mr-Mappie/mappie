@@ -2,16 +2,11 @@ package testing
 
 import io.github.stefankoppier.mapping.annotations.Mapper
 
-data class Person(val name: String)
+data class Person(val name: String, val age: Long)
 
-data class PersonDto(val name: String)
+data class PersonDto(val name: String, val age: Int)
 
-fun map(from: Person): PersonDto =
-    PersonDto(from.name)
+object PersonMapper : Mapper<Person, PersonDto>() {
 
-class PersonMapper : Mapper<Person, PersonDto>() {
-
-    override fun map(from: Person): PersonDto = mapping {
-        Person::name mappedTo PersonDto::name
-    }
+    override fun map(from: Person): PersonDto = mapping()
 }

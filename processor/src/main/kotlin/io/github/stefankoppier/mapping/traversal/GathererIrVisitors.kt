@@ -1,6 +1,7 @@
 package io.github.stefankoppier.mapping.traversal
 
 import io.github.stefankoppier.mapping.MappingPluginContext
+import io.github.stefankoppier.mapping.resolver.MappingResolver
 import io.github.stefankoppier.mapping.util.isSubclassOfFqName
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.ir.IrElement
@@ -33,17 +34,29 @@ class IrTransformer(private val pluginContext: MappingPluginContext): IrElementT
 
     override fun visitFunctionNew(declaration: IrFunction): IrStatement {
         if (declaration.name == Name.identifier("map")) {
-            val returnType = declaration.returnType.getClass()!!
-            val parameterType = declaration.valueParameters.first().type.getClass()!!
-            val constructor: IrConstructor = returnType.primaryConstructor!!
+            val targetClass = requireNotNull(declaration.returnType.getClass()) {
+                "Expected return type of map to be non-null."
+            }
+            val primaryConstructor = requireNotNull(targetClass.primaryConstructor) {
+                "The target type must have a primary constructor."
+            }
+//
+            val sourceParameter = requireNotNull(declaration.valueParameters.firstOrNull())
+            val sourceClass = requireNotNull(sourceParameter.type.getClass()) {
+                "Expected type of source argument to be non-null."
+            }
+
+            val arguments = MappingResolver()
+                .resolve(target = declaration.returnType, source = sourceParameter.type)
 
             declaration.body = with (createScope(declaration)) {
                 pluginContext.blockBody(this.scope) {
-                    +irReturn(irCallConstructor(constructor.symbol, emptyList()).apply {
-                        putValueArgument(0,  irCall(parameterType.getPropertyGetter("name")!!).apply {
-                                dispatchReceiver = irGet(pluginContext.irBuiltIns.stringType, declaration.valueParameters.first().symbol)
-                            }
-                        )
+                    +irReturn(irCallConstructor(primaryConstructor.symbol, emptyList()).apply {
+                        arguments.mapIndexed { index, (type, argument) ->
+                            putValueArgument(index, irCall(sourceClass.getPropertyGetter(argument.name.asString())!!).apply {
+                                dispatchReceiver = irGet(type, sourceParameter.symbol)
+                            })
+                        }
                     })
                 }
             }
