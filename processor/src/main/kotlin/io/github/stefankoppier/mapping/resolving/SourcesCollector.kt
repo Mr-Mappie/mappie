@@ -46,7 +46,7 @@ class SourcesCollector(
             Name.identifier("mapping") -> {
                 expression.valueArguments.first()!!.accept(this, Unit)
             }
-            Name.identifier("mappedTo") -> {
+            Name.identifier("mappedTo"), Name.identifier("constant") -> {
                 val source = expression.extensionReceiver!!.accept(SourceValueCollector(pluginContext, dispatchReceiverSymbol), Unit)
                 val target = expression.valueArguments[0]!!.accept(TargetValueCollector(pluginContext), Unit)
 

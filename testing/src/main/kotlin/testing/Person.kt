@@ -10,6 +10,6 @@ object PersonMapper : Mapper<Person, PersonDto>() {
 
     override fun map(from: Person): PersonDto = mapping {
         Person::name mappedTo PersonDto::namee
-        1 mappedTo PersonDto::age
+        1 constant PersonDto::age
     }
 }
