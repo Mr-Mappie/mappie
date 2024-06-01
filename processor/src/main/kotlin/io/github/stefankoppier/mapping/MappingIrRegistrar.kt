@@ -10,6 +10,9 @@ class MappingIrRegistrar(private val messageCollector: MessageCollector) : IrGen
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         val context = MappingPluginContext(messageCollector, pluginContext)
+
+//        messageCollector.error(moduleFragment.dump())
+
         moduleFragment.accept(IrTransformer(context), null)
     }
 }

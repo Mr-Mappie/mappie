@@ -10,6 +10,8 @@ dependencies {
     implementation(project(":api"))
 
     testImplementation(kotlin("test"))
+    testImplementation(libs.junit.jupiter.params)
+
 }
 
 tasks.test {

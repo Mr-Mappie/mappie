@@ -1,16 +1,15 @@
-package io.github.stefankoppier.mapping.resolving
+package io.github.stefankoppier.mapping.resolving.classes
 
 import io.github.stefankoppier.mapping.MappingPluginContext
+import io.github.stefankoppier.mapping.resolving.BaseVisitor
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.name.Name
-import kotlin.math.exp
 
 sealed interface MappingSource
 
@@ -25,10 +24,8 @@ data class ConstantSource<T>(
     val value: IrConst<T>,
 ) : MappingSource
 
-@OptIn(UnsafeDuringIrConstructionAPI::class)
-class SourcesCollector(
+class ObjectSourcesCollector(
     pluginContext: MappingPluginContext,
-    private val target: MappingTarget,
     private val dispatchReceiverSymbol: IrValueSymbol,
 ) : BaseVisitor<List<Pair<Name, MappingSource>>, Unit>(pluginContext) {
 
@@ -44,13 +41,13 @@ class SourcesCollector(
     override fun visitCall(expression: IrCall, data: Unit): List<Pair<Name, MappingSource>> {
         return when (expression.symbol.owner.name) {
             Name.identifier("mapping") -> {
-                expression.valueArguments.first()!!.accept(this, Unit)
+                expression.valueArguments.first()!!.accept(ObjectSourcesCollector(pluginContext, dispatchReceiverSymbol), Unit)
             }
-            Name.identifier("mappedTo"), Name.identifier("constant") -> {
-                val source = expression.extensionReceiver!!.accept(SourceValueCollector(pluginContext, dispatchReceiverSymbol), Unit)
-                val target = expression.valueArguments[0]!!.accept(TargetValueCollector(pluginContext), Unit)
+            Name.identifier("property"), Name.identifier("constant") -> {
+                val target = expression.extensionReceiver!!.accept(TargetValueCollector(pluginContext), Unit)
+                val source = expression.valueArguments[0]!!.accept(SourceValueCollector(pluginContext, dispatchReceiverSymbol), Unit)
 
-                return listOf(target to source)
+                listOf(target to source)
             }
             else -> {
                 TODO("$javaClass :: visitCall Not implemented for ${expression::class} :: ${expression.dump()}")
@@ -88,7 +85,6 @@ private class SourceValueCollector(
     }
 }
 
-@OptIn(UnsafeDuringIrConstructionAPI::class)
 private class TargetValueCollector(pluginContext: MappingPluginContext) : BaseVisitor<Name, Unit>(pluginContext) {
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Unit): Name {
