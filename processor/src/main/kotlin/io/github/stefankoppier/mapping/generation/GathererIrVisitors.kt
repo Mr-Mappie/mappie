@@ -59,16 +59,10 @@ class IrTransformer(private val pluginContext: MappingPluginContext): IrElementT
 fun MappingSource.toIr(builder: IrBuilderWithScope): IrExpression =
     when (this) {
         is PropertySource -> toIr(builder)
-        is ConstantSource<*> -> toIr(builder)
+        is ConstantSource<*> -> this.value
     }
 
 fun PropertySource.toIr(builder: IrBuilderWithScope) =
     builder.irCall(property).apply {
         dispatchReceiver = builder.irGet(type, dispatchReceiverSymbol)
-    }
-
-fun ConstantSource<String>.toIr(builder: IrBuilderWithScope) =
-    when (type) {
-        builder.context.irBuiltIns.stringType -> IrConstImpl.string(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, type, value)
-        else -> TODO("Unimplemented type")
     }

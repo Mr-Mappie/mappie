@@ -22,7 +22,7 @@ data class PropertySource(
 
 data class ConstantSource<T>(
     val type: IrType,
-    val value: T
+    val value: IrConst<T>,
 ) : MappingSource
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -81,6 +81,10 @@ private class SourceValueCollector(
             type = expression.type,
             dispatchReceiverSymbol = dispatchReceiverSymbol,
         )
+    }
+
+    override fun visitConst(expression: IrConst<*>, data: Unit): MappingSource {
+        return ConstantSource(expression.type, expression)
     }
 }
 

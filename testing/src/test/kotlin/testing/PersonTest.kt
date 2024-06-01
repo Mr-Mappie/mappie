@@ -9,6 +9,6 @@ class PersonTest {
 
     @Test
     fun `map Person to PersonDto`() {
-        assertEquals(mapper.map(Person("Sjon", 42)), PersonDto("Sjon"))
+        assertEquals(mapper.map(Person("Sjon")), PersonDto("Sjon", "Sjon", 1))
     }
 }
