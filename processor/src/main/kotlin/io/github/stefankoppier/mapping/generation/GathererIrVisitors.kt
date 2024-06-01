@@ -1,7 +1,7 @@
-package io.github.stefankoppier.mapping.traversal
+package io.github.stefankoppier.mapping.generation
 
 import io.github.stefankoppier.mapping.MappingPluginContext
-import io.github.stefankoppier.mapping.resolver.*
+import io.github.stefankoppier.mapping.resolving.*
 import io.github.stefankoppier.mapping.util.isSubclassOfFqName
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.ir.IrStatement
