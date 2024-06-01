@@ -42,9 +42,6 @@ class IrTransformer(private val pluginContext: MappingPluginContext): IrElementT
             val targetClass = requireNotNull(declaration.returnType.getClass()) {
                 "Expected return type of map to be non-null."
             }
-            val primaryConstructor = requireNotNull(targetClass.primaryConstructor) {
-                "The target type must have a primary constructor."
-            }
 
             val mapping = declaration.accept(MappingResolver(pluginContext), Unit)
 
@@ -52,6 +49,9 @@ class IrTransformer(private val pluginContext: MappingPluginContext): IrElementT
                 when (mapping) {
                     is ConstructorCallMapping -> {
                         pluginContext.blockBody(this.scope) {
+                            val primaryConstructor = requireNotNull(targetClass.primaryConstructor) {
+                                "The target type must have a primary constructor."
+                            }
                             +irReturn(irCallConstructor(primaryConstructor.symbol, emptyList()).apply {
                                 mapping.sources.mapIndexed { index, source ->
                                     putValueArgument(index, source.toIr(this@blockBody))
@@ -59,19 +59,6 @@ class IrTransformer(private val pluginContext: MappingPluginContext): IrElementT
                             })
                         }
                     }
-
-// VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:testing.Color [val]
-// GET_VAR 'from: testing.Color declared in testing.testy' type=testing.Color origin=null
-//     WHEN type=testing.Colour origin=WHEN
-//     BRANCH
-// if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-//     arg0: GET_VAR 'val tmp0_subject: testing.Color [val] declared in testing.testy' type=testing.Color origin=null
-//     arg1: GET_ENUM 'ENUM_ENTRY name:RED' type=testing.Color
-//     then: GET_ENUM 'ENUM_ENTRY name:RED' type=testing.Colour
-//     BRANCH
-// if: CONST Boolean type=kotlin.Boolean value=true
-//     then: CALL 'public final fun noWhenBranchMatchedException (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=null
-
                     is EnumMapping -> {
                         pluginContext.blockBody(this.scope) {
                             +irReturn(irWhen(mapping.targetType, mapping.sources.map { source ->
@@ -80,6 +67,11 @@ class IrTransformer(private val pluginContext: MappingPluginContext): IrElementT
                                 val rhs = IrGetEnumValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, mapping.sourceType, source.symbol)
                                 irBranch(irEqeqeq(lhs, rhs), IrGetEnumValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, mapping.targetType, target.symbol))
                             } + irElseBranch(irCall(context.irBuiltIns.noWhenBranchMatchedExceptionSymbol))))
+                        }
+                    }
+                    is SingleValueMapping -> {
+                        pluginContext.blockBody(this.scope) {
+                            +irReturn(mapping.value)
                         }
                     }
                 }

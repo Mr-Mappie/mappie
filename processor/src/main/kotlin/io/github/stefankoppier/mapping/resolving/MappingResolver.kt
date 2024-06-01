@@ -6,6 +6,7 @@ import io.github.stefankoppier.mapping.resolving.classes.MappingSource
 import io.github.stefankoppier.mapping.resolving.enums.EnumMappingResolver
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
@@ -23,15 +24,19 @@ data class EnumMapping(
     val sourceType: IrType,
 ) : Mapping
 
+data class SingleValueMapping(
+    val type: IrType,
+    val value: IrExpression,
+) : Mapping
+
 class MappingResolver(pluginContext: MappingPluginContext)
     : BaseVisitor<Mapping, Unit>(pluginContext) {
 
     override fun visitFunction(declaration: IrFunction, data: Unit): Mapping {
         val target = declaration.returnType.getClass()!!
         return when {
-            target.isData -> declaration.accept(ClassMappingResolver(pluginContext), Unit)
             target.isEnumClass -> declaration.accept(EnumMappingResolver(pluginContext), Unit)
-            else -> error("Target not supported yet.")
+            else -> declaration.accept(ClassMappingResolver(pluginContext), Unit)
         }
     }
 }

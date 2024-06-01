@@ -57,4 +57,7 @@ abstract class Mapper<FROM, TO> {
 
     infix fun KProperty1<TO, Char>.constant(source: Char): Mapper<Int, Char> =
         error("Will be generated")
+
+    fun result(source: TO): Mapper<FROM, TO> =
+        error("Will be generated")
 }
