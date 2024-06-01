@@ -2,7 +2,7 @@ package testing
 
 import io.github.stefankoppier.mapping.annotations.Mapper
 
-data class Person(val name: String)
+data class Person(val name: String, val age: Int)
 
 data class PersonDto(val namee: String)
 

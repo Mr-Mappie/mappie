@@ -1,5 +1,8 @@
 package io.github.stefankoppier.mapping.resolver
 
+import io.github.stefankoppier.mapping.MappingPluginContext
+import io.github.stefankoppier.mapping.util.error
+import io.github.stefankoppier.mapping.util.location
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -7,9 +10,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.getPropertyGetter
-import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 sealed interface MappingSource
@@ -26,23 +27,23 @@ data class ConstantSource<T>(
 ) : MappingSource
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
-class MappingResolver : IrElementVisitor<MutableList<MappingSource>, MutableList<MappingSource>> {
+class MappingResolver(private val pluginContext: MappingPluginContext) : IrElementVisitor<MutableList<MappingSource>, MutableList<MappingSource>> {
 
     override fun visitFunction(declaration: IrFunction, data: MutableList<MappingSource>): MutableList<MappingSource> {
-        val source = requireNotNull(declaration.valueParameters.firstOrNull())
-
-        val target = declaration.accept(TargetsCollector(), Unit) as ConstructorMappingTarget
-
-        val sourceClass = requireNotNull(source.type.getClass()) {
+        val sourceParameter = requireNotNull(declaration.valueParameters.firstOrNull())
+        val mappingTarget = declaration.accept(TargetsCollector(), Unit) as ConstructorMappingTarget
+        val sourceClass = requireNotNull(sourceParameter.type.getClass()) {
             "Expected type of source argument to be non-null."
         }
-        val sourceValues = sourceClass.properties
 
-        val sources: MutableList<MappingSource> = target.values.map { target ->
+        val sources: MutableList<MappingSource> = mappingTarget.values.map { target ->
+            val source = requireNotNull(sourceClass.properties.firstOrNull { it.name == target.name }) {
+                pluginContext.messageCollector.error("Target ${target.name.asString()} has no source defined", location(declaration))
+            }
             PropertySource(
-                sourceClass.getPropertyGetter(sourceValues.first { it.name == target.name }.name.asString())!!,
+                sourceClass.getPropertyGetter(source.name.asString())!!,
                 target.type,
-                source.symbol,
+                sourceParameter.symbol,
             )
         }.toMutableList()
 

@@ -39,7 +39,7 @@ class IrTransformer(private val pluginContext: MappingPluginContext): IrElementT
                 "The target type must have a primary constructor."
             }
 
-            val targets = declaration.accept(MappingResolver(), mutableListOf())
+            val targets = declaration.accept(MappingResolver(pluginContext), mutableListOf())
 
             declaration.body = with (createScope(declaration)) {
                 pluginContext.blockBody(this.scope) {
