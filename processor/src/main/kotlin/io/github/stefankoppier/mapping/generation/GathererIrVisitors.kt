@@ -7,8 +7,6 @@ import io.github.stefankoppier.mapping.resolving.classes.MappingSource
 import io.github.stefankoppier.mapping.resolving.classes.PropertySource
 import io.github.stefankoppier.mapping.util.isSubclassOfFqName
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.linkage.issues.IrDeserializationException
-import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -16,9 +14,9 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -54,7 +52,7 @@ class IrTransformer(private val pluginContext: MappingPluginContext): IrElementT
                             }
                             +irReturn(irCallConstructor(primaryConstructor.symbol, emptyList()).apply {
                                 mapping.sources.mapIndexed { index, source ->
-                                    putValueArgument(index, source.toIr(this@blockBody))
+                                    putValueArgument(index, source.toIr(pluginContext,this@blockBody))
                                 }
                             })
                         }
@@ -82,13 +80,19 @@ class IrTransformer(private val pluginContext: MappingPluginContext): IrElementT
     }
 }
 
-fun MappingSource.toIr(builder: IrBuilderWithScope): IrExpression =
+fun MappingSource.toIr(pluginContext: MappingPluginContext, builder: IrBuilderWithScope): IrExpression =
     when (this) {
-        is PropertySource -> toIr(builder)
-        is ConstantSource<*> -> this.value
+        is PropertySource -> toIr(pluginContext, builder)
+        is ConstantSource<*> -> value
     }
 
-fun PropertySource.toIr(builder: IrBuilderWithScope) =
-    builder.irCall(property).apply {
-        dispatchReceiver = builder.irGet(type, dispatchReceiverSymbol)
-    }
+fun PropertySource.toIr(pluginContext: MappingPluginContext, builder: IrBuilderWithScope): IrExpression {
+    val getter = builder.irCall(property).apply { dispatchReceiver = builder.irGet(type, dispatchReceiverSymbol) }
+    return transformation?.let {
+        val let = pluginContext.referenceFunctions(CallableId(FqName("kotlin"), Name.identifier("let"))).first()
+        builder.irCall(let).apply {
+            extensionReceiver = getter
+            putValueArgument(0, transformation)
+        }
+    } ?: getter
+}

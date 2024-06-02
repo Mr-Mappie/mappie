@@ -6,6 +6,7 @@ import io.github.stefankoppier.mapping.util.error
 import io.github.stefankoppier.mapping.util.location
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.properties
 
@@ -22,7 +23,7 @@ class ClassMappingResolver(pluginContext: MappingPluginContext)
         return when (mappingTarget) {
             is ConstructorMappingTarget -> {
                 val dispatchReceiverSymbol = declaration.valueParameters.first().symbol
-                val concreteSources = declaration.body?.accept(ObjectSourcesCollector(pluginContext, dispatchReceiverSymbol), Unit) ?: emptyList()
+                val concreteSources = declaration.body?.accept(ObjectSourcesCollector(pluginContext, dispatchReceiverSymbol, declaration.fileEntry), Unit) ?: emptyList()
                 mappingTarget.values.map { target ->
                     val concreteSource = concreteSources.firstOrNull { it.first == target.name }
 

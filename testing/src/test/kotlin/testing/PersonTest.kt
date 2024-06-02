@@ -5,10 +5,19 @@ import kotlin.test.assertEquals
 
 class PersonTest {
 
-    private val mapper = PersonMapper
+    @Test
+    fun `map Person to PersonDto via PersonMapper`() {
+        assertEquals(
+            PersonDto("Sjon", "Sjon", 26),
+            PersonMapper.map(Person("Sjon"))
+        )
+    }
 
     @Test
-    fun `map Person to PersonDto`() {
-        assertEquals(PersonDto("Sjon", "Sjon", 26), mapper.map(Person("Sjon")))
+    fun `map Person to PersonDto via TransformingPersonMapper`() {
+        assertEquals(
+            PersonDto("Firstname", "Firstname Surname", 24),
+            TransformingPersonMapper.map(Person("Firstname"))
+        )
     }
 }

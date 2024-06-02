@@ -15,7 +15,5 @@ enum class Colour {
 }
 
 object ColorMapper : EnumMapper<Color, Colour>() {
-    override fun map(from: Color): Colour = enumMapping {
-
-    }
+    override fun map(from: Color): Colour = enumMapping()
 }

@@ -1,14 +1,19 @@
 package io.github.stefankoppier.mapping.resolving.classes
 
 import io.github.stefankoppier.mapping.MappingPluginContext
+import io.github.stefankoppier.mapping.annotations.Mapper
 import io.github.stefankoppier.mapping.resolving.BaseVisitor
+import io.github.stefankoppier.mapping.util.error
+import io.github.stefankoppier.mapping.util.location
+import io.github.stefankoppier.mapping.util.warn
+import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
 sealed interface MappingSource
@@ -17,6 +22,7 @@ data class PropertySource(
     val property: IrSimpleFunctionSymbol,
     val type: IrType,
     val dispatchReceiverSymbol: IrValueSymbol,
+    val transformation: IrFunctionExpression? = null,
 ) : MappingSource
 
 data class ConstantSource<T>(
@@ -27,6 +33,7 @@ data class ConstantSource<T>(
 class ObjectSourcesCollector(
     pluginContext: MappingPluginContext,
     private val dispatchReceiverSymbol: IrValueSymbol,
+    private val fileEntry: IrFileEntry,
 ) : BaseVisitor<List<Pair<Name, MappingSource>>, Unit>(pluginContext) {
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): List<Pair<Name, MappingSource>> {
@@ -41,13 +48,37 @@ class ObjectSourcesCollector(
     override fun visitCall(expression: IrCall, data: Unit): List<Pair<Name, MappingSource>> {
         return when (expression.symbol.owner.name) {
             Name.identifier("mapping") -> {
-                expression.valueArguments.first()!!.accept(ObjectSourcesCollector(pluginContext, dispatchReceiverSymbol), Unit)
+                expression.valueArguments.first()!!.accept(this, Unit)
             }
+            else -> {
+                pluginContext.messageCollector.error("map function must be defined via calling mapping", location(fileEntry, expression))
+                error("")
+            }
+        }
+    }
+
+    override fun visitFunctionExpression(expression: IrFunctionExpression, data: Unit): List<Pair<Name, MappingSource>> {
+        return expression.function.body!!.statements.map { it.accept(ObjectSourceCollector(pluginContext, dispatchReceiverSymbol), Unit) }
+    }
+}
+
+private class ObjectSourceCollector(
+    pluginContext: MappingPluginContext,
+    private val dispatchReceiverSymbol: IrValueSymbol,
+) : BaseVisitor<Pair<Name, MappingSource>, Unit>(pluginContext) {
+
+    override fun visitCall(expression: IrCall, data: Unit): Pair<Name, MappingSource> {
+        return when (expression.symbol.owner.name) {
             Name.identifier("property"), Name.identifier("constant") -> {
                 val target = expression.extensionReceiver!!.accept(TargetValueCollector(pluginContext), Unit)
-                val source = expression.valueArguments[0]!!.accept(SourceValueCollector(pluginContext, dispatchReceiverSymbol), Unit)
+                val source = expression.valueArguments.first()!!.accept(SourceValueCollector(pluginContext, dispatchReceiverSymbol), Unit)
 
-                listOf(target to source)
+                target to source
+            }
+            Name.identifier("transform") -> {
+                val mapping = expression.dispatchReceiver!!.accept(this, Unit)
+                val transformation = expression.valueArguments.first()!! as IrFunctionExpression
+                mapping.first to (mapping.second as PropertySource).copy(transformation = transformation)
             }
             else -> {
                 TODO("$javaClass :: visitCall Not implemented for ${expression::class} :: ${expression.dump()}")
@@ -55,15 +86,11 @@ class ObjectSourcesCollector(
         }
     }
 
-    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): List<Pair<Name, MappingSource>> {
+    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): Pair<Name, MappingSource> {
         return when (expression.operator.name) {
-            "IMPLICIT_COERCION_TO_UNIT" -> expression.argument.accept(this, Unit)
+            "IMPLICIT_COERCION_TO_UNIT" -> expression.argument.accept(this, data)
             else -> error(expression.operator.name)
         }
-    }
-
-    override fun visitFunctionExpression(expression: IrFunctionExpression, data: Unit): List<Pair<Name, MappingSource>> {
-        return expression.function.body!!.statements.flatMap { it.accept(this, Unit) }
     }
 }
 

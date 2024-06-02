@@ -1,13 +1,17 @@
 package testing
 
-import io.github.stefankoppier.mapping.annotations.Mapper
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class PrimitiveTest {
 
     @Test
-    fun `map Person to PersonDto`() {
+    fun `map Int to String via IntMapper`() {
         assertEquals("2", IntMapper.map(2))
+    }
+
+    @Test
+    fun `map String to Int via StringMapper`() {
+        assertEquals(2, StringMapper.map("2"))
     }
 }
