@@ -6,12 +6,14 @@ enum class Color {
     RED,
     GREEN,
     BLUE,
+    ORANGE,
 }
 
 enum class Colour {
     RED,
     GREEN,
     BLUE,
+    OTHER,
 }
 
 object ColorMapper : EnumMapper<Color, Colour>() {

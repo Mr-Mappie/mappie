@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 class ColorTest {
 
     @ParameterizedTest(name = "map Color.{0} to Colour.{1}")
-    @CsvSource("RED, RED", "BLUE, BLUE", "GREEN, GREEN")
+    @CsvSource("RED, RED", "BLUE, BLUE", "GREEN, GREEN", "ORANGE, OTHER")
     fun `map Color to Colour via ColorMapper`(color: Color, colour: Colour) {
         assertEquals(colour, ColorMapper.map(color))
     }

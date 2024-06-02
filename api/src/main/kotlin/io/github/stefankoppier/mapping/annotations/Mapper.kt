@@ -6,6 +6,8 @@ abstract class EnumMapper<FROM: Enum<*>, TO : Enum<*>> : Mapper<FROM, TO>() {
 
     protected fun enumMapping(builder: EnumMapper<FROM, TO>.() -> Unit = { }): TO =
         error("Will be generated")
+
+    infix fun TO.value(source: FROM): EnumMapper<FROM, TO> = generated()
 }
 
 @Suppress("unused")
