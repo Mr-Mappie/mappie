@@ -1,6 +1,6 @@
 package testing
 
-import io.github.stefankoppier.mapping.annotations.Mapper
+import io.github.mappie.annotations.Mapper
 
 data class Person(val name: String)
 

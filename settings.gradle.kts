@@ -1,4 +1,4 @@
-rootProject.name = "kotlin-mapping"
+rootProject.name = "mappie"
 
 pluginManagement {
     repositories {
@@ -16,7 +16,7 @@ dependencyResolutionManagement {
 
 include(
     ":api",
-    ":processor",
+    ":compiler-plugin",
     ":gradle-plugin",
     ":testing"
 )

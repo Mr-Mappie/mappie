@@ -6,7 +6,7 @@ plugins {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            artifactId = "mapping-api"
+            artifactId = "mappie-api"
             from(components["kotlin"])
         }
     }

@@ -1,6 +1,6 @@
 package testing
 
-import io.github.stefankoppier.mapping.annotations.EnumMapper
+import io.github.mappie.annotations.EnumMapper
 
 enum class Color {
     RED,

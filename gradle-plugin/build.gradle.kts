@@ -5,14 +5,16 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.kotlin.gradle.plugin.api)
+    compileOnly(libs.kotlin.gradle.plugin.api)
 }
 
 gradlePlugin {
     plugins {
-        create("analysis") {
-            id = "io.github.stefankoppier.kotlin.mapping"
-            implementationClass = "io.github.stefankoppier.mapping.MappingSubPlugin"
+        create("mappie") {
+            id = "io.github.mappie"
+            displayName = "Mappie Gradle Plugin"
+            description = "Kotlin compiler plugin for generating mapping functions"
+            implementationClass = "io.github.mappie.MappieGradlePlugin"
         }
     }
 }

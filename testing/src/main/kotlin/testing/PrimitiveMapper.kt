@@ -1,6 +1,6 @@
 package testing
 
-import io.github.stefankoppier.mapping.annotations.Mapper
+import io.github.mappie.annotations.Mapper
 
 object IntMapper : Mapper<Int, String>() {
 
