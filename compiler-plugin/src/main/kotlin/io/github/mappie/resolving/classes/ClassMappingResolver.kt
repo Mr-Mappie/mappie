@@ -22,33 +22,30 @@ class ClassMappingResolver : BaseVisitor<Mapping, Unit> {
             "Expected type of source argument to be non-null."
         }
 
-        return when (mappingTarget) {
-            is ConstructorMappingTarget -> {
-                val dispatchReceiverSymbol = declaration.valueParameters.first().symbol
-                val concreteSources = declaration.body?.accept(ObjectSourcesCollector(dispatchReceiverSymbol, declaration.fileEntry), Unit) ?: emptyList()
-                mappingTarget.values.map { target ->
-                    val concreteSource = concreteSources.firstOrNull { it.first == target.name }
+        val dispatchReceiverSymbol = declaration.valueParameters.first().symbol
+        val concreteSources = declaration.body?.accept(
+            ObjectSourcesCollector(dispatchReceiverSymbol, declaration.fileEntry),
+            Unit
+        ) ?: emptyList()
 
-                    if (concreteSource != null) {
-                        concreteSource.second
-                    } else {
-                        val source = requireNotNull(sourceClass.properties.firstOrNull { it.name == target.name }) {
-                            context.messageCollector.error(
-                                "Target ${target.name.asString()} has no source defined",
-                                location(declaration)
-                            )
-                        }
-                        PropertySource(
-                            sourceClass.getPropertyGetter(source.name.asString())!!,
-                            target.type,
-                            sourceParameter.symbol,
-                        )
-                    }
-                }.let { ConstructorCallMapping(it) }
+        return mappingTarget.values.map { target ->
+            val concreteSource = concreteSources.firstOrNull { it.first == target.name }
+
+            if (concreteSource != null) {
+                concreteSource.second
+            } else {
+                val source = requireNotNull(sourceClass.properties.firstOrNull { it.name == target.name }) {
+                    context.messageCollector.error(
+                        "Target ${target.name.asString()} has no source defined",
+                        location(declaration)
+                    )
+                }
+                PropertySource(
+                    sourceClass.getPropertyGetter(source.name.asString())!!,
+                    target.type,
+                    sourceParameter.symbol,
+                )
             }
-            is SingleResultMappingTarget -> {
-                SingleValueMapping(mappingTarget.type, mappingTarget.value)
-            }
-        }
+        }.let { ConstructorCallMapping(it) }
     }
 }

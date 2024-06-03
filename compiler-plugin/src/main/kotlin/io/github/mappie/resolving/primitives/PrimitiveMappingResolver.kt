@@ -10,12 +10,11 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.sure
 
 class PrimitiveMappingResolver : BaseVisitor<Mapping, Unit> {
 
     override fun visitFunction(declaration: IrFunction, data: Unit): Mapping {
-        val targetType = declaration.returnType.sure { "" }
+        val targetType = declaration.returnType
         check(targetType.isPrimitiveType() || targetType.isString())
         return SingleValueMapping(targetType, declaration.body!!.accept(SingleResultTargetCollector(declaration), Unit))
     }
@@ -26,8 +25,7 @@ private class SingleResultTargetCollector(
 ) : BaseVisitor<IrExpression, Unit> {
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): IrExpression {
-        require(body.statements.size == 1)
-        return body.statements.first().accept(this, Unit)
+        return body.statements.single().accept(this, Unit)
     }
 
     override fun visitReturn(expression: IrReturn, data: Unit): IrExpression {

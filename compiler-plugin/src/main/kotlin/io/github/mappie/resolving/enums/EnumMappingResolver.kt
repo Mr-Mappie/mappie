@@ -6,12 +6,14 @@ import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.name.Name
 
 class EnumMappingResolver : BaseVisitor<EnumMapping, Unit> {
 
     override fun visitFunction(declaration: IrFunction, data: Unit): EnumMapping {
         val targetType = declaration.returnType
+        check(targetType.getClass()!!.isEnumClass)
         val sourceType = declaration.valueParameters.first().type
         val targets = targetType.getClass()!!.accept(EnumEntriesCollector(), Unit)
         val resolvedSources = sourceType.getClass()!!.accept(EnumEntriesCollector(), Unit)
@@ -62,8 +64,7 @@ private class EnumMappingsResolver : BaseVisitor<Map<IrEnumEntry, List<IrEnumEnt
     }
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): Map<IrEnumEntry, List<IrEnumEntry>> {
-        require(body.statements.size == 1)
-        return body.statements.first().accept(this, Unit)
+        return body.statements.single().accept(this, Unit)
     }
 }
 

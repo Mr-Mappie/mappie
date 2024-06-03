@@ -33,8 +33,7 @@ class ObjectSourcesCollector(
 ) : BaseVisitor<List<Pair<Name, MappingSource>>, Unit> {
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): List<Pair<Name, MappingSource>> {
-        require(body.statements.size == 1)
-        return body.statements.first().accept(this, Unit)
+        return body.statements.single().accept(this, Unit)
     }
 
     override fun visitReturn(expression: IrReturn, data: Unit): List<Pair<Name, MappingSource>> {
