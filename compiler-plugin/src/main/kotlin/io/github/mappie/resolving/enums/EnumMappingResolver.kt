@@ -2,6 +2,8 @@ package io.github.mappie.resolving.enums
 
 import io.github.mappie.BaseVisitor
 import io.github.mappie.resolving.EnumMapping
+import io.github.mappie.resolving.IDENTIFIER_ENUM_MAPPING
+import io.github.mappie.resolving.IDENTIFIER_VALUE
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -33,10 +35,10 @@ private class EnumMappingsResolver : BaseVisitor<Map<IrEnumEntry, List<IrEnumEnt
 
     override fun visitCall(expression: IrCall, data: Unit): Map<IrEnumEntry, List<IrEnumEntry>> {
         return when (expression.symbol.owner.name) {
-            Name.identifier("enumMapping") -> {
+            IDENTIFIER_ENUM_MAPPING -> {
                 expression.valueArguments.first()?.accept(this, Unit) ?: return emptyMap()
             }
-            Name.identifier("value") -> {
+            IDENTIFIER_VALUE -> {
                 val target = (expression.extensionReceiver!! as IrGetEnumValue).symbol.owner
                 val source = (expression.valueArguments.first()!! as IrGetEnumValue).symbol.owner
                 mapOf(target to listOf(source))

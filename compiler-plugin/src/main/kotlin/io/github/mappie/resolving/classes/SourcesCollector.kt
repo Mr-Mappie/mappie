@@ -2,6 +2,10 @@ package io.github.mappie.resolving.classes
 
 import io.github.mappie.BaseVisitor
 import io.github.mappie.MappieIrRegistrar.Companion.context
+import io.github.mappie.resolving.IDENTIFIER_CONSTANT
+import io.github.mappie.resolving.IDENTIFIER_MAPPING
+import io.github.mappie.resolving.IDENTIFIER_PROPERTY
+import io.github.mappie.resolving.IDENTIFIER_TRANFORM
 import io.github.mappie.util.error
 import io.github.mappie.util.location
 import org.jetbrains.kotlin.ir.IrFileEntry
@@ -42,7 +46,7 @@ class ObjectSourcesCollector(
 
     override fun visitCall(expression: IrCall, data: Unit): List<Pair<Name, MappingSource>> {
         return when (expression.symbol.owner.name) {
-            Name.identifier("mapping") -> {
+            IDENTIFIER_MAPPING -> {
                 expression.valueArguments.first()?.accept(this, Unit) ?: emptyList()
             }
             else -> {
@@ -63,13 +67,13 @@ private class ObjectSourceCollector(
 
     override fun visitCall(expression: IrCall, data: Unit): Pair<Name, MappingSource> {
         return when (expression.symbol.owner.name) {
-            Name.identifier("property"), Name.identifier("constant") -> {
+            IDENTIFIER_PROPERTY, IDENTIFIER_CONSTANT -> {
                 val target = expression.extensionReceiver!!.accept(TargetValueCollector(), Unit)
                 val source = expression.valueArguments.first()!!.accept(SourceValueCollector(dispatchReceiverSymbol), Unit)
 
                 target to source
             }
-            Name.identifier("transform") -> {
+            IDENTIFIER_TRANFORM -> {
                 val mapping = expression.dispatchReceiver!!.accept(this, Unit)
                 val transformation = expression.valueArguments.first()!! as IrFunctionExpression
                 mapping.first to (mapping.second as PropertySource).copy(transformation = transformation)

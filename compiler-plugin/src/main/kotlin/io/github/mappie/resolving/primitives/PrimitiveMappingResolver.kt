@@ -1,6 +1,8 @@
 package io.github.mappie.resolving.primitives
 
 import io.github.mappie.BaseVisitor
+import io.github.mappie.resolving.IDENTIFIER_MAPPING
+import io.github.mappie.resolving.IDENTIFIER_RESULT
 import io.github.mappie.resolving.Mapping
 import io.github.mappie.resolving.SingleValueMapping
 import io.github.mappie.util.irGet
@@ -34,11 +36,11 @@ private class SingleResultTargetCollector(
 
     override fun visitCall(expression: IrCall, data: Unit): IrExpression {
         return when (expression.symbol.owner.name) {
-            Name.identifier("mapping") -> {
+            IDENTIFIER_MAPPING -> {
                 expression.valueArguments.first()?.accept(this, Unit)
                     ?: irGet(declaration.valueParameters.first())
             }
-            Name.identifier("result") -> {
+            IDENTIFIER_RESULT -> {
                 expression.valueArguments.first()!!
             }
             else -> {
