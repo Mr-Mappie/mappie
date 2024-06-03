@@ -5,6 +5,7 @@ import io.github.mappie.resolving.BaseVisitor
 import io.github.mappie.resolving.ConstructorMappingTarget
 import io.github.mappie.resolving.MappingTarget
 import io.github.mappie.resolving.SingleResultMappingTarget
+import io.github.mappie.util.irGet
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -20,7 +21,7 @@ class TargetsCollector(pluginContext: MappiePluginContext) : BaseVisitor<Mapping
     override fun visitFunction(declaration: IrFunction, data: Unit): MappingTarget {
         return when  {
             declaration.returnType.isPrimitiveType() || declaration.returnType.isString() -> {
-                SingleResultMappingTarget(declaration.returnType, declaration.body!!.accept(SingleResultTargetCollector(pluginContext), Unit))
+                SingleResultMappingTarget(declaration.returnType, declaration.body!!.accept(SingleResultTargetCollector(declaration, pluginContext), Unit))
             }
             else -> {
                 declaration.returnType.getClass()!!.primaryConstructor!!.accept(this, Unit)
@@ -33,7 +34,10 @@ class TargetsCollector(pluginContext: MappiePluginContext) : BaseVisitor<Mapping
     }
 }
 
-class SingleResultTargetCollector(pluginContext: MappiePluginContext) : BaseVisitor<IrExpression, Unit>(pluginContext) {
+class SingleResultTargetCollector(
+    private val declaration: IrFunction,
+    pluginContext: MappiePluginContext,
+) : BaseVisitor<IrExpression, Unit>(pluginContext) {
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): IrExpression {
         require(body.statements.size == 1)
@@ -47,7 +51,8 @@ class SingleResultTargetCollector(pluginContext: MappiePluginContext) : BaseVisi
     override fun visitCall(expression: IrCall, data: Unit): IrExpression {
         return when (expression.symbol.owner.name) {
             Name.identifier("mapping") -> {
-                expression.valueArguments.first()!!.accept(this, Unit)
+                expression.valueArguments.first()?.accept(this, Unit)
+                    ?: irGet(declaration.valueParameters.first())
             }
             Name.identifier("result") -> {
                 expression.valueArguments.first()!!
@@ -65,6 +70,10 @@ class SingleResultTargetCollector(pluginContext: MappiePluginContext) : BaseVisi
     override fun visitFunction(declaration: IrFunction, data: Unit): IrExpression {
         return declaration.body!!.accept(this, Unit)
     }
+//
+//    override fun visitGetObjectValue(expression: IrGetObjectValue, data: Unit): IrExpression {
+//        return expression.
+//    }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): IrExpression {
         return expression.argument.accept(this, Unit)
