@@ -1,7 +1,7 @@
 package io.github.mappie.resolving.classes
 
-import io.github.mappie.MappiePluginContext
-import io.github.mappie.resolving.BaseVisitor
+import io.github.mappie.BaseVisitor
+import io.github.mappie.MappieIrRegistrar.Companion.context
 import io.github.mappie.util.error
 import io.github.mappie.util.location
 import org.jetbrains.kotlin.ir.IrFileEntry
@@ -28,10 +28,9 @@ data class ConstantSource<T>(
 ) : MappingSource
 
 class ObjectSourcesCollector(
-    pluginContext: MappiePluginContext,
     private val dispatchReceiverSymbol: IrValueSymbol,
     private val fileEntry: IrFileEntry,
-) : BaseVisitor<List<Pair<Name, MappingSource>>, Unit>(pluginContext) {
+) : BaseVisitor<List<Pair<Name, MappingSource>>, Unit> {
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): List<Pair<Name, MappingSource>> {
         require(body.statements.size == 1)
@@ -48,27 +47,26 @@ class ObjectSourcesCollector(
                 expression.valueArguments.first()?.accept(this, Unit) ?: emptyList()
             }
             else -> {
-                pluginContext.messageCollector.error("map function must be defined via calling mapping", location(fileEntry, expression))
+                context.messageCollector.error("map function must be defined via calling mapping", location(fileEntry, expression))
                 error("")
             }
         }
     }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: Unit): List<Pair<Name, MappingSource>> {
-        return expression.function.body!!.statements.map { it.accept(ObjectSourceCollector(pluginContext, dispatchReceiverSymbol), Unit) }
+        return expression.function.body!!.statements.map { it.accept(ObjectSourceCollector(dispatchReceiverSymbol), Unit) }
     }
 }
 
 private class ObjectSourceCollector(
-    pluginContext: MappiePluginContext,
     private val dispatchReceiverSymbol: IrValueSymbol,
-) : BaseVisitor<Pair<Name, MappingSource>, Unit>(pluginContext) {
+) : BaseVisitor<Pair<Name, MappingSource>, Unit> {
 
     override fun visitCall(expression: IrCall, data: Unit): Pair<Name, MappingSource> {
         return when (expression.symbol.owner.name) {
             Name.identifier("property"), Name.identifier("constant") -> {
-                val target = expression.extensionReceiver!!.accept(TargetValueCollector(pluginContext), Unit)
-                val source = expression.valueArguments.first()!!.accept(SourceValueCollector(pluginContext, dispatchReceiverSymbol), Unit)
+                val target = expression.extensionReceiver!!.accept(TargetValueCollector(), Unit)
+                val source = expression.valueArguments.first()!!.accept(SourceValueCollector(dispatchReceiverSymbol), Unit)
 
                 target to source
             }
@@ -92,9 +90,8 @@ private class ObjectSourceCollector(
 }
 
 private class SourceValueCollector(
-    pluginContext: MappiePluginContext,
     private val dispatchReceiverSymbol: IrValueSymbol
-) : BaseVisitor<MappingSource, Unit>(pluginContext) {
+) : BaseVisitor<MappingSource, Unit> {
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Unit): MappingSource {
         return PropertySource(
@@ -109,7 +106,7 @@ private class SourceValueCollector(
     }
 }
 
-private class TargetValueCollector(pluginContext: MappiePluginContext) : BaseVisitor<Name, Unit>(pluginContext) {
+private class TargetValueCollector : BaseVisitor<Name, Unit> {
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Unit): Name {
         return expression.symbol.owner.name

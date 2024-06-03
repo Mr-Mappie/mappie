@@ -1,5 +1,6 @@
 package io.github.mappie.generation
 
+import io.github.mappie.MappieIrRegistrar.Companion.context
 import io.github.mappie.MappiePluginContext
 import io.github.mappie.resolving.classes.ConstantSource
 import io.github.mappie.resolving.classes.MappingSource
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
-class IrTransformer(private val pluginContext: MappiePluginContext): IrElementTransformerVoidWithContext() {
+class IrTransformer : IrElementTransformerVoidWithContext() {
 
     override fun visitFileNew(declaration: IrFile): IrFile {
         val result = super.visitFileNew(declaration)
@@ -39,26 +40,26 @@ class IrTransformer(private val pluginContext: MappiePluginContext): IrElementTr
                 "Expected return type of map to be non-null."
             }
 
-            val mapping = declaration.accept(MappingResolver(pluginContext), Unit)
+            val mapping = declaration.accept(MappingResolver(), Unit)
 
             val validation = MappingValidation.of(mapping)
             if (validation.isValid()) {
                 declaration.body = with(createScope(declaration)) {
                     when (mapping) {
                         is ConstructorCallMapping -> {
-                            pluginContext.blockBody(this.scope) {
+                            context.blockBody(this.scope) {
                                 val primaryConstructor = requireNotNull(targetClass.primaryConstructor) {
                                     "The target type must have a primary constructor."
                                 }
                                 +irReturn(irCallConstructor(primaryConstructor.symbol, emptyList()).apply {
                                     mapping.sources.mapIndexed { index, source ->
-                                        putValueArgument(index, source.toIr(pluginContext, this@blockBody))
+                                        putValueArgument(index, source.toIr(this@blockBody))
                                     }
                                 })
                             }
                         }
                         is EnumMapping -> {
-                            pluginContext.blockBody(this.scope) {
+                            context.blockBody(this.scope) {
                                 +irReturn(irWhen(mapping.targetType, mapping.mappings.map { (target, sources) ->
                                     val lhs = irGet(declaration.valueParameters.first())
                                     val rhs = irGetEnumValue(mapping.sourceType, sources.single().symbol)
@@ -68,7 +69,7 @@ class IrTransformer(private val pluginContext: MappiePluginContext): IrElementTr
                         }
 
                         is SingleValueMapping -> {
-                            pluginContext.blockBody(this.scope) {
+                            context.blockBody(this.scope) {
                                 +irReturn(mapping.value)
                             }
                         }
@@ -76,7 +77,7 @@ class IrTransformer(private val pluginContext: MappiePluginContext): IrElementTr
                 }
             } else {
                 validation.problems().forEach { problem ->
-                    pluginContext.messageCollector.error(problem, location(declaration))
+                    context.messageCollector.error(problem, location(declaration))
                 }
             }
         }
@@ -84,16 +85,16 @@ class IrTransformer(private val pluginContext: MappiePluginContext): IrElementTr
     }
 }
 
-fun MappingSource.toIr(pluginContext: MappiePluginContext, builder: IrBuilderWithScope): IrExpression =
+fun MappingSource.toIr(builder: IrBuilderWithScope): IrExpression =
     when (this) {
-        is PropertySource -> toIr(pluginContext, builder)
+        is PropertySource -> toIr(builder)
         is ConstantSource<*> -> value
     }
 
-fun PropertySource.toIr(pluginContext: MappiePluginContext, builder: IrBuilderWithScope): IrExpression {
+fun PropertySource.toIr(builder: IrBuilderWithScope): IrExpression {
     val getter = builder.irCall(property).apply { dispatchReceiver = builder.irGet(type, dispatchReceiverSymbol) }
     return transformation?.let {
-        builder.irCall(pluginContext.referenceLetFunction()).apply {
+        builder.irCall(context.referenceLetFunction()).apply {
             extensionReceiver = getter
             putValueArgument(0, transformation)
         }

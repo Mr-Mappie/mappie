@@ -10,7 +10,11 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 class MappieIrRegistrar(private val messageCollector: MessageCollector) : IrGenerationExtension {
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
-        val pluginContext = MappiePluginContext(messageCollector, pluginContext)
-        moduleFragment.accept(IrTransformer(pluginContext), null)
+        context = MappiePluginContext(messageCollector, pluginContext)
+        moduleFragment.accept(IrTransformer(), null)
+    }
+
+    companion object {
+        lateinit var context: MappiePluginContext
     }
 }

@@ -3,7 +3,7 @@ package io.github.mappie.util
 import io.github.mappie.MappiePluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
@@ -26,8 +26,8 @@ fun MappiePluginContext.referenceLetFunction() =
 fun irGetEnumValue(type: IrType, symbol: IrEnumEntrySymbol): IrGetEnumValue =
     IrGetEnumValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, type, symbol)
 
-fun irGet(valueParameter: IrValueParameter) =
-    irGet(valueParameter.type, valueParameter.symbol)
+fun irGet(declaration: IrValueDeclaration) =
+    irGet(declaration.type, declaration.symbol)
 
 fun irGet(type: IrType, symbol: IrValueSymbol): IrGetValue =
     IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, type, symbol)
