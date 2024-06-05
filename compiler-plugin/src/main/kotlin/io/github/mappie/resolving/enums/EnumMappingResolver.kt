@@ -16,12 +16,15 @@ class EnumMappingResolver : BaseVisitor<EnumMapping, Unit> {
         val targetType = declaration.returnType
         check(targetType.getClass()!!.isEnumClass)
         val sourceType = declaration.valueParameters.first().type
+
         val targets = targetType.getClass()!!.accept(EnumEntriesCollector(), Unit)
-        val resolvedSources = sourceType.getClass()!!.accept(EnumEntriesCollector(), Unit)
-        val explicitSources = declaration.body!!.accept(EnumMappingsResolver(), Unit)
-        val mappings = targets.associateWith { target ->
-            explicitSources.getOrElse(target) { resolvedSources.filter { source -> target.name == source.name } }
+        val sources = sourceType.getClass()!!.accept(EnumEntriesCollector(), Unit)
+        val explicitMappings = declaration.body!!.accept(EnumMappingsResolver(), Unit)
+
+        val mappings = sources.associateWith { source ->
+            explicitMappings.getOrElse(source) { targets.filter { target -> target.name == source.name } }
         }
+
         return EnumMapping(
             targetType = targetType,
             sourceType = sourceType,
@@ -40,7 +43,7 @@ private class EnumMappingsResolver : BaseVisitor<Map<IrEnumEntry, List<IrEnumEnt
             IDENTIFIER_MAPPED_FROM_ENUM_ENTRY -> {
                 val target = (expression.extensionReceiver!! as IrGetEnumValue).symbol.owner
                 val source = (expression.valueArguments.first()!! as IrGetEnumValue).symbol.owner
-                mapOf(target to listOf(source))
+                mapOf(source to listOf(target))
             }
             else -> {
                 error("Unexpected symbol ${expression.symbol.owner.name}")
@@ -65,7 +68,14 @@ private class EnumMappingsResolver : BaseVisitor<Map<IrEnumEntry, List<IrEnumEnt
     }
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): Map<IrEnumEntry, List<IrEnumEntry>> {
-        return body.statements.single().accept(this, Unit)
+        return body.statements.map { it.accept(this, Unit) }
+            .fold(mutableMapOf()) { acc, current ->
+                acc.apply {
+                    current.forEach { (key, value) ->
+                        merge(key, value) { left, right -> left + right }
+                    }
+                }
+            }
     }
 }
 

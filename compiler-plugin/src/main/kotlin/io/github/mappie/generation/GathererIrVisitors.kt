@@ -56,10 +56,10 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
 
                         is EnumMapping -> {
                             context.blockBody(this.scope) {
-                                +irReturn(irWhen(mapping.targetType, mapping.mappings.map { (target, sources) ->
+                                +irReturn(irWhen(mapping.targetType, mapping.mappings.map { (source, targets) ->
                                     val lhs = irGet(declaration.valueParameters.first())
-                                    val rhs = irGetEnumValue(mapping.sourceType, sources.single().symbol)
-                                    irBranch(irEqeqeq(lhs, rhs), irGetEnumValue(mapping.targetType, target.symbol))
+                                    val rhs = irGetEnumValue(mapping.targetType, source.symbol)
+                                    irBranch(irEqeqeq(lhs, rhs), irGetEnumValue(mapping.targetType, targets.single().symbol))
                                 } + irElseBranch(irCall(context.irBuiltIns.noWhenBranchMatchedExceptionSymbol))))
                             }
                         }
