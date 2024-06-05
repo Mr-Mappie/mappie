@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
@@ -98,42 +99,49 @@ private class ObjectSourceCollector(
 private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit> {
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Unit): IrFunctionExpression {
-        val clazz = context.referenceClass(expression.symbol.owner.classId!!)
-        val function = clazz!!.functions
+        return context.referenceClass(expression.symbol.owner.classId!!)!!
+            .functions
             .filter { it.owner.name.asString() == "map" }
             .first()
+            .wrap(expression)
+    }
 
-        val expression = IrFunctionExpressionImpl(
+    override fun visitConstructorCall(expression: IrConstructorCall, data: Unit): IrFunctionExpression {
+        return expression.type.getClass()!!.symbol.functions
+            .filter { it.owner.name.asString() == "map" }
+            .first()
+            .wrap(expression)
+    }
+
+    private fun IrSimpleFunctionSymbol.wrap(receiver: IrExpression): IrFunctionExpression =
+        IrFunctionExpressionImpl(
             SYNTHETIC_OFFSET,
             SYNTHETIC_OFFSET,
-            function.owner.returnType,
+            owner.returnType,
             context.irFactory.buildFun {
                 name = Name.identifier("stub_for_inlining")
-                returnType = function.owner.returnType
+                returnType = owner.returnType
             }.apply {
-                parent = clazz.owner
+                parent = owner.parent
                 val itParameter = addValueParameter {
                     name = Name.identifier("it")
-                    type = function.owner.valueParameters.single().type
+                    type = owner.valueParameters.single().type
                     index = 0
                 }
                 body = context.irFactory.createExpressionBody(IrCallImpl(
                     SYNTHETIC_OFFSET,
                     SYNTHETIC_OFFSET,
-                    function.owner.returnType,
-                    function.owner.symbol,
+                    owner.returnType,
+                    owner.symbol,
                     0,
                     1,
                 ).apply {
-                    dispatchReceiver = expression
+                    dispatchReceiver = receiver
                     putValueArgument(0, irGet(itParameter))
                 })
             },
             IrStatementOrigin.ANONYMOUS_FUNCTION
         )
-
-        return expression
-    }
 }
 
 private class SourceValueCollector(
