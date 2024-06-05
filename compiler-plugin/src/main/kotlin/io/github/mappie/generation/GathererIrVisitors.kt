@@ -1,13 +1,11 @@
 package io.github.mappie.generation
 
 import io.github.mappie.MappieIrRegistrar.Companion.context
-import io.github.mappie.MappiePluginContext
 import io.github.mappie.resolving.classes.ConstantSource
 import io.github.mappie.resolving.classes.MappingSource
 import io.github.mappie.resolving.classes.PropertySource
 import io.github.mappie.resolving.*
 import io.github.mappie.util.*
-import io.github.mappie.util.isSubclassOfFqName
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -16,7 +14,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.Name
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
 class IrTransformer : IrElementTransformerVoidWithContext() {
@@ -27,15 +24,14 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
     }
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
-        if (!declaration.isSubclassOfFqName("io.github.mappie.annotations.Mapper")) {
-            return declaration
+        if (declaration.accept(ShouldTransformCollector(), Unit)) {
+            return super.visitClassNew(declaration)
         }
-
-        return super.visitClassNew(declaration)
+        return declaration
     }
 
     override fun visitFunctionNew(declaration: IrFunction): IrStatement {
-        if (declaration.name == Name.identifier("map")) {
+        if (declaration.accept(ShouldTransformCollector(), Unit)) {
             val targetClass = requireNotNull(declaration.returnType.getClass()) {
                 "Expected return type of map to be non-null."
             }
@@ -59,6 +55,7 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
                                 })
                             }
                         }
+
                         is EnumMapping -> {
                             context.blockBody(this.scope) {
                                 +irReturn(irWhen(mapping.targetType, mapping.mappings.map { (target, sources) ->

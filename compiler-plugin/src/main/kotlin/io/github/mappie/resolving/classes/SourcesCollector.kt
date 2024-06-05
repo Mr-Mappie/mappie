@@ -1,13 +1,10 @@
 package io.github.mappie.resolving.classes
 
 import io.github.mappie.BaseVisitor
-import io.github.mappie.MappieIrRegistrar.Companion.context
 import io.github.mappie.resolving.IDENTIFIER_CONSTANT
 import io.github.mappie.resolving.IDENTIFIER_MAPPING
 import io.github.mappie.resolving.IDENTIFIER_PROPERTY
 import io.github.mappie.resolving.IDENTIFIER_TRANFORM
-import io.github.mappie.util.error
-import io.github.mappie.util.location
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.expressions.*
@@ -50,8 +47,7 @@ class ObjectSourcesCollector(
                 expression.valueArguments.first()?.accept(this, Unit) ?: emptyList()
             }
             else -> {
-                context.messageCollector.error("map function must be defined via calling mapping", location(fileEntry, expression))
-                error("")
+                emptyList()
             }
         }
     }

@@ -14,6 +14,14 @@ object PersonMapper : Mapper<Person, PersonDto>() {
     }
 }
 
+object ConstructorCallPersonMapper : Mapper<Person, PersonDto>() {
+    override fun map(from: Person): PersonDto {
+        return from.name.let { name ->
+            PersonDto(name, "description", 10)
+        }
+    }
+}
+
 object TransformingPersonMapper : Mapper<Person, PersonDto>() {
 
     override fun map(from: Person): PersonDto = mapping {
