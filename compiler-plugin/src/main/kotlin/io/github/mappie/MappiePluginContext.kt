@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.builders.Scope
-import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 
 class MappiePluginContext(
     val messageCollector: MessageCollector,
@@ -13,7 +12,7 @@ class MappiePluginContext(
 ): IrPluginContext by irPluginContext {
 
     fun blockBody(scope: Scope, body: IrBlockBodyBuilder.() -> Unit) =
-        IrBlockBodyBuilder(IrGeneratorContextBase(irBuiltIns), scope, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
+        IrBlockBodyBuilder(IrGeneratorContextBase(irBuiltIns), scope, scope.scopeOwnerSymbol.owner.startOffset, scope.scopeOwnerSymbol.owner.endOffset)
             .blockBody(body)
 
 }
