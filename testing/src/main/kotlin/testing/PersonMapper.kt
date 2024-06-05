@@ -1,16 +1,17 @@
 package testing
 
-import io.github.mappie.annotations.Mapper
+import io.github.mappie.api.DataClassMapper
+import io.github.mappie.api.Mapper
 
 data class Person(val name: String)
 
 data class PersonDto(val name: String, val description: String, val age: Int)
 
-object PersonMapper : Mapper<Person, PersonDto>() {
+object PersonMapper : DataClassMapper<Person, PersonDto>() {
 
     override fun map(from: Person): PersonDto = mapping {
-        PersonDto::description property Person::name
-        PersonDto::age constant 26
+        PersonDto::description mappedFromProperty Person::name
+        PersonDto::age mappedFromConstant 26
     }
 }
 
@@ -22,10 +23,10 @@ object ConstructorCallPersonMapper : Mapper<Person, PersonDto>() {
     }
 }
 
-object TransformingPersonMapper : Mapper<Person, PersonDto>() {
+object TransformingPersonMapper : DataClassMapper<Person, PersonDto>() {
 
     override fun map(from: Person): PersonDto = mapping {
-        PersonDto::description property Person::name transform { "$it Surname" }
-        PersonDto::age constant 24
+        PersonDto::description mappedFromProperty Person::name transform { "$it Surname" }
+        PersonDto::age mappedFromConstant 24
     }
 }

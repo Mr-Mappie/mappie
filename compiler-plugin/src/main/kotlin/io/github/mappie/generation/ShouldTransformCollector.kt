@@ -1,7 +1,6 @@
 package io.github.mappie.generation
 
 import io.github.mappie.BaseVisitor
-import io.github.mappie.resolving.IDENTIFIER_ENUM_MAPPING
 import io.github.mappie.resolving.IDENTIFIER_MAPPING
 import io.github.mappie.util.isSubclassOfFqName
 import org.jetbrains.kotlin.ir.IrElement
@@ -13,7 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrReturn
 
 class ShouldTransformCollector : BaseVisitor<Boolean, Unit> {
     override fun visitClass(declaration: IrClass, data: Unit): Boolean {
-        return declaration.isSubclassOfFqName("io.github.mappie.annotations.Mapper")
+        return declaration.isSubclassOfFqName("io.github.mappie.api.Mapper")
                 && declaration.declarations.filterIsInstance<IrSimpleFunction>().any { it.accept(this, Unit) }
     }
 
@@ -30,7 +29,7 @@ class ShouldTransformCollector : BaseVisitor<Boolean, Unit> {
     }
 
     override fun visitCall(expression: IrCall, data: Unit): Boolean {
-        return expression.symbol.owner.name in listOf(IDENTIFIER_MAPPING, IDENTIFIER_ENUM_MAPPING)
+        return expression.symbol.owner.name == IDENTIFIER_MAPPING
     }
 
     override fun visitElement(element: IrElement, data: Unit): Boolean {

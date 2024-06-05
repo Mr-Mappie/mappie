@@ -2,14 +2,13 @@ package io.github.mappie.resolving.enums
 
 import io.github.mappie.BaseVisitor
 import io.github.mappie.resolving.EnumMapping
-import io.github.mappie.resolving.IDENTIFIER_ENUM_MAPPING
-import io.github.mappie.resolving.IDENTIFIER_VALUE
+import io.github.mappie.resolving.IDENTIFIER_MAPPING
+import io.github.mappie.resolving.IDENTIFIER_MAPPED_FROM_ENUM_ENTRY
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.isEnumClass
-import org.jetbrains.kotlin.name.Name
 
 class EnumMappingResolver : BaseVisitor<EnumMapping, Unit> {
 
@@ -35,10 +34,10 @@ private class EnumMappingsResolver : BaseVisitor<Map<IrEnumEntry, List<IrEnumEnt
 
     override fun visitCall(expression: IrCall, data: Unit): Map<IrEnumEntry, List<IrEnumEntry>> {
         return when (expression.symbol.owner.name) {
-            IDENTIFIER_ENUM_MAPPING -> {
+            IDENTIFIER_MAPPING -> {
                 expression.valueArguments.first()?.accept(this, Unit) ?: return emptyMap()
             }
-            IDENTIFIER_VALUE -> {
+            IDENTIFIER_MAPPED_FROM_ENUM_ENTRY -> {
                 val target = (expression.extensionReceiver!! as IrGetEnumValue).symbol.owner
                 val source = (expression.valueArguments.first()!! as IrGetEnumValue).symbol.owner
                 mapOf(target to listOf(source))

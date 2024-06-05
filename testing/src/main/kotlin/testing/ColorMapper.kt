@@ -1,6 +1,6 @@
 package testing
 
-import io.github.mappie.annotations.EnumMapper
+import io.github.mappie.api.EnumMapper
 
 enum class Color {
     RED,
@@ -17,7 +17,7 @@ enum class Colour {
 }
 
 object ColorMapper : EnumMapper<Color, Colour>() {
-    override fun map(from: Color): Colour = enumMapping {
-        Colour.OTHER value Color.ORANGE
+    override fun map(from: Color): Colour = mapping {
+        Colour.OTHER mappedFromEnumEntry Color.ORANGE
     }
 }

@@ -4,14 +4,13 @@ import org.jetbrains.kotlin.name.Name
 
 val IDENTIFIER_MAPPING = Name.identifier("mapping")
 
-val IDENTIFIER_ENUM_MAPPING = Name.identifier("enumMapping")
 
-val IDENTIFIER_VALUE = Name.identifier("value")
+val IDENTIFIER_MAPPED_FROM_ENUM_ENTRY = Name.identifier("mappedFromEnumEntry")
 
 val IDENTIFIER_RESULT = Name.identifier("result")
 
-val IDENTIFIER_PROPERTY = Name.identifier("property")
+val IDENTIFIER_MAPPED_FROM_PROPERTY = Name.identifier("mappedFromProperty")
 
-val IDENTIFIER_CONSTANT = Name.identifier("constant")
+val IDENTIFIER_MAPPED_FROM_CONSTANT = Name.identifier("mappedFromConstant")
 
 val IDENTIFIER_TRANFORM = Name.identifier("transform")

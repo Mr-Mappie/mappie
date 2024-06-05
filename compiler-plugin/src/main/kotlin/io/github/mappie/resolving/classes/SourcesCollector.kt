@@ -1,11 +1,10 @@
 package io.github.mappie.resolving.classes
 
 import io.github.mappie.BaseVisitor
-import io.github.mappie.resolving.IDENTIFIER_CONSTANT
+import io.github.mappie.resolving.IDENTIFIER_MAPPED_FROM_CONSTANT
 import io.github.mappie.resolving.IDENTIFIER_MAPPING
-import io.github.mappie.resolving.IDENTIFIER_PROPERTY
+import io.github.mappie.resolving.IDENTIFIER_MAPPED_FROM_PROPERTY
 import io.github.mappie.resolving.IDENTIFIER_TRANFORM
-import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -62,7 +61,7 @@ private class ObjectSourceCollector(
 
     override fun visitCall(expression: IrCall, data: Unit): Pair<Name, MappingSource> {
         return when (expression.symbol.owner.name) {
-            IDENTIFIER_PROPERTY, IDENTIFIER_CONSTANT -> {
+            IDENTIFIER_MAPPED_FROM_PROPERTY, IDENTIFIER_MAPPED_FROM_CONSTANT -> {
                 val target = expression.extensionReceiver!!.accept(TargetValueCollector(), Unit)
                 val source = expression.valueArguments.first()!!.accept(SourceValueCollector(dispatchReceiverSymbol), Unit)
 
