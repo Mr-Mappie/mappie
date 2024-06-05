@@ -52,8 +52,9 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
                                     "The target type must have a primary constructor."
                                 }
                                 +irReturn(irCallConstructor(primaryConstructor.symbol, emptyList()).apply {
-                                    mapping.sources.mapIndexed { index, source ->
-                                        putValueArgument(index, source.toIr(this@blockBody))
+                                    mapping.mappings.map { (target, source) ->
+                                        val index = primaryConstructor.valueParameters.indexOf(target)
+                                        putValueArgument(index, source.single().toIr(this@blockBody))
                                     }
                                 })
                             }

@@ -7,6 +7,7 @@ import io.github.mappie.resolving.enums.EnumMappingResolver
 import io.github.mappie.resolving.primitives.PrimitiveMappingResolver
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
@@ -17,7 +18,10 @@ import org.jetbrains.kotlin.ir.util.*
 sealed interface Mapping
 
 data class ConstructorCallMapping(
-    val sources: List<MappingSource>
+    val targetType: IrType,
+    val sourceType: IrType,
+    val mappings: Map<IrValueParameter, List<MappingSource>>,
+//    val sources: List<MappingSource>
 ) : Mapping
 
 data class EnumMapping(
