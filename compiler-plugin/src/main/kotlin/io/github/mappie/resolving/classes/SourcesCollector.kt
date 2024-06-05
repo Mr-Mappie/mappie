@@ -29,8 +29,7 @@ data class ConstantSource<T>(
 ) : MappingSource
 
 class ObjectSourcesCollector(
-    private val dispatchReceiverSymbol: IrValueSymbol,
-    private val fileEntry: IrFileEntry,
+    private val dispatchReceiverSymbol: IrValueSymbol
 ) : BaseVisitor<List<Pair<Name, MappingSource>>, Unit> {
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): List<Pair<Name, MappingSource>> {

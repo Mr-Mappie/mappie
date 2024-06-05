@@ -3,9 +3,7 @@ package io.github.mappie.resolving.classes
 import io.github.mappie.BaseVisitor
 import io.github.mappie.resolving.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.properties
 
@@ -18,11 +16,11 @@ class ClassMappingResolver : BaseVisitor<Mapping, Unit> {
         val targets = declaration.accept(ValueParametersCollector(), Unit)
         val dispatchReceiverSymbol = declaration.valueParameters.first().symbol
         val concreteSources = declaration.body?.accept(
-            ObjectSourcesCollector(dispatchReceiverSymbol, declaration.fileEntry),
+            ObjectSourcesCollector(dispatchReceiverSymbol),
             Unit
         ) ?: emptyList()
 
-        val mappings: Map<IrValueParameter, List<MappingSource>> = targets.associateWith { target ->
+        val mappings = targets.associateWith { target ->
             val concreteSource = concreteSources.firstOrNull { it.first == target.name }
 
             if (concreteSource != null) {
