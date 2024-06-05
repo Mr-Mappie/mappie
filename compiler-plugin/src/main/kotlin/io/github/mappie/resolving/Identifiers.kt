@@ -6,11 +6,15 @@ val IDENTIFIER_MAPPING = Name.identifier("mapping")
 
 val IDENTIFIER_MAP = Name.identifier("map")
 
+val IDENTIFIER_MAP_LIST = Name.identifier("mapList")
+
 val IDENTIFIER_MAPPED_FROM_ENUM_ENTRY = Name.identifier("mappedFromEnumEntry")
 
 val IDENTIFIER_MAPPED_FROM_PROPERTY = Name.identifier("mappedFromProperty")
 
 val IDENTIFIER_MAPPED_FROM_CONSTANT = Name.identifier("mappedFromConstant")
+
+val IDENTIFIER_MAPPED_FROM_EXPRESSION = Name.identifier("mappedFromExpression")
 
 val IDENTIFIER_RESULT = Name.identifier("result")
 

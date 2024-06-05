@@ -6,7 +6,7 @@ abstract class Mapper<FROM, TO> {
 
     abstract fun map(from: FROM): TO
 
-    fun mapCollection(from: List<FROM>): List<TO> =
+    fun mapList(from: List<FROM>): List<TO> =
         ArrayList<TO>(from.size).apply { from.forEach { add(map(it)) } }
 
     protected fun mapping(builder: Mapper<FROM, TO>.() -> Unit = { }): TO = generated()

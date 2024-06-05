@@ -8,9 +8,11 @@ import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.createExpressionBody
+import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -72,6 +74,9 @@ private class ObjectSourceCollector(
 
                 target to source
             }
+            IDENTIFIER_MAPPED_FROM_EXPRESSION -> {
+                TODO("Implement")
+            }
             IDENTIFIER_TRANFORM -> {
                 val mapping = expression.dispatchReceiver!!.accept(data)
                 val transformation = expression.valueArguments.first()!! as IrFunctionExpression
@@ -111,6 +116,25 @@ private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>
             .filter { it.owner.name == IDENTIFIER_MAP }
             .first()
             .wrap(expression)
+    }
+
+    override fun visitCall(expression: IrCall, data: Unit): IrFunctionExpression {
+        require(expression.origin == IrStatementOrigin.GET_PROPERTY)
+
+        return when (expression.symbol.owner.name) {
+            Name.special("<get-forList>") -> {
+                val mapper = expression.symbol.owner.parent as IrClassImpl
+
+                val function = mapper.functions
+                    .filter { it.name == IDENTIFIER_MAP_LIST }
+                    .first()
+
+                function.symbol.wrap(expression.dispatchReceiver!!)
+            }
+            else -> {
+                error("Expected get forList")
+            }
+        }
     }
 
     private fun IrSimpleFunctionSymbol.wrap(receiver: IrExpression): IrFunctionExpression =
