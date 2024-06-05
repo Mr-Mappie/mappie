@@ -23,9 +23,7 @@ data class PropertySource(
     val property: IrSimpleFunctionSymbol,
     val type: IrType,
     val dispatchReceiverSymbol: IrValueSymbol,
-    val transformation: IrExpression? = null,
-//    val transformation: IrFunctionExpression? = null,
-//    val transformation: IrFunctionReference? = null,
+    val transformation: IrFunctionExpression? = null,
 ) : MappingSource
 
 data class ConstantSource<T>(
