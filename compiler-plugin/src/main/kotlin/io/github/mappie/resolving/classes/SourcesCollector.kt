@@ -37,17 +37,17 @@ class ObjectSourcesCollector(
 ) : BaseVisitor<List<Pair<Name, MappingSource>>, Unit> {
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): List<Pair<Name, MappingSource>> {
-        return body.statements.single().accept(this, Unit)
+        return body.statements.single().accept(data)
     }
 
     override fun visitReturn(expression: IrReturn, data: Unit): List<Pair<Name, MappingSource>> {
-        return expression.value.accept(this, Unit)
+        return expression.value.accept(data)
     }
 
     override fun visitCall(expression: IrCall, data: Unit): List<Pair<Name, MappingSource>> {
         return when (expression.symbol.owner.name) {
             IDENTIFIER_MAPPING -> {
-                expression.valueArguments.first()?.accept(this, Unit) ?: emptyList()
+                expression.valueArguments.first()?.accept(data) ?: emptyList()
             }
             else -> {
                 emptyList()
@@ -73,12 +73,12 @@ private class ObjectSourceCollector(
                 target to source
             }
             IDENTIFIER_TRANFORM -> {
-                val mapping = expression.dispatchReceiver!!.accept(this, Unit)
+                val mapping = expression.dispatchReceiver!!.accept(data)
                 val transformation = expression.valueArguments.first()!! as IrFunctionExpression
                 mapping.first to (mapping.second as PropertySource).copy(transformation = transformation)
             }
             IDENTIFIER_VIA -> {
-                val mapping = expression.dispatchReceiver!!.accept(this, Unit)
+                val mapping = expression.dispatchReceiver!!.accept(data)
                 val transformation = expression.valueArguments.first()!!.accept(MapperReferenceCollector(), Unit)
                 mapping.first to (mapping.second as PropertySource).copy(transformation = transformation)
             }
@@ -90,7 +90,7 @@ private class ObjectSourceCollector(
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): Pair<Name, MappingSource> {
         return when (expression.operator.name) {
-            "IMPLICIT_COERCION_TO_UNIT" -> expression.argument.accept(this, data)
+            "IMPLICIT_COERCION_TO_UNIT" -> expression.argument.accept(data)
             else -> error(expression.operator.name)
         }
     }
@@ -101,14 +101,14 @@ private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Unit): IrFunctionExpression {
         return context.referenceClass(expression.symbol.owner.classId!!)!!
             .functions
-            .filter { it.owner.name.asString() == "map" }
+            .filter { it.owner.name == IDENTIFIER_MAP }
             .first()
             .wrap(expression)
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: Unit): IrFunctionExpression {
         return expression.type.getClass()!!.symbol.functions
-            .filter { it.owner.name.asString() == "map" }
+            .filter { it.owner.name == IDENTIFIER_MAP }
             .first()
             .wrap(expression)
     }
@@ -124,7 +124,7 @@ private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>
             }.apply {
                 parent = owner.parent
                 val itParameter = addValueParameter {
-                    name = Name.identifier("it")
+                    name = IDENTIFIER_IT
                     type = owner.valueParameters.single().type
                     index = 0
                 }

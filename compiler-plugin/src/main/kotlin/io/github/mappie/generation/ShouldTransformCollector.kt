@@ -13,19 +13,19 @@ import org.jetbrains.kotlin.ir.expressions.IrReturn
 class ShouldTransformCollector : BaseVisitor<Boolean, Unit> {
     override fun visitClass(declaration: IrClass, data: Unit): Boolean {
         return declaration.isSubclassOfFqName("io.github.mappie.api.Mapper")
-                && declaration.declarations.filterIsInstance<IrSimpleFunction>().any { it.accept(this, Unit) }
+                && declaration.declarations.filterIsInstance<IrSimpleFunction>().any { it.accept(data) }
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Unit): Boolean {
-        return declaration.body?.accept(this, Unit) ?: false
+        return declaration.body?.accept(data) ?: false
     }
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): Boolean {
-        return body.statements.singleOrNull()?.accept(this, Unit) ?: false
+        return body.statements.singleOrNull()?.accept(data) ?: false
     }
 
     override fun visitReturn(expression: IrReturn, data: Unit): Boolean {
-        return expression.value.accept(this, Unit)
+        return expression.value.accept(data)
     }
 
     override fun visitCall(expression: IrCall, data: Unit): Boolean {

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.util.primaryConstructor
 class ValueParametersCollector : BaseVisitor<List<IrValueParameter>, Unit> {
 
     override fun visitFunction(declaration: IrFunction, data: Unit): List<IrValueParameter> {
-        return declaration.returnType.getClass()!!.primaryConstructor!!.accept(this, Unit)
+        return declaration.returnType.getClass()!!.primaryConstructor!!.accept(data)
     }
 
     override fun visitConstructor(declaration: IrConstructor, data: Unit): List<IrValueParameter> {

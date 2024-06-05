@@ -4,6 +4,7 @@ import io.github.mappie.BaseVisitor
 import io.github.mappie.resolving.EnumMapping
 import io.github.mappie.resolving.IDENTIFIER_MAPPING
 import io.github.mappie.resolving.IDENTIFIER_MAPPED_FROM_ENUM_ENTRY
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -38,7 +39,7 @@ private class EnumMappingsResolver : BaseVisitor<Map<IrEnumEntry, List<IrEnumEnt
     override fun visitCall(expression: IrCall, data: Unit): Map<IrEnumEntry, List<IrEnumEntry>> {
         return when (expression.symbol.owner.name) {
             IDENTIFIER_MAPPING -> {
-                expression.valueArguments.first()?.accept(this, Unit) ?: return emptyMap()
+                expression.valueArguments.first()?.accept(data) ?: return emptyMap()
             }
             IDENTIFIER_MAPPED_FROM_ENUM_ENTRY -> {
                 val target = (expression.extensionReceiver!! as IrGetEnumValue).symbol.owner
@@ -52,27 +53,27 @@ private class EnumMappingsResolver : BaseVisitor<Map<IrEnumEntry, List<IrEnumEnt
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): Map<IrEnumEntry, List<IrEnumEntry>> {
-        return expression.argument.accept(this, Unit)
+        return expression.argument.accept(data)
     }
 
     override fun visitFunction(declaration: IrFunction, data: Unit): Map<IrEnumEntry, List<IrEnumEntry>> {
-        return declaration.body!!.accept(this, Unit)
+        return declaration.body!!.accept(data)
     }
 
     override fun visitReturn(expression: IrReturn, data: Unit): Map<IrEnumEntry, List<IrEnumEntry>> {
-        return expression.value.accept(this, Unit)
+        return expression.value.accept(data)
     }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: Unit): Map<IrEnumEntry, List<IrEnumEntry>> {
-        return expression.function.accept(this, Unit)
+        return expression.function.accept(data)
     }
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): Map<IrEnumEntry, List<IrEnumEntry>> {
-        return body.statements.map { it.accept(this, Unit) }
+        return body.statements.map { it.accept(data) }
             .fold(mutableMapOf()) { acc, current ->
                 acc.apply {
                     current.forEach { (key, value) ->
-                        merge(key, value) { left, right -> left + right }
+                        merge(key, value, Collection<IrEnumEntry>::plus)
                     }
                 }
             }

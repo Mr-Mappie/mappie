@@ -26,17 +26,17 @@ private class SingleResultTargetCollector(
 ) : BaseVisitor<IrExpression, Unit> {
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): IrExpression {
-        return body.statements.single().accept(this, Unit)
+        return body.statements.single().accept(data)
     }
 
     override fun visitReturn(expression: IrReturn, data: Unit): IrExpression {
-        return expression.value.accept(this, Unit)
+        return expression.value.accept(data)
     }
 
     override fun visitCall(expression: IrCall, data: Unit): IrExpression {
         return when (expression.symbol.owner.name) {
             IDENTIFIER_MAPPING -> {
-                expression.valueArguments.first()?.accept(this, Unit)
+                expression.valueArguments.first()?.accept(data)
                     ?: irGet(declaration.valueParameters.first())
             }
             IDENTIFIER_RESULT -> {
@@ -49,14 +49,14 @@ private class SingleResultTargetCollector(
     }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: Unit): IrExpression {
-        return expression.function.accept(this, Unit)
+        return expression.function.accept(data)
     }
 
     override fun visitFunction(declaration: IrFunction, data: Unit): IrExpression {
-        return declaration.body!!.accept(this, Unit)
+        return declaration.body!!.accept(data)
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): IrExpression {
-        return expression.argument.accept(this, Unit)
+        return expression.argument.accept(data)
     }
 }
