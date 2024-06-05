@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
-import org.jetbrains.kotlin.name.Name
 
 class PrimitiveMappingResolver : BaseVisitor<Mapping, Unit> {
 

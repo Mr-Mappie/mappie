@@ -21,7 +21,6 @@ data class ConstructorCallMapping(
     val targetType: IrType,
     val sourceType: IrType,
     val mappings: Map<IrValueParameter, List<MappingSource>>,
-//    val sources: List<MappingSource>
 ) : Mapping
 
 data class EnumMapping(
