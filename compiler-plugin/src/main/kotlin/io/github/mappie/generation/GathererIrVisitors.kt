@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
@@ -92,9 +94,20 @@ fun MappingSource.toIr(builder: IrBuilderWithScope): IrExpression =
 fun PropertySource.toIr(builder: IrBuilderWithScope): IrExpression {
     val getter = builder.irCall(property).apply { dispatchReceiver = builder.irGet(type, dispatchReceiverSymbol) }
     return transformation?.let {
-        builder.irCall(context.referenceLetFunction()).apply {
-            extensionReceiver = getter
-            putValueArgument(0, transformation)
+        when (transformation) {
+            is IrFunctionExpression -> {
+                builder.irCall(context.referenceLetFunction()).apply {
+                    extensionReceiver = getter
+                    putValueArgument(0, transformation)
+                }
+            }
+            is IrFunctionReference -> {
+                builder.irCall(context.referenceLetFunction()).apply {
+                    extensionReceiver = getter
+                    putValueArgument(0, transformation)
+                }
+            }
+            else -> error("kotlin.let can only be called with a function expression or function reference")
         }
     } ?: getter
 }

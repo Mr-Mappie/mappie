@@ -14,3 +14,5 @@ val IDENTIFIER_MAPPED_FROM_PROPERTY = Name.identifier("mappedFromProperty")
 val IDENTIFIER_MAPPED_FROM_CONSTANT = Name.identifier("mappedFromConstant")
 
 val IDENTIFIER_TRANFORM = Name.identifier("transform")
+
+val IDENTIFIER_VIA = Name.identifier("via")
