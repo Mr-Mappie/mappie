@@ -8,8 +8,8 @@ class NestedMapperTest {
     @Test
     fun `map Thing to ThingDto via ThingMapper`() {
         assertEquals(
-            ThingDto(ThongDto("description")),
-            ThingMapper.map(Thing(Thong("description")))
+            ThingDto(ThangDto("description"), BooleanDto.TRUE),
+            ThingMapper.map(Thing(Thang("description"), Boolean.TRUE))
         )
     }
 }

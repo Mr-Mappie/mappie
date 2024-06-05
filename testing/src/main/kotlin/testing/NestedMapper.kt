@@ -1,21 +1,38 @@
 package testing
 
 import io.github.mappie.api.DataClassMapper
+import io.github.mappie.api.EnumMapper
 
-data class Thing(val inner: Thong)
+enum class Boolean {
+    TRUE,
+    FALSE,
+}
 
-data class Thong(val description: String)
+data class Thing(val inner: Thang, val boolean: Boolean)
 
-data class ThingDto(val inner: ThongDto)
+data class Thang(val description: String)
 
-data class ThongDto(val description: String)
+enum class BooleanDto {
+    TRUE,
+    FALSE,
+}
 
+data class ThingDto(val inner: ThangDto, val boolean: BooleanDto)
+
+data class ThangDto(val description: String)
+
+// TODO: type checking for rhs of mappedFromProperty is incorrect
 object ThingMapper : DataClassMapper<Thing, ThingDto>() {
     override fun map(from: Thing): ThingDto = mapping {
-        ThingDto::inner mappedFromProperty Thing::inner via ThongMapper
+        ThingDto::inner mappedFromProperty Thing::inner via ThangMapper
+        ThingDto::boolean mappedFromProperty Thing::boolean via BooleanMapper()
     }
 }
 
-object ThongMapper : DataClassMapper<Thong, ThongDto>() {
-    override fun map(from: Thong): ThongDto = mapping()
+object ThangMapper : DataClassMapper<Thang, ThangDto>() {
+    override fun map(from: Thang): ThangDto = mapping()
+}
+
+class BooleanMapper : EnumMapper<Boolean, BooleanDto>() {
+    override fun map(from: Boolean): BooleanDto = mapping()
 }
