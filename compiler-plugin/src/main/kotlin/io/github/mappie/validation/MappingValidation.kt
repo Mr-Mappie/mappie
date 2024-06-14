@@ -65,7 +65,7 @@ interface MappingValidation {
             when (mapping) {
                 is EnumMapping -> EnumMappingValidation(mapping)
                 is ConstructorCallMapping -> ConstructorCallMappingValidation(file, mapping)
-                else -> object : MappingValidation { override fun isValid(): Boolean = true; override fun problems() = emptyList<Problem>() }
+                else -> object : MappingValidation { override fun problems() = emptyList<Problem>() }
             }
     }
 }
