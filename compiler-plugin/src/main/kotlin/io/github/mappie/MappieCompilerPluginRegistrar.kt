@@ -15,13 +15,12 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-        val configuration = MappieConfiguration(
-            StrictnessConfiguration(
-                configuration.get(ARGUMENT_STRICTNESS_ENUMS, true)
+        IrGenerationExtension.registerExtension(
+            MappieIrRegistrar(
+                messageCollector,
+                MappieConfiguration(StrictnessConfiguration(configuration.get(ARGUMENT_STRICTNESS_ENUMS, true)))
             )
         )
-
-        IrGenerationExtension.registerExtension(MappieIrRegistrar(messageCollector, configuration))
     }
 
 }

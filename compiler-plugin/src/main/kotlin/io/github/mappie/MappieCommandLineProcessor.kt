@@ -12,7 +12,7 @@ class MappieCommandLineProcessor : CommandLineProcessor {
 
     override val pluginId = "mappie"
 
-    override val pluginOptions = listOf<CliOption>(
+    override val pluginOptions = listOf(
         CliOption(
             optionName = OPTION_STRICTNESS_ENUMS,
             valueDescription = "boolean",
