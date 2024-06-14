@@ -1,4 +1,4 @@
-name: Website Build
+name: Build and Deploy Website
 
 on:
   push:
@@ -39,8 +39,6 @@ jobs:
             -cvf "$RUNNER_TEMP/artifact.tar" \
             .
           echo ::endgroup::
-        env:
-          INPUT_PATH: ${{ inputs.path }}
 
       - name: Upload artifact
         id: upload-artifact
@@ -54,6 +52,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          path: ./website/dist
-          name: 'github-pages'
