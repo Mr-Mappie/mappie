@@ -57,7 +57,7 @@ module.exports = config => {
   config.setLibrary('md', markdownLib);
 
   config.on('eleventy.after', () => {
-    execSync(`npx pagefind --source ../docs --glob \"**/*.html\"`, { encoding: 'utf-8' })
+    execSync(`npx pagefind --source dist --glob \"**/*.html\"`, { encoding: 'utf-8' })
   });
 
   return {
@@ -66,7 +66,7 @@ module.exports = config => {
     htmlTemplateEngine: 'njk',
     dir: {
       input: 'src',
-      output: '../docs'
+      output: 'dist'
     },
     passthroughFileCopy: true,
     pathPrefix: './',
