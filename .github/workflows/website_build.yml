@@ -35,7 +35,7 @@ jobs:
           echo ::group::Archive artifact
           tar \
             --dereference --hard-dereference \
-            --directory "website/src" \
+            --directory "website/dist" \
             -cvf "$RUNNER_TEMP/artifact.tar" \
             .
           echo ::endgroup::
