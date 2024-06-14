@@ -6,6 +6,7 @@ import io.github.mappie.resolving.classes.MappingSource
 import io.github.mappie.resolving.classes.PropertySource
 import io.github.mappie.resolving.*
 import io.github.mappie.util.*
+import io.github.mappie.validation.MappingValidation
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -36,7 +37,7 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
 
             val mapping = declaration.accept(MappingResolver(), Unit)
 
-            val validation = MappingValidation.of(mapping)
+            val validation = MappingValidation.of(declaration.fileEntry, mapping)
             if (validation.isValid()) {
                 declaration.body = with(createScope(declaration)) {
                     when (mapping) {
@@ -73,7 +74,7 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
                 }
             } else {
                 validation.problems().forEach { problem ->
-                    context.messageCollector.error(problem, location(declaration))
+                    context.messageCollector.error(problem.description, problem.location ?: location(declaration))
                 }
             }
         }

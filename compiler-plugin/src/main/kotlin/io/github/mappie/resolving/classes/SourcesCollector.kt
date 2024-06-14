@@ -12,27 +12,40 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
-sealed interface MappingSource
+sealed interface MappingSource {
+    fun resolveType(): IrType
+}
 
 data class PropertySource(
     val property: IrSimpleFunctionSymbol,
     val type: IrType,
     val dispatchReceiverSymbol: IrValueSymbol,
     val transformation: IrFunctionExpression? = null,
-) : MappingSource
+    val origin: IrExpression? = null,
+) : MappingSource {
+    override fun resolveType(): IrType {
+        return if (transformation == null) {
+            type
+        } else if (transformation.type.isFunction()) {
+                (transformation.type as IrSimpleType).arguments[1].typeOrFail
+        } else {
+            transformation.type
+        }
+    }
+}
 
 data class ConstantSource<T>(
     val type: IrType,
     val value: IrConst<T>,
-) : MappingSource
+) : MappingSource {
+    override fun resolveType() = type
+}
 
 class ObjectSourcesCollector(
     private val dispatchReceiverSymbol: IrValueSymbol
@@ -85,7 +98,11 @@ private class ObjectSourceCollector(
             IDENTIFIER_VIA -> {
                 val mapping = expression.dispatchReceiver!!.accept(data)
                 val transformation = expression.valueArguments.first()!!.accept(MapperReferenceCollector(), Unit)
-                mapping.first to (mapping.second as PropertySource).copy(transformation = transformation)
+                val type = transformation.type
+                mapping.first to (mapping.second as PropertySource).copy(
+                    transformation = transformation,
+                    type = type,
+                )
             }
             else -> {
                 TODO("$javaClass :: visitCall Not implemented for ${expression::class} :: ${expression.dump()}")
@@ -169,14 +186,16 @@ private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>
 }
 
 private class SourceValueCollector(
-    private val dispatchReceiverSymbol: IrValueSymbol
+    private val dispatchReceiverSymbol: IrValueSymbol,
 ) : BaseVisitor<MappingSource, Unit> {
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Unit): MappingSource {
         return PropertySource(
             property = expression.getter!!,
-            type = expression.type,
+            type = (expression.type as IrSimpleType).arguments[1].typeOrFail,
             dispatchReceiverSymbol = dispatchReceiverSymbol,
+            transformation = null,
+            origin = expression,
         )
     }
 

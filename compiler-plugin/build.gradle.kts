@@ -8,6 +8,9 @@ plugins {
 dependencies {
     compileOnly(project(":api"))
     compileOnly(libs.kotlin.compiler.embeddable)
+
+    testImplementation(kotlin("test"))
+    testImplementation(libs.kotlin.compiler.embeddable)
 }
 
 publishing {
@@ -17,6 +20,10 @@ publishing {
             from(components["kotlin"])
         }
     }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 tasks.withType<KotlinCompile>().configureEach {

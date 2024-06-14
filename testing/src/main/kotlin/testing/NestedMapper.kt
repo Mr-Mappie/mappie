@@ -21,7 +21,6 @@ data class ThingDto(val inner: ThangDto, val boolean: BooleanDto)
 
 data class ThangDto(val description: String)
 
-// TODO: type checking for rhs of mappedFromProperty is incorrect
 object ThingMapper : DataClassMapper<Thing, ThingDto>() {
     override fun map(from: Thing): ThingDto = mapping {
         ThingDto::inner mappedFromProperty Thing::inner via ThangMapper
