@@ -1,0 +1,66 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.accordion-card {
+  $this: &;
+
+  background-color: color('background');
+  border: 1px solid color('border');
+  border-radius: config('border-radius-sm', $display);
+  max-inline-size: 75ch;
+
+  &--js {
+    #{$this}__title {
+      padding: 0;
+    }
+  }
+
+  &__title {
+    font-family: config('font-family-base', $typography);
+    font-size: font-size('h4');
+    margin-block: 0;
+    padding: spacer('m');
+  }
+
+  &__toggle {
+    @include clear-btn;
+    align-items: center;
+    display: flex;
+    gap: spacer('m');
+    inline-size: 100%;
+    justify-content: space-between;
+    padding: spacer('m');
+    text-align: start;
+
+    &:focus-visible {
+      svg {
+        @include focus-ring(
+          $type: config('focus-ring-type', $btn, false),
+          $ring-color: color('primary'),
+          $ring-size: config('focus-ring-size', $btn, false),
+          $ring-offset: config('focus-ring-offset', $btn, false)
+        );
+      }
+    }
+
+    svg {
+      --dimension: 1.75rem;
+
+      background-color: color('primary-background', 'btn');
+      block-size: var(--dimension);
+      border-radius: config('border-radius-sm', $display);
+      color: color('primary-foreground', 'btn');
+      flex-shrink: 0;
+      inline-size: var(--dimension);
+    }
+
+    &[aria-expanded='true'] .vertical-line {
+      display: none;
+    }
+  }
+
+  &__content {
+    @include layout-stack('xs');
+    padding-block-end: spacer('m');
+    padding-inline: spacer('m');
+  }
+}

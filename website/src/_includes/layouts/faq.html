@@ -1,0 +1,29 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+    <div class="l-list" data-pagefind-body>
+        {% set breadcrumbs = [{
+            "title": title,
+            "url": page.url
+        }] %}
+        {% include "partials/post-heading.html" %}
+        <div class="l-list__inner l-list__inner--faq">
+            {% for faq in faqs %}
+                <div class="group">
+                    {% if faq.title %}
+                        <h2>{{ faq.title }}</h2>
+                    {% endif %}
+                    <div class="accordion-list">
+                        {% for post in faq.items %}
+                            <div class="accordion-card">
+                                <h3 class="accordion-card__title">{{ post.title }}</h3>
+                                <div class="accordion-card__content">
+                                    {% markdownRender post.description %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{
+  "name": "sprucecss-eleventy-documentation-template",
+  "version": "1.2.0",
+  "author": "Cone (https://conedevelopment.com)",
+  "main": ".eleventy.js",
+  "scripts": {
+    "delete:dist": "del-cli --force dist",
+    "eleventy:dev": "npx eleventy --serve",
+    "eleventy:prod": "npx eleventy",
+    "js:lint": "npx eslint \"src/**/*.js\"",
+    "js:lint:fix": "npx eslint \"src/**/*.js**\" --fix",
+    "prod": "npm-run-all delete:dist eleventy:prod sass:prod",
+    "sass:dev": "sass --load-path=node_modules --watch --no-source-map --update --style=expanded src/scss:src/css",
+    "sass:prod": "sass --load-path=node_modules --no-source-map --style=compressed src/scss:src/css",
+    "sass:lint": "stylelint \"src/scss/**/*.scss\"",
+    "sass:lint:fix": "stylelint \"src/scss/**/*.scss\" --fix",
+    "start": "npm-run-all --parallel eleventy:dev sass:dev"
+  },
+  "dependencies": {
+    "@11ty/eleventy-img": "^3.1.0",
+    "@11ty/eleventy": "^2.0.1",
+    "@11ty/eleventy-navigation": "^0.3.5",
+    "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
+    "del-cli": "^5.0.1",
+    "dotenv": "^16.3.1",
+    "eleventy-plugin-toc": "^1.1.5",
+    "eslint": "^8.48.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.28.1",
+    "himalaya": "^1.1.0",
+    "html-minifier": "^4.0.0",
+    "moment": "^2.29.4",
+    "markdown-it-anchor": "^8.6.7",
+    "npm-run-all": "^4.1.5",
+    "pagefind": "^0.12.0",
+    "sass": "^1.66.1",
+    "sprucecss": "^2.3.0",
+    "stylelint": "^15.10.3",
+    "stylelint-config-sass-guidelines": "^10.0.0",
+    "stylelint-order": "^6.0.3"
+  },
+  "engines": {
+    "node": "^18.12",
+    "npm": "^9.2",
+    "yarn": "please-use-npm"
+  }
+}

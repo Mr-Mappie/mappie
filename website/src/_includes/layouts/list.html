@@ -1,0 +1,21 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+    <div class="l-list">
+        {% set breadcrumbs = collections.all | eleventyNavigationBreadcrumb(title, { includeSelf: true }) %}
+        {% include "partials/post-heading.html" %}
+        <div class="l-list__inner l-card">
+            {% set posts = collections.all | parentFilter(eleventyNavigation.key) %}
+            {% for post in posts %}
+                <div class="post-card">
+                    <span class="post-card__serial-number"></span>
+                    <h2 class="post-card__title">{{ post.data.title }}</h2>
+                    <p>{{ post.data.summary }}</p>
+                    <a href="{{ post.url }}" class="btn btn--primary btn--primary-shadow">
+                        Read More
+                        <span class="sr-only">{{ post.title }}</span>
+                    </a>
+                </div>
+            {% endfor %}
+        </ol>
+    </div>
+{% endblock %}

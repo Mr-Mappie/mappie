@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script src="/js/theme-detection.js"></script>
+        <link rel="preload" as="font" type="font/woff2" href="/font/manrope-v14-latin-regular.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/font/manrope-v14-latin-600.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/font/manrope-v14-latin-800.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/font/open-sans-v35-latin-regular.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/font/open-sans-v35-latin-700.woff2" crossorigin>
+
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <link rel="alternate"  type="application/rss+xml"  href="https://eleventy-documentation.sprucecss.com/feed.xml" />
+        
+    
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+<title>Spruce CSS - Spruce CSS Eleventy Documentation Template</title>
+<link rel="canonical" href="https://eleventy-documentation.sprucecss.com/customization/spruce-css/" />
+
+<meta name="generator" content="Eleventy v2.0.1" />
+
+<meta property="og:site_name" content="Spruce CSS Eleventy Documentation Template" />
+<meta property="og:title" content="Spruce CSS - Spruce CSS Eleventy Documentation Template" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://eleventy-documentation.sprucecss.com/customization/spruce-css/" />
+
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:image" content="https://eleventy-documentation.sprucecss.com/img/social-share.png" />
+    <meta name="twitter:image" content="https://eleventy-documentation.sprucecss.com/img/social-share.png" />
+    <meta property="og:image:alt" content="Page image for Spruce CSS Eleventy Documentation Template" />
+    <meta name="twitter:image:alt" content="Page image for Spruce CSS Eleventy Documentation Template" />
+
+
+
+
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml" />
+
+        <link rel="stylesheet" href="/css/main.css" />
+    </head>
+    <body>
+        <div class="site-wrapper">
+            <a class="btn btn--primary skip-link" href="#content">Skip to content</a>
+            <div class="container container--wide">
+                <header class="header">
+    <div class="header__column">
+        <a class="header__logo" href="/" aria-label="Spruce CSS Eleventy Documentation Template">
+            <svg width='100%' height='100%' viewBox='0 0 482 133' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xml:space='preserve' xmlns:serif='http://www.serif.com/' style='fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;' class='icon'>
+    <style>
+        .background {
+            fill: #282547;
+        }
+        [data-theme-mode="dark"] .background {
+            fill: #221E44;
+        }
+    </style>
+    <path class='background' d='M481.5,45c-0,-11.935 -4.741,-23.381 -13.18,-31.82c-8.439,-8.439 -19.885,-13.18 -31.82,-13.18l-391.5,0c-11.935,-0 -23.381,4.741 -31.82,13.18c-8.439,8.439 -13.18,19.885 -13.18,31.82l0,42.465c0,11.935 4.741,23.381 13.18,31.82c8.439,8.439 19.885,13.18 31.82,13.18l436.5,0l0,-87.465Z' style='fill:#282547;'></path>
+    <g>
+        <path d='M165.961,78.797c-0.252,0.944 -0.42,2.396 -0.42,3.702c0,2.904 0.924,5.297 2.856,7.037c2.184,2.031 5.291,3.118 9.406,3.118c4.955,0 8.315,-1.015 11.086,-3.19c3.024,-2.32 4.787,-5.222 5.795,-9.506l9.071,-39.566l-8.903,-0l-9.07,39.494c-0.84,3.775 -3.528,5.88 -6.803,5.88c-2.939,0 -4.535,-1.452 -4.535,-4.065c-0,-0.726 0.084,-1.525 0.252,-2.251l9.07,-39.058l-8.902,-0l-8.903,38.405Zm38.465,2.613c0,3.122 0.504,5.009 2.016,7.111c1.932,2.611 5.123,4.133 10.33,4.133c5.039,0 8.063,-1.015 10.666,-2.973c3.444,-2.61 5.291,-5.875 6.551,-11.102l-8.986,-0c-0.588,2.251 -1.428,3.92 -2.772,5.3c-1.091,1.161 -2.519,1.887 -4.619,1.887c-3.023,0 -4.283,-1.597 -4.283,-4.428c-0,-3.122 1.008,-8.497 2.519,-15.105c3.024,-12.783 4.116,-15.904 6.467,-18.01c1.092,-1.016 2.436,-1.524 4.284,-1.524c3.275,-0 4.199,1.887 4.199,4.21c-0,0.944 -0,1.815 -0.252,2.904l8.902,0c0.252,-1.306 0.252,-2.25 0.252,-3.339c0,-2.686 -0.924,-5.515 -2.519,-7.255c-2.1,-2.248 -5.543,-3.408 -9.911,-3.408c-4.871,-0 -8.23,1.16 -11.086,3.625c-3.779,3.19 -5.543,7.11 -9.238,22.797c-1.596,7.044 -2.52,12.055 -2.52,15.177Zm-154.28,-3.412c-0.42,2.106 -0.672,3.63 -0.672,5.227c0,2.614 1.008,4.789 2.688,6.311c2.183,2.031 5.123,3.046 10.246,3.046c5.543,-0 8.986,-1.088 11.758,-3.408c2.603,-2.175 4.031,-4.787 5.375,-10.668c0.588,-2.541 0.84,-4.865 0.84,-6.826c-0,-4.14 -1.932,-6.464 -7.727,-8.861l-4.787,-1.961c-2.1,-0.871 -3.276,-2.033 -3.276,-4.14c0,-1.089 0.168,-2.396 0.42,-3.485c0.504,-2.251 1.26,-4.066 2.688,-5.227c1.092,-0.944 2.352,-1.307 3.947,-1.307c1.512,-0 2.52,0.508 3.024,1.089c0.672,0.726 0.924,1.524 0.924,2.831c-0,1.016 -0.084,2.105 -0.504,3.775l8.902,0c0.42,-2.105 0.588,-3.775 0.588,-5.227c-0,-2.758 -1.008,-5.078 -2.352,-6.238c-2.351,-2.031 -4.955,-3.118 -9.994,-3.118c-5.039,-0 -8.23,1.305 -10.834,3.553c-2.687,2.247 -4.283,5.513 -5.291,9.869c-0.504,2.033 -0.672,3.776 -0.672,5.664c0,3.704 1.596,6.174 6.215,8.134l5.543,2.325c2.772,1.089 4.031,2.469 4.031,4.502c0,1.308 -0.168,2.905 -0.588,4.576c-0.839,3.339 -1.343,4.574 -2.939,5.88c-1.176,0.944 -2.688,1.452 -4.535,1.452c-1.68,0 -2.856,-0.508 -3.612,-1.307c-0.671,-0.653 -1.007,-1.597 -1.007,-2.831c-0,-1.016 0.168,-2.105 0.503,-3.63l-8.902,0Zm35.442,14.075l8.902,0l4.619,-20.182l6.047,-0c9.071,-0 14.698,-3.045 17.637,-15.75c0.504,-2.324 0.672,-4.213 0.672,-6.029c-0,-2.76 -0.756,-5.298 -2.772,-7.038c-2.183,-1.885 -4.955,-2.682 -9.658,-2.682l-13.521,-0l-11.926,51.681Zm38.129,0l8.902,0l4.955,-21.416l5.208,-0l2.687,21.416l8.902,0l-3.191,-22.794c4.871,-1.885 7.727,-4.64 9.826,-13.646c0.504,-2.252 0.756,-4.213 0.756,-5.884c0,-5.587 -3.443,-9.357 -12.094,-9.357l-14.025,-0l-11.926,51.681Zm115.983,0l23.852,0l1.596,-6.888l-14.95,0l3.612,-15.763l12.849,0l1.596,-6.815l-12.85,0l3.528,-15.327l14.949,-0l1.596,-6.888l-23.852,-0l-11.926,51.681Zm-138.995,-27.07l4.115,-17.723l4.619,-0c3.78,-0 5.124,1.452 5.124,4.358c-0,1.307 -0.336,3.05 -0.672,4.503c-1.512,6.537 -3.696,8.862 -8.315,8.862l-4.871,-0Zm38.381,-1.017l3.863,-16.706l5.04,-0c3.611,-0 4.703,1.597 4.703,4.212c-0,1.163 -0.252,2.616 -0.588,4.141c-1.176,5.23 -3.276,8.353 -7.643,8.353l-5.375,0Z' style='fill:#fff;fill-rule:nonzero;'></path>
+        <path d='M395.324,77.343c-0.42,2.106 -0.588,3.704 -0.588,5.229c0,2.685 1.092,5.151 3.024,6.819c2.436,2.103 5.795,3.263 11.338,3.263c6.467,0 10.078,-1.233 13.102,-3.844c2.519,-2.175 3.947,-4.714 5.291,-10.523c0.588,-2.542 0.755,-4.865 0.755,-6.899c0,-4.429 -2.183,-6.898 -8.482,-9.44l-4.787,-1.961c-2.016,-0.799 -3.024,-1.96 -3.024,-3.631c0,-1.016 0.168,-2.106 0.42,-3.195c0.252,-1.089 0.84,-2.759 1.848,-3.631c0.924,-0.799 1.932,-1.089 3.191,-1.089c1.26,0 2.016,0.436 2.436,0.799c0.588,0.508 0.84,1.307 0.84,2.541c-0,0.799 -0.084,1.743 -0.42,3.196l11.254,-0c0.42,-2.034 0.504,-3.777 0.504,-5.229c-0,-2.612 -0.924,-5.151 -2.688,-6.674c-2.435,-2.103 -5.543,-3.263 -11.17,-3.263c-5.879,-0 -9.154,1.45 -11.926,3.844c-2.687,2.32 -4.199,5.875 -5.039,9.506c-0.504,2.179 -0.756,3.994 -0.756,6.173c0,3.558 1.848,6.535 6.467,8.423l5.795,2.397c2.604,1.016 3.948,2.178 3.948,4.212c-0,0.871 -0.084,2.396 -0.42,3.848c-0.504,2.179 -1.092,3.486 -2.268,4.503c-1.092,0.944 -2.352,1.234 -3.863,1.234c-1.344,0 -2.268,-0.435 -2.94,-1.016c-0.588,-0.509 -0.924,-1.38 -0.924,-2.615c0,-0.726 0.084,-1.742 0.336,-2.977l-11.254,0Zm-77.098,-11.111c-1.428,5.883 -2.267,10.748 -2.267,13.943c-0,3.268 0.419,5.154 1.931,7.475c2.016,3.119 5.711,5.004 11.926,5.004c5.627,0 9.322,-1.305 12.514,-4.061c3.863,-3.336 5.627,-7.546 9.154,-22.361c1.428,-5.882 2.268,-10.747 2.268,-13.942c-0,-3.268 -0.42,-5.154 -1.932,-7.475c-2.015,-3.119 -5.711,-5.004 -11.926,-5.004c-5.627,-0 -9.322,1.305 -12.513,4.061c-3.864,3.336 -5.627,7.546 -9.155,22.36Zm38.045,13.943c0,3.268 0.42,5.154 1.932,7.475c2.016,3.119 5.711,5.004 11.926,5.004c5.963,0 9.07,-1.16 11.926,-3.336c3.527,-2.683 5.459,-5.948 6.887,-11.757l-11.422,-0c-0.504,1.815 -1.176,3.268 -2.1,4.43c-1.008,1.234 -2.268,1.96 -4.283,1.96c-2.688,0 -3.612,-1.525 -3.612,-3.921c0,-3.123 1.092,-8.714 2.268,-13.798c2.519,-10.892 3.779,-14.668 5.711,-16.339c1.008,-0.871 2.1,-1.379 3.695,-1.379c2.856,-0 3.612,1.67 3.612,3.631c-0,0.871 -0,1.597 -0.168,2.686l11.254,0c0.168,-1.234 0.168,-2.251 0.168,-3.267c-0,-2.978 -1.092,-6.096 -2.856,-7.982c-2.435,-2.611 -6.299,-3.771 -11.086,-3.771c-5.627,-0 -9.238,1.305 -12.43,4.061c-3.863,3.336 -5.627,7.546 -9.154,22.36c-1.428,5.883 -2.268,10.748 -2.268,13.943Zm-83.817,11.898l16.461,0c6.047,0 9.995,-1.378 13.522,-4.424c3.947,-3.408 5.627,-8.781 8.566,-21.489c1.26,-5.664 2.352,-10.893 2.352,-13.217c0,-3.05 -0.588,-5.517 -2.016,-7.475c-2.351,-3.263 -5.207,-5.076 -11.506,-5.076l-15.453,-0l-11.926,51.681Zm57.026,-25.841c2.52,-10.892 3.779,-14.668 5.711,-16.339c1.008,-0.871 2.1,-1.379 3.611,-1.379c2.772,-0 3.696,1.525 3.696,3.921c-0,3.123 -1.092,8.714 -2.268,13.797c-2.519,10.893 -3.779,14.669 -5.711,16.34c-1.008,0.871 -2.099,1.379 -3.611,1.379c-2.772,0 -3.695,-1.525 -3.695,-3.921c-0,-3.123 1.091,-8.714 2.267,-13.798Zm-43.756,17.138l7.895,-34.275l4.451,-0c1.26,-0 2.267,0.363 2.939,1.016c0.756,0.727 1.092,1.743 1.092,2.832c0,2.978 -1.26,8.569 -2.352,13.217c-1.343,5.737 -2.939,12.563 -4.787,14.959c-1.091,1.307 -2.603,2.251 -5.123,2.251l-4.115,0Z' style='fill:#31eaff;fill-rule:nonzero;'></path>
+    </g>
+</svg>
+
+        </a>
+        
+            <nav class="header__navigation">
+                <ul>
+                    
+                    <li>
+                        <a
+                            href="/faq/"
+                            
+                            
+                        >
+                            FAQ
+                            
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a
+                            href="/changelog/"
+                            
+                            
+                        >
+                            Changelog
+                            
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a
+                            href="https://sprucecss.com"
+                            
+                            
+                                target="_blank"
+                                rel="noopener"
+                            
+                        >
+                            Spruce CSS
+                            
+                                <span class="sr-only">Open in new window</span>
+                                <svg aria-hidden='true' focusable='false' role='img' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' style='fill: currentColor' width='24' height='24' class='btn__icon'>
+    <path d='M1.111,1.907c0,1.049 0.858,1.908 1.907,1.908l14.478,-0l-16.938,16.938c-0.744,0.744 -0.744,1.945 -0,2.689c0.744,0.744 1.945,0.744 2.689,0l16.938,-16.938l0,14.478c0,1.049 0.859,1.907 1.908,1.907c1.049,-0 1.907,-0.858 1.907,-1.907l0,-19.075c0,-1.049 -0.858,-1.907 -1.907,-1.907l-19.075,0c-1.049,0 -1.907,0.858 -1.907,1.907Z'></path>
+</svg>
+
+                            
+                        </a>
+                    </li>
+                    
+                </ul>
+            </nav>
+        
+        <button class="btn btn--primary btn--icon header__toggle" data-action="sidebar-toggle" aria-controls="primary-menu" aria-expanded="false" aria-label="Toogle navigation">
+            <svg aria-hidden='true' focusable='false' role='img' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' style='fill: currentColor' width='24' height='24' class='btn__icon'>
+    <path d='M24,19.6c0,-0.331 -0.269,-0.6 -0.6,-0.6l-20.8,0c-0.331,0 -0.6,0.269 -0.6,0.6l0,2.8c0,0.331 0.269,0.6 0.6,0.6l20.8,-0c0.331,-0 0.6,-0.269 0.6,-0.6l0,-2.8Zm0,-9c0,-0.331 -0.269,-0.6 -0.6,-0.6l-22.8,-0c-0.331,-0 -0.6,0.269 -0.6,0.6l0,2.8c0,0.331 0.269,0.6 0.6,0.6l22.8,-0c0.331,-0 0.6,-0.269 0.6,-0.6l0,-2.8Zm0,-9c0,-0.331 -0.269,-0.6 -0.6,-0.6l-15.8,-0c-0.331,-0 -0.6,0.269 -0.6,0.6l0,2.8c0,0.331 0.269,0.6 0.6,0.6l15.8,-0c0.331,-0 0.6,-0.269 0.6,-0.6l0,-2.8Z'></path>
+</svg>
+
+        </button>
+    </div>
+    <div class="header__actions">
+        <span class="open-search">
+    <svg aria-hidden='true' focusable='false' role='img' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 24 24' width='24' height='24' style='fill: currentColor' class='open-search__icon'>
+    <path d='M19.501,9.75c-0,2.152 -0.699,4.14 -1.875,5.752l5.935,5.94c0.585,0.586 0.585,1.537 -0,2.123c-0.586,0.586 -1.538,0.586 -2.124,0l-5.935,-5.939c-1.612,1.181 -3.6,1.875 -5.752,1.875c-5.386,-0 -9.75,-4.364 -9.75,-9.751c0,-5.386 4.364,-9.75 9.75,-9.75c5.387,-0 9.751,4.364 9.751,9.75Zm-9.751,6.751c3.704,-0 6.751,-3.047 6.751,-6.751c-0,-3.703 -3.047,-6.75 -6.751,-6.75c-3.703,0 -6.75,3.047 -6.75,6.75c0,3.704 3.047,6.751 6.75,6.751Z'></path>
+</svg>
+
+    <span class="open-search__caption">Search</span>
+    <button class="btn btn--outline-primary btn--sm open-search__btn" data-action="open-search">
+        Ctrl K
+    </button>
+</span>
+
+        <div class="theme-switcher" id="theme-switcher">
+    <button
+        class="btn btn--outline-primary btn--sm btn--icon theme-switcher__system-mode"
+        aria-label="Switch to light mode"
+        data-action="light"
+    >
+        <svg aria-hidden='true' focusable='false' role='img' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 24 24' width='24' height='24' style='fill: currentColor' class='btn__icon'>
+    <path d='M21,12c0,-4.969 -4.031,-9 -9,-9l0,18c4.969,0 9,-4.031 9,-9Zm3,0c0,6.628 -5.372,12 -12,12c-6.628,0 -12,-5.372 -12,-12c0,-6.628 5.372,-12 12,-12c6.628,0 12,5.372 12,12Z'></path>
+</svg>
+
+    </button>
+    <button
+        class="btn btn--outline-primary btn--sm btn--icon theme-switcher__light-mode"
+        aria-label="Switch to dark mode"
+        data-action="dark"
+    >
+        <svg aria-hidden='true' focusable='false' role='img' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 24 24' width='24' height='24' style='fill: currentColor' class='btn__icon'>
+    <path d='M5.509,3.917l-0.425,-0.426c-0.426,-0.425 -1.113,-0.415 -1.528,0l-0.01,0.011c-0.426,0.425 -0.426,1.113 -0,1.527l0.425,0.426c0.426,0.425 1.102,0.425 1.527,-0l0.011,-0.011c0.426,-0.415 0.426,-1.113 0,-1.527Zm-3.316,6.938l-1.113,-0c-0.6,-0 -1.08,0.48 -1.08,1.08l-0,0.011c-0,0.6 0.48,1.08 1.08,1.08l1.102,-0c0.611,0.011 1.091,-0.469 1.091,-1.069l-0,-0.011c-0,-0.611 -0.48,-1.091 -1.08,-1.091Zm9.818,-10.855l-0.011,-0c-0.61,-0 -1.09,0.48 -1.09,1.08l-0,1.047c-0,0.6 0.48,1.08 1.08,1.08l0.01,0c0.611,0.011 1.091,-0.469 1.091,-1.069l0,-1.058c0,-0.6 -0.48,-1.08 -1.08,-1.08Zm8.444,3.502c-0.425,-0.426 -1.112,-0.426 -1.538,-0.011l-0.425,0.426c-0.426,0.425 -0.426,1.112 -0,1.527l0.011,0.011c0.425,0.425 1.112,0.425 1.527,-0l0.425,-0.426c0.426,-0.425 0.426,-1.102 0,-1.527Zm-1.974,16.473l0.425,0.426c0.426,0.425 1.113,0.425 1.538,-0c0.426,-0.426 0.426,-1.113 0,-1.538l-0.425,-0.426c-0.426,-0.425 -1.113,-0.414 -1.527,0c-0.437,0.436 -0.437,1.113 -0.011,1.538Zm2.247,-8.04l0,0.011c0,0.6 0.48,1.08 1.08,1.08l1.102,-0c0.6,-0 1.08,-0.48 1.08,-1.08l-0,-0.011c-0,-0.6 -0.48,-1.08 -1.08,-1.08l-1.102,-0c-0.6,-0 -1.08,0.48 -1.08,1.08Zm-8.728,-6.535c-3.611,0 -6.545,2.935 -6.545,6.546c-0,3.611 2.934,6.546 6.545,6.546c3.612,-0 6.546,-2.935 6.546,-6.546c0,-3.611 -2.934,-6.546 -6.546,-6.546Zm-0.01,18.492l0.01,-0c0.6,-0 1.08,-0.48 1.08,-1.08l0,-1.048c0,-0.6 -0.48,-1.08 -1.08,-1.08l-0.01,0c-0.6,0 -1.08,0.48 -1.08,1.08l-0,1.048c-0,0.6 0.48,1.08 1.08,1.08Zm-8.444,-3.502c0.425,0.425 1.112,0.425 1.538,-0l0.425,-0.426c0.426,-0.425 0.415,-1.112 0,-1.527l-0.011,-0.011c-0.425,-0.425 -1.112,-0.425 -1.538,0l-0.425,0.426c-0.415,0.436 -0.415,1.112 0.011,1.538Z'></path>
+</svg>
+
+    </button>
+    <button
+        class="btn btn--outline-primary btn--sm btn--icon theme-switcher__dark-mode"
+        aria-label="Switch to system mode"
+        data-action="system"
+    >
+        <svg aria-hidden='true' focusable='false' role='img' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 24 24' width='24' height='24' style='fill: currentColor' class='btn__icon'>
+    <path d='M13.684,-0c-6.616,-0 -11.974,5.373 -11.974,12c0,6.627 5.358,12 11.974,12c3.246,0 6.187,-1.296 8.346,-3.396c0.268,-0.263 0.338,-0.67 0.166,-1.002c-0.171,-0.332 -0.541,-0.52 -0.911,-0.456c-0.525,0.092 -1.06,0.14 -1.612,0.14c-5.191,-0 -9.402,-4.222 -9.402,-9.429c0,-3.525 1.929,-6.595 4.784,-8.212c0.327,-0.188 0.493,-0.563 0.413,-0.927c-0.081,-0.364 -0.392,-0.638 -0.767,-0.67c-0.337,-0.027 -0.675,-0.043 -1.017,-0.043l-0,-0.005Z'></path>
+</svg>
+
+    </button>
+</div>
+
+        <div class="header__socials">
+            
+                <a href="https://github.com/conedevelopment/sprucecss-eleventy-documentation-template" aria-label="GitHub">
+                    <svg aria-hidden='true' focusable='false' role='img' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 24 24' width='24' height='24' style='fill: currentColor;' class='icon'>
+    <path d='M9.305,15.635c-0,1.045 -0.545,2.755 -1.835,2.755c-1.29,-0 -1.835,-1.71 -1.835,-2.755c-0,-1.045 0.545,-2.755 1.835,-2.755c1.29,-0 1.835,1.71 1.835,2.755Zm14.695,-2.525c-0,1.595 -0.16,3.285 -0.875,4.75c-1.895,3.83 -7.105,3.74 -10.835,3.74c-3.79,-0 -9.31,0.135 -11.28,-3.74c-0.73,-1.45 -1.01,-3.155 -1.01,-4.75c0,-2.095 0.695,-4.075 2.075,-5.68c-0.26,-0.79 -0.385,-1.62 -0.385,-2.44c-0,-1.075 0.245,-1.615 0.73,-2.59c2.265,-0 3.715,0.45 5.44,1.8c1.45,-0.345 2.94,-0.5 4.435,-0.5c1.35,-0 2.71,0.145 4.02,0.46c1.7,-1.335 3.15,-1.76 5.39,-1.76c0.49,0.975 0.73,1.515 0.73,2.59c-0,0.82 -0.13,1.635 -0.385,2.41c1.375,1.62 1.95,3.615 1.95,5.71Zm-3.215,2.525c-0,-2.195 -1.335,-4.13 -3.675,-4.13c-0.945,-0 -1.85,0.17 -2.8,0.3c-0.745,0.115 -1.49,0.16 -2.255,0.16c-0.76,-0 -1.505,-0.045 -2.255,-0.16c-0.935,-0.13 -1.85,-0.3 -2.8,-0.3c-2.34,-0 -3.675,1.935 -3.675,4.13c-0,4.39 4.02,5.065 7.52,5.065l2.41,-0c3.515,-0 7.53,-0.67 7.53,-5.065Zm-4.13,-2.755c-1.29,-0 -1.835,1.71 -1.835,2.755c-0,1.045 0.545,2.755 1.835,2.755c1.29,-0 1.835,-1.71 1.835,-2.755c-0,-1.045 -0.545,-2.755 -1.835,-2.755Z'></path>
+</svg>
+
+                </a>
+            
+            
+            
+                <a href="https://twitter.com/conedevelopment" aria-label="Twitter">
+                    <svg aria-hidden='true' focusable='false' role='img' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 24 24' width='24' height='24' style='fill:currentColor;' class='icon'>
+    <path d='M21.533,7.112c0.015,0.213 0.015,0.426 0.015,0.639c0,6.503 -4.949,13.995 -13.995,13.995c-2.786,0 -5.375,-0.807 -7.553,-2.208c0.396,0.046 0.777,0.061 1.188,0.061c2.299,0 4.416,-0.777 6.106,-2.102c-2.162,-0.045 -3.974,-1.461 -4.599,-3.411c0.305,0.046 0.61,0.076 0.929,0.076c0.442,0 0.884,-0.061 1.295,-0.167c-2.254,-0.457 -3.944,-2.437 -3.944,-4.828l-0,-0.06c0.654,0.365 1.416,0.594 2.223,0.624c-1.325,-0.883 -2.193,-2.391 -2.193,-4.097c0,-0.913 0.244,-1.751 0.67,-2.482c2.421,2.985 6.061,4.934 10.142,5.147c-0.076,-0.365 -0.122,-0.746 -0.122,-1.126c0,-2.711 2.193,-4.919 4.919,-4.919c1.416,-0 2.696,0.594 3.594,1.553c1.112,-0.213 2.178,-0.624 3.122,-1.188c-0.366,1.142 -1.142,2.102 -2.162,2.711c0.989,-0.107 1.949,-0.381 2.832,-0.761c-0.67,0.974 -1.508,1.842 -2.467,2.543Z'></path>
+</svg>
+
+                </a>
+            
+        </div>
+    </div>
+</header>
+
+                <div class="l-main">
+                    <aside class="sidebar l-main__sidebar">
+    <div class="sidebar__body">
+        
+            <div class="sidebar-section sidebar-section--navigation">
+                <h3 class="sidebar-section__title">Navigation</h3>
+                <nav class="sidebar-section__navigation">
+                    <ul>
+                        
+                        <li>
+                            <a
+                                href="/faq/"
+                                
+                                
+                            >
+                                FAQ
+                                
+                            </a>
+                        </li>
+                        
+                        <li>
+                            <a
+                                href="/changelog/"
+                                
+                                
+                            >
+                                Changelog
+                                
+                            </a>
+                        </li>
+                        
+                        <li>
+                            <a
+                                href="https://sprucecss.com"
+                                
+                                
+                                    target="_blank"
+                                    rel="noopener"
+                                
+                            >
+                                Spruce CSS
+                                
+                                    <span class="sr-only">Open in new window</span>
+                                    <svg aria-hidden='true' focusable='false' role='img' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' style='fill: currentColor' width='24' height='24' class='btn__icon'>
+    <path d='M1.111,1.907c0,1.049 0.858,1.908 1.907,1.908l14.478,-0l-16.938,16.938c-0.744,0.744 -0.744,1.945 -0,2.689c0.744,0.744 1.945,0.744 2.689,0l16.938,-16.938l0,14.478c0,1.049 0.859,1.907 1.908,1.907c1.049,-0 1.907,-0.858 1.907,-1.907l0,-19.075c0,-1.049 -0.858,-1.907 -1.907,-1.907l-19.075,0c-1.049,0 -1.907,0.858 -1.907,1.907Z'></path>
+</svg>
+
+                                
+                            </a>
+                        </li>
+                        
+                    </ul>
+                </nav>
+            </div>
+        
+
+        
+        
+            <div class="sidebar-section">
+                <h3 class="sidebar-section__title">Getting Started</h3>
+                <nav class="sidebar-section__navigation">
+                    <ul>
+                        
+                            <li><a href="/getting-started/introduction/" >Introduction</a></li>
+                        
+                    </ul>
+                </nav>
+            </div>
+        
+            <div class="sidebar-section">
+                <h3 class="sidebar-section__title">Customization</h3>
+                <nav class="sidebar-section__navigation">
+                    <ul>
+                        
+                            <li><a href="/customization/spruce-css/"  aria-current="page" data-state="active">Spruce CSS</a></li>
+                        
+                            <li><a href="/customization/themes/" >Themes</a></li>
+                        
+                    </ul>
+                </nav>
+            </div>
+        
+    </div>
+    <div class="sidebar__footer">
+        © 2024 - Some rights reserved.
+    </div>
+</aside>
+
+                    <div class="l-main__body">
+                        <main id="content">
+    <article class="l-post" data-pagefind-body>
+        
+        <div class="post-heading">
+    
+    
+        <ol class="breadcrumb-list post-heading__breadcrumb">
+    <li>
+        <a href="/">Home</a>
+    </li>
+        <li>
+            
+                <a href="/customization/">Customization</a>
+            
+        </li>
+        <li>
+            
+                <span aria-current="page">Spruce CSS</span>
+            
+        </li>
+</ol>
+
+    
+    
+        <h1 class="post-heading__title">
+            Spruce CSS
+        </h1>
+    
+    
+    
+</div>
+
+        
+        <div class="l-post__toc toc" aria-labelledby="toc-title">
+            <section class="toc" aria-labelledby="toc-title">
+                <h3 class="toc__title" id="toc-title">On this page</h3>
+                <nav class="toc__navigation"><nav class="toc" >
+        <ol><li><a href="#what-is-spruce-css%3F">What is Spruce CSS?</a></li></ol>
+      </nav></nav>
+            </section>
+        </div>
+        
+        <div class="l-post__content post-content">
+            <p><strong>Spruce CSS is an open-source, lightweight and modernish CSS design system, framework built on Sass. Give your project a solid foundation.</strong></p>
+<h2 id="what-is-spruce-css%3F" tabindex="-1">What is Spruce CSS? <a class="anchor" href="#what-is-spruce-css%3F">#</a></h2>
+<ul>
+<li>It is a Sass-based, small framework that operates with just a few utility classes.</li>
+<li>It takes advantage of the Sass members: variables, mixins, and functions.</li>
+<li>It embraces Sass modules, so it uses @use and namespacing for import.</li>
+<li>Spruce is a good choice if you prefer writing CSS instead of HTML. It uses just a few classic utility classes.</li>
+<li>It is a relatively small (~7kb gzipped) framework with a smaller learning curve. The codebase is small but can add more to any project with the available mixins and functions.</li>
+<li>It is that bunch of code you keep manually carrying from project to project.</li>
+<li>It is themeable. You can create different themes using CSS custom properties like a dark one.</li>
+<li>The generated CSS code is separated from the framework. You can use only the tools (variables, mixins, functions) in your project <a href="https://sprucecss.com/docs/elements/generators">without the generated styles</a>.</li>
+<li>Include just a few components. For UI, we have a separate project named <a href="/ui/getting-started/introduction">Spruce UI</a>, where you can find drop-in components.</li>
+<li><a href="https://sprucecss.com/docs/customization/themes">It comes with dark-mode</a> (or any theme mode) support. It uses CSS custom properties, so it isn’t that hard to create a new color theme.</li>
+<li>It doesn’t come with a classical grid system.</li>
+</ul>
+
+        </div>
+    </article>
+    
+
+
+<nav class="post-navigation">
+    
+        <a class="post-navigation-item post-navigation-item--prev" href="/getting-started/introduction/">
+            <span class="post-navigation-item__icon">
+                <svg width='100%' height='100%' viewBox='0 0 24 24' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xml:space='preserve' xmlns:serif='http://www.serif.com/' style='fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;fill:currentColor;' class='icon'>
+    <path d='M22.46,10.468l-17.204,-0l7.516,-7.517c0.601,-0.6 0.601,-1.586 0,-2.187c-0.601,-0.6 -1.571,-0.6 -2.172,0l-10.149,10.15c-0.601,0.601 -0.601,1.571 -0,2.172l10.149,10.15c0.601,0.6 1.571,0.6 2.172,-0c0.601,-0.601 0.601,-1.571 0,-2.172l-7.516,-7.516l17.204,-0c0.847,-0 1.54,-0.693 1.54,-1.54c0,-0.847 -0.693,-1.54 -1.54,-1.54Z'></path>
+</svg>
+
+            </span>
+            <span class="post-navigation-item__caption">
+                Previous
+                <span class="post-navigation-item__title">Introduction</span>
+            </span>
+        </a>
+    
+    
+        <a class="post-navigation-item post-navigation-item--next" href="/customization/themes/">
+            <span class="post-navigation-item__caption">
+                Next
+                <span class="post-navigation-item__title">Themes</span>
+            </span>
+            <span class="post-navigation-item__icon">
+                <svg width='100%' height='100%' viewBox='0 0 24 24' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xml:space='preserve' style='fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;fill:currentColor;' class='icon'>
+    <path d='M1.54,13.532l17.204,0l-7.516,7.517c-0.601,0.6 -0.601,1.586 -0,2.187c0.601,0.6 1.571,0.6 2.172,-0l10.149,-10.15c0.601,-0.601 0.601,-1.571 0,-2.172l-10.149,-10.15c-0.601,-0.6 -1.571,-0.6 -2.172,0c-0.601,0.601 -0.601,1.571 -0,2.172l7.516,7.516l-17.204,0c-0.847,0 -1.54,0.693 -1.54,1.54c0,0.847 0.693,1.54 1.54,1.54Z'></path>
+</svg>
+
+            </span
+        ></a>
+    
+</nav>
+
+</main>
+                        <footer class="footer">
+    <div class="footer__inner">
+        
+        <div class="footer__column">
+            <h3 class="footer__title" id="footer-title-getting-started">
+                Getting Started
+            </h3>
+            <ul
+                class="footer__navigation"
+                aria-labelledby="footer-title-getting-started"
+            >
+                
+                <li>
+                    <a
+                        href="/getting-started/introduction/"
+                        
+                        
+                    >
+                        Introduction
+                        
+                    </a>
+                </li>
+                
+                <li>
+                    <a
+                        href="/getting-started/features/"
+                        
+                        
+                    >
+                        Features
+                        
+                    </a>
+                </li>
+                
+                <li>
+                    <a
+                        href="/getting-started/structure/"
+                        
+                        
+                    >
+                        Structure
+                        
+                    </a>
+                </li>
+                
+                <li>
+                    <a
+                        href="/getting-started/setup/"
+                        
+                        
+                    >
+                        Setup
+                        
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+        
+        <div class="footer__column">
+            <h3 class="footer__title" id="footer-title-spruce-css">
+                Spruce CSS
+            </h3>
+            <ul
+                class="footer__navigation"
+                aria-labelledby="footer-title-spruce-css"
+            >
+                
+                <li>
+                    <a
+                        href="https://sprucecss.com/docs/getting-started/introduction/"
+                        
+                        
+                            target="_blank"
+                            rel="noopener"
+                        
+                    >
+                        Introduction
+                        
+                            <span class="sr-only">Open in new window</span>
+                            <svg aria-hidden='true' focusable='false' role='img' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' style='fill: currentColor' width='24' height='24' class='btn__icon'>
+    <path d='M1.111,1.907c0,1.049 0.858,1.908 1.907,1.908l14.478,-0l-16.938,16.938c-0.744,0.744 -0.744,1.945 -0,2.689c0.744,0.744 1.945,0.744 2.689,0l16.938,-16.938l0,14.478c0,1.049 0.859,1.907 1.908,1.907c1.049,-0 1.907,-0.858 1.907,-1.907l0,-19.075c0,-1.049 -0.858,-1.907 -1.907,-1.907l-19.075,0c-1.049,0 -1.907,0.858 -1.907,1.907Z'></path>
+</svg>
+
+                        
+                    </a>
+                </li>
+                
+                <li>
+                    <a
+                        href="https://sprucecss.com/docs/customization/themes/"
+                        
+                        
+                            target="_blank"
+                            rel="noopener"
+                        
+                    >
+                        Themes
+                        
+                            <span class="sr-only">Open in new window</span>
+                            <svg aria-hidden='true' focusable='false' role='img' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' style='fill: currentColor' width='24' height='24' class='btn__icon'>
+    <path d='M1.111,1.907c0,1.049 0.858,1.908 1.907,1.908l14.478,-0l-16.938,16.938c-0.744,0.744 -0.744,1.945 -0,2.689c0.744,0.744 1.945,0.744 2.689,0l16.938,-16.938l0,14.478c0,1.049 0.859,1.907 1.908,1.907c1.049,-0 1.907,-0.858 1.907,-1.907l0,-19.075c0,-1.049 -0.858,-1.907 -1.907,-1.907l-19.075,0c-1.049,0 -1.907,0.858 -1.907,1.907Z'></path>
+</svg>
+
+                        
+                    </a>
+                </li>
+                
+                <li>
+                    <a
+                        href="https://sprucecss.com/ui/getting-started/introduction/"
+                        
+                        
+                            target="_blank"
+                            rel="noopener"
+                        
+                    >
+                        Components
+                        
+                            <span class="sr-only">Open in new window</span>
+                            <svg aria-hidden='true' focusable='false' role='img' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' style='fill: currentColor' width='24' height='24' class='btn__icon'>
+    <path d='M1.111,1.907c0,1.049 0.858,1.908 1.907,1.908l14.478,-0l-16.938,16.938c-0.744,0.744 -0.744,1.945 -0,2.689c0.744,0.744 1.945,0.744 2.689,0l16.938,-16.938l0,14.478c0,1.049 0.859,1.907 1.908,1.907c1.049,-0 1.907,-0.858 1.907,-1.907l0,-19.075c0,-1.049 -0.858,-1.907 -1.907,-1.907l-19.075,0c-1.049,0 -1.907,0.858 -1.907,1.907Z'></path>
+</svg>
+
+                        
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+        
+        <div class="footer__column">
+            <h3 class="footer__title" id="footer-title-more-from-us">
+                More From Us
+            </h3>
+            <ul
+                class="footer__navigation"
+                aria-labelledby="footer-title-more-from-us"
+            >
+                
+                <li>
+                    <a
+                        href="https://conedevelopment.com/services/"
+                        
+                        
+                            target="_blank"
+                            rel="noopener"
+                        
+                    >
+                        Services
+                        
+                            <span class="sr-only">Open in new window</span>
+                            <svg aria-hidden='true' focusable='false' role='img' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' style='fill: currentColor' width='24' height='24' class='btn__icon'>
+    <path d='M1.111,1.907c0,1.049 0.858,1.908 1.907,1.908l14.478,-0l-16.938,16.938c-0.744,0.744 -0.744,1.945 -0,2.689c0.744,0.744 1.945,0.744 2.689,0l16.938,-16.938l0,14.478c0,1.049 0.859,1.907 1.908,1.907c1.049,-0 1.907,-0.858 1.907,-1.907l0,-19.075c0,-1.049 -0.858,-1.907 -1.907,-1.907l-19.075,0c-1.049,0 -1.907,0.858 -1.907,1.907Z'></path>
+</svg>
+
+                        
+                    </a>
+                </li>
+                
+                <li>
+                    <a
+                        href="https://pineco.de/"
+                        
+                        
+                            target="_blank"
+                            rel="noopener"
+                        
+                    >
+                        Pine development blog
+                        
+                            <span class="sr-only">Open in new window</span>
+                            <svg aria-hidden='true' focusable='false' role='img' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' style='fill: currentColor' width='24' height='24' class='btn__icon'>
+    <path d='M1.111,1.907c0,1.049 0.858,1.908 1.907,1.908l14.478,-0l-16.938,16.938c-0.744,0.744 -0.744,1.945 -0,2.689c0.744,0.744 1.945,0.744 2.689,0l16.938,-16.938l0,14.478c0,1.049 0.859,1.907 1.908,1.907c1.049,-0 1.907,-0.858 1.907,-1.907l0,-19.075c0,-1.049 -0.858,-1.907 -1.907,-1.907l-19.075,0c-1.049,0 -1.907,0.858 -1.907,1.907Z'></path>
+</svg>
+
+                        
+                    </a>
+                </li>
+                
+                <li>
+                    <a
+                        href="https://root.conedevelopment.com/"
+                        
+                        
+                            target="_blank"
+                            rel="noopener"
+                        
+                    >
+                        Root Laravel admin
+                        
+                            <span class="sr-only">Open in new window</span>
+                            <svg aria-hidden='true' focusable='false' role='img' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' style='fill: currentColor' width='24' height='24' class='btn__icon'>
+    <path d='M1.111,1.907c0,1.049 0.858,1.908 1.907,1.908l14.478,-0l-16.938,16.938c-0.744,0.744 -0.744,1.945 -0,2.689c0.744,0.744 1.945,0.744 2.689,0l16.938,-16.938l0,14.478c0,1.049 0.859,1.907 1.908,1.907c1.049,-0 1.907,-0.858 1.907,-1.907l0,-19.075c0,-1.049 -0.858,-1.907 -1.907,-1.907l-19.075,0c-1.049,0 -1.907,0.858 -1.907,1.907Z'></path>
+</svg>
+
+                        
+                    </a>
+                </li>
+                
+                <li>
+                    <a
+                        href="https://bite-sized-a11y.com/"
+                        
+                        
+                            target="_blank"
+                            rel="noopener"
+                        
+                    >
+                        Bite-Sized Accessibility
+                        
+                            <span class="sr-only">Open in new window</span>
+                            <svg aria-hidden='true' focusable='false' role='img' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' style='fill: currentColor' width='24' height='24' class='btn__icon'>
+    <path d='M1.111,1.907c0,1.049 0.858,1.908 1.907,1.908l14.478,-0l-16.938,16.938c-0.744,0.744 -0.744,1.945 -0,2.689c0.744,0.744 1.945,0.744 2.689,0l16.938,-16.938l0,14.478c0,1.049 0.859,1.907 1.908,1.907c1.049,-0 1.907,-0.858 1.907,-1.907l0,-19.075c0,-1.049 -0.858,-1.907 -1.907,-1.907l-19.075,0c-1.049,0 -1.907,0.858 -1.907,1.907Z'></path>
+</svg>
+
+                        
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+        
+    </div>
+</footer>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+        <div id="search" class="search"></div>
+    </div>
+</div>
+
+<script src="/_pagefind/pagefind-ui.js" onload="new PagefindUI({ element: '#search', showImages: false });"></script>
+
+
+        <script src="/js/theme-change-assets.js" defer></script>
+        <script src="/js/navigation.js" defer></script>
+        <script src="/js/theme-switcher.js" defer></script>
+        <script src="/js/modal.js" defer></script>
+        <script src="/js/accordion-card.js" defer></script>
+    </body>
+</html>

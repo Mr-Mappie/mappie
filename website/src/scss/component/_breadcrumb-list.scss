@@ -1,0 +1,44 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.breadcrumb-list {
+  @include clear-list;
+  align-items: center;
+  display: flex;
+  max-inline-size: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+
+  > li {
+    align-items: center;
+    display: inline-flex;
+    margin-block: 0;
+
+    + li::before {
+      block-size: 0.4em;
+      border-block-end: 2px solid color('separator', 'breadcrumb');
+      border-inline-end: 2px solid color('separator', 'breadcrumb');
+      content: '';
+      display: inline-flex;
+      inline-size: 0.4em;
+      margin-inline: 0.75em;
+      transform: rotate(-45deg);
+
+      @at-root {
+        [dir='rtl'] & {
+          transform: rotate(45deg);
+        }
+      }
+    }
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  [aria-current='page'] {
+    @include text-ellipsis(1);
+    display: inline-block;
+    max-inline-size: 20ch;
+    text-align: start;
+  }
+}

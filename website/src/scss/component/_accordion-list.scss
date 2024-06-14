@@ -1,0 +1,5 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.accordion-list {
+  @include layout-stack('s');
+}

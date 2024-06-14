@@ -1,0 +1,16 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.l-list {
+  --gtc: minmax(0, 1fr);
+
+  display: grid;
+  gap: spacer('l');
+  grid-template-columns: var(--gtc);
+
+  &__inner {
+    &--changelog,
+    &--faq {
+      @include layout-stack('l');
+    }
+  }
+}

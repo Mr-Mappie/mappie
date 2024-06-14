@@ -1,0 +1,33 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: spacer('m');
+
+  @include breakpoint('sm') {
+    padding-inline-end: get-css-variable(--container-gap);
+  }
+
+  &__footer {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__body {
+    @include scrollbar(
+      $border-radius: 0.05rem
+    );
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: spacer('m');
+    max-block-size: calc(100vh - var(--dimension) - #{spacer('m')} * 3);
+    overflow-y: auto;
+
+    @include breakpoint('sm') {
+      max-block-size: initial;
+    }
+  }
+}

@@ -1,0 +1,15 @@
+@forward 'config';
+@forward 'layout';
+@forward 'section';
+@forward 'component';
+
+@use 'sprucecss/scss/spruce' as *;
+
+:root {
+  @include set-css-variable((
+    --section-gap: clamp(5rem, 7vw, 7rem),
+    --container-gap: spacer-clamp('m', 'l'),
+    --max-content-inline-size: 70rem,
+    --box-shadow: 0 0.75rem 1.25rem hsl(0 0% 0% / 5%)
+  ));
+}

@@ -1,0 +1,55 @@
+<header class="header">
+    <div class="header__column">
+        <a class="header__logo" href="/" aria-label="{{ site.name }}">
+            {% svgIcon './src/img/cone-docs-logo.svg' %}
+        </a>
+        {% if navigation.header.length > 0 %}
+            <nav class="header__navigation">
+                <ul>
+                    {% for item in navigation.header %}
+                    <li>
+                        <a
+                            href="{{ item.url }}"
+                            {{ helpers.getLinkActiveState(item.url, page.url) | safe }}
+                            {% if item.external %}
+                                target="_blank"
+                                rel="noopener"
+                            {% endif %}
+                        >
+                            {{ item.caption }}
+                            {% if item.external %}
+                                <span class="sr-only">Open in new window</span>
+                                {% svgIcon './src/img/icon/arrow-outward.svg', 'btn__icon' %}
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+        {% endif %}
+        <button class="btn btn--primary btn--icon header__toggle" data-action="sidebar-toggle" aria-controls="primary-menu" aria-expanded="false" aria-label="Toogle navigation">
+            {% svgIcon './src/img/icon/menu.svg', 'btn__icon' %}
+        </button>
+    </div>
+    <div class="header__actions">
+        {% include "partials/search-toggle.html" %}
+        {% include "partials/theme-switcher.html" %}
+        <div class="header__socials">
+            {% if (site.social.github) %}
+                <a href="{{ site.social.github }}" aria-label="GitHub">
+                    {% svgIcon './src/img/icon/github.svg' %}
+                </a>
+            {% endif %}
+            {% if (site.social.discord) %}
+                <a href="{{ site.social.discord }}" aria-label="Discrod">
+                    {% svgIcon './src/img/icon/discord.svg' %}
+                </a>
+            {% endif %}
+            {% if (site.social.twitter) %}
+                <a href="{{ site.social.twitter }}" aria-label="Twitter">
+                    {% svgIcon './src/img/icon/twitter.svg' %}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</header>

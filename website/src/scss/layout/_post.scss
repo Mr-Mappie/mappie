@@ -1,0 +1,30 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.l-post {
+  --gtc: minmax(0, 1fr);
+
+  display: grid;
+  gap: get-css-variable(--container-gap);
+  grid-template-columns: var(--gtc);
+
+  @include breakpoint('lg') {
+    --gtc: minmax(0, 1fr) minmax(0, 15rem);
+  }
+
+  &__toc {
+    @include breakpoint('lg') {
+      order: 2;
+    }
+
+    .toc {
+      inset-block-start: spacer('l');
+      position: sticky;
+    }
+  }
+
+  .post-heading {
+    @include breakpoint('lg') {
+      grid-column: 1 / 3;
+    }
+  }
+}

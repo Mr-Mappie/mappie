@@ -1,0 +1,15 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.open-search {
+  @include a11y-card-link('.open-search__btn', true);
+  align-items: center;
+  display: flex;
+  gap: spacer('xs');
+
+  &__icon {
+    --dimension: 1rem;
+    block-size: var(--dimension);
+    color: color('icon', 'search');
+    inline-size: var(--dimension);
+  }
+}

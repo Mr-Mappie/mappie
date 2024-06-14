@@ -1,0 +1,13 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.l-card {
+  --columns: 1;
+  counter-reset: card;
+  display: grid;
+  gap: spacer('l');
+  grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+
+  @include breakpoint('lg') {
+    --columns: 2;
+  }
+}

@@ -1,0 +1,14 @@
+<svg
+    width="100%"
+    height="100%"
+    viewBox="0 0 24 24"
+    version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xml:space="preserve"
+    style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;fill:currentColor;"
+>
+    <path
+        d="M1.54,13.532l17.204,0l-7.516,7.517c-0.601,0.6 -0.601,1.586 -0,2.187c0.601,0.6 1.571,0.6 2.172,-0l10.149,-10.15c0.601,-0.601 0.601,-1.571 0,-2.172l-10.149,-10.15c-0.601,-0.6 -1.571,-0.6 -2.172,0c-0.601,0.601 -0.601,1.571 -0,2.172l7.516,7.516l-17.204,0c-0.847,0 -1.54,0.693 -1.54,1.54c0,0.847 0.693,1.54 1.54,1.54Z"
+    />
+</svg>

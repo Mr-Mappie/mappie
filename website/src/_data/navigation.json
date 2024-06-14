@@ -1,0 +1,91 @@
+{
+  "header": [
+    {
+      "caption": "FAQ",
+      "url": "/faq/",
+      "external": false
+    },
+    {
+      "caption": "Changelog",
+      "url": "/changelog/",
+      "external": false
+    },
+    {
+      "caption": "Spruce CSS",
+      "url": "https://sprucecss.com",
+      "external": true
+    }
+  ],
+  "footer": [
+    {
+      "title": "Getting Started",
+      "items": [
+        {
+          "caption": "Introduction",
+          "url": "/getting-started/introduction/",
+          "external": false
+        },
+        {
+          "caption": "Features",
+          "url": "/getting-started/features/",
+          "external": false
+        },
+        {
+          "caption": "Structure",
+          "url": "/getting-started/structure/",
+          "external": false
+        },
+        {
+          "caption": "Setup",
+          "url": "/getting-started/setup/",
+          "external": false
+        }
+      ]
+    },
+    {
+      "title": "Spruce CSS",
+      "items": [
+        {
+          "caption": "Introduction",
+          "url": "https://sprucecss.com/docs/getting-started/introduction/",
+          "external": true
+        },
+        {
+          "caption": "Themes",
+          "url": "https://sprucecss.com/docs/customization/themes/",
+          "external": true
+        },
+        {
+          "caption": "Components",
+          "url": "https://sprucecss.com/ui/getting-started/introduction/",
+          "external": true
+        }
+      ]
+    },
+    {
+      "title": "More From Us",
+      "items": [
+        {
+          "caption": "Services",
+          "url": "https://conedevelopment.com/services/",
+          "external": true
+        },
+        {
+          "caption": "Pine development blog",
+          "url": "https://pineco.de/",
+          "external": true
+        },
+        {
+          "caption": "Root Laravel admin",
+          "url": "https://root.conedevelopment.com/",
+          "external": true
+        },
+        {
+          "caption": "Bite-Sized Accessibility",
+          "url": "https://bite-sized-a11y.com/",
+          "external": true
+        }
+      ]
+    }
+  ]
+}

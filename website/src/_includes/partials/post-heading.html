@@ -1,0 +1,29 @@
+<div class="post-heading">
+    {% if headline %}
+        <p class="post-heading__headline">{{ headline }}</p>
+    {% endif %}
+    {% if breadcrumbs %}
+        {% include "partials/breadcrumbs.html" %}
+    {% endif %}
+    {% if title %}
+        <h1 class="post-heading__title">
+            {{ title }}
+        </h1>
+    {% endif %}
+    {% if summary and displaySummary %}
+        <p class="post-heading__description">
+            {{ summary }}
+        </p>
+    {% endif %}
+    {% if btns %}
+        <div class="post-heading__actions">
+            {% for btn in btns %}
+                {% set cls = 'btn--primary btn--primary-shadow' %}
+                {% if btn.type === 'outline' %}
+                    {% set cls = 'btn--outline-primary' %}
+                {% endif %}
+                <a class="btn btn--lg {{ cls }}" href="{{ btn.url }}">{{ btn.caption }}</a>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

@@ -1,0 +1,30 @@
+name: Website Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    permissions:
+      pages: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@4
+
+      - name: Setup Node
+        uses: actions/setup-node@4
+        with:
+          node-version: '18.x'
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

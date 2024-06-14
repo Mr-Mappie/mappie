@@ -1,0 +1,58 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.sidebar-section {
+  &--navigation {
+    @include breakpoint('sm') {
+      display: none;
+    }
+  }
+
+  &__title {
+    color: color('heading');
+    font-size: config('font-size-base', $typography);
+    margin-block: 0;
+  }
+
+  &__navigation {
+    border-inline-start: 1px solid color('border');
+    font-size: 1rem;
+    margin-block-start: 1rem;
+    padding-inline-start: 1rem;
+
+    ul {
+      @include clear-list;
+    }
+
+    a {
+      align-items: center;
+      color: color('text');
+      display: inline-flex;
+      gap: spacer('xs');
+      text-decoration: none;
+
+      &[aria-current='page'] {
+        color: color('heading');
+        font-weight: 700;
+        position: relative;
+
+        &::before {
+          background-color: color('primary');
+          border-end-end-radius: config('border-radius-sm', $display);
+          border-start-end-radius: config('border-radius-sm', $display);
+          content: '';
+          inline-size: 0.3rem;
+          inset-block: 0;
+          inset-inline-start: -1rem;
+          position: absolute;
+        }
+      }
+
+      svg {
+        --dimension: 0.65em;
+        block-size: var(--dimension);
+        color: color('arrow', 'navigation');
+        inline-size: var(--dimension);
+      }
+    }
+  }
+}

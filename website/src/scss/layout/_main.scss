@@ -1,0 +1,47 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.l-main {
+  --gtc: minmax(0, 1fr);
+
+  display: grid;
+  gap: spacer('l');
+  grid-template-columns: var(--gtc);
+  margin-block: spacer-clamp('m', 'l') spacer-clamp('l', 'xl');
+
+  @include breakpoint('sm') {
+    --gtc: minmax(0, 16rem) minmax(0, 1fr);
+    gap: calc(#{get-css-variable(--container-gap)} * 1.5);
+  }
+
+  @include breakpoint('md') {
+    --gtc: minmax(0, 18.5rem) minmax(0, 1fr);
+  }
+
+  @include breakpoint('lg') {
+    --gtc: minmax(0, 20rem) minmax(0, 1fr);
+  }
+
+  &__sidebar {
+    display: none !important;
+
+    @include breakpoint('sm') {
+      border-inline-end: 1px solid color('border');
+      display: flex !important;
+      inset-block-start: spacer('l');
+      max-block-size: calc(100vh - #{spacer('l')} * 2);
+      position: sticky;
+    }
+
+    &--open {
+      display: flex !important;
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    inline-size: 100%;
+    margin-inline: auto;
+    max-inline-size: get-css-variable(--max-content-inline-size);
+  }
+}

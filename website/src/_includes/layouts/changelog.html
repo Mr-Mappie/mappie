@@ -1,0 +1,25 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+    <div class="l-list" data-pagefind-body>
+        {% set breadcrumbs = [{
+            "title": title,
+            "url": page.url
+        }] %}
+        {% include "partials/post-heading.html" %}
+        <div class="l-list__inner l-list__inner--changelog">
+            {% for change in changelog %}
+                <div class="changelog-item">
+                    <time datetime="{{ change.date | w3DateFilter }}" class="changelog-item__date">{{ change.date | dateFilter }}</time>
+                    <div class="changelog-item__body post-content">
+                        <h2 class="changelog-item__title">{{ change.title }}</h2>
+                        <ul>
+                            {% for row in change.items %}
+                                <li>{% markdownRender row %}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

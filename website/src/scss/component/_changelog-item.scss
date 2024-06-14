@@ -1,0 +1,30 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.changelog-item {
+  --gtc: minmax(0, 1fr);
+  align-items: flex-start;
+  display: grid;
+  gap: spacer('m') spacer('l');
+  grid-template-columns: var(--gtc);
+
+  @include breakpoint('md') {
+    --gtc: minmax(0, 9rem) minmax(0, 1fr);
+  }
+
+  &__date {
+    background-color: color('primary-background', 'btn');
+    border-radius: config('border-radius-sm', $display);
+    color: color('primary-foreground', 'btn');
+    display: inline-flex;
+    flex-shrink: 0;
+    font-weight: 700;
+    justify-self: start;
+    padding: spacer('xxs') spacer('s');
+  }
+
+  ul {
+    p {
+      margin-block: 0;
+    }
+  }
+}

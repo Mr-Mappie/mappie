@@ -1,0 +1,32 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.post-heading {
+  @include layout-stack('s');
+
+  &__headline {
+    color: color('primary');
+    font-family: config('font-family-heading', $typography);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  &__title {
+    font-size: responsive-font-size(3.5rem, 30, '4.5vw');
+    line-height: config('line-height-sm', $typography);
+    margin-block-start: spacer('xs');
+    max-inline-size: 20ch;
+  }
+
+  &__description {
+    font-size: config('font-size-lead', $typography);
+    max-inline-size: 60ch;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: spacer('s');
+    margin-block-start: spacer('m');
+  }
+}

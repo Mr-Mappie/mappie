@@ -1,0 +1,52 @@
+{% if page.url.length > 1 %}
+    {% set pageTitle = title + ' - ' + site.name %}
+{% else %}
+    {% set pageTitle = site.name %}
+{% endif %}
+
+{% if site.name === title %}
+    {% set pageTitle = title %}
+{% endif %}
+
+{% set siteTitle = site.name %}
+{% set currentUrl = site.url + page.url %}
+
+{% if not socialImage %}
+    {% set socialImage = site.url + '/img/social-share.png' %}
+{% else %}
+    {% set socialImage = site.url + socialImage %}
+{% endif %}
+
+{% if metaTitle %}
+    {% set pageTitle = metaTitle %}
+{% endif %}
+
+{% if not metaDesc %}
+    {% set metaDesc = summary %}
+{% endif %}
+
+<title>{{ pageTitle }}</title>
+<link rel="canonical" href="{{ currentUrl }}" />
+
+<meta name="generator" content="{{ eleventy.generator }}" />
+
+<meta property="og:site_name" content="{{ siteTitle }}" />
+<meta property="og:title" content="{{ pageTitle }}" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ currentUrl }}" />
+
+{% if socialImage %}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:image" content="{{ socialImage }}" />
+    <meta name="twitter:image" content="{{ socialImage }}" />
+    <meta property="og:image:alt" content="Page image for {{ site.name }}" />
+    <meta name="twitter:image:alt" content="Page image for {{ site.name }}" />
+{% endif %}
+
+{% if metaDesc %}
+    <meta name="description" content="{{ metaDesc }}" />
+    <meta name="twitter:description" content="{{ metaDesc }}" />
+    <meta property="og:description" content="{{ metaDesc }}" />
+{% endif %}
+
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml" />

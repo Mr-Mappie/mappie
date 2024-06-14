@@ -1,0 +1,131 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.header {
+  align-items: center;
+  border-block-end: 1px solid color('border');
+  display: flex;
+  flex-wrap: wrap;
+  gap: spacer('s') spacer-clamp('m', 'l');
+  justify-content: space-between;
+  order: 2;
+  padding-block: 1.75rem;
+
+  @include breakpoint('sm') {
+    order: -1;
+  }
+
+  &__column {
+    align-items: center;
+    display: flex;
+    flex-grow: 1;
+    gap: spacer-clamp('m', 'l');
+    justify-content: space-between;
+
+    @include breakpoint('sm') {
+      justify-content: flex-start;
+    }
+  }
+
+  &__logo {
+    display: inline-flex;
+
+    img,
+    svg {
+      block-size: 2rem;
+      display: inline-flex;
+      inline-size: auto;
+    }
+  }
+
+  &__toggle {
+    @include set-css-variable((
+      --border-radius: 1rem 1rem 0 1rem
+    ));
+
+    @include breakpoint('sm') {
+      display: none;
+    }
+  }
+
+  &__actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: spacer-clamp('s', 'm');
+    margin-inline-start: auto;
+  }
+
+  &__navigation {
+    display: none;
+
+    @include breakpoint('sm') {
+      display: flex;
+    }
+
+    ul {
+      @include clear-list;
+      align-items: center;
+      background-color: transparent;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: spacer('xs') spacer('m');
+      inset: auto;
+      padding: 0;
+      position: relative;
+
+      @include breakpoint('lg') {
+        gap: spacer('xs') spacer('l');
+      }
+    }
+
+    li {
+      margin-block: 0;
+    }
+
+    a {
+      align-items: center;
+      color: color('heading');
+      display: flex;
+      gap: spacer('xs');
+      text-decoration: none;
+
+      &:hover {
+        color: color('primary');
+      }
+
+      &[aria-current='page'] {
+        font-weight: 700;
+      }
+    }
+
+    svg {
+      --dimension: 0.65em;
+      block-size: var(--dimension);
+      color: color('arrow', 'navigation');
+      inline-size: var(--dimension);
+    }
+  }
+
+  &__socials {
+    align-items: center;
+    display: flex;
+    gap: spacer('s');
+
+    a {
+      color: color('heading');
+      display: inline-flex;
+
+      &:hover,
+      &:focus {
+        color: color('primary');
+      }
+    }
+
+    svg {
+      --dimension: 1.25rem;
+      block-size: var(--dimension);
+      inline-size: var(--dimension);
+    }
+  }
+}

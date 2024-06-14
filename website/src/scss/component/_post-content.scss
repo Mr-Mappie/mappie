@@ -1,0 +1,64 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.post-content {
+  @include layout-stack;
+
+  @include breakpoint('md') {
+    font-size: 1.0375rem;
+  }
+
+  :is(dd, dl, dl, h1, h2, h3:not(.accordion-card__title), h4, h5, h6, hr, ul, ol, p, blockquote) {
+    max-inline-size: 40rem;
+  }
+
+  * + h2,
+  * + h3 {
+    margin-top: spacer('l');
+  }
+
+  h2 + *,
+  h3 + *,
+  h4 + *,
+  h5 + *,
+  h6 + * {
+    margin-top: spacer('s');
+  }
+
+  h2[id] {
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+
+    &:hover .anchor,
+    &:focus-within .anchor {
+      opacity: 1;
+    }
+
+    .anchor {
+      font-weight: 600;
+      opacity: 0;
+      text-decoration: none;
+    }
+  }
+
+  img,
+  iframe {
+    border-radius: config('border-radius-sm', $display);
+  }
+
+  iframe {
+    aspect-ratio: 16 / 9;
+  }
+
+  a > code {
+    color: color('link');
+  }
+
+  strong {
+    color: color('heading');
+  }
+
+  picture {
+    display: flex;
+  }
+}

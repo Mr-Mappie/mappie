@@ -1,0 +1,59 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.footer {
+  --logo-block-size: 4rem;
+  --logo-inline-size: 4rem;
+
+  border-block-start: 1px solid color('border');
+  margin-block-start: spacer-clamp('l', 'xl');
+  padding-block-start: spacer-clamp('l', 'xl');
+
+  &__inner {
+    @include layout-grid('l', 12rem);
+  }
+
+  &__logo {
+    block-size: var(--logo-block-size);
+    display: flex;
+    inline-size: var(--logo-inline-size);
+  }
+
+  &__title {
+    font-size: font-size('h4');
+  }
+
+  &__navigation {
+    @include clear-list;
+    @include layout-stack('xs');
+
+    a {
+      align-items: center;
+      color: color('text');
+      display: inline-flex;
+      gap: spacer('xs');
+      text-decoration: none;
+
+      &:hover,
+      &:focus,
+      &:active,
+      &[aria-current='page'] {
+        color: color('primary');
+      }
+
+      &[aria-current='page'] {
+        font-weight: 700;
+      }
+
+      svg {
+        --dimension: 0.65em;
+        block-size: var(--dimension);
+        color: color('arrow', 'navigation');
+        inline-size: var(--dimension);
+      }
+    }
+  }
+
+  &__column {
+    @include layout-stack('m');
+  }
+}

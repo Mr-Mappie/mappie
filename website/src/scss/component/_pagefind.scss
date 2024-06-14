@@ -1,0 +1,58 @@
+@use 'sprucecss/scss/spruce' as *;
+
+@include generate-form-control('.pagefind-ui__search-input', false, false, false);
+
+.pagefind-ui {
+  position: relative;
+
+  &__search-input {
+    padding: config('padding', $form-control, false) !important;
+  }
+
+  &__form {
+    @include layout-stack('s');
+  }
+
+  &__search-clear {
+    background: none;
+    border: 0;
+    font-size: config('font-size-sm', $typography);
+    inset-block-start: 0.8em;
+    inset-inline-end: 0.5em;
+    margin-block-start: 0;
+    position: absolute;
+    text-transform: uppercase;
+  }
+
+  &__drawer {
+    @include scrollbar;
+    max-block-size: 20rem;
+    overflow-y: auto;
+  }
+
+  &__results {
+    @include clear-list;
+    @include layout-stack('s');
+    padding-inline-end: spacer('m');
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  &__results-area {
+    @include layout-stack('xs');
+  }
+
+  &__result-inner {
+    @include layout-stack('xxs');
+  }
+
+  &__result-title {
+    font-weight: 700;
+  }
+
+  &__hidden {
+    display: none;
+  }
+}

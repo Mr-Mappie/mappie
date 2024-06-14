@@ -1,0 +1,34 @@
+<footer class="footer">
+    <div class="footer__inner">
+        {% for block in navigation.footer %}
+        <div class="footer__column">
+            <h3 class="footer__title" id="footer-title-{{ block.title | slugify }}">
+                {{ block.title }}
+            </h3>
+            <ul
+                class="footer__navigation"
+                aria-labelledby="footer-title-{{ block.title | slugify }}"
+            >
+                {% for item in block.items %}
+                <li>
+                    <a
+                        href="{{ item.url }}"
+                        {{ helpers.getLinkActiveState(item.url, page.url) | safe }}
+                        {% if item.external %}
+                            target="_blank"
+                            rel="noopener"
+                        {% endif %}
+                    >
+                        {{ item.caption }}
+                        {% if item.external %}
+                            <span class="sr-only">Open in new window</span>
+                            {% svgIcon './src/img/icon/arrow-outward.svg', 'btn__icon' %}
+                        {% endif %}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+</footer>

@@ -1,0 +1,11 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.skip-link {
+  inset: -50vh auto auto spacer('m');
+  position: fixed;
+  z-index: 100;
+
+  &:focus {
+    inset-block-start: spacer('m');
+  }
+}

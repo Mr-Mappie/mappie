@@ -1,0 +1,7 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.l-front-page {
+  display: grid;
+  gap: spacer('xl');
+  grid-template-columns: minmax(0, 1fr);
+}

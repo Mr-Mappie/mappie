@@ -1,0 +1,93 @@
+@use 'sass:color';
+@use 'dark-colors' as dark;
+
+$color-primary: hsl(238deg 100% 50%);
+$color-secondary: hsl(186deg 100% 60%);
+
+@use 'sprucecss/scss/spruce' with (
+  $btn: (
+    'font-family': #{'Manrope', sans-serif},
+    'font-weight': 700,
+    'padding': 0.75em 1.5em,
+  ),
+  $btn-lg: (
+    'font-size': 1rem,
+    'padding': 1em 1.75em,
+  ),
+  $color-black: hsl(245 31% 21%),
+  $color-primary: $color-primary,
+  $color-secondary: $color-secondary,
+  $colors: (
+    'base': (
+      'border': hsl(0deg 0% 0% / 5%),
+      'code-background': hsl(224deg 94% 97%),
+      'heading': hsl(232deg 68% 11%),
+      'text': hsl(208, 21%, 39%),
+    ),
+    'btn': (
+      'secondary-foreground': color.adjust($color-secondary, $lightness: -50%),
+      'secondary-shadow': color.adjust($color-secondary, $lightness: 20%),
+    ),
+    'breadcrumb': (
+      'separator': hsl(0deg 0% 80%),
+    ),
+    'card': (
+      'background': hsl(0deg 0% 100%),
+    ),
+    'footer': (
+      'background': hsl(224deg 94% 98%),
+    ),
+    'navigation': (
+      'arrow': hsl(0deg 0% 0% / 15%),
+      'icon-background': hsl(224deg 94% 98%),
+      'icon-background-hover': $color-primary,
+      'icon-foreground': $color-primary,
+      'icon-foreground-hover': hsl(0deg 0% 100%),
+    ),
+    'search': (
+      'icon': hsl(229deg 26% 48% / 25%),
+    ),
+    'scrollbar': (
+      'thumb-background': hsl(229deg 26% 48% / 15%),
+      'thumb-background-hover':	hsl(0deg 0% 0% / 25%),
+      'track-background':	hsl(226deg 100% 87% / 15%),
+    ),
+    'prism': (
+      'color': hsl(243deg 14% 29%),
+      'background': hsl(224deg 94% 99%),
+      'comment': hsl(225deg 14% 46%),
+      'punctuation': hsl(279deg 50% 53%),
+      'namespace': hsl(173deg 100% 24%),
+      'deleted': hsl(1deg 83% 63% / 56%),
+      'boolean': hsl(0deg 44% 53%),
+      'number': hsl(315deg 90% 35%),
+      'constant': hsl(221deg 57% 52%),
+      'class-name': hsl(0deg 0% 7%),
+      'regex': hsl(1deg 48% 59%),
+    ),
+  ),
+  $dark-colors: dark.$colors,
+  $generators: (
+    'form': (
+      'file-btn': false,
+      'form-check': false,
+      'form-control': false,
+      'form-description': false,
+      'form-feedback': false,
+      'form-fieldset': false,
+      'form-group': false,
+      'form-label': false,
+      'form-range': false,
+      'form-row': false,
+      'form-switch': false,
+    ),
+  ),
+  $typography: (
+    'font-family-base': #{'Open Sans', sans-serif},
+    'font-family-heading': #{'Manrope', sans-serif},
+    'font-size-lead': clamp(1.1rem, 2vw, 1.25rem),
+  ),
+  $settings: (
+    'css-custom-properties': true,
+  ),
+);

@@ -1,0 +1,112 @@
+@use 'sass:color';
+
+$dark-color-black: hsl(245deg 38% 11%);
+$dark-color-danger: hsl(0deg 71% 51%);
+$dark-color-gray-dark: hsl(0deg 0% 100% / 8%);
+$dark-color-gray: hsl(0deg 0% 97%);
+$dark-color-primary: hsl(186deg 100% 60%);
+$dark-color-secondary: hsl(227deg 92% 55%);
+$dark-color-success: hsl(150deg 100% 33%);
+$dark-color-white: hsl(0deg 0% 95%);
+
+$colors: (
+  'base': (
+    'background': $dark-color-black,
+    'blockquote-border': $dark-color-primary,
+    'border': $dark-color-gray-dark,
+    'card-border': hsl(207deg 90% 13%),
+    'code-background': hsl(207deg 64% 21%),
+    'code-foreground': $dark-color-white,
+    'footer-background': hsl(0deg 0% 0% / 15%),
+    'heading': $dark-color-white,
+    'link-hover': color.scale($dark-color-primary, $lightness: 10%),
+    'link': $dark-color-primary,
+    'mark-background': hsl(50deg 100% 80%),
+    'mark-foreground': $dark-color-black,
+    'marker': $dark-color-primary,
+    'primary': $dark-color-primary,
+    'secondary': $dark-color-secondary,
+    'text': $dark-color-gray,
+  ),
+  'breadcrumb': (
+    'arrow': hsl(0deg 0% 100% / 0.1),
+  ),
+  'btn': (
+    'primary-background': $dark-color-primary,
+    'primary-background-hover': hsl(186deg 100% 45%),
+    'primary-foreground': hsl(186deg 100% 5%),
+    'primary-shadow': hsl(186deg 100% 25%),
+    'secondary-background': $dark-color-secondary,
+    'secondary-background-hover': color.adjust($dark-color-secondary, $lightness: 5%),
+    'secondary-foreground': $dark-color-white,
+    'secondary-shadow': color.adjust($dark-color-secondary, $lightness: -20%),
+  ),
+  'card': (
+    'background': $dark-color-black,
+  ),
+  'container': (
+    'background': hsl(207deg 92% 12%),
+  ),
+  'form': (
+    'background': color.scale($dark-color-black, $lightness: 5%),
+    'background-disabled': $dark-color-black,
+    'border-disabled': $dark-color-gray-dark,
+    'border-focus': $dark-color-primary,
+    'border': $dark-color-gray-dark,
+    'check-background': $dark-color-primary,
+    'check-foreground': $dark-color-black,
+    'invalid': $dark-color-danger,
+    'invalid-shadow': color.adjust($dark-color-danger, $alpha: -0.75),
+    'label': $dark-color-white,
+    'legend': $dark-color-white,
+    'placeholder': hsl(0deg 0% 60%),
+    'select-foreground': hsl(0deg 0% 100%),
+    'shadow-focus': color.adjust($dark-color-primary, $alpha: -0.75),
+    'text': $dark-color-gray,
+    'valid': $dark-color-success,
+    'valid-shadow': color.adjust($dark-color-success, $alpha: -0.75),
+  ),
+  'footer': (
+    'background': hsl(245deg 38% 10%),
+  ),
+  'navigation': (
+    'arrow': hsl(0deg 0% 100% / 15%),
+    'icon-background': hsl(245deg 38% 10%),
+    'icon-background-hover': $dark-color-primary,
+    'icon-foreground': $dark-color-primary,
+    'icon-foreground-hover': hsl(186deg 100% 5%),
+  ),
+  'prism': (
+    'color': hsl(217deg 34% 88%),
+    'background': hsl(245deg 38% 7%),
+    'comment': hsl(180deg 9% 55%),
+    'punctuation': hsl(276deg 68% 75%),
+    'namespace': hsl(197deg 31% 77%),
+    'deleted': hsl(1deg 83% 63% / 56%),
+    'boolean': hsl(350deg 100% 67%),
+    'number': hsl(14deg 90% 70%),
+    'constant': hsl(221deg 100% 75%),
+    'class-name': hsl(33deg 100% 77%),
+    'regex': hsl(217deg 34% 88%),
+  ),
+  'table': (
+    'border': $dark-color-gray-dark,
+    'caption': $dark-color-gray,
+    'heading': $dark-color-white,
+    'hover': hsl(0deg 0% 100% / 5%),
+    'stripe': hsl(0deg 0% 100% / 2.5%),
+    'text': $dark-color-gray,
+  ),
+  'selection': (
+    'background': $dark-color-primary,
+    'foreground': hsl(186deg 100% 5%),
+  ),
+  'search': (
+    'icon': hsl(0deg 0% 100% / 25%),
+  ),
+  'scrollbar': (
+    'thumb-background': hsl(0 0% 100% / 15%),
+    'thumb-background-hover':	hsl(0 0% 100% / 25%),
+    'track-background':	hsl(0 0% 100% / 5%),
+  ),
+);

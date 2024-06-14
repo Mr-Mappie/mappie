@@ -1,0 +1,17 @@
+@use 'sprucecss/scss/spruce' as *;
+
+@include generate-color-variables(
+  $dark-colors,
+  ':root[data-theme-mode="dark"]'
+);
+
+[data-theme-mode='dark'] {
+  color-scheme: dark;
+
+  select.form-control:not([multiple]):not([size]) { /* stylelint-disable-line */
+    @include field-icon(
+      config('select', $form-icon, false),
+      color('select-foreground', 'form', true, $dark-colors)
+    );
+  }
+}

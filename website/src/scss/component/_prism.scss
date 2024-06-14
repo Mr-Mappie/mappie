@@ -1,0 +1,125 @@
+@use 'sprucecss/scss/spruce' as *;
+
+code[class*='language-'],
+pre[class*='language-'] {
+  border-radius: config('border-radius-sm', $display);
+  color: color('color', 'prism');
+  font-family: config('font-family-cursive', $typography);
+  font-size: config('font-size-base', $typography);
+  hyphens: none;
+  line-height: 1.5;
+  tab-size: 4;
+  text-align: left;
+  white-space: pre;
+  word-break: normal;
+  word-spacing: normal;
+  word-wrap: normal;
+}
+
+@media print {
+  code[class*='language-'],
+  pre[class*='language-'] {
+    text-shadow: none;
+  }
+}
+
+/* Code blocks */
+pre[class*='language-'] {
+  display: grid;
+  overflow: auto;
+  padding: spacer('m');
+}
+
+pre[class*='language-'] code {
+  background-color: transparent;
+  padding: 0;
+}
+
+:not(pre) > code[class*='language-'],
+pre[class*='language-'] {
+  background: color('background', 'prism');
+  overflow-x: auto;
+}
+
+.token.comment,
+.token.prolog,
+.token.cdata {
+  color: color('comment', 'prism');
+  font-style: italic;
+}
+
+.token.punctuation {
+  color: color('punctuation', 'prism');
+}
+
+.namespace {
+  color: color('namespace', 'prism');
+}
+
+.token.deleted {
+  color: color('deleted', 'prism');
+  font-style: italic;
+}
+
+.token.symbol,
+.token.operator,
+.token.keyword,
+.token.property {
+  color: color('namespace', 'prism');
+}
+
+.token.tag {
+  color: color('punctuation', 'prism');
+}
+
+.token.boolean {
+  color: color('boolean', 'prism');
+}
+
+.token.number {
+  color: color('number', 'prism');
+}
+
+.token.constant,
+.token.builtin,
+.token.string,
+.token.url,
+.token.entity,
+.language-css .token.string,
+.style .token.string,
+.token.char {
+  color: color('constant', 'prism');
+}
+
+.token.selector,
+.token.function,
+.token.doctype {
+  color: color('punctuation', 'prism');
+  font-style: italic;
+}
+
+.token.attr-name,
+.token.inserted {
+  color: color('constant', 'prism');
+  font-style: italic;
+}
+
+.token.class-name,
+.token.atrule {
+  color: color('class-name', 'prism');
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: color('regex', 'prism');
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}

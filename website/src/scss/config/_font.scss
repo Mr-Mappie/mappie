@@ -1,0 +1,29 @@
+@use 'sprucecss/scss/spruce' as *;
+
+@include font-face(
+  'Manrope',
+  '../../font/manrope-v14-latin-regular.woff2'
+);
+
+@include font-face(
+  'Manrope',
+  '../../font/manrope-v14-latin-600.woff2',
+  600
+);
+
+@include font-face(
+  'Manrope',
+  '../../font/manrope-v14-latin-800.woff2',
+  700
+);
+
+@include font-face(
+  'Open Sans',
+  '../../font/open-sans-v35-latin-regular.woff2'
+);
+
+@include font-face(
+  'Open Sans',
+  '../../font/open-sans-v35-latin-700.woff2',
+  700
+);
