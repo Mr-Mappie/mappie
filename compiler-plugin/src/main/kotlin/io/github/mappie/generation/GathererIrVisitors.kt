@@ -53,17 +53,17 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
                                 })
                             }
                         }
-
                         is EnumMapping -> {
                             context.blockBody(this.scope) {
-                                +irReturn(irWhen(mapping.targetType, mapping.mappings.map { (source, targets) ->
+                                +irReturn(irWhen(mapping.targetType, mapping.mappings
+                                    .filter { (_, targets) -> targets.isNotEmpty() }
+                                    .map { (source, targets) ->
                                     val lhs = irGet(declaration.valueParameters.first())
                                     val rhs = irGetEnumValue(mapping.targetType, source.symbol)
                                     irBranch(irEqeqeq(lhs, rhs), irGetEnumValue(mapping.targetType, targets.single().symbol))
                                 } + irElseBranch(irCall(context.irBuiltIns.noWhenBranchMatchedExceptionSymbol))))
                             }
                         }
-
                         is SingleValueMapping -> {
                             context.blockBody(this.scope) {
                                 +irReturn(mapping.value)
@@ -96,3 +96,4 @@ fun PropertySource.toIr(builder: IrBuilderWithScope): IrExpression {
         }
     } ?: getter
 }
+

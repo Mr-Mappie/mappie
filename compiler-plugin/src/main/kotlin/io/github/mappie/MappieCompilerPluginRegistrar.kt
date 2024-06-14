@@ -1,5 +1,6 @@
 package io.github.mappie
 
+import io.github.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_STRICTNESS_ENUMS
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -14,7 +15,13 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-        IrGenerationExtension.registerExtension(MappieIrRegistrar(messageCollector))
+        val configuration = MappieConfiguration(
+            StrictnessConfiguration(
+                configuration.get(ARGUMENT_STRICTNESS_ENUMS, true)
+            )
+        )
+
+        IrGenerationExtension.registerExtension(MappieIrRegistrar(messageCollector, configuration))
     }
 
 }

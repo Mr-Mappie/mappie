@@ -1,15 +1,15 @@
 package io.github.mappie.resolving
 
+import io.github.mappie.MappieIrRegistrar.Companion.context
 import org.jetbrains.kotlin.ir.types.getClass
 
 interface MappingValidation {
-    fun isValid(): Boolean
+    fun isValid(): Boolean =
+        problems().isEmpty()
 
     fun problems(): List<String>
 
     private class ConstructorCallMappingValidation(private val mapping: ConstructorCallMapping) : MappingValidation {
-        override fun isValid() =
-            mapping.mappings.all { it.value.size == 1 }
 
         override fun problems(): List<String> =
             mapping.mappings
@@ -19,13 +19,14 @@ interface MappingValidation {
 
     private class EnumMappingValidation(private val mapping: EnumMapping) : MappingValidation {
 
-        override fun isValid() =
-            mapping.mappings.all { (_, targets) -> targets.size == 1 }
-
         override fun problems(): List<String> =
-            mapping.mappings
-                .filter { (_, targets) -> targets.size != 1 }
-                .map { (source, targets) -> "Source ${mapping.sourceType.getClass()!!.name.asString()}.${source.name.asString()} has ${if (targets.isEmpty()) "no target defined" else "multiple targets defined"}" }
+            if (context.configuration.strictness.enums) {
+                mapping.mappings
+                    .filter { (_, targets) -> targets.size != 1 }
+                    .map { (source, targets) -> "Source ${mapping.sourceType.getClass()!!.name.asString()}.${source.name.asString()} has ${if (targets.isEmpty()) "no target defined" else "multiple targets defined"}" }
+            } else {
+                emptyList()
+            }
     }
 
     companion object {

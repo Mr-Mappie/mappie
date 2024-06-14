@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.ir.builders.Scope
 
 class MappiePluginContext(
     val messageCollector: MessageCollector,
+    val configuration: MappieConfiguration,
     irPluginContext: IrPluginContext,
 ): IrPluginContext by irPluginContext {
 
