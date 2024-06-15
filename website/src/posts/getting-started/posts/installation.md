@@ -1,6 +1,6 @@
 ---
 title: "Installation"
-summary: ""
+summary: "Applying Mappie to your project."
 eleventyNavigation:
   key: Installation
   parent: Getting Started
