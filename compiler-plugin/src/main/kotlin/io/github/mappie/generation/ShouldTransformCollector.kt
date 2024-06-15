@@ -1,6 +1,7 @@
 package io.github.mappie.generation
 
 import io.github.mappie.BaseVisitor
+import io.github.mappie.api.Mapper
 import io.github.mappie.resolving.IDENTIFIER_MAPPING
 import io.github.mappie.util.isSubclassOfFqName
 import org.jetbrains.kotlin.ir.IrElement
@@ -12,7 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrReturn
 
 class ShouldTransformCollector : BaseVisitor<Boolean, Unit>() {
     override fun visitClass(declaration: IrClass, data: Unit): Boolean {
-        return declaration.isSubclassOfFqName("io.github.mappie.api.Mapper")
+        return declaration.isSubclassOfFqName(Mapper::class.java.name)
                 && declaration.declarations.filterIsInstance<IrSimpleFunction>().any { it.accept(data) }
     }
 

@@ -6,8 +6,9 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":api"))
     compileOnly(libs.kotlin.compiler.embeddable)
+
+    implementation(project(":api"))
 
     testImplementation(kotlin("test"))
     testImplementation(libs.kotlin.compiler.embeddable)
