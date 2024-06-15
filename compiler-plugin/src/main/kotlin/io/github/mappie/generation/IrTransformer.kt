@@ -5,6 +5,7 @@ import io.github.mappie.resolving.classes.ConstantSource
 import io.github.mappie.resolving.classes.MappingSource
 import io.github.mappie.resolving.classes.PropertySource
 import io.github.mappie.resolving.*
+import io.github.mappie.resolving.classes.DefaultParameterValueSource
 import io.github.mappie.util.*
 import io.github.mappie.validation.MappingValidation
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
@@ -78,6 +79,7 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
 fun MappingSource.toIr(builder: IrBuilderWithScope): IrExpression =
     when (this) {
         is PropertySource -> toIr(builder)
+        is DefaultParameterValueSource -> value
         is ConstantSource<*> -> value
     }
 

@@ -44,6 +44,12 @@ data class PropertySource(
     }
 }
 
+data class DefaultParameterValueSource(
+    val value: IrExpression,
+) : MappingSource {
+    override fun resolveType() = value.type
+}
+
 data class ConstantSource<T>(
     val type: IrType,
     val value: IrConst<T>,

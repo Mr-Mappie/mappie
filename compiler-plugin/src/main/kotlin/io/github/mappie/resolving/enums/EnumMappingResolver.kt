@@ -8,18 +8,19 @@ import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.ir.util.isEnumClass
 
-class EnumMappingResolver : BaseVisitor<EnumMapping, Unit>() {
+class EnumMappingResolver(private val declaration: IrFunction) {
 
-    override fun visitFunction(declaration: IrFunction, data: Unit): EnumMapping {
-        file = declaration.fileEntry
+    private val targetType = declaration.returnType
 
-        val targetType = declaration.returnType
+    private val sourceType = declaration.valueParameters.first().type
+
+    init {
         check(targetType.getClass()!!.isEnumClass)
+    }
 
-        val sourceType = declaration.valueParameters.first().type
+    fun resolve(): EnumMapping {
         val targets = targetType.getClass()!!.accept(EnumEntriesCollector(), Unit)
         val sources = sourceType.getClass()!!.accept(EnumEntriesCollector(), Unit)
         val explicitMappings = declaration.body!!.accept(EnumMappingsResolver(), Unit)
