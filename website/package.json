@@ -14,8 +14,7 @@
     "sass:prod": "sass --load-path=node_modules --no-source-map --style=compressed src/scss:src/css",
     "sass:lint": "stylelint \"src/scss/**/*.scss\"",
     "sass:lint:fix": "stylelint \"src/scss/**/*.scss\" --fix",
-    "start": "npm-run-all --parallel eleventy:dev sass:dev",
-    "build": "eleventy"
+    "start": "npm-run-all --parallel eleventy:dev sass:dev"
   },
   "dependencies": {
     "@11ty/eleventy-img": "^3.1.0",

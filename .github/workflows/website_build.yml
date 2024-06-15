@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - website/**
 
 jobs:
   deploy:
@@ -26,7 +28,7 @@ jobs:
       - run: npm ci
         working-directory: ./website
 
-      - run: npm run build
+      - run: npm run prod
         working-directory: ./website
 
       - name: Archive artifact

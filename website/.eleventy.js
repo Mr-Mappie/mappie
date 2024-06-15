@@ -69,6 +69,6 @@ module.exports = config => {
       output: 'dist'
     },
     passthroughFileCopy: true,
-    pathPrefix: './',
+    pathPrefix: 'mappie',
   };
 };
