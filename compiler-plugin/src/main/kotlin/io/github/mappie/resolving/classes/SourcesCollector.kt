@@ -28,9 +28,9 @@ sealed interface MappingSource {
 
 data class PropertySource(
     val property: IrSimpleFunctionSymbol,
-//    val property: IrField,
     val type: IrType,
     val dispatchReceiverSymbol: IrValueSymbol,
+    val isResolvedAutomatically: Boolean,
     val transformation: IrFunctionExpression? = null,
     val origin: IrExpression? = null,
 ) : MappingSource {
@@ -212,6 +212,7 @@ private class SourceValueCollector(
             dispatchReceiverSymbol = dispatchReceiverSymbol,
             transformation = null,
             origin = expression,
+            isResolvedAutomatically = false
         )
     }
 

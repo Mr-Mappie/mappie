@@ -36,7 +36,7 @@ class ClassMappingResolver : BaseVisitor<List<Mapping>, Unit>() {
                         getter.name == Name.special("<get-${target.name.asString()}>")
                     }
                     if (getter != null) {
-                        listOf(PropertySource(getter.symbol, target.type, sourceParameter.symbol))
+                        listOf(PropertySource(getter.symbol, target.type, sourceParameter.symbol, true))
                     } else {
                         emptyList()
                     }

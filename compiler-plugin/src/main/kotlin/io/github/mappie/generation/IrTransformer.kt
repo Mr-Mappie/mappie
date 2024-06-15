@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 
 class IrTransformer : IrElementTransformerVoidWithContext() {
@@ -31,17 +30,13 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
 
     override fun visitFunctionNew(declaration: IrFunction): IrStatement {
         if (declaration.accept(ShouldTransformCollector(), Unit)) {
-            val targetClass = requireNotNull(declaration.returnType.getClass()) {
-                "Expected return type of map to be non-null."
-            }
-
             val (valids, invalids) = declaration.accept(MappingResolver(), Unit)
                 .map { it to MappingValidation.of(declaration.fileEntry, it)  }
                 .partition { it.second.isValid() }
 
             if (valids.isNotEmpty()) {
                 declaration.body = with(createScope(declaration)) {
-                    when (val mapping = valids.single().first) {
+                    when (val mapping = MappingSelector.of(valids).select()) {
                         is ConstructorCallMapping -> {
                             context.blockBody(this.scope) {
                                 +irReturn(irCallConstructor(mapping.symbol, emptyList()).apply {
