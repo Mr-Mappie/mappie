@@ -1,7 +1,6 @@
 plugins {
-    alias(libs.plugins.kotlin.jvm)
-    id("java-gradle-plugin")
-    id("maven-publish")
+    alias(libs.plugins.kotlin.jvm) version embeddedKotlinVersion
+    alias(libs.plugins.gradle.plugin.publish)
 }
 
 dependencies {
@@ -13,7 +12,7 @@ gradlePlugin {
         create("mappie") {
             id = "io.github.mappie"
             displayName = "Mappie Gradle Plugin"
-            description = "Kotlin compiler plugin for generating mapping functions"
+            description = "Kotlin compiler plugin for generating object mappers"
             implementationClass = "io.github.mappie.MappieGradlePlugin"
         }
     }
