@@ -16,7 +16,7 @@ dependencies {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            artifactId = "compiler-plugin"
+            artifactId = "mappie-compiler-plugin"
             from(components["kotlin"])
         }
     }

@@ -27,7 +27,7 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
     override fun getPluginArtifact(): SubpluginArtifact =
         SubpluginArtifact(
             groupId = "io.github.mappie",
-            artifactId = "compiler-plugin",
+            artifactId = "mappie-compiler-plugin",
             version = "0.1.0",
         )
 
