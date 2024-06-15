@@ -1,13 +1,12 @@
 {
-  "authorEmail": "hello@conedevelopment.com",
-  "authorName": "Cone",
+  "authorEmail": "stefan.koppier@outlook.com",
+  "authorName": "Stefan Koppier",
   "copyright": "Some rights reserved.",
-  "name": "Spruce CSS Eleventy Documentation Template",
-  "slogen": "An Eleventy theme for documentation sites",
+  "name": "Mappie",
+  "slogen": "Mappie: a Kotlin object mapper",
   "social": {
-    "twitter": "https://twitter.com/conedevelopment",
-    "github": "https://github.com/conedevelopment/sprucecss-eleventy-documentation-template",
+    "github": "https://github.com/Mr-Mappie/mappie",
     "discord": ""
   },
-  "url": "https://eleventy-documentation.sprucecss.com"
+  "url": "https://mr-mappie.github.io/mappie/"
 }
