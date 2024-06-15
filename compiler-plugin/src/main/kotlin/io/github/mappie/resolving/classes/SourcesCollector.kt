@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
-import kotlin.math.exp
 
 sealed interface MappingSource {
     fun resolveType(): IrType

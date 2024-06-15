@@ -36,7 +36,7 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
 
             if (valids.isNotEmpty()) {
                 declaration.body = with(createScope(declaration)) {
-                    when (val mapping = MappingSelector.of(valids).select()) {
+                    when (val mapping = MappingSelector.of(valids.map { it.first }).select()) {
                         is ConstructorCallMapping -> {
                             context.blockBody(this.scope) {
                                 +irReturn(irCallConstructor(mapping.symbol, emptyList()).apply {
