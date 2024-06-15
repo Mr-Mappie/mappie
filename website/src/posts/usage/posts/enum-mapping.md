@@ -25,7 +25,7 @@ object ColorMapper : EnumMapper<Color, Colour>() {
 }
 ```
 
-Now suppose `Color`{:.kotlin} has an extra entry: `Color.ORANGE`, whilst `Colour` does
+Now suppose `Color` has an extra entry: `Color.ORANGE`, whilst `Colour` does
 not have `Colour.ORANGE`, but does have `Colour.OTHER`. We can map `Colour.ORANGE` to `Colour.OTHER` via
 
 ```kotlin
