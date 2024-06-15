@@ -18,4 +18,16 @@ overview:
     title: "Getting Started"
     url: "/getting-started/"
     description: "Start here and get to know Mappie."
+-
+  title: "Object Mapping"
+  url: "/object-mapping/"
+  description: "Learn how to use Mappie for object mapping."
+-
+  title: "Enum Mapping"
+  url: "/enum-mapping/"
+  description: "Learn how to use Mappie for enum mapping."
+-
+  title: "Primitive Mapping"
+  url: "/primitive-mapping/"
+  description: "Learn how to use Mappie for primitive mapping."
 ---

@@ -1,0 +1,4 @@
+{
+  "layout": "layouts/post.html",
+  "permalink": "/object-mapping/{{ title | slug }}/index.html"
+}

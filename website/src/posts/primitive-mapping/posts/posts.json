@@ -1,0 +1,4 @@
+{
+  "layout": "layouts/post.html",
+  "permalink": "/primitive-mapping/{{ title | slug }}/index.html"
+}

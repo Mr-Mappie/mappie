@@ -32,13 +32,33 @@
       "items": [
         {
           "caption": "Object Mapping",
-          "url": "/usage/object-mapping/",
+          "url": "/object-mapping/overview/",
           "external": false
         },
         {
           "caption": "Enum Mapping",
-          "url": "/usage/enum-mapping/",
+          "url": "/enum-mapping/overview/",
           "external": false
+        },
+        {
+          "caption": "Primitive Mapping",
+          "url": "/primitive-mapping/overview/",
+          "external": false
+        }
+      ]
+    },
+    {
+      "title": "Contact",
+      "items": [
+        {
+          "caption": "Submit a Bug or Feature Request",
+          "url": "https://github.com/Mr-Mappie/mappie/issues/new/choose",
+          "external": true
+        },
+        {
+          "caption": "Start a Discussion",
+          "url": "https://github.com/Mr-Mappie/mappie/discussions/new/choose",
+          "external": true
         }
       ]
     }
