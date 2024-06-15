@@ -4,7 +4,7 @@ summary: "Performing enum mapping."
 eleventyNavigation:
   key: Enum Mapping
   parent: Usage
-  order: 2
+  order: 4
 ---
 
 # Summary
