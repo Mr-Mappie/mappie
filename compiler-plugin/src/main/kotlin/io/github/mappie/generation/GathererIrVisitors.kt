@@ -35,20 +35,18 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
                 "Expected return type of map to be non-null."
             }
 
-            val mapping = declaration.accept(MappingResolver(), Unit)
+            val (valids, invalids) = declaration.accept(MappingResolver(), Unit)
+                .map { it to MappingValidation.of(declaration.fileEntry, it)  }
+                .partition { it.second.isValid() }
 
-            val validation = MappingValidation.of(declaration.fileEntry, mapping)
-            if (validation.isValid()) {
+            if (valids.isNotEmpty()) {
                 declaration.body = with(createScope(declaration)) {
-                    when (mapping) {
+                    when (val mapping = valids.single().first) {
                         is ConstructorCallMapping -> {
                             context.blockBody(this.scope) {
-                                val primaryConstructor = requireNotNull(targetClass.primaryConstructor) {
-                                    "The target type must have a primary constructor."
-                                }
-                                +irReturn(irCallConstructor(primaryConstructor.symbol, emptyList()).apply {
+                                +irReturn(irCallConstructor(mapping.symbol, emptyList()).apply {
                                     mapping.mappings.map { (target, source) ->
-                                        val index = primaryConstructor.valueParameters.indexOf(target)
+                                        val index = mapping.symbol.owner.valueParameters.indexOf(target)
                                         putValueArgument(index, source.single().toIr(this@blockBody))
                                     }
                                 })
@@ -73,7 +71,7 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
                     }
                 }
             } else {
-                validation.problems().forEach { problem ->
+                invalids.first().second.problems().forEach { problem ->
                     context.messageCollector.error(problem.description, problem.location ?: location(declaration))
                 }
             }

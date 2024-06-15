@@ -42,6 +42,11 @@ interface MappingValidation {
                             (sources.single() as? PropertySource)?.origin?.let { location(file, it) }
                         ) }
                 )
+
+                // TODO: make optional via configuration
+                if (!mapping.symbol.owner.visibility.isPublicAPI) {
+                    add(Problem("Constructor is not public", location(mapping.symbol.owner)))
+                }
             }
     }
 

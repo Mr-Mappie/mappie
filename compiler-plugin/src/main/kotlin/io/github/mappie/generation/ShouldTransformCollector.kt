@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 
-class ShouldTransformCollector : BaseVisitor<Boolean, Unit> {
+class ShouldTransformCollector : BaseVisitor<Boolean, Unit>() {
     override fun visitClass(declaration: IrClass, data: Unit): Boolean {
         return declaration.isSubclassOfFqName("io.github.mappie.api.Mapper")
                 && declaration.declarations.filterIsInstance<IrSimpleFunction>().any { it.accept(data) }

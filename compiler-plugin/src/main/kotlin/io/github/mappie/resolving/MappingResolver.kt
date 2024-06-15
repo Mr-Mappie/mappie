@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
@@ -20,6 +22,7 @@ sealed interface Mapping
 data class ConstructorCallMapping(
     val targetType: IrType,
     val sourceType: IrType,
+    val symbol: IrConstructorSymbol,
     val mappings: Map<IrValueParameter, List<MappingSource>>,
 ) : Mapping
 
@@ -34,16 +37,15 @@ data class SingleValueMapping(
     val value: IrExpression,
 ) : Mapping
 
-class MappingResolver
-    : BaseVisitor<Mapping, Unit> {
+class MappingResolver : BaseVisitor<List<Mapping>, Unit>() {
 
-    override fun visitFunction(declaration: IrFunction, data: Unit): Mapping {
+    override fun visitFunction(declaration: IrFunction, data: Unit): List<Mapping> {
         val type = declaration.returnType
         val clazz = type.getClass()!!
         return when {
-            clazz.isEnumClass -> declaration.accept(EnumMappingResolver(), Unit)
+            clazz.isEnumClass -> listOf(declaration.accept(EnumMappingResolver(), Unit))
             clazz.isData -> declaration.accept(ClassMappingResolver(), Unit)
-            type.isPrimitiveType() || type.isString() -> declaration.accept(PrimitiveMappingResolver(), Unit)
+            type.isPrimitiveType() || type.isString() -> listOf(declaration.accept(PrimitiveMappingResolver(), Unit))
             else -> error("Only mapping of data- and enum classes are supported yet.")
         }
     }

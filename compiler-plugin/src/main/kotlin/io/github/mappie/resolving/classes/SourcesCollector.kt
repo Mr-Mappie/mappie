@@ -3,7 +3,10 @@ package io.github.mappie.resolving.classes
 import io.github.mappie.BaseVisitor
 import io.github.mappie.MappieIrRegistrar.Companion.context
 import io.github.mappie.resolving.*
+import io.github.mappie.util.error
 import io.github.mappie.util.irGet
+import io.github.mappie.util.location
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -17,6 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import kotlin.math.exp
 
 sealed interface MappingSource {
     fun resolveType(): IrType
@@ -24,6 +28,7 @@ sealed interface MappingSource {
 
 data class PropertySource(
     val property: IrSimpleFunctionSymbol,
+//    val property: IrField,
     val type: IrType,
     val dispatchReceiverSymbol: IrValueSymbol,
     val transformation: IrFunctionExpression? = null,
@@ -48,8 +53,9 @@ data class ConstantSource<T>(
 }
 
 class ObjectSourcesCollector(
-    private val dispatchReceiverSymbol: IrValueSymbol
-) : BaseVisitor<List<Pair<Name, MappingSource>>, Unit> {
+    file: IrFileEntry,
+    private val dispatchReceiverSymbol: IrValueSymbol,
+) : BaseVisitor<List<Pair<Name, MappingSource>>, Unit>(file) {
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): List<Pair<Name, MappingSource>> {
         return body.statements.single().accept(data)
@@ -71,15 +77,16 @@ class ObjectSourcesCollector(
     }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: Unit): List<Pair<Name, MappingSource>> {
-        return expression.function.body!!.statements.map { it.accept(ObjectSourceCollector(dispatchReceiverSymbol), Unit) }
+        return expression.function.body!!.statements.map { it.accept(ObjectSourceCollector(file, dispatchReceiverSymbol), Unit) }.filterNotNull()
     }
 }
 
 private class ObjectSourceCollector(
+    file: IrFileEntry?,
     private val dispatchReceiverSymbol: IrValueSymbol,
-) : BaseVisitor<Pair<Name, MappingSource>, Unit> {
+) : BaseVisitor<Pair<Name, MappingSource>?, Unit>(file) {
 
-    override fun visitCall(expression: IrCall, data: Unit): Pair<Name, MappingSource> {
+    override fun visitCall(expression: IrCall, data: Unit): Pair<Name, MappingSource>? {
         return when (expression.symbol.owner.name) {
             IDENTIFIER_MAPPED_FROM_PROPERTY, IDENTIFIER_MAPPED_FROM_CONSTANT -> {
                 val target = expression.extensionReceiver!!.accept(TargetValueCollector(), Unit)
@@ -91,12 +98,12 @@ private class ObjectSourceCollector(
                 TODO("Implement")
             }
             IDENTIFIER_TRANFORM -> {
-                val mapping = expression.dispatchReceiver!!.accept(data)
+                val mapping = expression.dispatchReceiver!!.accept(data)!!
                 val transformation = expression.valueArguments.first()!! as IrFunctionExpression
                 mapping.first to (mapping.second as PropertySource).copy(transformation = transformation)
             }
             IDENTIFIER_VIA -> {
-                val mapping = expression.dispatchReceiver!!.accept(data)
+                val mapping = expression.dispatchReceiver!!.accept(data)!!
                 val transformation = expression.valueArguments.first()!!.accept(MapperReferenceCollector(), Unit)
                 val type = transformation.type
                 mapping.first to (mapping.second as PropertySource).copy(
@@ -105,20 +112,29 @@ private class ObjectSourceCollector(
                 )
             }
             else -> {
-                TODO("$javaClass :: visitCall Not implemented for ${expression::class} :: ${expression.dump()}")
+                context.messageCollector.error("Unexpected method call", file?.let { location(it, expression) })
+                return null
             }
         }
     }
 
-    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): Pair<Name, MappingSource> {
+    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): Pair<Name, MappingSource>? {
         return when (expression.operator.name) {
             "IMPLICIT_COERCION_TO_UNIT" -> expression.argument.accept(data)
             else -> error(expression.operator.name)
         }
     }
+
+    override fun visitReturn(expression: IrReturn, data: Unit): Pair<Name, MappingSource>? {
+        return expression.value.accept(data)
+    }
+
+    override fun visitGetObjectValue(expression: IrGetObjectValue, data: Unit): Pair<Name, MappingSource>? {
+        return null
+    }
 }
 
-private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit> {
+private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>() {
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Unit): IrFunctionExpression {
         return context.referenceClass(expression.symbol.owner.classId!!)!!
@@ -187,7 +203,7 @@ private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>
 
 private class SourceValueCollector(
     private val dispatchReceiverSymbol: IrValueSymbol,
-) : BaseVisitor<MappingSource, Unit> {
+) : BaseVisitor<MappingSource, Unit>() {
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Unit): MappingSource {
         return PropertySource(
@@ -204,7 +220,7 @@ private class SourceValueCollector(
     }
 }
 
-private class TargetValueCollector : BaseVisitor<Name, Unit> {
+private class TargetValueCollector : BaseVisitor<Name, Unit>() {
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Unit): Name {
         return expression.symbol.owner.name

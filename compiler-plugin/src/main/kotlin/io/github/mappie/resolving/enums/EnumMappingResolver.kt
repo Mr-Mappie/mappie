@@ -4,20 +4,22 @@ import io.github.mappie.BaseVisitor
 import io.github.mappie.resolving.EnumMapping
 import io.github.mappie.resolving.IDENTIFIER_MAPPING
 import io.github.mappie.resolving.IDENTIFIER_MAPPED_FROM_ENUM_ENTRY
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.ir.util.isEnumClass
 
-class EnumMappingResolver : BaseVisitor<EnumMapping, Unit> {
+class EnumMappingResolver : BaseVisitor<EnumMapping, Unit>() {
 
     override fun visitFunction(declaration: IrFunction, data: Unit): EnumMapping {
+        file = declaration.fileEntry
+
         val targetType = declaration.returnType
         check(targetType.getClass()!!.isEnumClass)
-        val sourceType = declaration.valueParameters.first().type
 
+        val sourceType = declaration.valueParameters.first().type
         val targets = targetType.getClass()!!.accept(EnumEntriesCollector(), Unit)
         val sources = sourceType.getClass()!!.accept(EnumEntriesCollector(), Unit)
         val explicitMappings = declaration.body!!.accept(EnumMappingsResolver(), Unit)
@@ -34,7 +36,7 @@ class EnumMappingResolver : BaseVisitor<EnumMapping, Unit> {
     }
 }
 
-private class EnumMappingsResolver : BaseVisitor<Map<IrEnumEntry, List<IrEnumEntry>>, Unit> {
+private class EnumMappingsResolver : BaseVisitor<Map<IrEnumEntry, List<IrEnumEntry>>, Unit>() {
 
     override fun visitCall(expression: IrCall, data: Unit): Map<IrEnumEntry, List<IrEnumEntry>> {
         return when (expression.symbol.owner.name) {
@@ -47,7 +49,7 @@ private class EnumMappingsResolver : BaseVisitor<Map<IrEnumEntry, List<IrEnumEnt
                 mapOf(source to listOf(target))
             }
             else -> {
-                error("Unexpected symbol ${expression.symbol.owner.name}")
+                super.visitCall(expression, data)
             }
         }
     }

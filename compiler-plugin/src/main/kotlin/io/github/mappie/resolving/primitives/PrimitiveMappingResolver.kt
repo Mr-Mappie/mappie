@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
 
-class PrimitiveMappingResolver : BaseVisitor<Mapping, Unit> {
+class PrimitiveMappingResolver : BaseVisitor<Mapping, Unit>() {
 
     override fun visitFunction(declaration: IrFunction, data: Unit): Mapping {
         val targetType = declaration.returnType
@@ -23,7 +23,7 @@ class PrimitiveMappingResolver : BaseVisitor<Mapping, Unit> {
 
 private class SingleResultTargetCollector(
     private val declaration: IrFunction,
-) : BaseVisitor<IrExpression, Unit> {
+) : BaseVisitor<IrExpression, Unit>() {
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): IrExpression {
         return body.statements.single().accept(data)

@@ -12,6 +12,7 @@ class GameMapperTest {
             GameMapper.map(Game("Poker", null)),
         )
     }
+
     @Test
     fun `map Game to GameDto without null via GameMapper`() {
         assertEquals(
