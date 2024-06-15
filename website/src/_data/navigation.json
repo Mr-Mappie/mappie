@@ -21,16 +21,6 @@
           "external": false
         }
       ]
-    },
-    {
-      "title": "Acknowledgements",
-      "items": [
-        {
-          "caption": "Acknowledgements",
-          "url": "/acknowledgements/",
-          "external": false
-        }
-      ]
     }
   ]
 }
