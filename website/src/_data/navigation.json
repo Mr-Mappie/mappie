@@ -19,6 +19,26 @@
           "caption": "Introduction",
           "url": "/getting-started/introduction/",
           "external": false
+        },
+        {
+          "caption": "Installation",
+          "url": "/getting-started/installation/",
+          "external": false
+        }
+      ]
+    },
+    {
+      "title": "Usage",
+      "items": [
+        {
+          "caption": "Object Mapping",
+          "url": "/usage/object-mapping/",
+          "external": false
+        },
+        {
+          "caption": "Enum Mapping",
+          "url": "/usage/enum-mapping/",
+          "external": false
         }
       ]
     }

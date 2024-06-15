@@ -1,6 +1,6 @@
 ---
-title: "Mapping"
+title: "Usage"
 eleventyNavigation:
-  key: Mapping
+  key: Usage
   order: 2
 ---

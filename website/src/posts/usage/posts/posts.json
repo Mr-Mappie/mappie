@@ -1,0 +1,4 @@
+{
+  "layout": "layouts/post.html",
+  "permalink": "/usage/{{ title | slug }}/index.html"
+}
