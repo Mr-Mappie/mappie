@@ -10,7 +10,7 @@ allprojects {
 
 sonar {
     properties {
-        property("sonar.projectKey", "Mr-Mappie_mappe")
+        property("sonar.projectKey", "Mr-Mappie_mappie")
         property("sonar.organization", "mappie")
         property("sonar.host.url", "https://sonarcloud.io")
     }
