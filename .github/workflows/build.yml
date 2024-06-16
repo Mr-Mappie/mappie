@@ -20,8 +20,9 @@ jobs:
 
       - uses: actions/setup-java@v4
         with:
-          java-version: 11
+          java-version: 17
           distribution: temurin
+          cache: 'gradle'
 
       - name: Build
         run: ./gradlew build

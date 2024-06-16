@@ -8,10 +8,6 @@ allprojects {
     version = "0.1.0"
 }
 
-kotlin {
-    jvmToolchain(11)
-}
-
 sonar {
     properties {
         property("sonar.projectKey", "Mr-Mappie_mappe")
