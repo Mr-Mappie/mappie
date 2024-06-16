@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.kotlin.jvm) version embeddedKotlinVersion
+    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.gradle.plugin.publish)
 }
 
