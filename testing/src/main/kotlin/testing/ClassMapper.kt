@@ -1,7 +1,6 @@
 package testing
 
 import io.github.mappie.api.DataClassMapper
-import kotlin.Boolean
 
 class Class(
     private val field: String,
