@@ -8,9 +8,9 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  permissions:
-    pull-requests: read
   build:
+    permissions:
+      pull-requests: read
     name: Build and Analysis
     runs-on: ubuntu-latest
     steps:
