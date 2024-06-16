@@ -19,7 +19,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -28,10 +29,12 @@ jobs:
         with:
           node-version: '18.x'
 
-      - run: npm ci
+      - name: Install Packages
+        run: npm ci
         working-directory: ./website
 
-      - run: npm run prod
+      - name: Build Website
+        run: npm run prod
         working-directory: ./website
 
       - name: Archive artifact
