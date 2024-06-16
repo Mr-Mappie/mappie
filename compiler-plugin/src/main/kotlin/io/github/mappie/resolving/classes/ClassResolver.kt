@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.ir.util.hasDefaultValue
 import org.jetbrains.kotlin.ir.util.isClass
 import org.jetbrains.kotlin.name.Name
 
-class ClassMappingResolver(private val declaration: IrFunction) {
+class ClassResolver(private val declaration: IrFunction) {
 
     private val sourceParameter = declaration.valueParameters.first()
 

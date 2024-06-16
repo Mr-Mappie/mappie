@@ -12,11 +12,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.callableId
-import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.ir.util.isEnumClass
 
-class EnumMappingResolver(private val declaration: IrFunction) {
+class EnumResolver(private val declaration: IrFunction) {
 
     private val targetType = declaration.returnType
 
@@ -36,10 +35,10 @@ class EnumMappingResolver(private val declaration: IrFunction) {
             val explicitMapping = explicitMappings[source]
             if (resolvedMapping.isNotEmpty() && explicitMapping != null) {
                 with (explicitMapping.first()) {
-                    context.messageCollector.warn("Unnecessary explicit mapping of ${symbol.owner.callableId.className}.${name.asString()}", location(declaration))
+                    context.messageCollector.warn("Unnecessary explicit mapping of ${target.symbol.owner.callableId.className}.${target.name.asString()}", location(declaration.fileEntry, origin))
                 }
             }
-            explicitMapping ?: resolvedMapping
+            explicitMapping?.map { it.target } ?: resolvedMapping
         }
 
         return EnumMapping(
@@ -50,9 +49,14 @@ class EnumMappingResolver(private val declaration: IrFunction) {
     }
 }
 
-private class EnumMappingsResolver : BaseVisitor<Map<IrEnumEntry, List<IrEnumEntry>>, Unit>() {
+data class ExplicitEnumMapping(
+    val target: IrEnumEntry,
+    val origin: IrExpression,
+)
 
-    override fun visitCall(expression: IrCall, data: Unit): Map<IrEnumEntry, List<IrEnumEntry>> {
+private class EnumMappingsResolver : BaseVisitor<Map<IrEnumEntry, List<ExplicitEnumMapping>>, Unit>() {
+
+    override fun visitCall(expression: IrCall, data: Unit): Map<IrEnumEntry, List<ExplicitEnumMapping>> {
         return when (expression.symbol.owner.name) {
             IDENTIFIER_MAPPING -> {
                 expression.valueArguments.first()?.accept(data) ?: return emptyMap()
@@ -60,7 +64,7 @@ private class EnumMappingsResolver : BaseVisitor<Map<IrEnumEntry, List<IrEnumEnt
             IDENTIFIER_MAPPED_FROM_ENUM_ENTRY -> {
                 val target = (expression.extensionReceiver!! as IrGetEnumValue).symbol.owner
                 val source = (expression.valueArguments.first()!! as IrGetEnumValue).symbol.owner
-                mapOf(source to listOf(target))
+                mapOf(source to listOf(ExplicitEnumMapping(target, expression)))
             }
             else -> {
                 super.visitCall(expression, data)
@@ -68,31 +72,30 @@ private class EnumMappingsResolver : BaseVisitor<Map<IrEnumEntry, List<IrEnumEnt
         }
     }
 
-    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): Map<IrEnumEntry, List<IrEnumEntry>> {
+    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): Map<IrEnumEntry, List<ExplicitEnumMapping>> {
         return expression.argument.accept(data)
     }
 
-    override fun visitFunction(declaration: IrFunction, data: Unit): Map<IrEnumEntry, List<IrEnumEntry>> {
+    override fun visitFunction(declaration: IrFunction, data: Unit): Map<IrEnumEntry, List<ExplicitEnumMapping>> {
         return declaration.body!!.accept(data)
     }
 
-    override fun visitReturn(expression: IrReturn, data: Unit): Map<IrEnumEntry, List<IrEnumEntry>> {
+    override fun visitReturn(expression: IrReturn, data: Unit): Map<IrEnumEntry, List<ExplicitEnumMapping>> {
         return expression.value.accept(data)
     }
 
-    override fun visitFunctionExpression(expression: IrFunctionExpression, data: Unit): Map<IrEnumEntry, List<IrEnumEntry>> {
+    override fun visitFunctionExpression(expression: IrFunctionExpression, data: Unit): Map<IrEnumEntry, List<ExplicitEnumMapping>> {
         return expression.function.accept(data)
     }
 
-    override fun visitBlockBody(body: IrBlockBody, data: Unit): Map<IrEnumEntry, List<IrEnumEntry>> {
+    override fun visitBlockBody(body: IrBlockBody, data: Unit): Map<IrEnumEntry, List<ExplicitEnumMapping>> {
         return body.statements.map { it.accept(data) }
             .fold(mutableMapOf()) { acc, current ->
                 acc.apply {
                     current.forEach { (key, value) ->
-                        merge(key, value, Collection<IrEnumEntry>::plus)
+                        merge(key, value, Collection<ExplicitEnumMapping>::plus)
                     }
                 }
             }
     }
 }
-

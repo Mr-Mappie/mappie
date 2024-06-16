@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
 
-class PrimitiveMappingResolver(private val declaration: IrFunction) {
+class PrimitiveResolver(private val declaration: IrFunction) {
 
     private val targetType = declaration.returnType
 

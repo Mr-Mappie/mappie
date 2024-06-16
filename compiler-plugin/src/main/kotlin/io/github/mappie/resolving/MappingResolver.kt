@@ -1,16 +1,15 @@
 package io.github.mappie.resolving
 
 import io.github.mappie.BaseVisitor
-import io.github.mappie.resolving.classes.ClassMappingResolver
+import io.github.mappie.resolving.classes.ClassResolver
 import io.github.mappie.resolving.classes.MappingSource
-import io.github.mappie.resolving.enums.EnumMappingResolver
-import io.github.mappie.resolving.primitives.PrimitiveMappingResolver
+import io.github.mappie.resolving.enums.EnumResolver
+import io.github.mappie.resolving.primitives.PrimitiveResolver
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
@@ -43,9 +42,9 @@ class MappingResolver : BaseVisitor<List<Mapping>, Unit>() {
         val type = declaration.returnType
         val clazz = type.getClass()!!
         return when {
-            type.isPrimitiveType() || type.isString() -> listOf(PrimitiveMappingResolver(declaration).resolve())
-            clazz.isEnumClass -> listOf(EnumMappingResolver(declaration).resolve())
-            clazz.isClass -> ClassMappingResolver(declaration).resolve()
+            type.isPrimitiveType() || type.isString() -> listOf(PrimitiveResolver(declaration).resolve())
+            clazz.isEnumClass -> listOf(EnumResolver(declaration).resolve())
+            clazz.isClass -> ClassResolver(declaration).resolve()
             else -> error("Only mapping of data- and enum classes are supported yet.")
         }
     }
