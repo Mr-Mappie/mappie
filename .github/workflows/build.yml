@@ -7,27 +7,27 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
-  jobs:
-    permissions:
-      pull-requests: read
-    build:
-      name: Build and Analysis
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-          with:
-            fetch-depth: 0
+jobs:
+  permissions:
+    pull-requests: read
+  build:
+    name: Build and Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-        - uses: actions/setup-java@v4
-          with:
-            java-version: 11
-            distribution: temurin
+      - uses: actions/setup-java@v4
+        with:
+          java-version: 11
+          distribution: temurin
 
-        - name: Build
-          run: ./gradlew build
+      - name: Build
+        run: ./gradlew build
 
-        - name: Sonar
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          run: ./gradlew sonar
+      - name: Sonar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew sonar
