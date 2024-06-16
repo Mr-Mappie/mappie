@@ -7,9 +7,9 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
-  permissions:
-    pull-requests: read
   jobs:
+    permissions:
+      pull-requests: read
     build:
       name: Build and Analysis
       runs-on: ubuntu-latest
