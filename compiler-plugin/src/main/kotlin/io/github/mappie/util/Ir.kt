@@ -3,7 +3,6 @@ package io.github.mappie.util
 import io.github.mappie.MappieIrRegistrar.Companion.context
 import io.github.mappie.MappiePluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
@@ -20,7 +19,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 internal fun IrClass.isSubclassOfFqName(fqName: String): Boolean =
-    fqNameWhenAvailable?.asString() == fqName || superTypes.any { it.erasedUpperBound.isSubclassOfFqName(fqName) }
+    allSuperTypes().any { it.erasedUpperBound.fqNameWhenAvailable?.asString() == fqName }
+
+internal fun IrClass.allSuperTypes(): List<IrType> =
+    this.superTypes + this.superTypes.flatMap { it.erasedUpperBound.allSuperTypes() }
 
 fun IrType.isAssignableFrom(other: IrType): Boolean =
     isSubtypeOf(other, IrTypeSystemContextImpl(context.irBuiltIns)) && (isNullable() || !other.isNullable())
