@@ -1,10 +1,15 @@
 plugins {
+    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.sonarqube)
 }
 
 allprojects {
     group = "io.github.mappie"
     version = "0.1.0"
+}
+
+kotlin {
+    jvmToolchain(11)
 }
 
 sonar {
