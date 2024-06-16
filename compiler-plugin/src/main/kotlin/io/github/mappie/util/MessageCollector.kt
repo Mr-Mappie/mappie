@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.ir.util.fileEntry
 
 fun MessageCollector.info(message: String) = report(CompilerMessageSeverity.INFO, message)
 
-fun MessageCollector.warn(message: String) = report(CompilerMessageSeverity.WARNING, message)
+fun MessageCollector.warn(message: String, location: CompilerMessageSourceLocation? = null) =
+    report(CompilerMessageSeverity.WARNING, message, location)
 
 fun MessageCollector.error(message: String, location: CompilerMessageSourceLocation? = null) =
     report(CompilerMessageSeverity.ERROR, message, location)

@@ -1,13 +1,19 @@
 package io.github.mappie.resolving.enums
 
 import io.github.mappie.BaseVisitor
+import io.github.mappie.MappieIrRegistrar.Companion.context
 import io.github.mappie.resolving.EnumMapping
 import io.github.mappie.resolving.IDENTIFIER_MAPPING
 import io.github.mappie.resolving.IDENTIFIER_MAPPED_FROM_ENUM_ENTRY
+import io.github.mappie.util.location
+import io.github.mappie.util.warn
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.util.callableId
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.ir.util.isEnumClass
 
 class EnumMappingResolver(private val declaration: IrFunction) {
@@ -26,7 +32,14 @@ class EnumMappingResolver(private val declaration: IrFunction) {
         val explicitMappings = declaration.body!!.accept(EnumMappingsResolver(), Unit)
 
         val mappings = sources.associateWith { source ->
-            explicitMappings.getOrElse(source) { targets.filter { target -> target.name == source.name } }
+            val resolvedMapping = targets.filter { target -> target.name == source.name }
+            val explicitMapping = explicitMappings[source]
+            if (resolvedMapping.isNotEmpty() && explicitMapping != null) {
+                with (explicitMapping.first()) {
+                    context.messageCollector.warn("Unnecessary explicit mapping of ${symbol.owner.callableId.className}.${name.asString()}", location(declaration))
+                }
+            }
+            explicitMapping ?: resolvedMapping
         }
 
         return EnumMapping(

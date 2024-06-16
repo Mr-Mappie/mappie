@@ -9,6 +9,7 @@ abstract class CollectionMapper<FROM, TO> : Mapper<List<FROM>, List<TO>>() {
     abstract infix fun filteredBy(predicate: (FROM) -> Boolean): CollectionMapper<FROM, TO>
 }
 
+// TODO: choose between DataClassMapper and ClassMapper vs just ObjectMapper
 abstract class DataClassMapper<FROM, TO> : Mapper<FROM, TO>() {
 
     val forList: CollectionMapper<FROM, TO> get() =

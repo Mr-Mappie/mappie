@@ -37,7 +37,11 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
 
             if (valids.isNotEmpty()) {
                 declaration.body = with(createScope(declaration)) {
-                    when (val mapping = MappingSelector.of(valids.map { it.first }).select()) {
+                    val (mapping, validation) = MappingSelector.of(valids).select()
+                    validation.warnings().forEach { warning ->
+                        context.messageCollector.warn(warning.description, warning.location)
+                    }
+                    when (mapping) {
                         is ConstructorCallMapping -> {
                             context.blockBody(this.scope) {
                                 +irReturn(irCallConstructor(mapping.symbol, emptyList()).apply {
@@ -67,7 +71,7 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
                     }
                 }
             } else {
-                invalids.first().second.problems().forEach { problem ->
+                invalids.first().second.problems.forEach { problem ->
                     context.messageCollector.error(problem.description, problem.location ?: location(declaration))
                 }
             }

@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
+import org.jetbrains.kotlin.ir.util.isClass
 import org.jetbrains.kotlin.name.Name
 
 class ClassMappingResolver(private val declaration: IrFunction) {
@@ -12,7 +13,7 @@ class ClassMappingResolver(private val declaration: IrFunction) {
     private val sourceParameter = declaration.valueParameters.first()
 
     init {
-        require(declaration.returnType.getClass()!!.isData)
+        require(declaration.returnType.getClass()!!.isClass)
     }
 
     fun resolve(): List<Mapping> {

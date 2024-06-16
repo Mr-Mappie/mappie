@@ -43,9 +43,9 @@ class MappingResolver : BaseVisitor<List<Mapping>, Unit>() {
         val type = declaration.returnType
         val clazz = type.getClass()!!
         return when {
-            clazz.isEnumClass -> listOf(EnumMappingResolver(declaration).resolve())
-            clazz.isData -> ClassMappingResolver(declaration).resolve()
             type.isPrimitiveType() || type.isString() -> listOf(PrimitiveMappingResolver(declaration).resolve())
+            clazz.isEnumClass -> listOf(EnumMappingResolver(declaration).resolve())
+            clazz.isClass -> ClassMappingResolver(declaration).resolve()
             else -> error("Only mapping of data- and enum classes are supported yet.")
         }
     }
