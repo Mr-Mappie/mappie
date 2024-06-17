@@ -23,34 +23,34 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
-class ObjectBodyCollector(
+class ObjectMappingBodyCollector(
     file: IrFileEntry,
     private val dispatchReceiverSymbol: IrValueSymbol,
-) : BaseVisitor<List<Pair<Name, ObjectMappingSource>>, Unit>(file) {
+) : BaseVisitor<ObjectMappingsConstructor, ObjectMappingsConstructor>(file) {
 
-    override fun visitBlockBody(body: IrBlockBody, data: Unit): List<Pair<Name, ObjectMappingSource>> {
+    override fun visitBlockBody(body: IrBlockBody, data: ObjectMappingsConstructor): ObjectMappingsConstructor {
         return body.statements.single().accept(data)
     }
 
-    override fun visitReturn(expression: IrReturn, data: Unit): List<Pair<Name, ObjectMappingSource>> {
+    override fun visitReturn(expression: IrReturn, data: ObjectMappingsConstructor): ObjectMappingsConstructor {
         return expression.value.accept(data)
     }
 
-    override fun visitCall(expression: IrCall, data: Unit): List<Pair<Name, ObjectMappingSource>> {
+    override fun visitCall(expression: IrCall, data: ObjectMappingsConstructor): ObjectMappingsConstructor {
         return when (expression.symbol.owner.name) {
             IDENTIFIER_MAPPING -> {
-                expression.valueArguments.first()?.accept(data) ?: emptyList()
+                expression.valueArguments.first()?.accept(data) ?: data
             }
             else -> {
-                emptyList()
+                data
             }
         }
     }
 
-    override fun visitFunctionExpression(expression: IrFunctionExpression, data: Unit): List<Pair<Name, ObjectMappingSource>> {
-        return expression.function.body!!.statements.mapNotNull {
-            it.accept(ObjectBodyStatementCollector(file, dispatchReceiverSymbol), Unit)
-        }
+    override fun visitFunctionExpression(expression: IrFunctionExpression, data: ObjectMappingsConstructor): ObjectMappingsConstructor {
+        return expression.function.body?.statements?.fold(data) { acc, current ->
+            acc.let { current.accept(ObjectBodyStatementCollector(file, dispatchReceiverSymbol), Unit)?.let { acc.explicit(it) } ?: it }
+        } ?: data
     }
 }
 
@@ -62,13 +62,13 @@ private class ObjectBodyStatementCollector(
     override fun visitCall(expression: IrCall, data: Unit): Pair<Name, ObjectMappingSource>? {
         return when (expression.symbol.owner.name) {
             IDENTIFIER_MAPPED_FROM_PROPERTY, IDENTIFIER_MAPPED_FROM_CONSTANT -> {
-                val target = expression.extensionReceiver!!.accept(TargetValueCollector(), Unit)
+                val target = expression.extensionReceiver!!.accept(TargetValueCollector(), data)
                 val source = expression.valueArguments.first()!!.accept(SourceValueCollector(dispatchReceiverSymbol), Unit)
 
                 target to source
             }
             IDENTIFIER_MAPPED_FROM_EXPRESSION -> {
-                val target = expression.extensionReceiver!!.accept(TargetValueCollector(), Unit)
+                val target = expression.extensionReceiver!!.accept(TargetValueCollector(), data)
                 val source = expression.valueArguments.first() as IrFunctionExpression
 
                 target to ExpressionSource(
@@ -130,8 +130,6 @@ private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>
             .first()
             .wrap(expression)
     }
-
-
 
     override fun visitCall(expression: IrCall, data: Unit): IrFunctionExpression {
         require(expression.origin == IrStatementOrigin.GET_PROPERTY)
