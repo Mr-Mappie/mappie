@@ -1,11 +1,8 @@
 package io.github.mappie.generation
 
 import io.github.mappie.MappieIrRegistrar.Companion.context
-import io.github.mappie.resolving.classes.ConstantSource
-import io.github.mappie.resolving.classes.MappingSource
-import io.github.mappie.resolving.classes.PropertySource
 import io.github.mappie.resolving.*
-import io.github.mappie.resolving.classes.DefaultParameterValueSource
+import io.github.mappie.resolving.classes.*
 import io.github.mappie.util.*
 import io.github.mappie.validation.MappingValidation
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
@@ -84,8 +81,16 @@ fun MappingSource.toIr(builder: IrBuilderWithScope): IrExpression =
     when (this) {
         is PropertySource -> toIr(builder)
         is DefaultParameterValueSource -> value
+        is ExpressionSource -> toIr(builder)
         is ConstantSource<*> -> value
     }
+
+fun ExpressionSource.toIr(builder: IrBuilderWithScope): IrExpression {
+    return builder.irCall(context.referenceLetFunction()).apply {
+        extensionReceiver = builder.irGet(type, extensionReceiverSymbol)
+        putValueArgument(0, expression)
+    }
+}
 
 fun PropertySource.toIr(builder: IrBuilderWithScope): IrExpression {
     val getter = builder.irCall(property).apply { dispatchReceiver = builder.irGet(type, dispatchReceiverSymbol) }

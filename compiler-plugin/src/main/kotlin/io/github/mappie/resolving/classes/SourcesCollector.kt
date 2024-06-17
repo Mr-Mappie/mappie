@@ -44,6 +44,14 @@ data class PropertySource(
     }
 }
 
+data class ExpressionSource(
+    val extensionReceiverSymbol: IrValueSymbol,
+    val expression: IrFunctionExpression,
+    val type: IrType,
+) : MappingSource {
+    override fun resolveType() = type
+}
+
 data class DefaultParameterValueSource(
     val value: IrExpression,
 ) : MappingSource {
@@ -100,7 +108,14 @@ private class ObjectSourceCollector(
                 target to source
             }
             IDENTIFIER_MAPPED_FROM_EXPRESSION -> {
-                TODO("Implement")
+                val target = expression.extensionReceiver!!.accept(TargetValueCollector(), Unit)
+                val source = expression.valueArguments.first() as IrFunctionExpression
+
+                target to ExpressionSource(
+                    dispatchReceiverSymbol,
+                    source,
+                    (source.type as IrSimpleType).arguments[1].typeOrFail
+                )
             }
             IDENTIFIER_TRANFORM -> {
                 val mapping = expression.dispatchReceiver!!.accept(data)!!
