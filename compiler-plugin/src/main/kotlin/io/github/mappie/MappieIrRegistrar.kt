@@ -1,7 +1,6 @@
 package io.github.mappie
 
 import io.github.mappie.generation.IrTransformer
-import io.github.mappie.util.error
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector

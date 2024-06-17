@@ -1,6 +1,7 @@
 package io.github.mappie
 
 import io.github.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_STRICTNESS_ENUMS
+import io.github.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_STRICTNESS_VISIBILITY
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -18,7 +19,10 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
         IrGenerationExtension.registerExtension(
             MappieIrRegistrar(
                 messageCollector,
-                MappieConfiguration(StrictnessConfiguration(configuration.get(ARGUMENT_STRICTNESS_ENUMS, true)))
+                MappieConfiguration(StrictnessConfiguration(
+                    enums = configuration.get(ARGUMENT_STRICTNESS_ENUMS, true),
+                    visibility = configuration.get(ARGUMENT_STRICTNESS_VISIBILITY, false)
+                ))
             )
         )
     }

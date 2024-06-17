@@ -6,4 +6,5 @@ data class MappieConfiguration(
 
 data class StrictnessConfiguration(
     val enums: Boolean,
+    val visibility: Boolean,
 )

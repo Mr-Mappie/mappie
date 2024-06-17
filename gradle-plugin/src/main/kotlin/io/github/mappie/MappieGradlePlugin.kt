@@ -16,9 +16,14 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
         val extension = kotlinCompilation.project.extensions.getByType(MappieExtension::class.java)
         return kotlinCompilation.target.project.provider {
-            listOf(
-                SubpluginOption("strictness.enums", lazy { extension.strictness.enums.get().toString() }),
-            )
+            buildList {
+                extension.strictness.enums.orNull?.apply {
+                    add(SubpluginOption("strictness.enums", this.toString() ))
+                }
+                extension.strictness.visibility.orNull?.apply {
+                    add(SubpluginOption("strictness.visibility", this.toString()))
+                }
+            }
         }
     }
 
