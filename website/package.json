@@ -1,7 +1,7 @@
 {
-  "name": "sprucecss-eleventy-documentation-template",
+  "name": "mappie",
   "version": "1.2.0",
-  "author": "Cone (https://conedevelopment.com)",
+  "author": "Stefan Koppier",
   "main": ".eleventy.js",
   "scripts": {
     "delete:dist": "del-cli --force dist",
