@@ -1,5 +1,6 @@
 package io.github.mappie.util
 
+import io.github.mappie.MappieIrRegistrar.Companion.context
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
@@ -11,8 +12,14 @@ import org.jetbrains.kotlin.ir.util.fileEntry
 
 fun MessageCollector.info(message: String) = report(CompilerMessageSeverity.INFO, message)
 
+fun logWarn(message: String, location: CompilerMessageSourceLocation? = null) =
+    context.messageCollector.warn(message, location)
+
 fun MessageCollector.warn(message: String, location: CompilerMessageSourceLocation? = null) =
     report(CompilerMessageSeverity.WARNING, message, location)
+
+fun logError(message: String, location: CompilerMessageSourceLocation? = null) =
+    context.messageCollector.error(message, location)
 
 fun MessageCollector.error(message: String, location: CompilerMessageSourceLocation? = null) =
     report(CompilerMessageSeverity.ERROR, message, location)

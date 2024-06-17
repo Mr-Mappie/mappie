@@ -27,6 +27,12 @@ internal fun IrClass.allSuperTypes(): List<IrType> =
 fun IrType.isAssignableFrom(other: IrType): Boolean =
     isSubtypeOf(other, IrTypeSystemContextImpl(context.irBuiltIns)) && (isNullable() || !other.isNullable())
 
+fun getterName(name: Name) =
+    getterName(name.asString())
+
+fun getterName(name: String) =
+    Name.special("<get-$name>")
+
 fun MappiePluginContext.referenceLetFunction() =
     referenceFunctions(CallableId(FqName("kotlin"), Name.identifier("let"))).first()
 

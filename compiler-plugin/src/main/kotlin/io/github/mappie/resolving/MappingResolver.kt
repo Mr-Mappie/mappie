@@ -2,7 +2,7 @@ package io.github.mappie.resolving
 
 import io.github.mappie.BaseVisitor
 import io.github.mappie.resolving.classes.ClassResolver
-import io.github.mappie.resolving.classes.MappingSource
+import io.github.mappie.resolving.classes.ObjectMappingSource
 import io.github.mappie.resolving.enums.EnumResolver
 import io.github.mappie.resolving.primitives.PrimitiveResolver
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
@@ -22,7 +22,7 @@ data class ConstructorCallMapping(
     val targetType: IrType,
     val sourceType: IrType,
     val symbol: IrConstructorSymbol,
-    val mappings: Map<IrValueParameter, List<MappingSource>>,
+    val mappings: Map<IrValueParameter, List<ObjectMappingSource>>,
 ) : Mapping
 
 data class EnumMapping(

@@ -36,7 +36,7 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
                 declaration.body = with(createScope(declaration)) {
                     val (mapping, validation) = MappingSelector.of(valids).select()
                     validation.warnings().forEach { warning ->
-                        context.messageCollector.warn(warning.description, warning.location)
+                        logWarn(warning.description, warning.location)
                     }
                     when (mapping) {
                         is ConstructorCallMapping -> {
@@ -77,7 +77,7 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
     }
 }
 
-fun MappingSource.toIr(builder: IrBuilderWithScope): IrExpression =
+fun ObjectMappingSource.toIr(builder: IrBuilderWithScope): IrExpression =
     when (this) {
         is PropertySource -> toIr(builder)
         is DefaultParameterValueSource -> value

@@ -1,12 +1,12 @@
 package io.github.mappie.resolving.classes
 
 import io.github.mappie.resolving.*
+import io.github.mappie.util.getterName
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
 import org.jetbrains.kotlin.ir.util.isClass
-import org.jetbrains.kotlin.name.Name
 
 class ClassResolver(private val declaration: IrFunction) {
 
@@ -20,7 +20,7 @@ class ClassResolver(private val declaration: IrFunction) {
         val possibilities = declaration.accept(ConstructorsCollector(), Unit)
         val getters = sourceParameter.accept(GettersCollector(), Unit)
         val dispatchReceiverSymbol = sourceParameter.symbol
-        val concreteSources = declaration.body?.accept(ObjectSourcesCollector(declaration.fileEntry, dispatchReceiverSymbol), Unit) ?: emptyList()
+        val concreteSources = declaration.body?.accept(ObjectBodyCollector(declaration.fileEntry, dispatchReceiverSymbol), Unit) ?: emptyList()
 
         return possibilities.map { constructor ->
             val targets = constructor.valueParameters
@@ -31,7 +31,7 @@ class ClassResolver(private val declaration: IrFunction) {
                     listOf(concreteSource.second)
                 } else {
                     val getter = getters.firstOrNull { getter ->
-                        getter.name == Name.special("<get-${target.name.asString()}>")
+                        getter.name == getterName(target.name)
                     }
                     if (getter != null) {
                         listOf(PropertySource(getter.symbol, target.type, sourceParameter.symbol, true))
