@@ -1,4 +1,4 @@
-const htmlmin = require('html-minifier');
+const htmlmin = require('html-minifier-terser');
 
 module.exports = (value, outputPath) => {
   if (outputPath && outputPath.indexOf('.html') > -1) {
