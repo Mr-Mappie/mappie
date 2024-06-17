@@ -1,15 +1,15 @@
 package testing
 
-import io.github.mappie.api.DataClassMapper
+import io.github.mappie.api.ObjectMapper
 
-object IntMapper : DataClassMapper<Int, String>() {
+object IntMapper : ObjectMapper<Int, String>() {
 
     override fun map(from: Int) = mapping {
         result(from.toString())
     }
 }
 
-object StringMapper : DataClassMapper<String, Int>() {
+object StringMapper : ObjectMapper<String, Int>() {
 
     override fun map(from: String) = mapping {
         result(from.toInt())

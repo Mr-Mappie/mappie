@@ -1,6 +1,6 @@
 package testing
 
-import io.github.mappie.api.DataClassMapper
+import io.github.mappie.api.ObjectMapper
 import io.github.mappie.api.EnumMapper
 
 enum class BooleanEnum {
@@ -21,14 +21,14 @@ data class ThingDto(val inner: ThangDto, val boolean: BooleanDto)
 
 data class ThangDto(val description: String)
 
-object ThingMapper : DataClassMapper<Thing, ThingDto>() {
+object ThingMapper : ObjectMapper<Thing, ThingDto>() {
     override fun map(from: Thing): ThingDto = mapping {
         ThingDto::inner mappedFromProperty Thing::inner via ThangMapper
         ThingDto::boolean mappedFromProperty Thing::boolean via BooleanMapper()
     }
 }
 
-object ThangMapper : DataClassMapper<Thang, ThangDto>() {
+object ThangMapper : ObjectMapper<Thang, ThangDto>() {
     override fun map(from: Thang): ThangDto = mapping()
 }
 

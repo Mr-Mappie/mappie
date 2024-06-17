@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.Name
 
 sealed interface Mapping
 
@@ -23,6 +24,7 @@ data class ConstructorCallMapping(
     val sourceType: IrType,
     val symbol: IrConstructorSymbol,
     val mappings: Map<IrValueParameter, List<ObjectMappingSource>>,
+    val unknowns: List<Pair<Name, ObjectMappingSource>>,
 ) : Mapping
 
 data class EnumMapping(

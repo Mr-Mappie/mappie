@@ -2,7 +2,7 @@ package io.github.mappie.resolving.classes
 
 import io.github.mappie.BaseVisitor
 import io.github.mappie.MappieIrRegistrar.Companion.context
-import io.github.mappie.api.DataClassMapper
+import io.github.mappie.api.ObjectMapper
 import io.github.mappie.resolving.*
 import io.github.mappie.util.getterName
 import io.github.mappie.util.irGet
@@ -49,26 +49,26 @@ class ObjectMappingBodyCollector(
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: ObjectMappingsConstructor): ObjectMappingsConstructor {
         return expression.function.body?.statements?.fold(data) { acc, current ->
-            acc.let { current.accept(ObjectBodyStatementCollector(file, dispatchReceiverSymbol), Unit)?.let { acc.explicit(it) } ?: it }
+            acc.let { current.accept(ObjectBodyStatementCollector(file!!, dispatchReceiverSymbol), Unit)?.let { acc.explicit(it) } ?: it }
         } ?: data
     }
 }
 
 private class ObjectBodyStatementCollector(
-    file: IrFileEntry?,
+    file: IrFileEntry,
     private val dispatchReceiverSymbol: IrValueSymbol,
 ) : BaseVisitor<Pair<Name, ObjectMappingSource>?, Unit>(file) {
 
     override fun visitCall(expression: IrCall, data: Unit): Pair<Name, ObjectMappingSource>? {
         return when (expression.symbol.owner.name) {
             IDENTIFIER_MAPPED_FROM_PROPERTY, IDENTIFIER_MAPPED_FROM_CONSTANT -> {
-                val target = expression.extensionReceiver!!.accept(TargetValueCollector(), data)
+                val target = expression.extensionReceiver!!.accept(TargetValueCollector(file!!), data)
                 val source = expression.valueArguments.first()!!.accept(SourceValueCollector(dispatchReceiverSymbol), Unit)
 
                 target to source
             }
             IDENTIFIER_MAPPED_FROM_EXPRESSION -> {
-                val target = expression.extensionReceiver!!.accept(TargetValueCollector(), data)
+                val target = expression.extensionReceiver!!.accept(TargetValueCollector(file!!), data)
                 val source = expression.valueArguments.first() as IrFunctionExpression
 
                 target to ExpressionSource(
@@ -135,7 +135,7 @@ private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>
         require(expression.origin == IrStatementOrigin.GET_PROPERTY)
 
         return when (expression.symbol.owner.name) {
-            getterName(DataClassMapper<*, *>::forList.name) -> {
+            getterName(ObjectMapper<*, *>::forList.name) -> {
                 val mapper = expression.symbol.owner.parent as IrClassImpl
 
                 val function = mapper.functions
@@ -201,9 +201,26 @@ private class SourceValueCollector(
     }
 }
 
-private class TargetValueCollector : BaseVisitor<Name, Unit>() {
+private class TargetValueCollector(file: IrFileEntry) : BaseVisitor<Name, Unit>(file) {
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Unit): Name {
         return expression.symbol.owner.name
+    }
+
+    override fun visitCall(expression: IrCall, data: Unit): Name {
+        return when (expression.symbol.owner.name) {
+            IDENTIFIER_PARAMETER -> {
+                val value = expression.valueArguments.first()!!
+                return if (value is IrConst<*>) {
+                    Name.identifier(value.value as String)
+                } else {
+                    logError("Parameter name must be a String literal", file?.let { location(it, expression) })
+                    throw AssertionError()
+                }
+            }
+            else -> {
+                super.visitCall(expression, data)
+            }
+        }
     }
 }

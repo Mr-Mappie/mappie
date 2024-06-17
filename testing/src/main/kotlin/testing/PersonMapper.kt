@@ -1,13 +1,13 @@
 package testing
 
-import io.github.mappie.api.DataClassMapper
+import io.github.mappie.api.ObjectMapper
 import io.github.mappie.api.Mapper
 
 data class Person(val name: String)
 
 data class PersonDto(val name: String, val description: String, val age: Int)
 
-object PersonMapper : DataClassMapper<Person, PersonDto>() {
+object PersonMapper : ObjectMapper<Person, PersonDto>() {
 
     override fun map(from: Person): PersonDto = mapping {
         PersonDto::description mappedFromProperty Person::name
@@ -23,7 +23,7 @@ object ConstructorCallPersonMapper : Mapper<Person, PersonDto>() {
     }
 }
 
-object TransformingPersonMapper : DataClassMapper<Person, PersonDto>() {
+object TransformingPersonMapper : ObjectMapper<Person, PersonDto>() {
 
     override fun map(from: Person): PersonDto = mapping {
         PersonDto::description mappedFromProperty Person::name transform { "$it Surname" }

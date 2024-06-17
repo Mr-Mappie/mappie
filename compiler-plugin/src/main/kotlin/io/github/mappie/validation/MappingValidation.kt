@@ -60,6 +60,11 @@ interface MappingValidation {
                         ) }
                 )
 
+                addAll(
+                    mapping.unknowns
+                        .map { Problem.error("Parameter ${it.first.asString()} does not occur as a parameter in constructor") }
+                )
+
                 // TODO: make optional via configuration
                 if (!mapping.symbol.owner.visibility.isPublicAPI) {
                     add(Problem.error("Constructor is not public", location(mapping.symbol.owner)))

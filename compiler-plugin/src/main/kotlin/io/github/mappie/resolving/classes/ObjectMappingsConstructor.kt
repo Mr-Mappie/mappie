@@ -18,7 +18,7 @@ class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParam
 
     var constructor: IrConstructor? = null
 
-    private val targets
+    val targets
         get() = constructor?.valueParameters ?: emptyList()
 
     fun construct(): ConstructorCallMapping {
@@ -41,11 +41,15 @@ class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParam
             }
         }
 
+        val unknowns = explicit
+            .filter { it.first !in mappings.map { it.key.name } }
+
         return ConstructorCallMapping(
             targetType = targetType,
             sourceType = source.type,
             symbol = constructor!!.symbol,
-            mappings = mappings
+            mappings = mappings,
+            unknowns = unknowns,
         )
     }
 

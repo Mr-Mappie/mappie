@@ -9,8 +9,7 @@ abstract class CollectionMapper<FROM, TO> : Mapper<List<FROM>, List<TO>>() {
     abstract infix fun filteredBy(predicate: (FROM) -> Boolean): CollectionMapper<FROM, TO>
 }
 
-// TODO: choose between DataClassMapper and ClassMapper vs just ObjectMapper
-abstract class DataClassMapper<FROM, TO> : Mapper<FROM, TO>() {
+abstract class ObjectMapper<FROM, TO> : Mapper<FROM, TO>() {
 
     val forList: CollectionMapper<FROM, TO> get() =
         error("The mapper forList should only be used in the context of 'via'. Use mapList instead.")
@@ -18,14 +17,14 @@ abstract class DataClassMapper<FROM, TO> : Mapper<FROM, TO>() {
     protected infix fun <TO_TYPE, FROM_TYPE> KProperty1<TO, TO_TYPE>.mappedFromProperty(source: KProperty1<FROM, FROM_TYPE>): TransformableValue<FROM_TYPE, TO_TYPE> =
         generated()
 
-    protected infix fun <TO_TYPE> KProperty1<TO, TO_TYPE>.mappedFromConstant(value: TO_TYPE): DataClassMapper<FROM, TO_TYPE> =
+    protected infix fun <TO_TYPE> KProperty1<TO, TO_TYPE>.mappedFromConstant(value: TO_TYPE): ObjectMapper<FROM, TO_TYPE> =
         generated()
 
-    protected infix fun <TO_TYPE> KProperty1<TO, TO_TYPE>.mappedFromExpression(function: (FROM) -> TO_TYPE): DataClassMapper<FROM, TO_TYPE> =
+    protected infix fun <TO_TYPE> KProperty1<TO, TO_TYPE>.mappedFromExpression(function: (FROM) -> TO_TYPE): ObjectMapper<FROM, TO_TYPE> =
         generated()
 
-    fun expression(function: (FROM) -> TO): Mapper<FROM, TO> =
+    protected fun parameter(name: String): KProperty1<TO, *> =
         generated()
 
-    protected fun result(source: TO): DataClassMapper<FROM, TO> = generated()
+    protected fun result(source: TO): ObjectMapper<FROM, TO> = generated()
 }

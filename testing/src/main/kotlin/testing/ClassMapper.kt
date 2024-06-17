@@ -1,6 +1,6 @@
 package testing
 
-import io.github.mappie.api.DataClassMapper
+import io.github.mappie.api.ObjectMapper
 
 class Class(
     private val field: String,
@@ -22,7 +22,7 @@ class ClassDto(
         argument.hashCode()
 }
 
-object ClassMapper : DataClassMapper<Class, ClassDto>() {
+object ClassMapper : ObjectMapper<Class, ClassDto>() {
     override fun map(from: Class) = mapping {
         ClassDto::argument mappedFromConstant 1
     }

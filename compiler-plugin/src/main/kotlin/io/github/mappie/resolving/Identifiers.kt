@@ -18,6 +18,8 @@ val IDENTIFIER_MAPPED_FROM_EXPRESSION = Name.identifier("mappedFromExpression")
 
 val IDENTIFIER_RESULT = Name.identifier("result")
 
+val IDENTIFIER_PARAMETER = Name.identifier("parameter")
+
 val IDENTIFIER_TRANFORM = Name.identifier("transform")
 
 val IDENTIFIER_VIA = Name.identifier("via")
