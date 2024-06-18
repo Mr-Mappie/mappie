@@ -1,6 +1,6 @@
 ---
 title: "Reusing Mappers"
-summary: "Resolving source- and target properties."
+summary: "Reusing other mappers."
 eleventyNavigation:
   key: Reusing Mappers
   parent: Object Mapping

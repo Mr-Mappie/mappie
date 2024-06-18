@@ -4,14 +4,10 @@ import io.github.mappie.api.ObjectMapper
 
 object IntMapper : ObjectMapper<Int, String>() {
 
-    override fun map(from: Int) = mapping {
-        result(from.toString())
-    }
+    override fun map(from: Int) = from.toString()
 }
 
 object StringMapper : ObjectMapper<String, Int>() {
 
-    override fun map(from: String) = mapping {
-        result(from.toInt())
-    }
+    override fun map(from: String) = from.toInt()
 }

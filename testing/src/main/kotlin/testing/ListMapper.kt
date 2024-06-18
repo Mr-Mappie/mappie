@@ -15,7 +15,5 @@ object BookMapper : ObjectMapper<Book, BookDto>() {
 }
 
 object PageMapper : ObjectMapper<Page, String>() {
-    override fun map(from: Page): String = mapping {
-        result(from.text)
-    }
+    override fun map(from: Page): String = from.text
 }

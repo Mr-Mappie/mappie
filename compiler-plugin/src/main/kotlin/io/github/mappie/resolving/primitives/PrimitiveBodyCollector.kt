@@ -2,7 +2,6 @@ package io.github.mappie.resolving.primitives
 
 import io.github.mappie.BaseVisitor
 import io.github.mappie.resolving.IDENTIFIER_MAPPING
-import io.github.mappie.resolving.IDENTIFIER_RESULT
 import io.github.mappie.util.irGet
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -25,9 +24,6 @@ class PrimitiveBodyCollector(
             IDENTIFIER_MAPPING -> {
                 expression.valueArguments.first()?.accept(data)
                     ?: irGet(declaration.valueParameters.first())
-            }
-            IDENTIFIER_RESULT -> {
-                expression.valueArguments.first()!!
             }
             else -> {
                 super.visitCall(expression, data)

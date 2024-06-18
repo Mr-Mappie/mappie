@@ -7,7 +7,11 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             artifactId = "mappie-api"
-            from(components["kotlin"])
+            from(components["java"])
         }
     }
+}
+
+java {
+    withSourcesJar()
 }
