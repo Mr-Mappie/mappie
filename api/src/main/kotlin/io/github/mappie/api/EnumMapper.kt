@@ -1,4 +1,4 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "UNUSED_PARAMETER")
 
 package io.github.mappie.api
 
@@ -24,9 +24,9 @@ abstract class EnumMapper<FROM: Enum<*>, TO : Enum<*>> : Mapper<FROM, TO>() {
      *
      * For example
      * ```kotlin
-     * Color.UNKNOWN mappedFromEnumEntry Color.ORANGE
+     * Colour.UNKNOWN mappedFromEnumEntry Color.ORANGE
      * ```
-     * will generate an explicit mapping, mapping `Color.ORANGE` to `Color.UNKNOWN`.
+     * will generate an explicit mapping, mapping `Colour.ORANGE` to `Color.UNKNOWN`.
      */
     protected infix fun TO.mappedFromEnumEntry(source: FROM): EnumMapper<FROM, TO> = generated()
 }

@@ -1,13 +1,8 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "UNUSED_PARAMETER")
 
 package io.github.mappie.api
 
 import kotlin.reflect.KProperty1
-
-/**
- * Base mapper class for list mappers. Cannot be instantiated, but can be created by using the field [ObjectMapper.forList].
- */
-sealed class ListMapper<FROM, TO> : Mapper<List<FROM>, List<TO>>()
 
 /**
  * Base class for object mappers. See the [documentation](https://mr-mappie.github.io/mappie/object-mapping/object-mapping-overview/)
