@@ -13,8 +13,7 @@ class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParam
 
     var getters = mutableListOf<IrSimpleFunction>()
 
-    // TODO: Map of lists for detecting duplicates
-    var explicit = mutableListOf<Pair<Name, ObjectMappingSource>>()
+    var explicit = mutableMapOf<Name, List<ObjectMappingSource>>()
 
     var constructor: IrConstructor? = null
 
@@ -23,10 +22,10 @@ class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParam
 
     fun construct(): ConstructorCallMapping {
         val mappings = targets.associateWith { target ->
-            val concreteSource = explicit.firstOrNull { it.first == target.name }
+            val concreteSource = explicit[target.name]
 
             if (concreteSource != null) {
-                listOf(concreteSource.second)
+                concreteSource
             } else {
                 val getter = getters.firstOrNull { getter ->
                     getter.name == getterName(target.name)
@@ -42,7 +41,7 @@ class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParam
         }
 
         val unknowns = explicit
-            .filter { it.first !in mappings.map { it.key.name } }
+            .filter { it.key !in mappings.map { it.key.name } }
 
         return ConstructorCallMapping(
             targetType = targetType,
@@ -54,7 +53,7 @@ class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParam
     }
 
     fun explicit(entry: Pair<Name, ObjectMappingSource>): ObjectMappingsConstructor =
-        apply { explicit.add(entry) }
+        apply { explicit.merge(entry.first, listOf(entry.second), Collection<ObjectMappingSource>::plus) }
 
     companion object {
         fun of(constructor: ObjectMappingsConstructor) =

@@ -24,7 +24,7 @@ data class ConstructorCallMapping(
     val sourceType: IrType,
     val symbol: IrConstructorSymbol,
     val mappings: Map<IrValueParameter, List<ObjectMappingSource>>,
-    val unknowns: List<Pair<Name, ObjectMappingSource>>,
+    val unknowns: Map<Name, List<ObjectMappingSource>>,
 ) : Mapping
 
 data class EnumMapping(
