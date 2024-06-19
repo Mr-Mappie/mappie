@@ -1,11 +1,11 @@
-@file:Suppress("unused", "UNUSED_PARAMETER")
+@file:Suppress("unused", "UNUSED_PARAMETER", "SameParameterValue")
 
 package io.github.mappie.api
 
 import kotlin.reflect.KProperty1
 
 /**
- * Base class for object mappers. See the [documentation](https://mr-mappie.github.io/mappie/object-mapping/object-mapping-overview/)
+ * Base class for object mappers. See the [documentation](https://mappie.tech/object-mapping/object-mapping-overview/)
  * for a complete overview of how to generate object mappers.
  *
  * For example

@@ -1,7 +1,6 @@
 require('dotenv').config();
 
 const { execSync } = require('child_process');
-const { EleventyHtmlBasePlugin } = require("@11ty/eleventy");
 const dateFilter = require('./src/filters/date-filter.js');
 const eleventyNavigationPlugin = require('@11ty/eleventy-navigation');
 const htmlMinTransform = require('./src/transforms/html-min-transform.js');
@@ -24,9 +23,6 @@ module.exports = config => {
     debugger;
   });
 
-  config.addPlugin(EleventyHtmlBasePlugin, {
-    baseHref: 'mappie',
-  });
   config.addPlugin(eleventyNavigationPlugin);
   config.addPlugin(syntaxHighlight);
   config.addPlugin(pluginTOC);
@@ -73,6 +69,6 @@ module.exports = config => {
       output: 'dist'
     },
     passthroughFileCopy: true,
-    pathPrefix: 'mappie',
+    pathPrefix: '',
   };
 };

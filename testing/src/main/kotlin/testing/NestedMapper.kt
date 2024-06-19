@@ -23,7 +23,7 @@ data class ThangDto(val description: String)
 
 object ThingMapper : ObjectMapper<Thing, ThingDto>() {
     override fun map(from: Thing): ThingDto = mapping {
-        ThingDto::inner mappedFromProperty Thing::inner via ThangMapper
+        ThingDto::inner mappedFromProperty Thing::inner via ThangMapper // TODO: uitcommenten levert een bug op: type check moet toegevoegd worden aan automatische resolve
         ThingDto::boolean mappedFromProperty Thing::boolean via BooleanMapper()
     }
 }

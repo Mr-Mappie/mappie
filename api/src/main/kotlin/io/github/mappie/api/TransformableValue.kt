@@ -9,7 +9,7 @@ class TransformableValue<FROM, TO> {
 
     /**
      * Transforms the result value of a mapping.
-     * See the [documentation](https://mr-mappie.github.io/mappie/object-mapping/transforming/)
+     * See the [documentation](https://mappie.tech/object-mapping/transforming/)
      *
      * For example
      * ```kotlin
@@ -23,7 +23,7 @@ class TransformableValue<FROM, TO> {
 
     /**
      * Transforms the result value of a mapping using a different mapper.
-     * See the [documentation](https://mr-mappie.github.io/mappie/object-mapping/reusing-mappers/)
+     * See the [documentation](https://mappie.tech/object-mapping/reusing-mappers/)
      *
      * @param mapper the mapper to transform the value with.
      */

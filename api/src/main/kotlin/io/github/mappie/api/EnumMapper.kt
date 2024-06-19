@@ -3,7 +3,7 @@
 package io.github.mappie.api
 
 /**
- * Base class for enum mappers. See the [documentation](https://mr-mappie.github.io/mappie/enum-mapping/enum-mapping-overview/)
+ * Base class for enum mappers. See the [documentation](https://mappie.tech/enum-mapping/enum-mapping-overview/)
  * for a complete overview of how to generate enum mappers.
  *
  * For example
