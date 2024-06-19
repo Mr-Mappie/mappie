@@ -17,6 +17,9 @@ class ConstructorParameterWhichIsNotAFieldDto(
         }
         return false
     }
+
+    override fun hashCode(): Int =
+        property.hashCode()
 }
 
 object ConstructorParameterWhichIsNotAFieldMapper : ObjectMapper<ConstructorParameterWhichIsNotAField, ConstructorParameterWhichIsNotAFieldDto>() {
