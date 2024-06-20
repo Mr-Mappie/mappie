@@ -35,11 +35,11 @@ object PersonMapper : ObjectMappie<Person, PersonDto>() {
 ## Handling nullability
 The `transform` operator can also come in handy when mapping nullable values to non-nullable values. 
 
-Suppose we have the data class `Dog` having the field `name` which can be `null`
+Suppose we have the data class `Dog` having the property `name` which can be `null`
 ```kotlin
 data class Dog(val name: String?)
 ```
-and we have the data class `DogDto` for which the field `name` is non-nullable.
+and we have the data class `DogDto` for which the constructor parameter `name` is non-nullable.
 ```kotlin
 data class DogDto(val name: String)
 ```
