@@ -8,7 +8,7 @@ package io.github.mappie.api
  *
  * For example
  * ```kotlin
- * class PersonMapper : EnumMapper<Color, Colour>() {
+ * class PersonMapper : EnumMappie<Color, Colour>() {
  *      override fun map(from: Color) = mapping()
  * }
  * ```
@@ -17,7 +17,7 @@ package io.github.mappie.api
  * @param FROM the source type to map from.
  * @param TO the target type to map to.
  */
-abstract class EnumMapper<FROM: Enum<*>, TO : Enum<*>> : Mapper<FROM, TO>() {
+abstract class EnumMappie<FROM: Enum<*>, TO : Enum<*>> : Mappie<FROM, TO>() {
 
     /**
      * Explicitly construct a mapping to [TO] from source entry [source].
@@ -28,5 +28,5 @@ abstract class EnumMapper<FROM: Enum<*>, TO : Enum<*>> : Mapper<FROM, TO>() {
      * ```
      * will generate an explicit mapping, mapping `Colour.ORANGE` to `Color.UNKNOWN`.
      */
-    protected infix fun TO.mappedFromEnumEntry(source: FROM): EnumMapper<FROM, TO> = generated()
+    protected infix fun TO.mappedFromEnumEntry(source: FROM): EnumMappie<FROM, TO> = generated()
 }

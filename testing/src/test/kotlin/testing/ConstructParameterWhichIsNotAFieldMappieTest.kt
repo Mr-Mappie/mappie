@@ -3,7 +3,7 @@ package testing
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class ConstructParameterWhichIsNotAFieldMapperTest {
+class ConstructParameterWhichIsNotAFieldMappieTest {
 
     @Test
     fun `map ConstructorParameterWhichIsNotAField to ConstructorParameterWhichIsNotAFieldDto via ConstructorParameterWhichIsNotAFieldMapper`() {

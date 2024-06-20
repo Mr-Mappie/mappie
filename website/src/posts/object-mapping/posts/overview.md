@@ -7,7 +7,7 @@ eleventyNavigation:
   order: 3
 ---
 
-Mappie supports creating object mappers via the base class `ObjectMapper`.
+Mappie supports creating object mappers via the base class `ObjectMappie`.
 
 Suppose we have a data class `Person`
 ```kotlin
@@ -19,7 +19,7 @@ data class PersonDto(val name: String, val age: Int)
 ```
 The fields of `Person` match those of `PersonDto`, and as such, not mappings have to be defined, for example
 ```kotlin
-object PersonMapper : ObjectMapper<Person, PersonDto>() {
+object PersonMapper : ObjectMappie<Person, PersonDto>() {
     override fun map(from: Person): PersonDto = mapping()
 }
 ```
@@ -42,7 +42,7 @@ This can be addressed in multiple ways.
 A possibility is to map `description` from another property, e.g. via `name`
 
 ```kotlin
-object PersonMapper : ObjectMapper<Person, PersonDto>() {
+object PersonMapper : ObjectMappie<Person, PersonDto>() {
     override fun map(from: Person): PersonDto = mapping {
         PersonDto::description mappedFromProperty Person::name
     }
@@ -53,7 +53,7 @@ object PersonMapper : ObjectMapper<Person, PersonDto>() {
 A possibility is to map `description` from an expression, e.g. setting it to the constant `"unknown"`
 
 ```kotlin
-object PersonMapper : ObjectMapper<Person, PersonDto>() {
+object PersonMapper : ObjectMappie<Person, PersonDto>() {
     override fun map(from: Person): PersonDto = mapping {
         PersonDto::description mappedFromExpression { source -> "unknown" }
     }

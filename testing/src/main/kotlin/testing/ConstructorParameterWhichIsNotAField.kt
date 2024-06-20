@@ -1,6 +1,6 @@
 package testing
 
-import io.github.mappie.api.ObjectMapper
+import io.github.mappie.api.ObjectMappie
 
 class ConstructorParameterWhichIsNotAField(
     val parameter: String
@@ -22,7 +22,7 @@ class ConstructorParameterWhichIsNotAFieldDto(
         property.hashCode()
 }
 
-object ConstructorParameterWhichIsNotAFieldMapper : ObjectMapper<ConstructorParameterWhichIsNotAField, ConstructorParameterWhichIsNotAFieldDto>() {
+object ConstructorParameterWhichIsNotAFieldMapper : ObjectMappie<ConstructorParameterWhichIsNotAField, ConstructorParameterWhichIsNotAFieldDto>() {
     override fun map(from: ConstructorParameterWhichIsNotAField): ConstructorParameterWhichIsNotAFieldDto = mapping {
         parameter("value") mappedFromProperty ConstructorParameterWhichIsNotAField::parameter
     }

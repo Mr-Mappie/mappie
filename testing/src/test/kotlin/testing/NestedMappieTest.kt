@@ -3,7 +3,7 @@ package testing
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class NestedMapperTest {
+class NestedMappieTest {
 
     @Test
     fun `map Thing to ThingDto via ThingMapper`() {

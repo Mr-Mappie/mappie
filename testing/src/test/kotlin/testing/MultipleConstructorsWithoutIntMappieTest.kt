@@ -3,7 +3,7 @@ package testing
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class MultipleConstructorsWithoutIntMapperTest {
+class MultipleConstructorsWithoutIntMappieTest {
 
     @Test
     fun `map MultipleConstructors to MultipleConstructorsDto via MultipleConstructorsWithoutIntMapper calls secondary constructor`() {

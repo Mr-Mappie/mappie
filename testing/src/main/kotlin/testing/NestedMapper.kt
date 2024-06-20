@@ -1,7 +1,7 @@
 package testing
 
-import io.github.mappie.api.ObjectMapper
-import io.github.mappie.api.EnumMapper
+import io.github.mappie.api.ObjectMappie
+import io.github.mappie.api.EnumMappie
 
 enum class BooleanEnum {
     TRUE,
@@ -21,17 +21,17 @@ data class ThingDto(val inner: ThangDto, val boolean: BooleanDto)
 
 data class ThangDto(val description: String)
 
-object ThingMapper : ObjectMapper<Thing, ThingDto>() {
+object ThingMapper : ObjectMappie<Thing, ThingDto>() {
     override fun map(from: Thing): ThingDto = mapping {
         ThingDto::inner mappedFromProperty Thing::inner via ThangMapper // TODO: uitcommenten levert een bug op: type check moet toegevoegd worden aan automatische resolve
         ThingDto::boolean mappedFromProperty Thing::boolean via BooleanMapper()
     }
 }
 
-object ThangMapper : ObjectMapper<Thang, ThangDto>() {
+object ThangMapper : ObjectMappie<Thang, ThangDto>() {
     override fun map(from: Thang): ThangDto = mapping()
 }
 
-class BooleanMapper : EnumMapper<BooleanEnum, BooleanDto>() {
+class BooleanMapper : EnumMappie<BooleanEnum, BooleanDto>() {
     override fun map(from: BooleanEnum): BooleanDto = mapping()
 }

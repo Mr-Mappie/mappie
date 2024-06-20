@@ -1,6 +1,6 @@
 package testing
 
-import io.github.mappie.api.ObjectMapper
+import io.github.mappie.api.ObjectMappie
 
 data class Game(
     val name: String,
@@ -12,7 +12,7 @@ data class GameDto(
     val description: String,
 )
 
-object GameMapper : ObjectMapper<Game, GameDto>() {
+object GameMapper : ObjectMappie<Game, GameDto>() {
     override fun map(from: Game): GameDto = mapping {
         GameDto::description mappedFromProperty Game::description transform { it ?: "default" }
     }

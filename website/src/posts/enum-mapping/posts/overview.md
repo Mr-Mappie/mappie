@@ -8,7 +8,7 @@ eleventyNavigation:
 ---
 
 Mappie supports mapping an enum class to another enum class. This can be achieved by implementing a mapper object which
-extends from `EnumMapper`.
+extends from `EnumMappie`.
 
 The mappings of the enum entries are resolved by name. For example, when constructing a mapper for the enum 
 classes `Color`
@@ -23,7 +23,7 @@ Mappie will resolve all mappings automatically, as the enum classes have identic
 
 This can be achieved by writing the following enum mapper
 ```kotlin
-object ColorMapper : EnumMapper<Color, Colour>() {
+object ColorMapper : EnumMappie<Color, Colour>() {
     override fun map(from: Color): Colour = mapping()
 }
 ```

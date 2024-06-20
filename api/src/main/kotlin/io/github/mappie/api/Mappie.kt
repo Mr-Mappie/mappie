@@ -2,7 +2,7 @@
 
 package io.github.mappie.api
 
-abstract class Mapper<FROM, TO> {
+abstract class Mappie<FROM, TO> {
 
     /**
      * Map [from] to an instance of [TO].
@@ -27,7 +27,7 @@ abstract class Mapper<FROM, TO> {
      * @param builder the configuration for the generation of this mapping.
      * @return An instance of the mapped value at runtime.
      */
-    protected fun mapping(builder: Mapper<FROM, TO>.() -> Unit = { }): TO = generated()
+    protected fun mapping(builder: Mappie<FROM, TO>.() -> Unit = { }): TO = generated()
 }
 
 internal fun generated(): Nothing =

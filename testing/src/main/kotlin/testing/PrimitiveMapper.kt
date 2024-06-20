@@ -1,13 +1,13 @@
 package testing
 
-import io.github.mappie.api.ObjectMapper
+import io.github.mappie.api.ObjectMappie
 
-object IntMapper : ObjectMapper<Int, String>() {
+object IntMapper : ObjectMappie<Int, String>() {
 
     override fun map(from: Int) = from.toString()
 }
 
-object StringMapper : ObjectMapper<String, Int>() {
+object StringMapper : ObjectMappie<String, Int>() {
 
     override fun map(from: String) = from.toInt()
 }

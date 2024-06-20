@@ -1,13 +1,13 @@
 package testing
 
-import io.github.mappie.api.ObjectMapper
-import io.github.mappie.api.Mapper
+import io.github.mappie.api.ObjectMappie
+import io.github.mappie.api.Mappie
 
 data class Person(val name: String)
 
 data class PersonDto(val name: String, val description: String, val age: Int)
 
-object PersonMapper : ObjectMapper<Person, PersonDto>() {
+object PersonMapper : ObjectMappie<Person, PersonDto>() {
 
     override fun map(from: Person): PersonDto = mapping {
         PersonDto::description mappedFromProperty Person::name
@@ -15,7 +15,7 @@ object PersonMapper : ObjectMapper<Person, PersonDto>() {
     }
 }
 
-object ConstructorCallPersonMapper : Mapper<Person, PersonDto>() {
+object ConstructorCallPersonMapper : Mappie<Person, PersonDto>() {
     override fun map(from: Person): PersonDto {
         return from.name.let { name ->
             PersonDto(name, "description", 10)
@@ -23,7 +23,7 @@ object ConstructorCallPersonMapper : Mapper<Person, PersonDto>() {
     }
 }
 
-object TransformingPersonMapper : ObjectMapper<Person, PersonDto>() {
+object TransformingPersonMapper : ObjectMappie<Person, PersonDto>() {
 
     override fun map(from: Person): PersonDto = mapping {
         PersonDto::description mappedFromProperty Person::name transform { "$it Surname" }

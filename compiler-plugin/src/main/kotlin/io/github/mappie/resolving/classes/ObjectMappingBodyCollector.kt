@@ -2,7 +2,7 @@ package io.github.mappie.resolving.classes
 
 import io.github.mappie.BaseVisitor
 import io.github.mappie.MappieIrRegistrar.Companion.context
-import io.github.mappie.api.ObjectMapper
+import io.github.mappie.api.ObjectMappie
 import io.github.mappie.resolving.*
 import io.github.mappie.util.getterName
 import io.github.mappie.util.irGet
@@ -135,7 +135,7 @@ private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>
         require(expression.origin == IrStatementOrigin.GET_PROPERTY)
 
         return when (expression.symbol.owner.name) {
-            getterName(ObjectMapper<*, *>::forList.name) -> {
+            getterName(ObjectMappie<*, *>::forList.name) -> {
                 val mapper = expression.symbol.owner.parent as IrClassImpl
 
                 val function = mapper.functions

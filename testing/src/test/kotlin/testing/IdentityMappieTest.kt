@@ -3,7 +3,7 @@ package testing
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class IdentityMapperTest {
+class IdentityMappieTest {
 
     @Test
     fun `map Int to Int via IdentityMapper`() {

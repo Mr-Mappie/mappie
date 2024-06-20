@@ -10,7 +10,7 @@ import kotlin.reflect.KProperty1
  *
  * For example
  * ```kotlin
- * class PersonMapper : ObjectMapper<PersonDto, Person>() {
+ * class PersonMapper : ObjectMappie<PersonDto, Person>() {
  *      override fun map(from: PersonDto) = mapping()
  * }
  * ```
@@ -19,12 +19,12 @@ import kotlin.reflect.KProperty1
  * @param FROM the source type to map from.
  * @param TO the target type to map to.
  */
-abstract class ObjectMapper<FROM, TO> : Mapper<FROM, TO>() {
+abstract class ObjectMappie<FROM, TO> : Mappie<FROM, TO>() {
 
     /**
      * A mapper for [List] to be used in [TransformableValue.via].
      */
-    val forList: ListMapper<FROM, TO> get() =
+    val forList: ListMappie<FROM, TO> get() =
         error("The mapper forList should only be used in the context of 'via'. Use mapList instead.")
 
     /**

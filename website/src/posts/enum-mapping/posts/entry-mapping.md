@@ -20,7 +20,7 @@ enum class Colour { RED, GREEN, BLUE, OTHER; }
 
 We can generate a complete mapper by mapping `Colour.ORANGE` to `Colour.OTHER` via `mappedFromEnumEntry`
 ```kotlin
-object ColorMapper : EnumMapper<Color, Colour>() {
+object ColorMapper : EnumMappie<Color, Colour>() {
     override fun map(from: Color): Colour = mapping {
         Colour.OTHER mappedFromEnumEntry Color.ORANGE
     }
