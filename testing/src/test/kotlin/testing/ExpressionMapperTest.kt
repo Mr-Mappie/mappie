@@ -3,7 +3,7 @@ package testing
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class ExpressionMappieTest {
+class ExpressionMapperTest {
 
     @Test
     fun `map Person to PersonDto via ExpressionMapper`() {

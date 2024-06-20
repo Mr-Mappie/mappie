@@ -3,7 +3,7 @@ package testing
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class BookMappieTest {
+class ListMapperTest {
 
     @Test
     fun `map Book to BookDto via BookMapper`() {

@@ -3,7 +3,7 @@ package testing
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class GameMappieTest {
+class GameMapperTest {
 
     @Test
     fun `map Game to GameDto with null via GameMapper`() {
