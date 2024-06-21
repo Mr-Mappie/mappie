@@ -8,6 +8,8 @@ val IDENTIFIER_MAP = Name.identifier("map")
 
 val IDENTIFIER_MAP_LIST = Name.identifier("mapList")
 
+val IDENTIFIER_MAP_SET = Name.identifier("mapSet")
+
 val IDENTIFIER_MAPPED_FROM_ENUM_ENTRY = Name.identifier("mappedFromEnumEntry")
 
 val IDENTIFIER_MAPPED_FROM_PROPERTY = Name.identifier("mappedFromProperty")

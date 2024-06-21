@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import kotlin.math.exp
 
 class ObjectMappingBodyCollector(
     file: IrFileEntry,
@@ -134,7 +135,7 @@ private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>
     override fun visitCall(expression: IrCall, data: Unit): IrFunctionExpression {
         require(expression.origin == IrStatementOrigin.GET_PROPERTY)
 
-        return when (expression.symbol.owner.name) {
+        return when (val name = expression.symbol.owner.name) {
             getterName(ObjectMappie<*, *>::forList.name) -> {
                 val mapper = expression.symbol.owner.parent as IrClassImpl
 
@@ -144,8 +145,18 @@ private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>
 
                 function.symbol.wrap(expression.dispatchReceiver!!)
             }
+            getterName(ObjectMappie<*, *>::forSet.name) -> {
+                val mapper = expression.symbol.owner.parent as IrClassImpl
+
+                val function = mapper.functions
+                    .filter { it.name == IDENTIFIER_MAP_SET }
+                    .first()
+
+                function.symbol.wrap(expression.dispatchReceiver!!)
+            }
             else -> {
-                error("Expected get forList")
+                logError("Unexpected call of ${name.asString()}, expected forList or forSet", file?.let { location(it, expression) })
+                error("Expected forList or forSet")
             }
         }
     }

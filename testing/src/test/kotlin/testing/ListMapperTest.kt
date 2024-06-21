@@ -6,10 +6,10 @@ import kotlin.test.assertEquals
 class ListMapperTest {
 
     @Test
-    fun `map Book to BookDto via BookMapper`() {
+    fun `map BookList to BookListDto via BookMapper`() {
         assertEquals(
-            BookDto(listOf("lorem", "ipsum")),
-            BookMapper.map(Book(listOf(Page("lorem"), Page("ipsum")))),
+            BookListDto(listOf("lorem", "ipsum")),
+            BookListMapper.map(BookList(listOf(Page("lorem"), Page("ipsum")))),
         )
     }
 }

@@ -2,15 +2,25 @@ package testing
 
 import io.github.mappie.api.ObjectMappie
 
-data class Book(val pages: List<Page>)
+data class BookList(val pages: List<Page>)
+
+data class BookSet(val pages: Set<Page>)
 
 data class Page(val text: String)
 
-data class BookDto(val pages: List<String>)
+data class BookListDto(val pages: List<String>)
 
-object BookMapper : ObjectMappie<Book, BookDto>() {
-    override fun map(from: Book): BookDto = mapping {
-        BookDto::pages mappedFromProperty Book::pages via PageMapper.forList
+data class BookSetDto(val pages: Set<String>)
+
+object BookListMapper : ObjectMappie<BookList, BookListDto>() {
+    override fun map(from: BookList): BookListDto = mapping {
+        BookListDto::pages mappedFromProperty BookList::pages via PageMapper.forList
+    }
+}
+
+object BookSetMapper : ObjectMappie<BookSet, BookSetDto>() {
+    override fun map(from: BookSet): BookSetDto = mapping {
+        BookSetDto::pages mappedFromProperty BookSet::pages via PageMapper.forSet
     }
 }
 

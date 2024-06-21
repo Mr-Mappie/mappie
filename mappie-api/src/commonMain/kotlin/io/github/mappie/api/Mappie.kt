@@ -22,6 +22,15 @@ public abstract class Mappie<FROM, TO> {
         ArrayList<TO>(from.size).apply { from.forEach { add(map(it)) } }
 
     /**
+     * Map each element in [from] to an instance of [TO].
+     *
+     * @param from the source values.
+     * @return [from] mapped to a set of instances of [TO].
+     */
+    public fun mapSet(from: Set<FROM>): Set<TO> =
+        HashSet<TO>(from.size).apply { from.forEach { add(map(it)) } }
+
+    /**
      * Mapping function which instructs Mappie to generate code for this implementation.
      *
      * @param builder the configuration for the generation of this mapping.

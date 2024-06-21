@@ -28,6 +28,12 @@ public abstract class ObjectMappie<FROM, TO> : Mappie<FROM, TO>() {
         error("The mapper forList should only be used in the context of 'via'. Use mapList instead.")
 
     /**
+     * A mapper for [Set] to be used in [TransformableValue.via].
+     */
+    public val forSet: SetMappie<FROM, TO> get() =
+        error("The mapper forSet should only be used in the context of 'via'. Use mapSet instead.")
+
+    /**
      * Explicitly construct a mapping to [TO] from property source [source].
      *
      * For example
