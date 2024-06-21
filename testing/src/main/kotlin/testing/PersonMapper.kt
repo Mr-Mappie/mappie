@@ -1,7 +1,7 @@
 package testing
 
-import io.github.mappie.api.ObjectMappie
-import io.github.mappie.api.Mappie
+import org.mappie.api.ObjectMappie
+import org.mappie.api.Mappie
 
 data class Person(val name: String)
 

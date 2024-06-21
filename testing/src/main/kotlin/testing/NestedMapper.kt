@@ -1,7 +1,7 @@
 package testing
 
-import io.github.mappie.api.ObjectMappie
-import io.github.mappie.api.EnumMappie
+import org.mappie.api.ObjectMappie
+import org.mappie.api.EnumMappie
 
 enum class BooleanEnum {
     TRUE,

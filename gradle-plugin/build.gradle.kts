@@ -11,12 +11,11 @@ gradlePlugin {
     website = "https://mappie.tech/"
     plugins {
         create("mappie") {
-            id = "io.github.mappie"
+            id = "org.mappie.plugin"
             displayName = "Mappie Gradle Plugin"
             description = "Kotlin compiler plugin for generating object mappers"
-            implementationClass = "io.github.mappie.MappieGradlePlugin"
+            implementationClass = "org.mappie.MappieGradlePlugin"
             tags = setOf("kotlin", "object-mapping", "compiler-plugin")
-            this.name
         }
     }
 }

@@ -1,6 +1,6 @@
 package testing
 
-import io.github.mappie.api.Mappie
+import org.mappie.api.Mappie
 
 object IdentityMapper : Mappie<Int, Int>() {
     override fun map(from: Int): Int = mapping()

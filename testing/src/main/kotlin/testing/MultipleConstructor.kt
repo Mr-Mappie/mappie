@@ -1,6 +1,6 @@
 package testing
 
-import io.github.mappie.api.ObjectMappie
+import org.mappie.api.ObjectMappie
 
 data class MultipleConstructors(val string: String)
 

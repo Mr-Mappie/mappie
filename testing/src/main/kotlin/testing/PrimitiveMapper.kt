@@ -1,6 +1,6 @@
 package testing
 
-import io.github.mappie.api.ObjectMappie
+import org.mappie.api.ObjectMappie
 
 object IntMapper : ObjectMappie<Int, String>() {
 
