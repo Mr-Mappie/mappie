@@ -14,6 +14,6 @@ object MultipleConstructorsWithoutIntMapper : ObjectMappie<MultipleConstructors,
 
 object MultipleConstructorsWitIntMapper : ObjectMappie<MultipleConstructors, MultipleConstructorsDto>() {
     override fun map(from: MultipleConstructors): MultipleConstructorsDto = mapping {
-        MultipleConstructorsDto::int mappedFromConstant 2
+        MultipleConstructorsDto::int fromConstant 2
     }
 }

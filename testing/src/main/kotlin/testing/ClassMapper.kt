@@ -24,6 +24,6 @@ class ClassDto(
 
 object ClassMapper : ObjectMappie<Class, ClassDto>() {
     override fun map(from: Class) = mapping {
-        ClassDto::argument mappedFromConstant 1
+        ClassDto::argument fromConstant 1
     }
 }

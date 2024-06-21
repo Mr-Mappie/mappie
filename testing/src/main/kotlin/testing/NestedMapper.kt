@@ -23,8 +23,8 @@ data class ThangDto(val description: String)
 
 object ThingMapper : ObjectMappie<Thing, ThingDto>() {
     override fun map(from: Thing): ThingDto = mapping {
-        ThingDto::inner mappedFromProperty Thing::inner via ThangMapper
-        ThingDto::boolean mappedFromProperty Thing::boolean via BooleanMapper()
+        ThingDto::inner fromProperty Thing::inner via ThangMapper
+        ThingDto::boolean fromProperty Thing::boolean via BooleanMapper()
     }
 }
 

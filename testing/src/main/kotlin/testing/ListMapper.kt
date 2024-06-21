@@ -14,13 +14,13 @@ data class BookSetDto(val pages: Set<String>)
 
 object BookListMapper : ObjectMappie<BookList, BookListDto>() {
     override fun map(from: BookList): BookListDto = mapping {
-        BookListDto::pages mappedFromProperty BookList::pages via PageMapper.forList
+        BookListDto::pages fromProperty BookList::pages via PageMapper.forList
     }
 }
 
 object BookSetMapper : ObjectMappie<BookSet, BookSetDto>() {
     override fun map(from: BookSet): BookSetDto = mapping {
-        BookSetDto::pages mappedFromProperty BookSet::pages via PageMapper.forSet
+        BookSetDto::pages fromProperty BookSet::pages via PageMapper.forSet
     }
 }
 

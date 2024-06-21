@@ -10,13 +10,13 @@ val IDENTIFIER_MAP_LIST = Name.identifier("mapList")
 
 val IDENTIFIER_MAP_SET = Name.identifier("mapSet")
 
-val IDENTIFIER_MAPPED_FROM_ENUM_ENTRY = Name.identifier("mappedFromEnumEntry")
+val IDENTIFIER_MAPPED_FROM_ENUM_ENTRY = Name.identifier("fromEnumEntry")
 
-val IDENTIFIER_MAPPED_FROM_PROPERTY = Name.identifier("mappedFromProperty")
+val IDENTIFIER_MAPPED_FROM_PROPERTY = Name.identifier("fromProperty")
 
-val IDENTIFIER_MAPPED_FROM_CONSTANT = Name.identifier("mappedFromConstant")
+val IDENTIFIER_MAPPED_FROM_CONSTANT = Name.identifier("fromConstant")
 
-val IDENTIFIER_MAPPED_FROM_EXPRESSION = Name.identifier("mappedFromExpression")
+val IDENTIFIER_MAPPED_FROM_EXPRESSION = Name.identifier("fromExpression")
 
 val IDENTIFIER_PARAMETER = Name.identifier("parameter")
 

@@ -24,9 +24,9 @@ public abstract class EnumMappie<FROM: Enum<*>, TO : Enum<*>> : Mappie<FROM, TO>
      *
      * For example
      * ```kotlin
-     * Colour.UNKNOWN mappedFromEnumEntry Color.ORANGE
+     * Colour.UNKNOWN fromEnumEntry Color.ORANGE
      * ```
      * will generate an explicit mapping, mapping `Colour.ORANGE` to `Color.UNKNOWN`.
      */
-    protected infix fun TO.mappedFromEnumEntry(source: FROM): EnumMappie<FROM, TO> = generated()
+    protected infix fun TO.fromEnumEntry(source: FROM): EnumMappie<FROM, TO> = generated()
 }

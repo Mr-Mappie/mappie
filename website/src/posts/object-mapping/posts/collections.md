@@ -31,7 +31,7 @@ object PageMapper : ObjectMappie<Page, String>() {
 
 object BookMapper : ObjectMappie<Book, BookDto>() {
     override fun map(from: Book): BookDto = mapping {
-        BookDto::pages mappedFromProperty Book::pages via PageMapper.forList
+        BookDto::pages fromProperty Book::pages via PageMapper.forList
     }
 }
 ```

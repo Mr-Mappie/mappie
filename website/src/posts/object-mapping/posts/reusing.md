@@ -43,7 +43,7 @@ the operator `via`
 ```kotlin
 object PersonMapper : ObjectMappie<Person, PersonDto>() {
     override fun map(from: Address) = mapping {
-        PersonDto::address mappedFromProperty PersonDto::address via AddressMapper
+        PersonDto::address fromProperty PersonDto::address via AddressMapper
     }
 }
 ```

@@ -13,7 +13,7 @@ public class TransformableValue<FROM, TO> {
      *
      * For example
      * ```kotlin
-     * Person::age mappedFromProperty PersonDto::dateOfBirth transform { it.periodUntil(Clock.todayIn(TimeZone.UTC)) }
+     * Person::age fromProperty PersonDto::dateOfBirth transform { it.periodUntil(Clock.todayIn(TimeZone.UTC)) }
      * ```
      * will generate an explicit mapping transforming `PersonDto.dateOfBirth` to the period between it and today.
      *

@@ -38,11 +38,11 @@ public abstract class ObjectMappie<FROM, TO> : Mappie<FROM, TO>() {
      *
      * For example
      * ```kotlin
-     * Person::name mappedFromProperty PersonDto::fullName
+     * Person::name fromProperty PersonDto::fullName
      * ```
      * will generate an explicit mapping, setting constructor parameter `Person.name` to `PersonDto.fullName`.
      */
-    protected infix fun <TO_TYPE, FROM_TYPE> KProperty1<TO, TO_TYPE>.mappedFromProperty(source: KProperty1<FROM, FROM_TYPE>): TransformableValue<FROM_TYPE, TO_TYPE> =
+    protected infix fun <TO_TYPE, FROM_TYPE> KProperty1<TO, TO_TYPE>.fromProperty(source: KProperty1<FROM, FROM_TYPE>): TransformableValue<FROM_TYPE, TO_TYPE> =
         generated()
 
     /**
@@ -50,11 +50,11 @@ public abstract class ObjectMappie<FROM, TO> : Mappie<FROM, TO>() {
      *
      * For example
      * ```kotlin
-     * Person::name mappedFromConstant "John Doe"
+     * Person::name fromConstant "John Doe"
      * ```
      * will generate an explicit mapping, setting constructor parameter `Person.name` to `"John Doe"`.
      */
-    protected infix fun <TO_TYPE> KProperty1<TO, TO_TYPE>.mappedFromConstant(value: TO_TYPE): Unit =
+    protected infix fun <TO_TYPE> KProperty1<TO, TO_TYPE>.fromConstant(value: TO_TYPE): Unit =
         generated()
 
     /**
@@ -62,12 +62,12 @@ public abstract class ObjectMappie<FROM, TO> : Mappie<FROM, TO>() {
      *
      * For example
      * ```kotlin
-     * Person::name mappedFromConstant { personDto -> personDto.fullName + " (full)" }
+     * Person::name fromConstant { personDto -> personDto.fullName + " (full)" }
      * ```
      * will generate an explicit mapping, setting constructor parameter `Person.name` to `"John Doe (full)"`,
      * assuming `personDto.fullName == "John Doe"`.
      */
-    protected infix fun <TO_TYPE> KProperty1<TO, TO_TYPE>.mappedFromExpression(function: (FROM) -> TO_TYPE): Unit =
+    protected infix fun <TO_TYPE> KProperty1<TO, TO_TYPE>.fromExpression(function: (FROM) -> TO_TYPE): Unit =
         generated()
 
     /**
@@ -75,7 +75,7 @@ public abstract class ObjectMappie<FROM, TO> : Mappie<FROM, TO>() {
      *
      * For example
      * ```kotlin
-     * parameter("name") mappedFromProperty PersonDto::fullName
+     * parameter("name") fromProperty PersonDto::fullName
      * ```
      * will generate an explicit mapping, setting constructor parameter `name` to `PersonDto.fullName`.
      */

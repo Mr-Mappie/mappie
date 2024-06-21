@@ -10,8 +10,8 @@ data class PersonDto(val name: String, val description: String, val age: Int)
 object PersonMapper : ObjectMappie<Person, PersonDto>() {
 
     override fun map(from: Person): PersonDto = mapping {
-        PersonDto::description mappedFromProperty Person::name
-        PersonDto::age mappedFromConstant 26
+        PersonDto::description fromProperty Person::name
+        PersonDto::age fromConstant 26
     }
 }
 
@@ -26,7 +26,7 @@ object ConstructorCallPersonMapper : Mappie<Person, PersonDto>() {
 object TransformingPersonMapper : ObjectMappie<Person, PersonDto>() {
 
     override fun map(from: Person): PersonDto = mapping {
-        PersonDto::description mappedFromProperty Person::name transform { "$it Surname" }
-        PersonDto::age mappedFromConstant 24
+        PersonDto::description fromProperty Person::name transform { "$it Surname" }
+        PersonDto::age fromConstant 24
     }
 }

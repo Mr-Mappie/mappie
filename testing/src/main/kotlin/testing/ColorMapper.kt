@@ -19,7 +19,7 @@ enum class Colour {
 
 object ColorMapper : EnumMappie<Color, Colour>() {
     override fun map(from: Color): Colour = mapping {
-        Colour.OTHER mappedFromEnumEntry Color.ORANGE
-        Colour.OTHER mappedFromEnumEntry Color.PURPLE
+        Colour.OTHER fromEnumEntry Color.ORANGE
+        Colour.OTHER fromEnumEntry Color.PURPLE
     }
 }

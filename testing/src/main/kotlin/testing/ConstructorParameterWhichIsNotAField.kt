@@ -24,6 +24,6 @@ class ConstructorParameterWhichIsNotAFieldDto(
 
 object ConstructorParameterWhichIsNotAFieldMapper : ObjectMappie<ConstructorParameterWhichIsNotAField, ConstructorParameterWhichIsNotAFieldDto>() {
     override fun map(from: ConstructorParameterWhichIsNotAField): ConstructorParameterWhichIsNotAFieldDto = mapping {
-        parameter("value") mappedFromProperty ConstructorParameterWhichIsNotAField::parameter
+        parameter("value") fromProperty ConstructorParameterWhichIsNotAField::parameter
     }
 }

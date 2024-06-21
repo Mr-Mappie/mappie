@@ -25,7 +25,7 @@ we can create a mapper between `Person` and `PersonDto` via
 ```kotlin
 object PersonMapper : ObjectMappie<Person, PersonDto>() {
     override fun map(from: Person): PersonDto = mapping {
-        PersonDto::age mappedFromProperty Person::dateOfBirth transform { dateOfBirth ->
+        PersonDto::age fromProperty Person::dateOfBirth transform { dateOfBirth ->
             Clock.todayIn(TimeZone.currentSystemDefault()).periodUntil(dateOfBirth) 
         }
     }
@@ -48,7 +48,7 @@ We create a mapping between `Dog` and `DogDto` via
 ```kotlin
 object DogMapper : ObjectMappie<Dog, DogDto>() {
     override fun map(from: Dog): DogDto = mapping {
-        DogDto::name mappedFromProperty DogDto::name transform {
+        DogDto::name fromProperty DogDto::name transform {
             it ?: "unknown"
         }
     }

@@ -14,6 +14,6 @@ data class GameDto(
 
 object GameMapper : ObjectMappie<Game, GameDto>() {
     override fun map(from: Game): GameDto = mapping {
-        GameDto::description mappedFromProperty Game::description transform { it ?: "default" }
+        GameDto::description fromProperty Game::description transform { it ?: "default" }
     }
 }
