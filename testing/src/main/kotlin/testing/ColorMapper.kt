@@ -1,6 +1,6 @@
 package testing
 
-import org.mappie.api.EnumMappie
+import tech.mappie.api.EnumMappie
 
 enum class Color {
     RED,

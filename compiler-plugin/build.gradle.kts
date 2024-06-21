@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     alias(libs.plugins.kotlin.jvm)
     id("maven-publish")
+    id("signing")
 }
 
 dependencies {
@@ -15,12 +16,28 @@ dependencies {
 }
 
 publishing {
+    repositories {
+        maven {
+            name = "OSSRH"
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+
+            credentials {
+                username = properties["ossrhUsername"] as String
+                password = properties["ossrhPassword"] as String
+            }
+        }
+    }
     publications {
-        create<MavenPublication>("maven") {
+        create<MavenPublication>("kotlin") {
             artifactId = "mappie-compiler-plugin"
             from(components["kotlin"])
         }
     }
+}
+
+signing {
+    useGpgCmd()
+    sign(publishing.publications["kotlin"])
 }
 
 tasks.withType<Test> {

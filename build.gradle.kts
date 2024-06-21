@@ -5,7 +5,7 @@ plugins {
 }
 
 allprojects {
-    group = "org.mappie"
+    group = "tech.mappie"
     version = "0.1.0"
 }
 
