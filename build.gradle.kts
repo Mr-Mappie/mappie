@@ -1,7 +1,10 @@
+import org.jreleaser.model.Signing
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.sonarqube)
+    alias(libs.plugins.jreleaser)
 }
 
 allprojects {
@@ -15,5 +18,44 @@ sonar {
         property("sonar.organization", "mappie")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.qualitygate.wait", "true")
+    }
+}
+
+jreleaser {
+    project {
+        authors.add("Stefan Koppier")
+        license = "Apache-2.0"
+        links {
+            homepage = "https://mappie.tech"
+        }
+        inceptionYear = "2024"
+    }
+}
+
+jreleaser {
+    signing {
+        active = org.jreleaser.model.Active.ALWAYS
+        armored = true
+        mode = Signing.Mode.COMMAND
+        passphrase = properties["signing.passphrase"] as String
+    }
+    release {
+        github {
+            token = properties["release.github.token"] as String
+            draft = true
+        }
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                create("sonatype") {
+                    url = "https://central.sonatype.com/api/v1/publisher"
+                    stagingRepository(layout.buildDirectory.dir("staging-deploy").get().toString())
+                    username = properties["ossrhUsername"] as String
+                    password = properties["ossrhPassword"] as String
+                    applyMavenCentralRules = true
+                }
+            }
+        }
     }
 }
