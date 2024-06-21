@@ -6,6 +6,8 @@
     if (!theme) return;
     const themeAssets = document.querySelectorAll('img[data-theme-mode]');
 
+    document.querySelector('#header__logo').setAttribute("src", `/img/logo_${theme}.png`)
+
     themeAssets.forEach((el) => {
       el.src = el.getAttribute(`data-${theme}-asset`);
     });

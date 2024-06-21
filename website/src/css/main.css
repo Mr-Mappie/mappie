@@ -1264,10 +1264,6 @@ strong {
   }
 }
 .header__logo {
-  display: inline-flex;
-}
-.header__logo img,
-.header__logo svg {
   block-size: 2rem;
   display: inline-flex;
   inline-size: auto;

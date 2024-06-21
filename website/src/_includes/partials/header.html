@@ -1,7 +1,7 @@
 <header class="header">
     <div class="header__column">
-        <a class="header__logo" href="/" aria-label="{{ site.name }}">
-            {% svgIcon './src/img/mappie-docs-logo.svg' %}
+        <a class="header__logo" href="/" aria-label="{{ site.name }}" style="width:50px;height:50px;">
+            <img id="header__logo">
         </a>
         {% if navigation.header.length > 0 %}
             <nav class="header__navigation">
