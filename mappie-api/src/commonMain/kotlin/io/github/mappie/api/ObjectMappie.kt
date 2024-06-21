@@ -19,12 +19,12 @@ import kotlin.reflect.KProperty1
  * @param FROM the source type to map from.
  * @param TO the target type to map to.
  */
-abstract class ObjectMappie<FROM, TO> : Mappie<FROM, TO>() {
+public abstract class ObjectMappie<FROM, TO> : Mappie<FROM, TO>() {
 
     /**
      * A mapper for [List] to be used in [TransformableValue.via].
      */
-    val forList: ListMappie<FROM, TO> get() =
+    public val forList: ListMappie<FROM, TO> get() =
         error("The mapper forList should only be used in the context of 'via'. Use mapList instead.")
 
     /**

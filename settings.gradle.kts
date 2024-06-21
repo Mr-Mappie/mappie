@@ -15,7 +15,7 @@ dependencyResolutionManagement {
 }
 
 include(
-    ":api",
+    ":mappie-api",
     ":compiler-plugin",
     ":gradle-plugin",
     ":testing"

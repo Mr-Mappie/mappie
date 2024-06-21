@@ -8,5 +8,6 @@ junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", vers
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 gradle-plugin-publish = { id = "com.gradle.plugin-publish", version = "1.2.1" }
 sonarqube = { id = "org.sonarqube", version = "5.0.0.4638" }

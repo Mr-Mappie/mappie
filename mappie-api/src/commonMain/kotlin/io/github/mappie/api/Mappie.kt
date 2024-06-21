@@ -2,7 +2,7 @@
 
 package io.github.mappie.api
 
-abstract class Mappie<FROM, TO> {
+public abstract class Mappie<FROM, TO> {
 
     /**
      * Map [from] to an instance of [TO].
@@ -10,7 +10,7 @@ abstract class Mappie<FROM, TO> {
      * @param from the source value.
      * @return [from] mapped to an instance of [TO].
      */
-    abstract fun map(from: FROM): TO
+    public abstract fun map(from: FROM): TO
 
     /**
      * Map each element in [from] to an instance of [TO].
@@ -18,7 +18,7 @@ abstract class Mappie<FROM, TO> {
      * @param from the source values.
      * @return [from] mapped to a list of instances of [TO].
      */
-    fun mapList(from: List<FROM>): List<TO> =
+    public fun mapList(from: List<FROM>): List<TO> =
         ArrayList<TO>(from.size).apply { from.forEach { add(map(it)) } }
 
     /**

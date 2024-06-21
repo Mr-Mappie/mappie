@@ -8,7 +8,7 @@ plugins {
 dependencies {
     compileOnly(libs.kotlin.compiler.embeddable)
 
-    implementation(project(":api"))
+    implementation(project(":mappie-api"))
 
     testImplementation(kotlin("test"))
     testImplementation(libs.kotlin.compiler.embeddable)

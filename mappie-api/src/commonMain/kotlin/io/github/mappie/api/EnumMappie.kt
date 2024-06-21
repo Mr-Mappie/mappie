@@ -17,7 +17,7 @@ package io.github.mappie.api
  * @param FROM the source type to map from.
  * @param TO the target type to map to.
  */
-abstract class EnumMappie<FROM: Enum<*>, TO : Enum<*>> : Mappie<FROM, TO>() {
+public abstract class EnumMappie<FROM: Enum<*>, TO : Enum<*>> : Mappie<FROM, TO>() {
 
     /**
      * Explicitly construct a mapping to [TO] from source entry [source].

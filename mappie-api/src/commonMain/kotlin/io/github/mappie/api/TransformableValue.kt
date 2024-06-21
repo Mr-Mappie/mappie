@@ -5,7 +5,7 @@ package io.github.mappie.api
 /**
  * The result of an explicit mapping definition which can be transformed.
  */
-class TransformableValue<FROM, TO> {
+public class TransformableValue<FROM, TO> {
 
     /**
      * Transforms the result value of a mapping.
@@ -19,7 +19,7 @@ class TransformableValue<FROM, TO> {
      *
      * @param function the transformation function to transform the value with.
      */
-    infix fun transform(function: (FROM) -> TO): Unit = generated()
+    public infix fun transform(function: (FROM) -> TO): Unit = generated()
 
     /**
      * Transforms the result value of a mapping using a different mapper.
@@ -27,5 +27,5 @@ class TransformableValue<FROM, TO> {
      *
      * @param mapper the mapper to transform the value with.
      */
-    infix fun <M : Mappie<FROM, TO>> via(mapper: M): M = generated()
+    public infix fun <M : Mappie<FROM, TO>> via(mapper: M): M = generated()
 }
