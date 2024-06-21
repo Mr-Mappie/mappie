@@ -26,8 +26,4 @@ overview:
   title: "Enum Mapping"
   url: "/enum-mapping/"
   description: "Learn how to use Mappie for enum mapping."
--
-  title: "Primitive Mapping"
-  url: "/primitive-mapping/"
-  description: "Learn how to use Mappie for primitive mapping."
 ---
