@@ -1,11 +1,6 @@
 {
   "header": [
     {
-      "caption": "FAQ",
-      "url": "/faq/",
-      "external": false
-    },
-    {
       "caption": "Changelog",
       "url": "/changelog/",
       "external": false
