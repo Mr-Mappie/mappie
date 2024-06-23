@@ -22,12 +22,11 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
-import kotlin.math.exp
 
 class ObjectMappingBodyCollector(
     file: IrFileEntry,
     private val dispatchReceiverSymbol: IrValueSymbol,
-) : tech.mappie.BaseVisitor<ObjectMappingsConstructor, ObjectMappingsConstructor>(file) {
+) : BaseVisitor<ObjectMappingsConstructor, ObjectMappingsConstructor>(file) {
 
     override fun visitBlockBody(body: IrBlockBody, data: ObjectMappingsConstructor): ObjectMappingsConstructor {
         return body.statements.single().accept(data)
@@ -58,7 +57,7 @@ class ObjectMappingBodyCollector(
 private class ObjectBodyStatementCollector(
     file: IrFileEntry,
     private val dispatchReceiverSymbol: IrValueSymbol,
-) : tech.mappie.BaseVisitor<Pair<Name, ObjectMappingSource>?, Unit>(file) {
+) : BaseVisitor<Pair<Name, ObjectMappingSource>?, Unit>(file) {
 
     override fun visitCall(expression: IrCall, data: Unit): Pair<Name, ObjectMappingSource>? {
         return when (expression.symbol.owner.name) {
@@ -194,7 +193,7 @@ private class MapperReferenceCollector : tech.mappie.BaseVisitor<IrFunctionExpre
 
 private class SourceValueCollector(
     private val dispatchReceiverSymbol: IrValueSymbol,
-) : tech.mappie.BaseVisitor<ObjectMappingSource, Unit>() {
+) : BaseVisitor<ObjectMappingSource, Unit>() {
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Unit): ObjectMappingSource {
         return PropertySource(
@@ -212,7 +211,7 @@ private class SourceValueCollector(
     }
 }
 
-private class TargetValueCollector(file: IrFileEntry) : tech.mappie.BaseVisitor<Name, Unit>(file) {
+private class TargetValueCollector(file: IrFileEntry) : BaseVisitor<Name, Unit>(file) {
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Unit): Name {
         return expression.symbol.owner.name
@@ -222,10 +221,10 @@ private class TargetValueCollector(file: IrFileEntry) : tech.mappie.BaseVisitor<
         return when (expression.symbol.owner.name) {
             IDENTIFIER_PARAMETER -> {
                 val value = expression.valueArguments.first()!!
-                return if (value is IrConst<*>) {
+                return if (value.isConstantLike && value is IrConst<*>) {
                     Name.identifier(value.value as String)
                 } else {
-                    logError("Parameter name must be a String literal", file?.let { location(it, expression) })
+                    logError("Parameter name must be a constant String", file?.let { location(it, expression) })
                     throw AssertionError()
                 }
             }
