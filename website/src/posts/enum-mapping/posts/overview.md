@@ -27,3 +27,7 @@ object ColorMapper : EnumMappie<Color, Colour>() {
     override fun map(from: Color): Colour = mapping()
 }
 ```
+or equivalently without an explicit body
+```kotlin
+object ColorMapper : EnumMappie<Color, Colour>()
+```
