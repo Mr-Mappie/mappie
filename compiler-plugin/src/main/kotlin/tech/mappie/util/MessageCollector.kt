@@ -9,17 +9,31 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.util.fileEntry
+import tech.mappie.validation.Problem
 
-fun MessageCollector.info(message: String) = report(CompilerMessageSeverity.INFO, message)
+fun logAll(problems: List<Problem>) =
+    problems.forEach { log(it) }
+
+fun log(problem: Problem) =
+    when(problem.severity) {
+        Problem.Severity.ERROR -> logError(problem.description, problem.location)
+        Problem.Severity.WARNING -> logWarn(problem.description, problem.location)
+    }
+
+fun logInfo(message: String, location: CompilerMessageSourceLocation? = null) =
+    context.messageCollector.info(message, location)
 
 fun logWarn(message: String, location: CompilerMessageSourceLocation? = null) =
     context.messageCollector.warn(message, location)
 
-fun MessageCollector.warn(message: String, location: CompilerMessageSourceLocation? = null) =
-    report(CompilerMessageSeverity.WARNING, message, location)
-
 fun logError(message: String, location: CompilerMessageSourceLocation? = null) =
     context.messageCollector.error(message, location)
+
+fun MessageCollector.info(message: String, location: CompilerMessageSourceLocation? = null) =
+    report(CompilerMessageSeverity.INFO, message, location)
+
+fun MessageCollector.warn(message: String, location: CompilerMessageSourceLocation? = null) =
+    report(CompilerMessageSeverity.WARNING, message, location)
 
 fun MessageCollector.error(message: String, location: CompilerMessageSourceLocation? = null) =
     report(CompilerMessageSeverity.ERROR, message, location)

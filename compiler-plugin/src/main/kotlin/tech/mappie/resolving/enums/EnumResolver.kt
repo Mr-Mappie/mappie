@@ -5,9 +5,7 @@ import tech.mappie.util.location
 import tech.mappie.util.logWarn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.callableId
-import org.jetbrains.kotlin.ir.util.fileEntry
-import org.jetbrains.kotlin.ir.util.isEnumClass
+import org.jetbrains.kotlin.ir.util.*
 
 class EnumResolver(private val declaration: IrFunction) {
 
@@ -24,7 +22,8 @@ class EnumResolver(private val declaration: IrFunction) {
             targets.addAll(targetType.getClass()!!.accept(EnumEntriesCollector(), Unit))
             sources.addAll(sourceType.getClass()!!.accept(EnumEntriesCollector(), Unit))
         }
-        declaration.body!!.accept(EnumMappingBodyCollector(), constructor)
+
+        declaration.body?.accept(EnumMappingBodyCollector(), constructor)
 
         validate(constructor)
 
