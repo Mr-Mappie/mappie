@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_WARNINGS_AS_ERRORS
 
 @OptIn(ExperimentalCompilerApi::class)
 class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
@@ -19,10 +20,13 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
         IrGenerationExtension.registerExtension(
             MappieIrRegistrar(
                 messageCollector,
-                MappieConfiguration(StrictnessConfiguration(
-                    enums = configuration.get(ARGUMENT_STRICTNESS_ENUMS, true),
-                    visibility = configuration.get(ARGUMENT_STRICTNESS_VISIBILITY, false)
-                ))
+                MappieConfiguration(
+                    warningsAsErrors = configuration.get(ARGUMENT_WARNINGS_AS_ERRORS, false),
+                    strictness = StrictnessConfiguration(
+                        enums = configuration.get(ARGUMENT_STRICTNESS_ENUMS, true),
+                        visibility = configuration.get(ARGUMENT_STRICTNESS_VISIBILITY, false)
+                    )
+                )
             )
         )
     }
