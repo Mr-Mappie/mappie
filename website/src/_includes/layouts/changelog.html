@@ -9,7 +9,11 @@
         <div class="l-list__inner l-list__inner--changelog">
             {% for change in changelog %}
                 <div class="changelog-item">
+                    {% if change.date == "tbd" %}
+                    <p class="changelog-item__date">TBD</p>
+                    {% else %}
                     <time datetime="{{ change.date | w3DateFilter }}" class="changelog-item__date">{{ change.date | dateFilter }}</time>
+                    {% endif %}
                     <div class="changelog-item__body post-content">
                         <h2 class="changelog-item__title">{{ change.title }}</h2>
                         <ul>
