@@ -10,7 +10,7 @@ public abstract class Mappie<FROM, TO> {
      * @param from the source value.
      * @return [from] mapped to an instance of [TO].
      */
-    public abstract fun map(from: FROM): TO
+    public open fun map(from: FROM): TO = generated()
 
     /**
      * Map each element in [from] to an instance of [TO].

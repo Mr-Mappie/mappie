@@ -14,14 +14,22 @@ import org.jetbrains.kotlin.ir.util.*
 
 class IrTransformer : IrElementTransformerVoidWithContext() {
 
-    override fun visitFileNew(declaration: IrFile): IrFile {
-        val result = super.visitFileNew(declaration)
-        return result
-    }
-
     override fun visitClassNew(declaration: IrClass): IrStatement {
         if (declaration.accept(ShouldTransformCollector(), Unit)) {
-            return super.visitClassNew(declaration)
+            var function = declaration.declarations
+                .filterIsInstance<IrSimpleFunction>()
+                .first { it.name == IDENTIFIER_MAP }
+
+            if (function.isFakeOverride) {
+                declaration.declarations.removeIf { it is IrSimpleFunction && function.name == IDENTIFIER_MAP }
+                function = function.realImplementation(declaration)
+                declaration.declarations.add(function)
+            }
+
+            val transformed = function.accept(this, null)
+            if (transformed is IrSimpleFunction && transformed.body == null) {
+                declaration.declarations.remove(transformed)
+            }
         }
         return declaration
     }
@@ -29,18 +37,18 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
     override fun visitFunctionNew(declaration: IrFunction): IrStatement {
         if (declaration.accept(ShouldTransformCollector(), Unit)) {
             val (valids, invalids) = declaration.accept(MappingResolver(), Unit)
-                .map { it to MappingValidation.of(declaration.fileEntry, it)  }
+                .map { it to MappingValidation.of(declaration.fileEntry, it) }
                 .partition { it.second.isValid() }
 
             if (valids.isNotEmpty()) {
                 declaration.body = with(createScope(declaration)) {
                     val (mapping, validation) = MappingSelector.of(valids).select()
-                    validation.warnings().forEach { warning ->
-                        logWarn(warning.description, warning.location)
-                    }
+
+                    logAll(validation.warnings())
+
                     when (mapping) {
                         is ConstructorCallMapping -> {
-                            context.blockBody(this.scope) {
+                            context.blockBody(scope) {
                                 +irReturn(irCallConstructor(mapping.symbol, emptyList()).apply {
                                     mapping.mappings.map { (target, source) ->
                                         val index = mapping.symbol.owner.valueParameters.indexOf(target)
@@ -49,19 +57,24 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
                                 })
                             }
                         }
+
                         is EnumMapping -> {
-                            context.blockBody(this.scope) {
+                            context.blockBody(scope) {
                                 +irReturn(irWhen(mapping.targetType, mapping.mappings
                                     .filter { (_, targets) -> targets.isNotEmpty() }
                                     .map { (source, targets) ->
-                                    val lhs = irGet(declaration.valueParameters.first())
-                                    val rhs = irGetEnumValue(mapping.targetType, source.symbol)
-                                    irBranch(irEqeqeq(lhs, rhs), irGetEnumValue(mapping.targetType, targets.single().symbol))
-                                } + irElseBranch(irCall(context.irBuiltIns.noWhenBranchMatchedExceptionSymbol))))
+                                        val lhs = irGet(declaration.valueParameters.first())
+                                        val rhs = irGetEnumValue(mapping.targetType, source.symbol)
+                                        irBranch(
+                                            irEqeqeq(lhs, rhs),
+                                            irGetEnumValue(mapping.targetType, targets.single().symbol)
+                                        )
+                                    } + irElseBranch(irCall(context.irBuiltIns.noWhenBranchMatchedExceptionSymbol))))
                             }
                         }
+
                         is SingleValueMapping -> {
-                            context.blockBody(this.scope) {
+                            context.blockBody(scope) {
                                 +irReturn(mapping.value)
                             }
                         }
@@ -69,7 +82,7 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
                 }
             } else {
                 invalids.first().second.problems.forEach { problem ->
-                    context.messageCollector.error(problem.description, problem.location ?: location(declaration))
+                    logError(problem.description, problem.location ?: location(declaration))
                 }
             }
         }

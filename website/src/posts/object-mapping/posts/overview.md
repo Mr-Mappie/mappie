@@ -25,4 +25,8 @@ object PersonMapper : ObjectMappie<Person, PersonDto>() {
     override fun map(from: Person): PersonDto = mapping()
 }
 ```
+or equivalently without an explicit body
+```kotlin
+object PersonMapper : ObjectMappie<Person, PersonDto>()
+```
 will generate a mapping function calling the primary constructor of `PersonDto` with the fields of `Person`.

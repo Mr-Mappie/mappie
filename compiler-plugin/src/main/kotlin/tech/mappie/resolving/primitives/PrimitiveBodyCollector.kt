@@ -5,10 +5,11 @@ import tech.mappie.util.irGet
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
+import tech.mappie.BaseVisitor
 
 class PrimitiveBodyCollector(
     private val declaration: IrFunction,
-) : tech.mappie.BaseVisitor<IrExpression, Unit>() {
+) : BaseVisitor<IrExpression, Unit>() {
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): IrExpression {
         return body.statements.single().accept(data)

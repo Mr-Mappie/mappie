@@ -1,6 +1,5 @@
 package tech.mappie.generation
 
-import tech.mappie.BaseVisitor
 import tech.mappie.api.Mappie
 import tech.mappie.resolving.IDENTIFIER_MAPPING
 import tech.mappie.util.isSubclassOfFqName
@@ -10,15 +9,16 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrReturn
+import tech.mappie.BaseVisitor
+import tech.mappie.resolving.IDENTIFIER_MAP
 
-class ShouldTransformCollector : tech.mappie.BaseVisitor<Boolean, Unit>() {
+class ShouldTransformCollector : BaseVisitor<Boolean, Unit>() {
     override fun visitClass(declaration: IrClass, data: Unit): Boolean {
         return declaration.isSubclassOfFqName(Mappie::class.java.name)
-                && declaration.declarations.filterIsInstance<IrSimpleFunction>().any { it.accept(data) }
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Unit): Boolean {
-        return declaration.body?.accept(data) ?: false
+        return declaration.body?.accept(data) ?: (declaration.name == IDENTIFIER_MAP)
     }
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): Boolean {
@@ -30,7 +30,7 @@ class ShouldTransformCollector : tech.mappie.BaseVisitor<Boolean, Unit>() {
     }
 
     override fun visitCall(expression: IrCall, data: Unit): Boolean {
-        return expression.symbol.owner.name == IDENTIFIER_MAPPING
+        return expression.symbol.owner.name in arrayOf(IDENTIFIER_MAPPING)
     }
 
     override fun visitElement(element: IrElement, data: Unit): Boolean {
