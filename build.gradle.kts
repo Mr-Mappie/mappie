@@ -38,11 +38,11 @@ jreleaser {
         active = org.jreleaser.model.Active.ALWAYS
         armored = true
         mode = Signing.Mode.COMMAND
-        passphrase = properties["signing.passphrase"] as String
+        passphrase = properties["signing.passphrase"] as? String
     }
     release {
         github {
-            token = properties["release.github.token"] as String
+            token = properties["release.github.token"] as? String
             draft = true
         }
     }
@@ -54,8 +54,8 @@ jreleaser {
                     active = org.jreleaser.model.Active.ALWAYS
                     url = "https://central.sonatype.com/api/v1/publisher"
                     stagingRepository(project(":mappie-api").layout.buildDirectory.dir("staging-deploy").get().toString())
-                    username = properties["mavenCentralUsername"] as String
-                    password = properties["mavenCentralPassword"] as String
+                    username = properties["mavenCentralUsername"] as? String
+                    password = properties["mavenCentralPassword"] as? String
                     applyMavenCentralRules = true
                     deploymentId = "d5bfe6b5-6fe5-4342-868b-c47ae4635249"
                 }
@@ -63,8 +63,8 @@ jreleaser {
                     active = org.jreleaser.model.Active.ALWAYS
                     url = "https://central.sonatype.com/api/v1/publisher"
                     stagingRepository(project(":compiler-plugin").layout.buildDirectory.dir("staging-deploy").get().toString())
-                    username = properties["mavenCentralUsername"] as String
-                    password = properties["mavenCentralPassword"] as String
+                    username = properties["mavenCentralUsername"] as? String
+                    password = properties["mavenCentralPassword"] as? String
                     applyMavenCentralRules = true
                     deploymentId = "a6d8ebaf-ee2d-444e-b808-4e965b9491ae"
                 }
