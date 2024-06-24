@@ -17,6 +17,9 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
         val extension = kotlinCompilation.project.extensions.getByType(MappieExtension::class.java)
         return kotlinCompilation.target.project.provider {
             buildList {
+                extension.warningsAsErrors.orNull?.apply {
+                    add(SubpluginOption("warningsAsErrors", this.toString()))
+                }
                 extension.strictness.enums.orNull?.apply {
                     add(SubpluginOption("strictness.enums", this.toString() ))
                 }

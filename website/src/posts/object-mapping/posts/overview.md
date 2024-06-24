@@ -4,7 +4,7 @@ summary: "Performing object mapping."
 eleventyNavigation:
   key: Object Mapping Overview
   parent: Object Mapping
-  order: 3
+  order: 4
 ---
 
 Mappie supports creating object mappers via the base class `ObjectMappie`. The generated mapper will call a constructor

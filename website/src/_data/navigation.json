@@ -19,6 +19,11 @@
           "caption": "Installation",
           "url": "/getting-started/installation/",
           "external": false
+        },
+        {
+          "caption": "Configuration",
+          "url": "/getting-started/configuration/",
+          "external": false
         }
       ]
     },

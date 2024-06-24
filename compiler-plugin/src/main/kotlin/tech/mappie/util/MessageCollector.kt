@@ -33,7 +33,11 @@ fun MessageCollector.info(message: String, location: CompilerMessageSourceLocati
     report(CompilerMessageSeverity.INFO, message, location)
 
 fun MessageCollector.warn(message: String, location: CompilerMessageSourceLocation? = null) =
-    report(CompilerMessageSeverity.WARNING, message, location)
+    if (context.configuration.warningsAsErrors) {
+        report(CompilerMessageSeverity.ERROR, message, location)
+    } else {
+        report(CompilerMessageSeverity.WARNING, message, location)
+    }
 
 fun MessageCollector.error(message: String, location: CompilerMessageSourceLocation? = null) =
     report(CompilerMessageSeverity.ERROR, message, location)

@@ -7,6 +7,11 @@ abstract class MappieExtension(private val project: Project) {
 
     private val extensions = mutableMapOf<String, Any>()
 
+    /**
+     * Whether to report all warnings as errors.
+     */
+    abstract val warningsAsErrors: Property<Boolean>
+
     internal val strictness: MappieStrictnessExtension get() =
         extensions.getOrPut(MappieStrictnessExtension.NAME) {
             project.objects.newInstance(MappieStrictnessExtension::class.java)

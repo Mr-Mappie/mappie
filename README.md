@@ -1,4 +1,6 @@
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Mr-Mappie_mappie&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Mr-Mappie_mappie)
+[![Maven Central](https://img.shields.io/maven-metadata/v.svg?label=maven-central&metadataUrl=https%3A%2F%2Frepo1.maven.org%2Fmaven2%2Ftech%2Fmappie%2Fmappie-api%2Fmaven-metadata.xml)](https://central.sonatype.com/artifact/tech.mappie/mappie-api)
+[![Continuous Integration](https://github.com/mr-mappie/mappie/workflows/Build/badge.svg)](https://github.com/mr-mappie/mappie/actions)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-green.svg)](https://shields.io/)
 
 # Mappie
 Mappie is a Kotlin compiler plugin which generates code simplifying developing object mapping code. Mappie generates all

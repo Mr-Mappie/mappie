@@ -4,7 +4,7 @@ summary: "Reusing other mappers."
 eleventyNavigation:
   key: Reusing Mappers
   parent: Object Mapping
-  order: 5
+  order: 6
 ---
 
 Mappie has support for reusing mappers in other mappers using the `via` operator.

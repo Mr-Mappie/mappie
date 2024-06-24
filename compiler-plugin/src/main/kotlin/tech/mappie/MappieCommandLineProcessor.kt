@@ -14,6 +14,12 @@ class MappieCommandLineProcessor : CommandLineProcessor {
 
     override val pluginOptions = listOf(
         CliOption(
+            optionName = OPTION_WARNINGS_AS_ERRORS,
+            valueDescription = "boolean",
+            description = "report all warnings as errors instead",
+            required = false,
+        ),
+        CliOption(
             optionName = OPTION_STRICTNESS_ENUMS,
             valueDescription = "boolean",
             description = "strictness of enum validation",
@@ -29,6 +35,7 @@ class MappieCommandLineProcessor : CommandLineProcessor {
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         return when (option.optionName) {
+            OPTION_WARNINGS_AS_ERRORS -> configuration.put(ARGUMENT_WARNINGS_AS_ERRORS, value.toBooleanStrict())
             OPTION_STRICTNESS_ENUMS -> configuration.put(ARGUMENT_STRICTNESS_ENUMS, value.toBooleanStrict())
             OPTION_STRICTNESS_VISIBILITY -> configuration.put(ARGUMENT_STRICTNESS_VISIBILITY, value.toBooleanStrict())
             else -> throw IllegalArgumentException("Unknown option ${option.optionName}")
@@ -36,9 +43,11 @@ class MappieCommandLineProcessor : CommandLineProcessor {
     }
 
     companion object {
+        const val OPTION_WARNINGS_AS_ERRORS = "warningsAsErrors"
         const val OPTION_STRICTNESS_ENUMS = "strictness.enums"
         const val OPTION_STRICTNESS_VISIBILITY = "strictness.visibility"
 
+        val ARGUMENT_WARNINGS_AS_ERRORS = CompilerConfigurationKey<Boolean>(OPTION_WARNINGS_AS_ERRORS)
         val ARGUMENT_STRICTNESS_ENUMS = CompilerConfigurationKey<Boolean>(OPTION_STRICTNESS_ENUMS)
         val ARGUMENT_STRICTNESS_VISIBILITY = CompilerConfigurationKey<Boolean>(OPTION_STRICTNESS_VISIBILITY)
     }
