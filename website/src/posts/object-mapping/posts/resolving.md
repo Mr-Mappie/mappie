@@ -4,7 +4,7 @@ summary: "Resolving source- and target properties."
 eleventyNavigation:
   key: Resolving
   parent: Object Mapping
-  order: 4
+  order: 5
 ---
 
 Not all data classes you want to map are equivalent. Suppose we have a data class `Person`
