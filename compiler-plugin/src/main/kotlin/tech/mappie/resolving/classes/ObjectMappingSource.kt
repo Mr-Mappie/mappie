@@ -1,6 +1,5 @@
 package tech.mappie.resolving.classes
 
-import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -41,15 +40,8 @@ data class ExpressionSource(
     override fun resolveType() = type
 }
 
-data class DefaultParameterValueSource(
+data class ValueSource(
     val value: IrExpression,
 ) : ObjectMappingSource {
     override fun resolveType() = value.type
-}
-
-data class ConstantSource<T>(
-    val type: IrType,
-    val value: IrConst<T>,
-) : ObjectMappingSource {
-    override fun resolveType() = type
 }

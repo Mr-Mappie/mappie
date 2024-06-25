@@ -11,7 +11,7 @@ object PersonMapper : ObjectMappie<Person, PersonDto>() {
 
     override fun map(from: Person): PersonDto = mapping {
         PersonDto::description fromProperty Person::name
-        PersonDto::age fromConstant 26
+        PersonDto::age fromValue 26
     }
 }
 
@@ -27,6 +27,6 @@ object TransformingPersonMapper : ObjectMappie<Person, PersonDto>() {
 
     override fun map(from: Person): PersonDto = mapping {
         PersonDto::description fromProperty Person::name transform { "$it Surname" }
-        PersonDto::age fromConstant 24
+        PersonDto::age fromValue 24
     }
 }

@@ -93,9 +93,8 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
 fun ObjectMappingSource.toIr(builder: IrBuilderWithScope): IrExpression =
     when (this) {
         is PropertySource -> toIr(builder)
-        is DefaultParameterValueSource -> value
         is ExpressionSource -> toIr(builder)
-        is ConstantSource<*> -> value
+        is ValueSource -> value
     }
 
 fun ExpressionSource.toIr(builder: IrBuilderWithScope): IrExpression {
