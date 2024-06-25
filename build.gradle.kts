@@ -1,4 +1,5 @@
 import org.jreleaser.model.Signing
+import java.io.ByteArrayOutputStream
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -13,12 +14,20 @@ allprojects {
     description = "Kotlin compiler plugin for generating object mappers"
 }
 
+val branch = ByteArrayOutputStream()
+
+exec {
+    commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
+    standardOutput = branch
+}
+
 sonar {
     properties {
         property("sonar.projectKey", "Mr-Mappie_mappie")
         property("sonar.organization", "mappie")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.qualitygate.wait", "true")
+        property("sonar.branch.name", branch.toString(Charsets.UTF_8))
     }
 }
 

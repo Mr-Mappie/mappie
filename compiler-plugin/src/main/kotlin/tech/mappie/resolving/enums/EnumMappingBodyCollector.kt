@@ -6,13 +6,14 @@ import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
+import tech.mappie.BaseVisitor
 
 data class ExplicitEnumMapping(
     val target: IrEnumEntry,
     val origin: IrExpression,
 )
 
-class EnumMappingBodyCollector : tech.mappie.BaseVisitor<EnumMappingsConstructor, EnumMappingsConstructor>() {
+class EnumMappingBodyCollector : BaseVisitor<EnumMappingsConstructor, EnumMappingsConstructor>() {
 
     override fun visitCall(expression: IrCall, data: EnumMappingsConstructor): EnumMappingsConstructor {
         return when (expression.symbol.owner.name) {

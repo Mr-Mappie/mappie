@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.properties
 
-class GettersCollector : tech.mappie.BaseVisitor<List<IrSimpleFunction>, Unit>() {
+class GettersCollector : BaseVisitor<List<IrSimpleFunction>, Unit>() {
 
     override fun visitValueParameter(declaration: IrValueParameter, data: Unit): List<IrSimpleFunction> {
         return declaration.type.getClass()!!.properties.flatMap { it.accept(Unit) }.toList()
