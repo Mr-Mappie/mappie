@@ -16,6 +16,8 @@ val IDENTIFIER_MAPPED_FROM_PROPERTY = Name.identifier("fromProperty")
 
 val IDENTIFIER_MAPPED_FROM_CONSTANT = Name.identifier("fromConstant")
 
+val IDENTIFIER_MAPPED_FROM_VALUE = Name.identifier("fromValue")
+
 val IDENTIFIER_MAPPED_FROM_EXPRESSION = Name.identifier("fromExpression")
 
 val IDENTIFIER_PARAMETER = Name.identifier("parameter")

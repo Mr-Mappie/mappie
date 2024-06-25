@@ -67,6 +67,12 @@ private class ObjectBodyStatementCollector(
 
                 target to source
             }
+            IDENTIFIER_MAPPED_FROM_VALUE -> {
+                val target = expression.extensionReceiver!!.accept(TargetValueCollector(file!!), data)
+                val source = expression.valueArguments.first()!!
+
+                target to ValueSource(source)
+            }
             IDENTIFIER_MAPPED_FROM_EXPRESSION -> {
                 val target = expression.extensionReceiver!!.accept(TargetValueCollector(file!!), data)
                 val source = expression.valueArguments.first() as IrFunctionExpression
@@ -207,7 +213,7 @@ private class SourceValueCollector(
     }
 
     override fun visitConst(expression: IrConst<*>, data: Unit): ObjectMappingSource {
-        return ConstantSource(expression.type, expression)
+        return ValueSource(expression)
     }
 }
 

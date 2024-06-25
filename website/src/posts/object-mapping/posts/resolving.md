@@ -41,13 +41,13 @@ will set `PersonDto.description` to `Person.name`.
 Sometimes, you want to map from a source property, but tweak the value, handle nullability, or transform the source in
 some other way. See [Transforming](/object-mapping/transforming/) for some guidelines.
 
-## Mapping via a Constant
-Targets can be set via the operator `fromConstant`. This will set the target to the given constant.
+## Mapping via a Value
+Targets can be set via the operator `fromValue`. This will set the target to the given value.
 For example
 ```kotlin
 object PersonMapper : ObjectMappie<Person, PersonDto>() {
     override fun map(from: Person): PersonDto = mapping {
-        PersonDto::description fromConstant "unknown"
+        PersonDto::description fromValue "unknown"
     }
 }
 ```
@@ -56,7 +56,7 @@ will always set `PersonDto.description` to `"unknown`.
 ## Mapping via an Expression
 Targets can be set via the operator `fromExpression`. This will set the target to the given lambda result. 
 
-The difference between `fromExpression` and `fromConstant` is that `fromExpression` will take a lambda
+The difference between `fromExpression` and `fromValue` is that `fromExpression` will take a lambda
 function as a parameter, which takes the original `source` as a parameter. Allowing for more flexibility. 
 
 For example
@@ -86,7 +86,7 @@ we can use `parameter("description")` to reference the constructor parameter
 ```kotlin
 object PersonMapper : ObjectMappie<Person, PersonDto>() {
     override fun map(from: Person): PersonDto = mapping {
-        parameter("description") fromConstant "a constant"
+        parameter("description") fromValue "a constant"
     }
 }
 ```

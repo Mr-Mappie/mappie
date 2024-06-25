@@ -10,6 +10,6 @@ data class PrivateConstructorDto constructor(val string: String, val int: Int) {
 
 object PrivateConstructorMapper : ObjectMappie<PrivateConstructor, PrivateConstructorDto>() {
     override fun map(from: PrivateConstructor): PrivateConstructorDto = mapping {
-        PrivateConstructorDto::int fromConstant 1
+        PrivateConstructorDto::int fromValue 1
     }
 }
