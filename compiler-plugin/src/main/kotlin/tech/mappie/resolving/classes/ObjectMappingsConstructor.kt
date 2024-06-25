@@ -33,7 +33,7 @@ class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParam
                 if (getter != null) {
                     listOf(PropertySource(getter.symbol, getter.returnType, source.symbol, true))
                 } else if (target.hasDefaultValue()) {
-                    listOf(DefaultParameterValueSource(target.defaultValue!!.expression))
+                    listOf(ValueSource(target.defaultValue!!.expression))
                 } else {
                     emptyList()
                 }

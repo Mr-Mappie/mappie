@@ -54,7 +54,20 @@ public abstract class ObjectMappie<FROM, TO> : Mappie<FROM, TO>() {
      * ```
      * will generate an explicit mapping, setting constructor parameter `Person.name` to `"John Doe"`.
      */
+    @Deprecated("This function is unnecessarily limiting.", replaceWith = ReplaceWith("this fromValue value"))
     protected infix fun <TO_TYPE> KProperty1<TO, TO_TYPE>.fromConstant(value: TO_TYPE): Unit =
+        generated()
+
+    /**
+     * Explicitly construct a mapping to [TO] from a value source [value].
+     *
+     * For example
+     * ```kotlin
+     * Person::name fromValue "John Doe"
+     * ```
+     * will generate an explicit mapping, setting constructor parameter `Person.name` to `"John Doe"`.
+     */
+    protected infix fun <TO_TYPE> KProperty1<TO, TO_TYPE>.fromValue(value: TO_TYPE): Unit =
         generated()
 
     /**
@@ -62,7 +75,7 @@ public abstract class ObjectMappie<FROM, TO> : Mappie<FROM, TO>() {
      *
      * For example
      * ```kotlin
-     * Person::name fromConstant { personDto -> personDto.fullName + " (full)" }
+     * Person::name fromExpression { personDto -> personDto.fullName + " (full)" }
      * ```
      * will generate an explicit mapping, setting constructor parameter `Person.name` to `"John Doe (full)"`,
      * assuming `personDto.fullName == "John Doe"`.
