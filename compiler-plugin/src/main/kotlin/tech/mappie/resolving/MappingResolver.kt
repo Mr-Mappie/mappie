@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import tech.mappie.BaseVisitor
 
 sealed interface Mapping
 
@@ -37,7 +38,7 @@ data class SingleValueMapping(
     val value: IrExpression,
 ) : Mapping
 
-class MappingResolver : tech.mappie.BaseVisitor<List<Mapping>, Unit>() {
+class MappingResolver : BaseVisitor<List<Mapping>, Unit>() {
 
     override fun visitFunction(declaration: IrFunction, data: Unit): List<Mapping> {
         val type = declaration.returnType

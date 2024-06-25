@@ -4,7 +4,7 @@ import tech.mappie.BaseVisitor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 
-class EnumEntriesCollector : tech.mappie.BaseVisitor<List<IrEnumEntry>, Unit>() {
+class EnumEntriesCollector : BaseVisitor<List<IrEnumEntry>, Unit>() {
 
     override fun visitClass(declaration: IrClass, data: Unit): List<IrEnumEntry> {
         return declaration.declarations

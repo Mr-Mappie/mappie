@@ -114,7 +114,7 @@ private class ObjectBodyStatementCollector(
     }
 }
 
-private class MapperReferenceCollector : tech.mappie.BaseVisitor<IrFunctionExpression, Unit>() {
+private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>() {
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Unit): IrFunctionExpression {
         return context.referenceClass(expression.symbol.owner.classId!!)!!
