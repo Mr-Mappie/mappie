@@ -9,6 +9,8 @@ changelog:
         - "[#16](https://github.com/Mr-Mappie/mappie/issues/16) improved resolution of explicit parameter names."
         - "[#21](https://github.com/Mr-Mappie/mappie/issues/21) added global configuration option to report all warnings as errors."
         - "[#24](https://github.com/Mr-Mappie/mappie/issues/24) added explicit mapping fromValue as a replacement of the much more restricting fromConstant."
+        - "[#26](https://github.com/Mr-Mappie/mappie/issues/26) support for selecting nested properties."
+        - "Several other bug fixes."
     - date: "2024-06-22"
       title: "v0.1.0"
       items:

@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
 import org.jetbrains.kotlin.name.Name
+import tech.mappie.util.irGet
 
 class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParameter) {
 
@@ -31,7 +32,7 @@ class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParam
                     getter.name == getterName(target.name)
                 }
                 if (getter != null) {
-                    listOf(PropertySource(getter.symbol, getter.returnType, source.symbol, true))
+                    listOf(PropertySource(getter.symbol, irGet(source), true))
                 } else if (target.hasDefaultValue()) {
                     listOf(ValueSource(target.defaultValue!!.expression))
                 } else {

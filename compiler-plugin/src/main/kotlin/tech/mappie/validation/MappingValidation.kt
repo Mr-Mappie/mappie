@@ -54,9 +54,9 @@ interface MappingValidation {
                 addAll(
                     mapping.mappings
                         .filter { (_, sources) -> sources.size == 1 }
-                        .filter { (target, sources) -> !target.type.isAssignableFrom(sources.single().resolveType()) }
+                        .filter { (target, sources) -> !target.type.isAssignableFrom(sources.single().type) }
                         .map { (target, sources) -> Problem.error(
-                            "Target ${mapping.targetType.getClass()!!.name.asString()}.${target.name.asString()} has type ${target.type.pretty()} which cannot be assigned from type ${sources.single().resolveType().pretty()}",
+                            "Target ${mapping.targetType.getClass()!!.name.asString()}.${target.name.asString()} has type ${target.type.pretty()} which cannot be assigned from type ${sources.single().type.pretty()}",
                             when (val source = sources.single()) {
                                 is PropertySource -> source.origin?.let { location(file, it) }
                                 is ExpressionSource -> source.origin?.let { location(file, it) }

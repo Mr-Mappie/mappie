@@ -2,6 +2,7 @@
 
 package tech.mappie.api
 
+import kotlin.reflect.KProperty0
 import kotlin.reflect.KProperty1
 
 /**
@@ -32,6 +33,19 @@ public abstract class ObjectMappie<FROM, TO> : Mappie<FROM, TO>() {
      */
     public val forSet: SetMappie<FROM, TO> get() =
         error("The mapper forSet should only be used in the context of 'via'. Use mapSet instead.")
+
+    /**
+     * Explicitly construct a mapping to [TO] from property source [source].
+     *
+     * For example
+     * ```kotlin
+     * Person::name fromProperty PersonDto::fullName
+     * ```
+     * will generate an explicit mapping, setting constructor parameter `Person.name` to `PersonDto.fullName`.
+     */
+    protected infix fun <TO_TYPE, FROM_TYPE> KProperty1<TO, TO_TYPE>.fromProperty(source: KProperty0<FROM_TYPE>): TransformableValue<FROM_TYPE, TO_TYPE> =
+        generated()
+
 
     /**
      * Explicitly construct a mapping to [TO] from property source [source].

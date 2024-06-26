@@ -105,7 +105,9 @@ fun ExpressionSource.toIr(builder: IrBuilderWithScope): IrExpression {
 }
 
 fun PropertySource.toIr(builder: IrBuilderWithScope): IrExpression {
-    val getter = builder.irCall(property).apply { dispatchReceiver = builder.irGet(type, dispatchReceiverSymbol) }
+    val getter = builder.irCall(property).apply {
+        dispatchReceiver = this@toIr.dispatchReceiver
+    }
     return transformation?.let {
             builder.irCall(context.referenceLetFunction()).apply {
                 extensionReceiver = getter
