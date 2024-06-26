@@ -25,7 +25,16 @@ internal fun IrClass.allSuperTypes(): List<IrType> =
     this.superTypes + this.superTypes.flatMap { it.erasedUpperBound.allSuperTypes() }
 
 fun IrType.isAssignableFrom(other: IrType): Boolean =
-    isSubtypeOf(other, IrTypeSystemContextImpl(context.irBuiltIns)) && (isNullable() || !other.isNullable())
+    other.isSubtypeOf(this, IrTypeSystemContextImpl(context.irBuiltIns)) || isIntegerAssignableFrom(other)
+
+fun IrType.isIntegerAssignableFrom(other: IrType): Boolean =
+    when (other) {
+        context.irBuiltIns.byteType -> this in listOf(context.irBuiltIns.byteType)
+        context.irBuiltIns.shortType -> this in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType)
+        context.irBuiltIns.intType -> this in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType, context.irBuiltIns.intType)
+        context.irBuiltIns.longType -> this in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType, context.irBuiltIns.intType, context.irBuiltIns.longType)
+        else -> false
+    }
 
 fun getterName(name: Name) =
     getterName(name.asString())

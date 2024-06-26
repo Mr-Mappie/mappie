@@ -3,10 +3,10 @@ package testing
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class IdentityMapperTest {
+class IntIdentityMapperTest {
 
     @Test
     fun `map Int to Int via IdentityMapper`() {
-        assertEquals(1, IdentityMapper.map(1))
+        assertEquals(1, IntIdentityMapper.map(1))
     }
 }
