@@ -10,26 +10,26 @@ import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.util.isFunction
 
 sealed interface ObjectMappingSource {
-    fun resolveType(): IrType
+    val type: IrType
 }
 
 data class PropertySource(
     val property: IrSimpleFunctionSymbol,
-    val type: IrType,
-    val dispatchReceiverSymbol: IrValueSymbol,
+    val dispatchReceiver: IrExpression,
+//    val dispatchReceiverSymbol: IrValueSymbol,
     val isResolvedAutomatically: Boolean,
     val transformation: IrFunctionExpression? = null,
     val origin: IrExpression? = null,
 ) : ObjectMappingSource {
-    override fun resolveType(): IrType {
-        return if (transformation == null) {
-            type
+
+    override val type: IrType
+        get() = if (transformation == null) {
+            property.owner.returnType
         } else if (transformation.type.isFunction()) {
             (transformation.type as IrSimpleType).arguments[1].typeOrFail
         } else {
             transformation.type
         }
-    }
 }
 
 data class ExpressionSource(
@@ -37,11 +37,11 @@ data class ExpressionSource(
     val expression: IrFunctionExpression,
     val origin: IrExpression?,
 ) : ObjectMappingSource {
-    override fun resolveType() = expression.function.returnType
+    override val type = expression.function.returnType
 }
 
 data class ValueSource(
     val value: IrExpression,
 ) : ObjectMappingSource {
-    override fun resolveType() = value.type
+    override val type = value.type
 }

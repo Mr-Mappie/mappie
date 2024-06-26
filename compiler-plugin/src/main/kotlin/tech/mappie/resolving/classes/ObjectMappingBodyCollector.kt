@@ -91,10 +91,8 @@ private class ObjectBodyStatementCollector(
             IDENTIFIER_VIA -> {
                 val mapping = expression.dispatchReceiver!!.accept(data)!!
                 val transformation = expression.valueArguments.first()!!.accept(MapperReferenceCollector(), Unit)
-                val type = transformation.type
                 mapping.first to (mapping.second as PropertySource).copy(
-                    transformation = transformation,
-                    type = type,
+                    transformation = transformation
                 )
             }
             else -> {
@@ -202,10 +200,10 @@ private class SourceValueCollector(
 ) : BaseVisitor<ObjectMappingSource, Unit>() {
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Unit): ObjectMappingSource {
+        val dispatchReceiver = expression.dispatchReceiver ?: irGet(expression.type, dispatchReceiverSymbol)
         return PropertySource(
             property = expression.getter!!,
-            type = (expression.type as IrSimpleType).arguments[1].typeOrFail,
-            dispatchReceiverSymbol = dispatchReceiverSymbol,
+            dispatchReceiver = dispatchReceiver,
             transformation = null,
             origin = expression,
             isResolvedAutomatically = false

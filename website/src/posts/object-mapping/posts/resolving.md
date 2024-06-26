@@ -38,6 +38,17 @@ object PersonMapper : ObjectMappie<Person, PersonDto>() {
 ```
 will set `PersonDto.description` to `Person.name`.
 
+We can also select a nested property using `fromProperty`. This can be done by selecting the property from the mapping
+parameter, usually named `from`. For example
+```kotlin
+object PersonMapper : ObjectMappie<Person, PersonDto>() {
+    override fun map(from: Person): PersonDto = mapping {
+        PersonDto::streetname fromProperty from.address::street
+    }
+}
+```
+will construct an explicit mapping from the property `street` from the `address` of `from` to `streetname` of `PersonDto`. 
+
 Sometimes, you want to map from a source property, but tweak the value, handle nullability, or transform the source in
 some other way. See [Transforming](/object-mapping/transforming/) for some guidelines.
 
