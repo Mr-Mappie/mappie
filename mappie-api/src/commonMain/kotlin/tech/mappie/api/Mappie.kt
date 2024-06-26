@@ -2,7 +2,7 @@
 
 package tech.mappie.api
 
-public abstract class Mappie<FROM, TO> {
+public abstract class Mappie<in FROM, out TO> {
 
     /**
      * Map [from] to an instance of [TO].
