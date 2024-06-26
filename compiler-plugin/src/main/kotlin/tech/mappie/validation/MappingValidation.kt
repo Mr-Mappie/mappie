@@ -11,6 +11,7 @@ import tech.mappie.util.location
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.types.getClass
+import tech.mappie.resolving.classes.ExpressionSource
 
 data class Problem(
     val description: String,
@@ -56,7 +57,11 @@ interface MappingValidation {
                         .filter { (target, sources) -> !target.type.isAssignableFrom(sources.single().resolveType()) }
                         .map { (target, sources) -> Problem.error(
                             "Target ${mapping.targetType.getClass()!!.name.asString()}.${target.name.asString()} has type ${target.type.pretty()} which cannot be assigned from type ${sources.single().resolveType().pretty()}",
-                            (sources.single() as? PropertySource)?.origin?.let { location(file, it) }
+                            when (val source = sources.single()) {
+                                is PropertySource -> source.origin?.let { location(file, it) }
+                                is ExpressionSource -> source.origin?.let { location(file, it) }
+                                else -> null
+                            }
                         ) }
                 )
 

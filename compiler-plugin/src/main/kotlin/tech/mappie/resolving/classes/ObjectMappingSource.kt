@@ -36,6 +36,7 @@ data class ExpressionSource(
     val extensionReceiverSymbol: IrValueSymbol,
     val expression: IrFunctionExpression,
     val type: IrType,
+    val origin: IrExpression?,
 ) : ObjectMappingSource {
     override fun resolveType() = type
 }
