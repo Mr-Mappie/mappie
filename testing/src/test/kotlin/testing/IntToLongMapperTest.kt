@@ -8,8 +8,8 @@ class IntToLongMapperTest {
     @Test
     fun `map Int to Long via IntToLongMapper`() {
         assertEquals(
-            IntOutput(1),
-            IntToLongMapper.map(LongInput(1)),
+            LongOutput(1),
+            IntToLongMapper.map(IntInput(1)),
         )
     }
 }

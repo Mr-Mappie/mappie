@@ -2,8 +2,8 @@ package testing
 
 import tech.mappie.api.ObjectMappie
 
-data class LongInput(val value: Long)
+data class IntInput(val value: Int)
 
-data class IntOutput(val value: Int)
+data class LongOutput(val value: Long)
 
-object IntToLongMapper : ObjectMappie<LongInput, IntOutput>()
+object IntToLongMapper : ObjectMappie<IntInput, LongOutput>()

@@ -28,11 +28,11 @@ fun IrType.isAssignableFrom(other: IrType): Boolean =
     other.isSubtypeOf(this, IrTypeSystemContextImpl(context.irBuiltIns)) || isIntegerAssignableFrom(other)
 
 fun IrType.isIntegerAssignableFrom(other: IrType): Boolean =
-    when (other) {
-        context.irBuiltIns.byteType -> this in listOf(context.irBuiltIns.byteType)
-        context.irBuiltIns.shortType -> this in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType)
-        context.irBuiltIns.intType -> this in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType, context.irBuiltIns.intType)
-        context.irBuiltIns.longType -> this in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType, context.irBuiltIns.intType, context.irBuiltIns.longType)
+    when (this) {
+        context.irBuiltIns.byteType -> other in listOf(context.irBuiltIns.byteType)
+        context.irBuiltIns.shortType -> other in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType)
+        context.irBuiltIns.intType -> other in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType, context.irBuiltIns.intType)
+        context.irBuiltIns.longType -> other in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType, context.irBuiltIns.intType, context.irBuiltIns.longType)
         else -> false
     }
 
