@@ -80,7 +80,6 @@ private class ObjectBodyStatementCollector(
                 target to ExpressionSource(
                     dispatchReceiverSymbol,
                     source,
-                    (source.type as IrSimpleType).arguments[1].typeOrFail,
                     expression,
                 )
             }
