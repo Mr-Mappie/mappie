@@ -13,6 +13,15 @@ public abstract class Mappie<in FROM, out TO> {
     public open fun map(from: FROM): TO = generated()
 
     /**
+     * Map nullable [from] to an instance of [TO].
+     *
+     * @param from the source value.
+     * @return [from] mapped to an instance of [TO].
+     */
+    public fun mapNullable(from: FROM?): TO? =
+        if (from == null) null else map(from)
+
+    /**
      * Map each element in [from] to an instance of [TO].
      *
      * @param from the source values.
