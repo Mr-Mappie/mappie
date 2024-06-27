@@ -19,10 +19,6 @@ dependencies {
     jacocoAggregation(project(":compiler-plugin"))
 }
 
-tasks.check {
-    finalizedBy(tasks.named<JacocoReport>("testCodeCoverageReport"))
-}
-
 val branch = ByteArrayOutputStream()
 
 exec {
