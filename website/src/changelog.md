@@ -2,7 +2,7 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-    - date: "tbd"
+    - date: "2024-06-27"
       title: "v0.2.0"
       items:
         - "[#13](https://github.com/Mr-Mappie/mappie/issues/13) added support for declaring a mapper without an implementation of map."

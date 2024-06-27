@@ -36,7 +36,7 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
         SubpluginArtifact(
             groupId = "tech.mappie",
             artifactId = "mappie-compiler-plugin",
-            version = "0.1.0",
+            version = "0.2.0",
         )
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) =
