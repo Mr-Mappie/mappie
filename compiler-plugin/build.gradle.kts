@@ -87,9 +87,3 @@ tasks.withType<KotlinCompile>().configureEach {
         "-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi"
     )
 }
-
-tasks.jacocoTestReport {
-    reports {
-        xml.required = true
-    }
-}

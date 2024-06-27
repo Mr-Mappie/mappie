@@ -6,12 +6,21 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.sonarqube)
     alias(libs.plugins.jreleaser)
+    id("jacoco-report-aggregation")
 }
 
 allprojects {
     group = "tech.mappie"
     version = "0.1.0"
     description = "Kotlin compiler plugin for generating object mappers"
+}
+
+dependencies {
+    jacocoAggregation(project(":compiler-plugin"))
+}
+
+tasks.check {
+    finalizedBy(tasks.named<JacocoReport>("testCodeCoverageReport"))
 }
 
 val branch = ByteArrayOutputStream()
@@ -28,7 +37,10 @@ sonar {
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.qualitygate.wait", "true")
         property("sonar.branch.name", branch.toString(Charsets.UTF_8))
-        property("sonar.coverage.jacoco.xmlReportPaths", project(":compiler-plugin").layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml"))
+        property("sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory
+                .file("reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
+                .get().asFile.absolutePath
+        )
     }
 }
 
