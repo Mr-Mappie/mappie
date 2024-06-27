@@ -75,7 +75,7 @@ jreleaser {
                     username = properties["mavenCentralUsername"] as? String
                     password = properties["mavenCentralPassword"] as? String
                     applyMavenCentralRules = true
-                    deploymentId = "d5bfe6b5-6fe5-4342-868b-c47ae4635249"
+                    retryDelay = 15
                 }
                 create("compiler-plugin") {
                     active = org.jreleaser.model.Active.ALWAYS
@@ -84,7 +84,7 @@ jreleaser {
                     username = properties["mavenCentralUsername"] as? String
                     password = properties["mavenCentralPassword"] as? String
                     applyMavenCentralRules = true
-                    deploymentId = "a6d8ebaf-ee2d-444e-b808-4e965b9491ae"
+                    retryDelay = 15
                 }
             }
         }
