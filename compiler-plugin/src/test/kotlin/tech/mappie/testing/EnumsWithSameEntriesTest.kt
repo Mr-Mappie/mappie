@@ -1,15 +1,15 @@
-package tech.mappie.testing.enums
+package tech.mappie.testing
 
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.KotlinCompilation
 import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
-import tech.mappie.testing.loadEnumMappieClass
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class TwoEnumsWithSameEntriesTest {
+class EnumsWithSameEntriesTest {
 
     enum class Input { SOME, OTHER }
     enum class Output { SOME, OTHER }
@@ -25,7 +25,7 @@ class TwoEnumsWithSameEntriesTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.EnumMappie
-                        import tech.mappie.testing.enums.TwoEnumsWithSameEntriesTest.*
+                        import tech.mappie.testing.EnumsWithSameEntriesTest.*
     
                         class Mapper : EnumMappie<Input, Output>()
                         """
@@ -33,8 +33,8 @@ class TwoEnumsWithSameEntriesTest {
                 )
             }
         }.compile {
-            assertEquals(ExitCode.OK, exitCode)
-            assertEquals("", messages)
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
 
             val mapper = classLoader
                 .loadEnumMappieClass<Input, Output>("Mapper")

@@ -14,11 +14,13 @@ dependencies {
 
     testFixturesImplementation(libs.classgraph)
     testFixturesImplementation(libs.okio)
+    testFixturesImplementation(libs.assertj.core)
 
+    testImplementation(project(":mappie-api"))
     testImplementation(kotlin("reflect"))
     testImplementation(kotlin("test"))
+    testImplementation(libs.assertj.core)
     testImplementation(libs.kotlin.compiler.embeddable)
-    testImplementation(project(":mappie-api"))
 }
 
 java {
