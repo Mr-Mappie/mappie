@@ -28,6 +28,7 @@ sonar {
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.qualitygate.wait", "true")
         property("sonar.branch.name", branch.toString(Charsets.UTF_8))
+        property("sonar.coverage.jacoco.xmlReportPaths", project(":compiler-plugin").layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml"))
     }
 }
 
