@@ -38,6 +38,9 @@ jobs:
       - name: Build
         run: ./gradlew build
 
+      - name: Coverage Report
+        run: ./gradlew testCodeCoverageReport
+
       - name: Sonar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -2,7 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    id("java-test-fixtures")
     id("maven-publish")
+    id("jacoco")
 }
 
 dependencies {
@@ -10,8 +12,13 @@ dependencies {
 
     implementation(project(":mappie-api"))
 
+    testFixturesImplementation(libs.classgraph)
+    testFixturesImplementation(libs.okio)
+
+    testImplementation(kotlin("reflect"))
     testImplementation(kotlin("test"))
     testImplementation(libs.kotlin.compiler.embeddable)
+    testImplementation(project(":mappie-api"))
 }
 
 java {
@@ -23,7 +30,11 @@ publishing {
     publications {
         create<MavenPublication>("kotlin") {
             artifactId = "mappie-compiler-plugin"
-            from(components["java"])
+
+            from((components["java"] as AdhocComponentWithVariants).apply {
+                withVariantsFromConfiguration(configurations["testFixturesApiElements"]) { skip() }
+                withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }
+            })
 
             pom {
                 name = "tech.mappie:compiler-plugin"
@@ -67,10 +78,12 @@ publishing {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
 }
 
 tasks.withType<KotlinCompile>().configureEach {
-    compilerOptions.freeCompilerArgs.add(
-        "-opt-in=org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI"
+    compilerOptions.freeCompilerArgs.addAll(
+        "-opt-in=org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI",
+        "-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi"
     )
 }
