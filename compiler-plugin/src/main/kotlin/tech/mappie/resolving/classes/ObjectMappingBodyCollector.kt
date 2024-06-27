@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.createExpressionBody
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
@@ -140,7 +140,7 @@ private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>
 
         return when (val name = expression.symbol.owner.name) {
             getterName(ObjectMappie<*, *>::forList.name) -> {
-                val mapper = expression.symbol.owner.parent as IrClassImpl
+                val mapper = expression.symbol.owner.parent as IrClass
 
                 val function = mapper.functions
                     .filter { it.name == IDENTIFIER_MAP_LIST }
@@ -149,7 +149,7 @@ private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>
                 function.symbol.wrap(expression.dispatchReceiver!!)
             }
             getterName(ObjectMappie<*, *>::forSet.name) -> {
-                val mapper = expression.symbol.owner.parent as IrClassImpl
+                val mapper = expression.symbol.owner.parent as IrClass
 
                 val function = mapper.functions
                     .filter { it.name == IDENTIFIER_MAP_SET }
