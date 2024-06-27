@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     id("java-test-fixtures")
     id("maven-publish")
+    id("jacoco")
 }
 
 dependencies {
@@ -77,6 +78,7 @@ publishing {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
 }
 
 tasks.withType<KotlinCompile>().configureEach {
@@ -84,4 +86,10 @@ tasks.withType<KotlinCompile>().configureEach {
         "-opt-in=org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI",
         "-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi"
     )
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required = true
+    }
 }
