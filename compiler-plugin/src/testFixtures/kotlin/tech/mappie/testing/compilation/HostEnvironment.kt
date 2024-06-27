@@ -35,16 +35,9 @@ object HostEnvironment {
         return Regex("$prefix(-[0-9]+\\.[0-9]+(\\.[0-9]+)?)([-0-9a-zA-Z]+)?(\\.jar|\\.klib)")
     }
 
-    /** Tries to find a file matching the given [regex] in the host process' classpath */
-    private fun findInClasspath(regex: Regex): File? {
-        val jarFile = classpath.firstOrNull { classpath ->
-            classpath.name.matches(regex)
-            //TODO("check that jar file actually contains the right classes")
-        }
-        return jarFile
-    }
+    private fun findInClasspath(regex: Regex): File? =
+        classpath.firstOrNull { classpath -> classpath.name.matches(regex) }
 
-    /** Returns the files on the classloader's classpath and modulepath */
     private fun getHostClasspaths(): List<File> {
         val classGraph = ClassGraph()
             .enableSystemJarsAndModules()

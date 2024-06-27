@@ -26,11 +26,6 @@ abstract class SourceFile {
             return new(name, finalContents, isMultiplatformCommonSource = isMultiplatformCommonSource)
         }
 
-        /**
-         * Create a new source file for the compilation when the compilation is run
-         *
-         * @param isMultiplatformCommonSource marks this source file as a source of the common module in a multiplatform project
-         */
         private fun new(name: String, contents: String, isMultiplatformCommonSource: Boolean = false) = object : SourceFile() {
             override fun writeIfNeeded(dir: File): File {
                 val file = dir.resolve(name)
