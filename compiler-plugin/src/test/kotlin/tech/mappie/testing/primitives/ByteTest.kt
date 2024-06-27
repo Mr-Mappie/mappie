@@ -6,10 +6,8 @@ import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.KotlinCompilation
 import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
-import tech.mappie.testing.containsError
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
-import kotlin.test.assertEquals
 
 @Suppress("unused")
 class ByteTest {

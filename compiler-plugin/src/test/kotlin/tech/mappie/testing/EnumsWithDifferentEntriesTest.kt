@@ -7,7 +7,6 @@ import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import java.io.File
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class EnumsWithDifferentEntriesTest {
 

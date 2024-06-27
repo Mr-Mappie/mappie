@@ -7,7 +7,6 @@ import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import java.io.File
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class EnumsWithSameEntriesTest {
 
@@ -43,7 +42,7 @@ class EnumsWithSameEntriesTest {
                 .call()
 
             Input.entries.forEach { entry ->
-                assertEquals(Output.valueOf(entry.name), mapper.map(entry))
+                assertThat(mapper.map(entry)).isEqualTo(Output.valueOf(entry.name))
             }
         }
     }
