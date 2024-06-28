@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+    - date: "tbd"
+      title: "v0.3.0"
+      items:
+        - "[#17](https://github.com/Mr-Mappie/mappie/issues/17) mappers can now be declared as inner declarations, instead of requiring them to be top-level."
     - date: "2024-06-27"
       title: "v0.2.0"
       items:

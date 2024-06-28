@@ -16,6 +16,10 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
         if (declaration.accept(ShouldTransformCollector(), Unit)) {
+            declaration.declarations.filterIsInstance<IrClass>().forEach { inner ->
+                inner.transform(IrTransformer(), null)
+            }
+
             var function = declaration.declarations
                 .filterIsInstance<IrSimpleFunction>()
                 .first { it.name == IDENTIFIER_MAP }
@@ -26,7 +30,7 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
                 declaration.declarations.add(function)
             }
 
-            val transformed = function.accept(this, null)
+            val transformed = function.transform(this, null)
             if (transformed is IrSimpleFunction && transformed.body == null) {
                 declaration.declarations.remove(transformed)
             }
