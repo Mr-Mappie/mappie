@@ -26,3 +26,17 @@ object ColorMapper : EnumMappie<Color, Colour>() {
     }
 }
 ```
+
+## Throwing an Exception
+We can also make the generated mapper throw an exception, similar to setting the global enum strictness property
+to true, but in a fine-grained manner. This can be done by mapping via `thrownByEnumEntry`. 
+
+For example the following snippet will generate a mapper in which the `map` function will throw an `IllegalStateException`
+when called with argument `Color.ORANGE`.
+```kotlin
+object ColorMapper : EnumMappie<Color, Colour>() {
+    override fun map(from: Color): Colour = mapping {
+        IllegalStateException() thrownByEnumEntry Color.ORANGE
+    }
+}
+```
