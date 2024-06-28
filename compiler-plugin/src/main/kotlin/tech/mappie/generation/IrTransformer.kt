@@ -6,11 +6,15 @@ import tech.mappie.resolving.classes.*
 import tech.mappie.util.*
 import tech.mappie.validation.MappingValidation
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.*
+import tech.mappie.resolving.enums.ExplicitEnumMappingTarget
+import tech.mappie.resolving.enums.ResolvedEnumMappingTarget
+import tech.mappie.resolving.enums.ThrowingEnumMappingTarget
 
 class IrTransformer : IrElementTransformerVoidWithContext() {
 
@@ -69,10 +73,12 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
                                     .map { (source, targets) ->
                                         val lhs = irGet(declaration.valueParameters.first())
                                         val rhs = irGetEnumValue(mapping.targetType, source.symbol)
-                                        irBranch(
-                                            irEqeqeq(lhs, rhs),
-                                            irGetEnumValue(mapping.targetType, targets.single().symbol)
-                                        )
+                                        val result: IrExpression = when (val target = targets.single()) {
+                                            is ExplicitEnumMappingTarget -> irGetEnumValue(mapping.targetType, target.target.symbol)
+                                            is ResolvedEnumMappingTarget -> irGetEnumValue(mapping.targetType, target.target.symbol)
+                                            is ThrowingEnumMappingTarget -> irThrow(target.exception)
+                                        }
+                                        irBranch(irEqeqeq(lhs, rhs), result)
                                     } + irElseBranch(irCall(context.irBuiltIns.noWhenBranchMatchedExceptionSymbol))))
                             }
                         }

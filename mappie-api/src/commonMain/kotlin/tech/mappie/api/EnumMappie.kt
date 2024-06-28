@@ -28,5 +28,16 @@ public abstract class EnumMappie<FROM: Enum<*>, TO : Enum<*>> : Mappie<FROM, TO>
      * ```
      * will generate an explicit mapping, mapping `Colour.ORANGE` to `Color.UNKNOWN`.
      */
-    protected infix fun TO.fromEnumEntry(source: FROM): EnumMappie<FROM, TO> = generated()
+    protected infix fun TO.fromEnumEntry(source: FROM): Unit = generated()
+
+    /**
+     * Explicitly construct a mapping to throw an exception from source entry [source].
+     *
+     * For example
+     * ```kotlin
+     * IllegalStateException() fromEnumEntry Color.ORANGE
+     * ```
+     * will generate an explicit mapping, mapping `Colour.ORANGE` to an [IllegalStateException] being thrown.
+     */
+    protected infix fun Throwable.thrownByEnumEntry(source: FROM): Unit = generated()
 }

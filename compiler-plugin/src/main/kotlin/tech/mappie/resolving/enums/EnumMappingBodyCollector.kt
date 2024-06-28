@@ -1,17 +1,29 @@
 package tech.mappie.resolving.enums
 
-import tech.mappie.resolving.IDENTIFIER_MAPPED_FROM_ENUM_ENTRY
+import tech.mappie.resolving.IDENTIFIER_FROM_ENUM_ENTRY
 import tech.mappie.resolving.IDENTIFIER_MAPPING
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import tech.mappie.BaseVisitor
+import tech.mappie.resolving.IDENTIFIER_THROWN_BY_ENUM_ENTRY
 
-data class ExplicitEnumMapping(
+sealed interface EnumMappingTarget
+
+data class ResolvedEnumMappingTarget(
+    val target: IrEnumEntry,
+) : EnumMappingTarget
+
+data class ExplicitEnumMappingTarget(
     val target: IrEnumEntry,
     val origin: IrExpression,
-)
+) : EnumMappingTarget
+
+data class ThrowingEnumMappingTarget(
+    val exception: IrExpression,
+    val origin: IrExpression,
+) : EnumMappingTarget
 
 class EnumMappingBodyCollector : BaseVisitor<EnumMappingsConstructor, EnumMappingsConstructor>() {
 
@@ -20,10 +32,15 @@ class EnumMappingBodyCollector : BaseVisitor<EnumMappingsConstructor, EnumMappin
             IDENTIFIER_MAPPING -> {
                 expression.valueArguments.first()?.accept(data) ?: data
             }
-            IDENTIFIER_MAPPED_FROM_ENUM_ENTRY -> {
+            IDENTIFIER_FROM_ENUM_ENTRY -> {
                 val target = (expression.extensionReceiver!! as IrGetEnumValue).symbol.owner
                 val source = (expression.valueArguments.first()!! as IrGetEnumValue).symbol.owner
-                data.explicit(source to ExplicitEnumMapping(target, expression))
+                data.explicit(source to ExplicitEnumMappingTarget(target, expression))
+            }
+            IDENTIFIER_THROWN_BY_ENUM_ENTRY -> {
+                val target = expression.extensionReceiver!!
+                val source = (expression.valueArguments.first()!! as IrGetEnumValue).symbol.owner
+                data.explicit(source to ThrowingEnumMappingTarget(target, expression))
             }
             else -> {
                 super.visitCall(expression, data)
