@@ -61,19 +61,19 @@ private class ObjectBodyStatementCollector(
 
     override fun visitCall(expression: IrCall, data: Unit): Pair<Name, ObjectMappingSource>? {
         return when (expression.symbol.owner.name) {
-            IDENTIFIER_MAPPED_FROM_PROPERTY, IDENTIFIER_MAPPED_FROM_CONSTANT -> {
+            IDENTIFIER_FROM_PROPERTY, IDENTIFIER_FROM_CONSTANT -> {
                 val target = expression.extensionReceiver!!.accept(TargetValueCollector(file!!), data)
                 val source = expression.valueArguments.first()!!.accept(SourceValueCollector(dispatchReceiverSymbol), Unit)
 
                 target to source
             }
-            IDENTIFIER_MAPPED_FROM_VALUE -> {
+            IDENTIFIER_FROM_VALUE -> {
                 val target = expression.extensionReceiver!!.accept(TargetValueCollector(file!!), data)
                 val source = expression.valueArguments.first()!!
 
                 target to ValueSource(source)
             }
-            IDENTIFIER_MAPPED_FROM_EXPRESSION -> {
+            IDENTIFIER_FROM_EXPRESSION -> {
                 val target = expression.extensionReceiver!!.accept(TargetValueCollector(file!!), data)
                 val source = expression.valueArguments.first() as IrFunctionExpression
 

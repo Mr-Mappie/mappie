@@ -37,8 +37,13 @@ class EnumResolver(private val declaration: IrFunction) {
 
             if (resolved.isNotEmpty() && explicit != null) {
                 with(explicit.first()) {
-                    val sourceName = "${target.symbol.owner.callableId.className}.${target.name.asString()}"
-                    logWarn("Unnecessary explicit mapping of $sourceName", location(declaration.fileEntry, origin))
+                    when (this) {
+                        is ExplicitEnumMappingTarget -> {
+                            val sourceName = "${target.symbol.owner.callableId.className}.${target.name.asString()}"
+                            logWarn("Unnecessary explicit mapping of $sourceName", location(declaration.fileEntry, origin))
+                        }
+                        else -> Unit
+                    }
                 }
             }
         }

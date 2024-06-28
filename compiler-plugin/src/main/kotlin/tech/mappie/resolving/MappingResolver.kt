@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.BaseVisitor
+import tech.mappie.resolving.enums.EnumMappingTarget
 
 sealed interface Mapping
 
@@ -30,7 +31,7 @@ data class ConstructorCallMapping(
 data class EnumMapping(
     val targetType: IrType,
     val sourceType: IrType,
-    val mappings: Map<IrEnumEntry, List<IrEnumEntry>>,
+    val mappings: Map<IrEnumEntry, List<EnumMappingTarget>>,
 ) : Mapping
 
 data class SingleValueMapping(
