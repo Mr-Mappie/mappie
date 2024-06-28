@@ -18,5 +18,4 @@ include(
     ":mappie-api",
     ":compiler-plugin",
     ":gradle-plugin",
-    ":testing"
 )

@@ -8,25 +8,28 @@ import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import java.io.File
 
-class ObjectWithSameEntriesTest {
+class FromExpressionTest {
 
-    data class Input(val value: String)
     data class Output(val value: String)
 
     @TempDir
     private lateinit var directory: File
 
     @Test
-    fun `map two data classes with the same values should succeed`() {
+    fun `map value fromExpression should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectWithSameEntriesTest.*
+                        import tech.mappie.testing.FromExpressionTest.*
     
-                        class Mapper : ObjectMappie<Input, Output>()
+                        class Mapper : ObjectMappie<Unit, Output>() {
+                            override fun map(from: Unit) = mapping {
+                                Output::value fromExpression { it::class.simpleName!! }
+                            }
+                        }
                         """
                     )
                 )
@@ -36,12 +39,12 @@ class ObjectWithSameEntriesTest {
             assertThat(messages).isEmpty()
 
             val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
+                .loadObjectMappieClass<Unit, Output>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input("value"))).isEqualTo(Output("value"))
+            assertThat(mapper.map(Unit)).isEqualTo(Output(Unit::class.simpleName!!))
         }
     }
 }
