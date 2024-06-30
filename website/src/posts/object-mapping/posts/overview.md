@@ -10,6 +10,11 @@ eleventyNavigation:
 Mappie supports creating object mappers via the base class `ObjectMappie`. The generated mapper will call a constructor
 of the target type, based on the properties and explicit mappings from the source type.
 
+Mappie resolves mappings by name. When the source type has a property that matches the name of a target of the target value,
+it will be inferred automatically. This requires that the types of the source property and target property match. If they do not
+match, it will be inferred automatically if there exists a single different mapper that takes the source- and target 
+types as input- and output types.
+
 Suppose we have a data class `Person`
 ```kotlin
 data class Person(val name: String, val age: Int)
