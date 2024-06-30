@@ -10,3 +10,16 @@ updates:
     schedule:
       interval: "weekly"
       day: "friday"
+    groups:
+      gradle-dependencies:
+        include-patterns:
+          - "*"
+  - package-ecosystem: "npm"
+    directory: "/website"
+    schedule:
+      interval: "weekly"
+      day: "friday"
+    groups:
+      npm-dependencies:
+        include-patterns:
+          - "*"
