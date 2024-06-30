@@ -8,6 +8,7 @@ changelog:
         - "[#17](https://github.com/Mr-Mappie/mappie/issues/17) mappers can now be declared as inner declarations, instead of requiring them to be top-level."
         - "[#31](https://github.com/Mr-Mappie/mappie/issues/31) added the explicit mapping method `thrownByEnumEntry` to throw an exception as a result when mapping an enum entry."
         - "[#28](https://github.com/Mr-Mappie/mappie/issues/28) added implicit mapping inference of mappers with the same name but a different type, but a mapper for those types are defined."
+        - "Several other bug fixes."
     - date: "2024-06-27"
       title: "v0.2.0"
       items:
