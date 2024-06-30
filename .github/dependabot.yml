@@ -11,7 +11,7 @@ updates:
       interval: "weekly"
       day: "friday"
     groups:
-      all:
+      gradle:
         patterns:
           - "*"
     labels:
@@ -22,7 +22,7 @@ updates:
       interval: "weekly"
       day: "friday"
     groups:
-      all:
+      npm:
         patterns:
           - "*"
     labels:
