@@ -17,12 +17,13 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.resolving.IDENTIFIER_MAP
+import kotlin.reflect.KClass
 
-internal fun IrClass.isSubclassOfFqName(fqName: String): Boolean =
-    allSuperTypes().any { it.erasedUpperBound.fqNameWhenAvailable?.asString() == fqName }
+internal fun IrClass.isStrictSubclassOf(clazz: KClass<*>): Boolean =
+    allSuperTypes().any { it.erasedUpperBound.fqNameWhenAvailable?.asString() == clazz.java.name }
 
 internal fun IrClass.allSuperTypes(): List<IrType> =
-    this.superTypes + this.superTypes.flatMap { it.erasedUpperBound.allSuperTypes() }
+    superTypes + superTypes.flatMap { it.erasedUpperBound.allSuperTypes() }
 
 fun IrType.isAssignableFrom(other: IrType): Boolean =
     other.isSubtypeOf(this, IrTypeSystemContextImpl(context.irBuiltIns)) || isIntegerAssignableFrom(other)
@@ -35,6 +36,12 @@ fun IrType.isIntegerAssignableFrom(other: IrType): Boolean =
         context.irBuiltIns.longType -> other in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType, context.irBuiltIns.intType, context.irBuiltIns.longType)
         else -> false
     }
+
+fun IrType.isList() =
+    classOrNull?.owner?.fqNameWhenAvailable?.asString() == List::class.qualifiedName
+
+fun IrType.isSet() =
+    classOrNull?.owner?.fqNameWhenAvailable?.asString() == Set::class.qualifiedName
 
 fun getterName(name: Name) =
     getterName(name.asString())
@@ -53,6 +60,17 @@ fun irGet(declaration: IrValueDeclaration) =
 
 fun irGet(type: IrType, symbol: IrValueSymbol): IrGetValue =
     IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, type, symbol)
+
+fun irConstructorCall(constructor: IrConstructor) =
+    IrConstructorCallImpl(
+        SYNTHETIC_OFFSET,
+        SYNTHETIC_OFFSET,
+        constructor.returnType,
+        constructor.symbol,
+        0,
+        0,
+        0,
+    )
 
 fun IrSimpleFunction.realImplementation(parent: IrDeclarationParent) =
     factory.createSimpleFunction(

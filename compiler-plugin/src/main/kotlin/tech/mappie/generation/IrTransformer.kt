@@ -16,14 +16,14 @@ import tech.mappie.resolving.enums.ExplicitEnumMappingTarget
 import tech.mappie.resolving.enums.ResolvedEnumMappingTarget
 import tech.mappie.resolving.enums.ThrowingEnumMappingTarget
 
-class IrTransformer : IrElementTransformerVoidWithContext() {
+class IrTransformer(private val symbols: List<MappieDefinition>) : IrElementTransformerVoidWithContext() {
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
-        if (declaration.accept(ShouldTransformCollector(), Unit)) {
-            declaration.declarations.filterIsInstance<IrClass>().forEach { inner ->
-                inner.transform(IrTransformer(), null)
-            }
+        declaration.declarations.filterIsInstance<IrClass>().forEach { inner ->
+            inner.transform(IrTransformer(symbols), null)
+        }
 
+        if (declaration.accept(ShouldTransformCollector(), Unit)) {
             var function = declaration.declarations
                 .filterIsInstance<IrSimpleFunction>()
                 .first { it.name == IDENTIFIER_MAP }
@@ -44,7 +44,8 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
 
     override fun visitFunctionNew(declaration: IrFunction): IrStatement {
         if (declaration.accept(ShouldTransformCollector(), Unit)) {
-            val (valids, invalids) = declaration.accept(MappingResolver(), Unit)
+            val (valids, invalids) = declaration
+                .accept(MappingResolver(), symbols)
                 .map { it to MappingValidation.of(declaration.fileEntry, it) }
                 .partition { it.second.isValid() }
 
@@ -102,6 +103,7 @@ class IrTransformer : IrElementTransformerVoidWithContext() {
 
 fun ObjectMappingSource.toIr(builder: IrBuilderWithScope): IrExpression =
     when (this) {
+        is ResolvedSource -> toIr(builder)
         is PropertySource -> toIr(builder)
         is ExpressionSource -> toIr(builder)
         is ValueSource -> value
@@ -114,15 +116,26 @@ fun ExpressionSource.toIr(builder: IrBuilderWithScope): IrExpression {
     }
 }
 
+fun ResolvedSource.toIr(builder: IrBuilderWithScope): IrExpression {
+    val getter = builder.irCall(property).apply {
+        dispatchReceiver = this@toIr.dispatchReceiver
+    }
+    return via?.let {
+        builder.irCall(via).apply {
+            dispatchReceiver = viaDispatchReceiver
+            putValueArgument(0, getter)
+        }
+    } ?: getter
+}
+
 fun PropertySource.toIr(builder: IrBuilderWithScope): IrExpression {
     val getter = builder.irCall(property).apply {
         dispatchReceiver = this@toIr.dispatchReceiver
     }
     return transformation?.let {
-            builder.irCall(context.referenceLetFunction()).apply {
-                extensionReceiver = getter
-                putValueArgument(0, transformation)
-        }
-    } ?: getter
+        builder.irCall(context.referenceLetFunction()).apply {
+            extensionReceiver = getter
+            putValueArgument(0, transformation)
+    } } ?: getter
 }
 

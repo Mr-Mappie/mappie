@@ -1,16 +1,19 @@
 package tech.mappie.resolving.classes
 
-import tech.mappie.resolving.ConstructorCallMapping
-import tech.mappie.util.getterName
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.hasDefaultValue
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
-import tech.mappie.util.irGet
+import tech.mappie.resolving.*
+import tech.mappie.util.*
 
 class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParameter) {
+
+    var symbols = listOf<MappieDefinition>()
 
     var getters = mutableListOf<IrSimpleFunction>()
 
@@ -32,8 +35,20 @@ class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParam
                     getter.name == getterName(target.name)
                 }
                 if (getter != null) {
-                    listOf(PropertySource(getter.symbol, irGet(source), true))
-                } else if (target.hasDefaultValue()) {
+                    val clazz = symbols.singleOrNull { it.fits(getter.returnType, target.type) }?.clazz
+                    val via = when {
+                        clazz == null -> null
+                        getter.returnType.isList() && target.type.isList() -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP_LIST }
+                        getter.returnType.isSet() && target.type.isSet() -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP_SET }
+                        else -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP }
+                    }
+                    val viaDispatchReceiver = when {
+                        clazz == null -> null
+                        clazz.isObject -> IrGetObjectValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, clazz.symbol.defaultType, clazz.symbol)
+                        else ->  clazz.constructors.firstOrNull { it.valueParameters.isEmpty() }?.let { irConstructorCall(it) }
+                    }
+                    listOf(ResolvedSource(getter.symbol, irGet(source), via, viaDispatchReceiver))
+                }  else if (target.hasDefaultValue()) {
                     listOf(ValueSource(target.defaultValue!!.expression))
                 } else {
                     emptyList()
