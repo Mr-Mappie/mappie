@@ -39,15 +39,15 @@ data class SingleValueMapping(
     val value: IrExpression,
 ) : Mapping
 
-class MappingResolver : BaseVisitor<List<Mapping>, Unit>() {
+class MappingResolver : BaseVisitor<List<Mapping>, List<MappieDefinition>>() {
 
-    override fun visitFunction(declaration: IrFunction, data: Unit): List<Mapping> {
+    override fun visitFunction(declaration: IrFunction, data: List<MappieDefinition>): List<Mapping> {
         val type = declaration.returnType
         val clazz = type.getClass()!!
         return when {
             type.isPrimitiveType() || type.isString() -> listOf(PrimitiveResolver(declaration).resolve())
             clazz.isEnumClass -> listOf(EnumResolver(declaration).resolve())
-            clazz.isClass -> ClassResolver(declaration).resolve()
+            clazz.isClass -> ClassResolver(declaration, data).resolve()
             else -> error("Only mapping of data- and enum classes are supported yet.")
         }
     }

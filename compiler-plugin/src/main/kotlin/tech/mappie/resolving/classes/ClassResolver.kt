@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.ir.util.isClass
 
-class ClassResolver(private val declaration: IrFunction) {
+class ClassResolver(private val declaration: IrFunction, private val symbols: List<MappieDefinition>) {
 
     private val sourceParameter = declaration.valueParameters.first()
 
@@ -23,6 +23,7 @@ class ClassResolver(private val declaration: IrFunction) {
         return declaration.accept(ConstructorsCollector(), Unit).map {
             ObjectMappingsConstructor.of(constructor).apply {
                 this.constructor = it
+                this.symbols = this@ClassResolver.symbols
             }.construct()
         }
     }

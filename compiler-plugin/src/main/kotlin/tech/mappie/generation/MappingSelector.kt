@@ -21,7 +21,7 @@ interface MappingSelector {
             mappings.firstOrNull { it.first.symbol.owner.isPrimary }
 
         private fun selectLeastResolvedAutomatically(): Pair<Mapping, MappingValidation> =
-            mappings.maxBy { it.first.mappings.count { (_, sources) -> !(sources.single() as PropertySource).isResolvedAutomatically } }
+            mappings.maxBy { it.first.mappings.count { (_, sources) -> sources.single() is PropertySource } }
     }
 
     companion object {

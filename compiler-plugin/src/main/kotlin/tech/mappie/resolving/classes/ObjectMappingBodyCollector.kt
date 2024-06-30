@@ -206,7 +206,6 @@ private class SourceValueCollector(
             dispatchReceiver = dispatchReceiver,
             transformation = null,
             origin = expression,
-            isResolvedAutomatically = false
         )
     }
 

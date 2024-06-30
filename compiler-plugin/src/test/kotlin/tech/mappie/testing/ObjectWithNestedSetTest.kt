@@ -8,33 +8,28 @@ import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import java.io.File
 
-class ViaListTest {
-    data class Input(val text: List<InnerInput>)
+class ObjectWithNestedSetTest {
+    data class Input(val text: Set<InnerInput>, val int: Int)
     data class InnerInput(val value: String)
-    data class Output(val text: List<String>)
+    data class Output(val text: Set<InnerOutput>, val int: Int)
+    data class InnerOutput(val value: String)
 
     @TempDir
     private lateinit var directory: File
 
     @Test
-    fun `map via forList should succeed`() {
+    fun `map data classes with nested set using object InnerMapper without declaring mapping should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ViaListTest.*
+                        import tech.mappie.testing.ObjectWithNestedSetTest.*
     
-                        class Mapper : ObjectMappie<Input, Output>() {
-                            override fun map(from: Input) = mapping {
-                                Output::text fromProperty from::text via InnerMapper.forList
-                            }
-                        }
+                        class Mapper : ObjectMappie<Input, Output>()
 
-                        object InnerMapper : ObjectMappie<InnerInput, String>() {
-                            override fun map(from: InnerInput) = from.value
-                        }
+                        object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
                         """
                     )
                 )
@@ -49,8 +44,8 @@ class ViaListTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(listOf(InnerInput("A"), InnerInput("B")))))
-                .isEqualTo(Output(listOf("A", "B")))
+            assertThat(mapper.map(Input(setOf(InnerInput("first"), InnerInput("second")), 20)))
+                .isEqualTo(Output(setOf(InnerOutput("first"), InnerOutput("second")), 20))
         }
     }
 }
