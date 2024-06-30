@@ -14,6 +14,8 @@ updates:
       gradle-dependencies:
         patterns:
           - "*"
+    labels:
+      - "dependencies"
   - package-ecosystem: "npm"
     directory: "/website"
     schedule:
@@ -23,3 +25,6 @@ updates:
       npm-dependencies:
         patterns:
           - "*"
+    labels:
+      - "dependencies"
+      - "documentation"
