@@ -14,7 +14,7 @@ class MappieIrRegistrar(
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         context = MappiePluginContext(messageCollector, configuration, pluginContext)
-        val symbols = moduleFragment.accept(AllMappieDefinitionsCollector(), mutableListOf())
+        val symbols = moduleFragment.accept(AllMappieDefinitionsCollector(), Unit)
         moduleFragment.accept(IrTransformer(symbols), null)
     }
 
