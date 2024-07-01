@@ -6,6 +6,8 @@ val IDENTIFIER_MAPPING = Name.identifier("mapping")
 
 val IDENTIFIER_MAP = Name.identifier("map")
 
+val IDENTIFIER_MAP_NULLABLE = Name.identifier("mapNullable")
+
 val IDENTIFIER_MAP_LIST = Name.identifier("mapList")
 
 val IDENTIFIER_MAP_SET = Name.identifier("mapSet")

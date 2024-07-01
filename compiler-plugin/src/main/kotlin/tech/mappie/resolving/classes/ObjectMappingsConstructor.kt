@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.resolving.*
@@ -40,6 +41,7 @@ class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParam
                         clazz == null -> null
                         getter.returnType.isList() && target.type.isList() -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP_LIST }
                         getter.returnType.isSet() && target.type.isSet() -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP_SET }
+                        getter.returnType.isNullable() && target.type.isNullable() -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP_NULLABLE }
                         else -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP }
                     }
                     val viaDispatchReceiver = when {

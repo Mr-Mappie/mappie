@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeOrFail
 import tech.mappie.BaseVisitor
 import tech.mappie.api.Mappie
@@ -17,7 +18,7 @@ data class MappieDefinition(
     val clazz: IrClass,
 ) {
     fun fits(sourceType: IrType, targetType: IrType): Boolean =
-        (fromType.isAssignableFrom(sourceType) && targetType.isAssignableFrom(toType))
+        (fromType.makeNullable().isAssignableFrom(sourceType) && targetType.makeNullable().isAssignableFrom(toType))
                 || fitsList(sourceType, targetType)
                 || fitsSet(sourceType, targetType)
 
