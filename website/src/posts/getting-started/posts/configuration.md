@@ -10,10 +10,17 @@ eleventyNavigation:
 Mappie can be configured via Gradle. The following global configuration options are available
 ```kotlin
 mappie {
-    warningsAsErrors = true // Enable reporting warnings as erros
+    warningsAsErrors = true // Enable reporting warnings as errors
     strictness {
-        visibility = false // Disable only selecting visible constructors
-        enums = false // Disable validating that all enum sources have a corresponding target
+        visibility = true // Allow calling constructors not visible from the calling scope
+        enums = true // Do not report an error if not all enum sources are mapped 
     }
 }
 ```
+with the following default values
+
+| Option                  | Default Value  |
+|-------------------------|----------------|
+| `warningsAsErrors`      | `false`        |
+| `strictness.visibility` | `false`        |
+| `strictness.enums`      | `false`        |

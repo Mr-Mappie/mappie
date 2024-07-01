@@ -589,13 +589,15 @@ figure figcaption {
   min-inline-size: var(--inline-size);
 }
 
-.table {
+table {
   --spruce-line-height: 1.5;
   --spruce-padding: 1rem;
   --spruce-responsive-inline-size: 40rem;
   border-collapse: collapse;
   color: var(--spruce-table-color-text);
-  inline-size: 100%;
+  inline-size: 80%;
+  margin-left: auto;
+  margin-right: auto;
 }
 .table caption {
   color: var(--spruce-table-color-caption);
@@ -609,8 +611,9 @@ figure figcaption {
 }
 .table th {
   color: var(--spruce-table-color-heading);
-  text-align: inherit;
+  text-align: left;
   text-align: -webkit-match-parent;
+  padding: var(--spruce-padding);
 }
 .table--striped > tbody > tr:nth-child(odd) {
   background-color: var(--spruce-table-color-stripe);
@@ -2208,3 +2211,4 @@ textarea.pagefind-ui__search-input {
   --spruce-max-content-inline-size: 70rem;
   --spruce-box-shadow: 0 0.75rem 1.25rem hsla(0, 0%, 0%, 0.05);
 }
+

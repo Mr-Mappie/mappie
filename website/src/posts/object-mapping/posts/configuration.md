@@ -13,7 +13,7 @@ This can be disabled by adding the following configuration to the `build.gradle.
 ```kotlin
 mappie {
     strictness {
-        visibility = false // Disable only selecting visible constructors
+        visibility = true // Allow calling constructors not visible from the calling scope
     }
 }
 ```

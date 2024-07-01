@@ -1,6 +1,11 @@
 {
   "header": [
     {
+      "caption": "Home",
+      "url": "/",
+      "external": false
+    },
+    {
       "caption": "Changelog",
       "url": "/changelog/",
       "external": false

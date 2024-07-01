@@ -13,9 +13,10 @@ configuration to the `build.gradle.kts` file
 ```kotlin
 mappie {
     strictness {
-        enums = false // Disable validating that all enum sources have a corresponding target 
+        enums = true // Do not report an error if not all enum sources are mapped 
     }
 }
 ```
 
-Note that this might result in a [NoWhenBranchMatchedException](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-no-when-branch-matched-exception/) exception being thrown at runtime.
+Note that this might result in a [NoWhenBranchMatchedException](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-no-when-branch-matched-exception/)
+being thrown at runtime.

@@ -62,7 +62,7 @@ object PersonMapper : ObjectMappie<Person, PersonDto>() {
     }
 }
 ```
-will always set `PersonDto.description` to `"unknown`.
+will always set `PersonDto.description` to `"unknown"`.
 
 ## Mapping via an Expression
 Targets can be set via the operator `fromExpression`. This will set the target to the given lambda result. 
