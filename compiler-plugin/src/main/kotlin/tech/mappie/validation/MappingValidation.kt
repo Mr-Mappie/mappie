@@ -9,9 +9,11 @@ import tech.mappie.util.isAssignableFrom
 import tech.mappie.util.location
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.ir.IrFileEntry
-import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import tech.mappie.resolving.classes.ExpressionSource
+import tech.mappie.resolving.classes.ResolvedSource
+import tech.mappie.resolving.classes.ValueSource
+import tech.mappie.util.dumpKotlinLike
 
 data class Problem(
     val description: String,
@@ -46,7 +48,7 @@ interface MappingValidation {
                     mapping.mappings
                         .filter { (_, sources) -> sources.size != 1 }
                         .map { (target, sources) ->
-                            Problem.error("Target ${mapping.targetType.getClass()!!.name.asString()}.${target.name.asString()} has ${if (sources.isEmpty()) "no source defined" else "multiple sources defined"}")
+                            Problem.error("Target ${mapping.targetType.dumpKotlinLike()}::${target.name.asString()} has ${if (sources.isEmpty()) "no source defined" else "multiple sources defined"}")
                         }
                 )
 
@@ -54,14 +56,29 @@ interface MappingValidation {
                     mapping.mappings
                         .filter { (_, sources) -> sources.size == 1 }
                         .filter { (target, sources) -> !target.type.isAssignableFrom(sources.single().type) }
-                        .map { (target, sources) -> Problem.error(
-                            "Target ${mapping.targetType.getClass()!!.name.asString()}.${target.name.asString()} has type ${target.type.dumpKotlinLike()} which cannot be assigned from type ${sources.single().type.dumpKotlinLike()}",
+                        .map { (target, sources) ->
                             when (val source = sources.single()) {
-                                is PropertySource -> source.origin?.let { location(file, it) }
-                                is ExpressionSource -> source.origin?.let { location(file, it) }
-                                else -> null
+                                is PropertySource -> {
+                                    val location = location(file, source.origin)
+                                    val description = "Target ${mapping.targetType.dumpKotlinLike()}::${target.name.asString()} of type ${target.type.dumpKotlinLike()} cannot be assigned from ${source.property.dumpKotlinLike()} of type ${source.type.dumpKotlinLike()}"
+                                    Problem.error(description, location)
+                                }
+                                is ExpressionSource -> {
+                                    val location = location(file, source.origin)
+                                    val description = "Target ${mapping.targetType.dumpKotlinLike()}::${target.name.asString()} of type ${target.type.dumpKotlinLike()} cannot be assigned from expression of type ${source.type.dumpKotlinLike()}"
+                                    Problem.error(description, location)
+                                }
+                                is ResolvedSource -> {
+                                    val description = "Target ${mapping.targetType.dumpKotlinLike()}::${target.name.asString()} automatically resolved from ${source.property.dumpKotlinLike()} but cannot assign source type ${source.type.dumpKotlinLike()} to target type ${target.type.dumpKotlinLike()}"
+                                    Problem.error(description, null)
+                                }
+                                is ValueSource -> {
+                                    val location = source.origin?.let { location(file, it) }
+                                    val description = "Target ${mapping.targetType.dumpKotlinLike()}::${target.name.asString()} of type ${target.type.dumpKotlinLike()} cannot be assigned from value of type ${source.type.dumpKotlinLike()}"
+                                    Problem.error(description, location)
+                                }
                             }
-                        ) }
+                        }
                 )
 
                 addAll(
@@ -70,8 +87,13 @@ interface MappingValidation {
                     }
                 )
 
-                if (!mapping.symbol.owner.visibility.isPublicAPI && context.configuration.strictness.visibility) {
-                    add(Problem.error("Constructor is not public", location(mapping.symbol.owner)))
+                with(mapping.symbol.owner) {
+                    if (!visibility.isPublicAPI && context.configuration.strictness.visibility) {
+                        val constructor = valueParameters.joinToString(prefix = name.asString() + "(", postfix = ")") {
+                            it.type.dumpKotlinLike()
+                        }
+                        add(Problem.error("Constructor $constructor is not visible from the current scope", location(this)))
+                    }
                 }
             }
     }
@@ -83,7 +105,7 @@ interface MappingValidation {
                 mapping.mappings
                     .filter { (_, targets) -> targets.size != 1 }
                     .map { (source, targets) ->
-                        Problem.error("Source ${mapping.sourceType.getClass()!!.name.asString()}.${source.name.asString()} has ${if (targets.isEmpty()) "no target defined" else "multiple targets defined"}")
+                        Problem.error("Source ${mapping.sourceType.dumpKotlinLike()}.${source.name.asString()} has ${if (targets.isEmpty()) "no target defined" else "multiple targets defined"}")
                     }
             } else {
                 emptyList()

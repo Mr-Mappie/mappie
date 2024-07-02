@@ -51,7 +51,7 @@ class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParam
                     }
                     listOf(ResolvedSource(getter.symbol, irGet(source), via, viaDispatchReceiver))
                 }  else if (target.hasDefaultValue()) {
-                    listOf(ValueSource(target.defaultValue!!.expression))
+                    listOf(ValueSource(target.defaultValue!!.expression, null))
                 } else {
                     emptyList()
                 }

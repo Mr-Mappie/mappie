@@ -32,7 +32,8 @@ class ObjectWithNullToNonNullTest {
             }
         }.compile {
             assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
-            assertThat(messages).containsError("Target Output.value has type String which cannot be assigned from type String?")
+            assertThat(messages)
+                .containsError("Target Output::value automatically resolved from Input::value but cannot assign source type String? to target type String")
         }
     }
 

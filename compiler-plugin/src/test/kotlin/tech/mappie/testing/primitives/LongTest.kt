@@ -36,7 +36,8 @@ class LongTest {
             }
         }.compile {
             assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
-            assertThat(messages).containsError("Target IntOutput.value has type Int which cannot be assigned from type Long")
+            assertThat(messages)
+                .containsError("Target IntOutput::value automatically resolved from Input::value but cannot assign source type Long to target type Int")
         }
     }
 

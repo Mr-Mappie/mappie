@@ -28,7 +28,7 @@ data class PropertySource(
     val property: IrSimpleFunctionSymbol,
     val dispatchReceiver: IrExpression,
     val transformation: IrFunctionExpression? = null,
-    val origin: IrExpression? = null,
+    val origin: IrExpression,
 ) : ObjectMappingSource {
 
     override val type: IrType
@@ -44,13 +44,14 @@ data class PropertySource(
 data class ExpressionSource(
     val extensionReceiverSymbol: IrValueSymbol,
     val expression: IrFunctionExpression,
-    val origin: IrExpression?,
+    val origin: IrExpression,
 ) : ObjectMappingSource {
     override val type = expression.function.returnType
 }
 
 data class ValueSource(
     val value: IrExpression,
+    val origin: IrExpression?,
 ) : ObjectMappingSource {
     override val type = value.type
 }

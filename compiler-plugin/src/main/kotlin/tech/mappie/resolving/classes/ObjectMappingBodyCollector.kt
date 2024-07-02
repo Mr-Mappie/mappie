@@ -71,7 +71,7 @@ private class ObjectBodyStatementCollector(
                 val target = expression.extensionReceiver!!.accept(TargetValueCollector(file!!), data)
                 val source = expression.valueArguments.first()!!
 
-                target to ValueSource(source)
+                target to ValueSource(source, expression)
             }
             IDENTIFIER_FROM_EXPRESSION -> {
                 val target = expression.extensionReceiver!!.accept(TargetValueCollector(file!!), data)
@@ -210,7 +210,7 @@ private class SourceValueCollector(
     }
 
     override fun visitConst(expression: IrConst<*>, data: Unit): ObjectMappingSource {
-        return ValueSource(expression)
+        return ValueSource(expression, expression)
     }
 }
 
@@ -227,7 +227,7 @@ private class TargetValueCollector(file: IrFileEntry) : BaseVisitor<Name, Unit>(
                 return if (value.isConstantLike && value is IrConst<*>) {
                     Name.identifier(value.value as String)
                 } else {
-                    logError("Parameter name must be a constant String", file?.let { location(it, expression) })
+                    logError("Parameter name must be a constant", location(file!!, expression))
                     throw AssertionError()
                 }
             }

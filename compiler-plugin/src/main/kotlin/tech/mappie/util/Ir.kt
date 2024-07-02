@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -99,4 +100,10 @@ fun IrSimpleFunction.realImplementation(parent: IrDeclarationParent) =
         valueParameters.forEach { valueParameter ->
             it.addValueParameter(valueParameter.name, valueParameter.type)
         }
+    }
+
+
+fun IrSimpleFunctionSymbol.dumpKotlinLike(): String =
+    owner.run {
+        parentAsClass.name.asString() + "::" + name.asString().removeSurrounding("<", ">").removePrefix("get-")
     }

@@ -38,7 +38,8 @@ class ShortTest {
             }
         }.compile {
             assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
-            assertThat(messages).containsError("Target ByteOutput.value has type Byte which cannot be assigned from type Short")
+            assertThat(messages)
+                .containsError("Target ByteOutput::value automatically resolved from Input::value but cannot assign source type Short to target type Byte")
         }
     }
 

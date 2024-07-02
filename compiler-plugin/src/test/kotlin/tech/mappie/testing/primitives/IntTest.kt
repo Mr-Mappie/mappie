@@ -37,7 +37,8 @@ class IntTest {
             }
         }.compile {
             assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
-            assertThat(messages).containsError("Target ShortOutput.value has type Short which cannot be assigned from type Int")
+            assertThat(messages)
+                .containsError("Target ShortOutput::value automatically resolved from Input::value but cannot assign source type Int to target type Short")
         }
     }
 

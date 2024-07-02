@@ -46,7 +46,6 @@ public abstract class ObjectMappie<FROM, TO> : Mappie<FROM, TO>() {
     protected infix fun <TO_TYPE, FROM_TYPE> KProperty1<TO, TO_TYPE>.fromProperty(source: KProperty0<FROM_TYPE>): TransformableValue<FROM_TYPE, TO_TYPE> =
         generated()
 
-
     /**
      * Explicitly construct a mapping to [TO] from property source [source].
      *
@@ -94,7 +93,7 @@ public abstract class ObjectMappie<FROM, TO> : Mappie<FROM, TO>() {
      * will generate an explicit mapping, setting constructor parameter `Person.name` to `"John Doe (full)"`,
      * assuming `personDto.fullName == "John Doe"`.
      */
-    protected infix fun <TO_TYPE> KProperty1<TO, TO_TYPE>.fromExpression(function: (FROM) -> TO_TYPE): Unit =
+    protected infix fun <FROM_TYPE, TO_TYPE> KProperty1<TO, TO_TYPE>.fromExpression(function: (FROM) -> FROM_TYPE): Unit =
         generated()
 
     /**

@@ -8,48 +8,53 @@ import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import java.io.File
 
-class ObjectWithDifferentValuesTest {
+class ObjectAssignedWithWrongTypeTest {
 
-    data class Input(val firstname: String, val age: Int)
-    data class Output(val name: String, val age: Int)
+    data class Input(val value: String)
+    data class Output(val value: Int)
 
     @TempDir
     private lateinit var directory: File
 
     @Test
-    fun `map two data classes with the different values should fail`() {
+    fun `explicit mapping using fromProperty with wrong type should fail`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectWithDifferentValuesTest.*
+                        import tech.mappie.testing.ObjectAssignedWithWrongTypeTest.*
     
-                        class Mapper : ObjectMappie<Input, Output>()
+                        class Mapper : ObjectMappie<Input, Output>() {
+                            override fun map(from: Input) = mapping {
+                                Output::value fromProperty from::value
+                            }
+                        }
                         """
                     )
                 )
             }
         }.compile {
             assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
-            assertThat(messages).containsError("Target Output::name has no source defined")
+            assertThat(messages)
+                .containsError("Target Output::value of type Int cannot be assigned from Input::value of type String")
         }
     }
 
     @Test
-    fun `map two data classes with the different values from KProperty0 should succeed`() {
+    fun `explicit mapping using fromValue with wrong type should fail`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectWithDifferentValuesTest.*
+                        import tech.mappie.testing.ObjectAssignedWithWrongTypeTest.*
     
                         class Mapper : ObjectMappie<Input, Output>() {
                             override fun map(from: Input) = mapping {
-                                Output::name fromProperty from::firstname
+                                Output::value fromValue from.value
                             }
                         }
                         """
@@ -57,32 +62,25 @@ class ObjectWithDifferentValuesTest {
                 )
             }
         }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
-
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
-            assertThat(mapper.map(Input("Stefan", 30))).isEqualTo(Output("Stefan", 30))
+            assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
+            assertThat(messages)
+                .containsError("Target Output::value of type Int cannot be assigned from value of type String")
         }
     }
 
     @Test
-    fun `map two data classes with the different values from KProperty1 should succeed`() {
+    fun `explicit mapping using fromExpression with wrong type should fail`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectWithDifferentValuesTest.*
+                        import tech.mappie.testing.ObjectAssignedWithWrongTypeTest.*
     
                         class Mapper : ObjectMappie<Input, Output>() {
                             override fun map(from: Input) = mapping {
-                                Output::name fromProperty Input::firstname
+                                Output::value fromExpression { it.value }
                             }
                         }
                         """
@@ -90,16 +88,9 @@ class ObjectWithDifferentValuesTest {
                 )
             }
         }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
-
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
-            assertThat(mapper.map(Input("Sjon", 58))).isEqualTo(Output("Sjon", 58))
+            assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
+            assertThat(messages)
+                .containsError("Target Output::value of type Int cannot be assigned from expression of type String")
         }
     }
 }
