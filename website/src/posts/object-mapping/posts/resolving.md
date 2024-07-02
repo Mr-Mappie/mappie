@@ -7,7 +7,11 @@ eleventyNavigation:
   order: 5
 ---
 
-Not all data classes you want to map are equivalent. Suppose we have a data class `Person`
+Not all data classes you want to map are equivalent. Mappie supports defining explicit mapping for those which cannot
+be resolved automatically. This can be done via properties, expressions, or expressions as described in the coming 
+sections.
+
+Suppose we have a data class `Person`
 ```kotlin
 data class Person(val name: String, val age: Int)
 ```
@@ -80,7 +84,7 @@ object PersonMapper : ObjectMappie<Person, PersonDto>() {
 ```
 will set `PersonDto.description` to `"Description: ${from.name}"`.
 
-## Targeting a constructor parameter without a backing property
+## Constructor Parameters without a Backing Property
 It is possible that a constructor parameter is declared without a backing property. We can handle those constructor 
 parameters via the function `parameter`.
 
@@ -101,3 +105,17 @@ object PersonMapper : ObjectMappie<Person, PersonDto>() {
     }
 }
 ```
+
+## The Target Type Alias 
+We can access the target properties via the target type of the mapper. This can clutter the mapping definition when
+many explicit mappings are defined. Mappie defines a special `to` property which can be used instead of the target type.
+
+For example, we can use `to` refer to the property `streetname` of `PersonDto`
+```kotlin
+object PersonMapper : ObjectMappie<Person, PersonDto>() {
+    override fun map(from: Person): PersonDto = mapping {
+        to::streetname fromProperty from.address::street
+    }
+}
+```
+where `to::streetname` is equivalent to `PersonDto::streetname`.

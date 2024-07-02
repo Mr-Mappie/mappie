@@ -16,11 +16,11 @@ import tech.mappie.resolving.enums.ExplicitEnumMappingTarget
 import tech.mappie.resolving.enums.ResolvedEnumMappingTarget
 import tech.mappie.resolving.enums.ThrowingEnumMappingTarget
 
-class IrTransformer(private val symbols: List<MappieDefinition>) : IrElementTransformerVoidWithContext() {
+class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrElementTransformerVoidWithContext() {
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
         declaration.declarations.filterIsInstance<IrClass>().forEach { inner ->
-            inner.transform(IrTransformer(symbols), null)
+            inner.transform(MappieIrTransformer(symbols), null)
         }
 
         if (declaration.accept(ShouldTransformCollector(), Unit)) {

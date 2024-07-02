@@ -71,6 +71,39 @@ class ObjectWithDifferentValuesTest {
     }
 
     @Test
+    fun `map two data classes using to with the different values from KProperty0 should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.ObjectWithDifferentValuesTest.*
+    
+                        class Mapper : ObjectMappie<Input, Output>() {
+                            override fun map(from: Input) = mapping {
+                                to::name fromProperty from::firstname
+                            }
+                        }
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input("Stefan", 30))).isEqualTo(Output("Stefan", 30))
+        }
+    }
+
+    @Test
     fun `map two data classes with the different values from KProperty1 should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
