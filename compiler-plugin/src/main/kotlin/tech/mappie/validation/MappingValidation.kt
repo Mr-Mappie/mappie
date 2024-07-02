@@ -9,6 +9,7 @@ import tech.mappie.util.isAssignableFrom
 import tech.mappie.util.location
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import tech.mappie.resolving.classes.ExpressionSource
 import tech.mappie.resolving.classes.ResolvedSource
@@ -55,7 +56,7 @@ interface MappingValidation {
                 addAll(
                     mapping.mappings
                         .filter { (_, sources) -> sources.size == 1 }
-                        .filter { (target, sources) -> !target.type.isAssignableFrom(sources.single().type) }
+                        .filter { (target, sources) -> !target.type.isAssignableFrom(sources.single().type, true) }
                         .map { (target, sources) ->
                             when (val source = sources.single()) {
                                 is PropertySource -> {
@@ -76,6 +77,37 @@ interface MappingValidation {
                                     val location = source.origin?.let { location(file, it) }
                                     val description = "Target ${mapping.targetType.dumpKotlinLike()}::${target.name.asString()} of type ${target.type.dumpKotlinLike()} cannot be assigned from value of type ${source.type.dumpKotlinLike()}"
                                     Problem.error(description, location)
+                                }
+                            }
+                        }
+                )
+
+                addAll(
+                    mapping.mappings
+                        .filter { (_, sources) -> sources.size == 1 }
+                        .filter { (target, sources) ->
+                            target.type.isAssignableFrom(sources.single().type, true) &&
+                            !target.type.isAssignableFrom(sources.single().type, false) }
+                        .map { (target, sources) ->
+                            when (val source = sources.single()) {
+                                is PropertySource -> {
+                                    val location = location(file, source.origin)
+                                    val description = "Target ${mapping.targetType.dumpKotlinLike()}::${target.name.asString()} of type ${target.type.dumpKotlinLike()} is unsafe to from ${source.property.dumpKotlinLike()} of platform type ${source.type.removeAnnotations().dumpKotlinLike()}"
+                                    Problem.warning(description, location)
+                                }
+                                is ExpressionSource -> {
+                                    val location = location(file, source.origin)
+                                    val description = "Target ${mapping.targetType.dumpKotlinLike()}::${target.name.asString()} of type ${target.type.dumpKotlinLike()} is unsafe to be assigned from expression of platform type ${source.type.removeAnnotations().dumpKotlinLike()}"
+                                    Problem.warning(description, location)
+                                }
+                                is ResolvedSource -> {
+                                    val description = "Target ${mapping.targetType.dumpKotlinLike()}::${target.name.asString()} automatically resolved from ${source.property.dumpKotlinLike()} but it is unsafe to assign source platform type ${source.type.removeAnnotations().dumpKotlinLike()} to target type ${target.type.dumpKotlinLike()}"
+                                    Problem.warning(description, null)
+                                }
+                                is ValueSource -> {
+                                    val location = source.origin?.let { location(file, it) }
+                                    val description = "Target ${mapping.targetType.dumpKotlinLike()}::${target.name.asString()} of type ${target.type.dumpKotlinLike()} is unsafe to assigned from value of platform type ${source.type.removeAnnotations().dumpKotlinLike()}"
+                                    Problem.warning(description, location)
                                 }
                             }
                         }

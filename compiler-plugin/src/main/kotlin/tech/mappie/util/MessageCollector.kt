@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.util.fileEntry
 import tech.mappie.validation.Problem
 
-fun logAll(problems: List<Problem>) =
-    problems.forEach { log(it) }
+fun logAll(problems: List<Problem>, location: CompilerMessageSourceLocation? = null) =
+    problems.forEach { log(it, location) }
 
-fun log(problem: Problem) =
+fun log(problem: Problem, location: CompilerMessageSourceLocation?) =
     when(problem.severity) {
-        Problem.Severity.ERROR -> logError(problem.description, problem.location)
-        Problem.Severity.WARNING -> logWarn(problem.description, problem.location)
+        Problem.Severity.ERROR -> logError(problem.description, problem.location ?: location)
+        Problem.Severity.WARNING -> logWarn(problem.description, problem.location ?: location)
     }
 
 fun logInfo(message: String, location: CompilerMessageSourceLocation? = null) =
