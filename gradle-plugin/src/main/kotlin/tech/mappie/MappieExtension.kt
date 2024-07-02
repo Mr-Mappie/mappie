@@ -12,6 +12,11 @@ abstract class MappieExtension(private val project: Project) {
      */
     abstract val warningsAsErrors: Property<Boolean>
 
+    /**
+     * Use default arguments if no mapping exists.
+     */
+    abstract val useDefaultArguments: Property<Boolean>
+
     internal val strictness: MappieStrictnessExtension get() =
         extensions.getOrPut(MappieStrictnessExtension.NAME) {
             project.objects.newInstance(MappieStrictnessExtension::class.java)

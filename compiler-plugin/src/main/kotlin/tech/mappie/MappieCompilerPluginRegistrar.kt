@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_USE_DEFAULT_ARGUMENTS
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_WARNINGS_AS_ERRORS
 
 @OptIn(ExperimentalCompilerApi::class)
@@ -22,6 +23,7 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
                 messageCollector,
                 MappieConfiguration(
                     warningsAsErrors = configuration.get(ARGUMENT_WARNINGS_AS_ERRORS, false),
+                    useDefaultArguments = configuration.get(ARGUMENT_USE_DEFAULT_ARGUMENTS, true),
                     strictness = StrictnessConfiguration(
                         enums = configuration.get(ARGUMENT_STRICTNESS_ENUMS, true),
                         visibility = configuration.get(ARGUMENT_STRICTNESS_VISIBILITY, false)

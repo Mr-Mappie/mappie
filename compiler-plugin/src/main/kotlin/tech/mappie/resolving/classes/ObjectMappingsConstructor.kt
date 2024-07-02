@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.resolving.*
 import tech.mappie.util.*
 
@@ -50,7 +51,7 @@ class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParam
                         else ->  clazz.constructors.firstOrNull { it.valueParameters.isEmpty() }?.let { irConstructorCall(it) }
                     }
                     listOf(ResolvedSource(getter.symbol, irGet(source), via, viaDispatchReceiver))
-                }  else if (target.hasDefaultValue()) {
+                }  else if (target.hasDefaultValue() && context.configuration.useDefaultArguments) {
                     listOf(ValueSource(target.defaultValue!!.expression, null))
                 } else {
                     emptyList()
