@@ -1,4 +1,4 @@
-@file:Suppress("unused", "UNUSED_PARAMETER", "SameParameterValue")
+@file:Suppress("UNUSED_PARAMETER", "SameParameterValue")
 
 package tech.mappie.api
 
@@ -25,16 +25,12 @@ public abstract class ObjectMappie<FROM, TO> : Mappie<FROM, TO>() {
 
     /**
      * Alias for the target type [TO] to simply property references.
-     * For example, in the following code
+     *
+     * For example, suppose we are constructing a mapper with target type `Person`
      * ```kotlin
-     * object Mapper : ObjectMappie<Person, PersonDto>() {
-     *     override fun map(from: Person) = mapping {
-     *         to::name fromProperty PersonDto::fullName
-     *     }
-     * }
+     *  to::name fromProperty PersonDto::fullName
      * ```
-     * the line `to::name fromProperty PersonDto::fullName` is equivalent to
-     * `Person::name fromProperty PersonDto::fullName`.
+     * is equivalent to `Person::name fromProperty PersonDto::fullName`.
      */
     protected val to: TO
         get() = error("The to property should only be used in the context of `to::property fromX y`.")
