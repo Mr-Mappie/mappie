@@ -20,6 +20,9 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
                 extension.warningsAsErrors.orNull?.apply {
                     add(SubpluginOption("warningsAsErrors", this.toString()))
                 }
+                extension.useDefaultArguments.orNull?.apply {
+                    add(SubpluginOption("useDefaultArguments", this.toString()))
+                }
                 extension.strictness.enums.orNull?.apply {
                     add(SubpluginOption("strictness.enums", this.toString() ))
                 }
