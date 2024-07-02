@@ -1,6 +1,6 @@
 package tech.mappie
 
-import tech.mappie.generation.IrTransformer
+import tech.mappie.generation.MappieIrTransformer
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -15,7 +15,7 @@ class MappieIrRegistrar(
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         context = MappiePluginContext(messageCollector, configuration, pluginContext)
         val symbols = moduleFragment.accept(AllMappieDefinitionsCollector(), Unit)
-        moduleFragment.accept(IrTransformer(symbols), null)
+        moduleFragment.accept(MappieIrTransformer(symbols), null)
     }
 
     companion object {

@@ -32,7 +32,7 @@ object PersonMapper : ObjectMappie<Person, PersonDto>() {
 }
 ```
 
-## Handling nullability
+## Handling Nullability
 The `transform` operator can also come in handy when mapping nullable values to non-nullable values. 
 
 Suppose we have the data class `Dog` having the property `name` which can be `null`
