@@ -6,6 +6,11 @@
       "external": false
     },
     {
+      "caption": "FAQ",
+      "url": "/faq/",
+      "external": false
+    },
+    {
       "caption": "Changelog",
       "url": "/changelog/",
       "external": false

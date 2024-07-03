@@ -26,9 +26,9 @@ data class PersonDto(
 
 When a mapping function is defined without any explicit mappings, Mappie will throw an error stating that the target 
 `description` has no source defined. We can set the target property in different ways:
-1. setting the target from a source property;
-2. setting the target from a constant; or
-3. setting the target from an expression.
+1. mapping via a source property;
+2. mapping via a value; or
+3. mapping via an expression.
 
 ## Mapping via a Source Property
 Targets can be set via the operator `fromProperty`. This will set the target to the given source property.
@@ -51,7 +51,7 @@ object PersonMapper : ObjectMappie<Person, PersonDto>() {
     }
 }
 ```
-will construct an explicit mapping from the property `street` from the `address` of `from` to `streetname` of `PersonDto`. 
+will construct an explicit mapping from the property `street` of `Person::address` to `streetname` of `PersonDto`. 
 
 Sometimes, you want to map from a source property, but tweak the value, handle nullability, or transform the source in
 some other way. See [Transforming](/object-mapping/transforming/) for some guidelines.
@@ -83,6 +83,10 @@ object PersonMapper : ObjectMappie<Person, PersonDto>() {
 }
 ```
 will set `PersonDto.description` to `"Description: ${from.name}"`.
+
+All mappings can be defined using `fromExpression`, but to keep the mappings clean and give Mappie the most information
+to suggest improvements to your code, `fromProperty` combined with either `via` or `transform` is preferred. For more 
+information on this, see [Transforming](/object-mapping/transforming/).
 
 ## Constructor Parameters without a Backing Property
 It is possible that a constructor parameter is declared without a backing property. We can handle those constructor 
@@ -119,12 +123,3 @@ object PersonMapper : ObjectMappie<Person, PersonDto>() {
 }
 ```
 where `to::streetname` is equivalent to `PersonDto::streetname`.
-
-## Java Compatibility
-Java classes are different from those of Kotlin. The main difference for Mappie is that Java does not have the concept
-of properties. Instead, the convention is to have a field `x`, and a getter `getX()` and setter `setX(Person value)` 
-method.
-
-Mappie automatically infers such getter methods. They must follow the convention `getX()` for the property `x` to be
-inferred. Also note that in Java all types are nullable. Mappie will give a warning if a Java getter is used to assign
-to a non-nullable target.
