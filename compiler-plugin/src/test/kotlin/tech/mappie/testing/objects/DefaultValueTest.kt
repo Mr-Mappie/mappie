@@ -1,37 +1,35 @@
-package tech.mappie.testing
+package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.KotlinCompilation
 import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class MaperClassCanContainPropertiesTest {
-
-    data class Input(val text: String)
-    data class Output(val text: String, val int: Int)
+class DefaultValueTest {
+    data class Input(val age: Int)
+    data class Output(val name: String = "unknown", val age: Int)
 
     @TempDir
     private lateinit var directory: File
 
     @Test
-    fun `map with a property in constructor of mapper should succeed`() {
+    @Disabled("Default values do not seem to work via KotlinCompilation")
+    fun `map two data classes with an unknown target having a default value should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.MaperClassCanContainPropertiesTest.*
+                        import tech.mappie.testing.objects.DefaultValueTest.*
     
-                        class Mapper(private val int: Int) : ObjectMappie<Input, Output>() {
-                            override fun map(from: Input) = mapping {
-                                Output::int fromValue int
-                            }
-                        }
- """
+                        class Mapper : ObjectMappie<Input, Output>()
+                        """
                     )
                 )
             }
@@ -43,10 +41,9 @@ class MaperClassCanContainPropertiesTest {
                 .loadObjectMappieClass<Input, Output>("Mapper")
                 .constructors
                 .first()
-                .call(10)
+                .call()
 
-            assertThat(mapper.map(Input("test")))
-                .isEqualTo(Output("test", 10))
+            assertThat(mapper.map(Input(25))).isEqualTo(Output("unknown", 25))
         }
     }
 

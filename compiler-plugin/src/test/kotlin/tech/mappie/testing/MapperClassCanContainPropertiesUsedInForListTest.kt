@@ -8,32 +8,36 @@ import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import java.io.File
 
-class ViaListTest {
+class MapperClassCanContainPropertiesUsedInForListTest {
+
     data class Input(val text: List<InnerInput>)
-    data class InnerInput(val value: String)
-    data class Output(val text: List<String>)
+    data class InnerInput(val text: String)
+    data class Output(val text: List<InnerOutput>)
+    data class InnerOutput(val text: String, val int: Int)
 
     @TempDir
     private lateinit var directory: File
 
     @Test
-    fun `map via forList should succeed`() {
+    fun `map a property in constructor of mapper should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ViaListTest.*
+                        import tech.mappie.testing.MapperClassCanContainPropertiesUsedInForListTest.*
     
                         class Mapper : ObjectMappie<Input, Output>() {
                             override fun map(from: Input) = mapping {
-                                Output::text fromProperty from::text via InnerMapper.forList
+                                Output::text fromProperty from::text via InnerMapper(10).forList
                             }
                         }
-
-                        object InnerMapper : ObjectMappie<InnerInput, String>() {
-                            override fun map(from: InnerInput) = from.value
+                        
+                        class InnerMapper(private val int: Int): ObjectMappie<InnerInput, InnerOutput>() {
+                            override fun map(from: InnerInput) = mapping { 
+                                InnerOutput::int fromValue int
+                            }
                         }
                         """
                     )
@@ -49,8 +53,8 @@ class ViaListTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(listOf(InnerInput("A"), InnerInput("B")))))
-                .isEqualTo(Output(listOf("A", "B")))
+            assertThat(mapper.map(Input(listOf(InnerInput("test")))))
+                .isEqualTo(Output(listOf(InnerOutput("test", 10))))
         }
     }
 }

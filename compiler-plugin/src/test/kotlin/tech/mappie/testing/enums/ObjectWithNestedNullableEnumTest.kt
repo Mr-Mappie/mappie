@@ -1,33 +1,37 @@
-package tech.mappie.testing
+package tech.mappie.testing.enums
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.KotlinCompilation
 import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class ObjectWithSameValuesTest {
-
-    data class Input(val value: String)
-    data class Output(val value: String)
+class ObjectWithNestedNullableEnumTest {
+    data class Input(val text: InnerEnum?)
+    enum class InnerEnum { A, B, C; }
+    data class Output(val text: OuterEnum?)
+    enum class OuterEnum { A, B, C; }
 
     @TempDir
     private lateinit var directory: File
 
     @Test
-    fun `map identical data classes should succeed`() {
+    fun `map data classes with nested non-null enum using object InnerMapper without declaring mapping should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectWithSameValuesTest.*
+                        import tech.mappie.api.EnumMappie
+                        import tech.mappie.testing.enums.ObjectWithNestedNullableEnumTest.*
     
                         class Mapper : ObjectMappie<Input, Output>()
+
+                        object InnerMapper : EnumMappie<InnerEnum, OuterEnum>()
                         """
                     )
                 )
@@ -42,33 +46,32 @@ class ObjectWithSameValuesTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input("value"))).isEqualTo(Output("value"))
+            assertThat(mapper.map(Input(InnerEnum.A)))
+                .isEqualTo(Output(OuterEnum.A))
         }
     }
 
     @Test
-    @Disabled("Not implemented yet")
-    fun `map identical data classes with an explicit mapping should succeed`() {
+    fun `map data classes with nested null enum using object InnerMapper without declaring mapping should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectWithSameValuesTest.*
+                        import tech.mappie.api.EnumMappie
+                        import tech.mappie.testing.enums.ObjectWithNestedNullableEnumTest.*
     
-                        class Mapper : ObjectMappie<Input, Output>() {
-                            override fun map(from: Input) = mapping {
-                                Output::value fromProperty Input::value
-                            }
-                        }
+                        class Mapper : ObjectMappie<Input, Output>()
+
+                        object InnerMapper : EnumMappie<InnerEnum, OuterEnum>()
                         """
                     )
                 )
             }
         }.compile {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).containsWarning("Unnecessary explicit mapping of target Output::value")
+            assertThat(messages).isEmpty()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -76,7 +79,8 @@ class ObjectWithSameValuesTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input("value"))).isEqualTo(Output("value"))
+            assertThat(mapper.map(Input(null)))
+                .isEqualTo(Output(null))
         }
     }
 }

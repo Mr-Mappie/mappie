@@ -191,7 +191,7 @@ private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>
                     putValueArgument(0, irGet(itParameter))
                 })
             },
-            IrStatementOrigin.ANONYMOUS_FUNCTION
+            IrStatementOrigin.LAMBDA
         )
 }
 

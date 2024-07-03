@@ -1,4 +1,4 @@
-package tech.mappie.testing
+package tech.mappie.testing.lists
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -6,31 +6,52 @@ import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.KotlinCompilation
 import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.containsError
+import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class ConstructorSelectionTest {
-
-    data class Input(val name: String)
-    data class Output(val name: String, val age: Int) {
-        constructor(name: String) : this(name, -1)
-    }
+class NullToNonNullTest {
+    data class Input(val value: String?)
+    data class Output(val value: String)
 
     @TempDir
     private lateinit var directory: File
 
     @Test
-    fun `map data class with all values should call primary constructor`() {
+    fun `map data class with null to non-null should fail`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ConstructorSelectionTest.*
+                        import tech.mappie.testing.lists.NullToNonNullTest.*
+    
+                        class Mapper : ObjectMappie<Input, Output>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
+            assertThat(messages)
+                .containsError("Target Output::value automatically resolved from Input::value but cannot assign source type String? to target type String")
+        }
+    }
+
+    @Test
+    fun `map data class with null to non-null should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.lists.NullToNonNullTest.*
     
                         class Mapper : ObjectMappie<Input, Output>() {
                             override fun map(from: Input) = mapping {
-                                Output::age fromValue 50
+                                Output::value fromProperty Input::value transform { it ?: "null" }
                             }
                         }
                         """
@@ -47,38 +68,8 @@ class ConstructorSelectionTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input("value")))
-                .isEqualTo(Output("value", 50))
-        }
-    }
-
-    @Test
-    fun `map data class with only values of secondary constructor should call secondary constructor`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ConstructorSelectionTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
-
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
-            assertThat(mapper.map(Input("value")))
-                .isEqualTo(Output("value", -1))
+            assertThat(mapper.map(Input(null))).isEqualTo(Output("null"))
+            assertThat(mapper.map(Input("value"))).isEqualTo(Output("value"))
         }
     }
 }

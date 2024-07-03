@@ -92,7 +92,12 @@ class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrEleme
                     }
                 }
             } else {
-                logAll(invalids.first().second.problems, location(declaration))
+                val first = invalids.firstOrNull()
+                if (first != null) {
+                    logAll(invalids.first().second.problems, location(declaration))
+                } else {
+                    logError("No constructor visible to use", location(declaration))
+                }
             }
         }
         return declaration

@@ -8,38 +8,30 @@ import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import java.io.File
 
-class MaperClassCanContainPropertiesUsedInForListTest {
+class MapperClassCanContainPropertiesTest {
 
-    data class Input(val text: List<InnerInput>)
-    data class InnerInput(val text: String)
-    data class Output(val text: List<InnerOutput>)
-    data class InnerOutput(val text: String, val int: Int)
+    data class Input(val text: String)
+    data class Output(val text: String, val int: Int)
 
     @TempDir
     private lateinit var directory: File
 
     @Test
-    fun `map a property in constructor of mapper should succeed`() {
+    fun `map with a property in constructor of mapper should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.MaperClassCanContainPropertiesUsedInForListTest.*
+                        import tech.mappie.testing.MapperClassCanContainPropertiesTest.*
     
-                        class Mapper : ObjectMappie<Input, Output>() {
+                        class Mapper(private val int: Int) : ObjectMappie<Input, Output>() {
                             override fun map(from: Input) = mapping {
-                                Output::text fromProperty from::text via InnerMapper(10).forList
+                                Output::int fromValue int
                             }
                         }
-                        
-                        class InnerMapper(private val int: Int): ObjectMappie<InnerInput, InnerOutput>() {
-                            override fun map(from: InnerInput) = mapping { 
-                                InnerOutput::int fromValue int
-                            }
-                        }
-                        """
+ """
                     )
                 )
             }
@@ -51,10 +43,11 @@ class MaperClassCanContainPropertiesUsedInForListTest {
                 .loadObjectMappieClass<Input, Output>("Mapper")
                 .constructors
                 .first()
-                .call()
+                .call(10)
 
-            assertThat(mapper.map(Input(listOf(InnerInput("test")))))
-                .isEqualTo(Output(listOf(InnerOutput("test", 10))))
+            assertThat(mapper.map(Input("test")))
+                .isEqualTo(Output("test", 10))
         }
     }
+
 }

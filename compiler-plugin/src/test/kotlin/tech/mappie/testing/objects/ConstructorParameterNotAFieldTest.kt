@@ -1,55 +1,67 @@
-package tech.mappie.testing
+package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.kotlin.com.google.common.base.Objects
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.KotlinCompilation
 import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.containsError
+import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class ObjectWithNullToNonNullTest {
-    data class Input(val value: String?)
-    data class Output(val value: String)
+class ConstructorParameterNotAFieldTest {
+
+    data class Input(val input: String, val age: Int)
+    class Output(output: String, val age: Int) {
+        val value = output
+
+        override fun equals(other: Any?) = other is Output && value == other.value && age == other.age
+        override fun hashCode(): Int = Objects.hashCode(value, age)
+    }
 
     @TempDir
     private lateinit var directory: File
 
     @Test
-    fun `map data class with null to non-null should fail`() {
+    fun `map two classes with unknown parameter set should fail`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectWithNullToNonNullTest.*
+                        import tech.mappie.testing.objects.ConstructorParameterNotAFieldTest.*
     
-                        class Mapper : ObjectMappie<Input, Output>()
+                        class Mapper : ObjectMappie<Input, Output>() {
+                            override fun map(from: Input) = mapping {
+                                parameter("fake") fromProperty Input::input
+                            }
+                        }
                         """
                     )
                 )
             }
         }.compile {
             assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
-            assertThat(messages)
-                .containsError("Target Output::value automatically resolved from Input::value but cannot assign source type String? to target type String")
+            assertThat(messages).containsError("Parameter fake does not occur as a parameter in constructor")
         }
     }
 
     @Test
-    fun `map data class with null to non-null should succeed`() {
+    fun `map two classes with parameter set should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectWithNullToNonNullTest.*
+                        import tech.mappie.testing.objects.ConstructorParameterNotAFieldTest.*
     
                         class Mapper : ObjectMappie<Input, Output>() {
                             override fun map(from: Input) = mapping {
-                                Output::value fromProperty Input::value transform { it ?: "null" }
+                                parameter("output") fromProperty Input::input
                             }
                         }
                         """
@@ -66,8 +78,8 @@ class ObjectWithNullToNonNullTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(null))).isEqualTo(Output("null"))
-            assertThat(mapper.map(Input("value"))).isEqualTo(Output("value"))
+            assertThat(mapper.map(Input("Sjon", 58))).isEqualTo(Output("Sjon", 58))
         }
     }
+
 }

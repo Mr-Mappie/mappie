@@ -1,4 +1,4 @@
-package tech.mappie.testing
+package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -6,9 +6,10 @@ import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.KotlinCompilation
 import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.containsError
 import java.io.File
 
-class ObjectAssignedWithWrongTypeTest {
+class WrongTypeAssignmentTest {
 
     data class Input(val value: String)
     data class Output(val value: Int)
@@ -24,7 +25,7 @@ class ObjectAssignedWithWrongTypeTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectAssignedWithWrongTypeTest.*
+                        import tech.mappie.testing.objects.WrongTypeAssignmentTest.*
     
                         class Mapper : ObjectMappie<Input, Output>() {
                             override fun map(from: Input) = mapping {
@@ -50,7 +51,7 @@ class ObjectAssignedWithWrongTypeTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectAssignedWithWrongTypeTest.*
+                        import tech.mappie.testing.objects.WrongTypeAssignmentTest.*
     
                         class Mapper : ObjectMappie<Input, Output>() {
                             override fun map(from: Input) = mapping {
@@ -76,7 +77,7 @@ class ObjectAssignedWithWrongTypeTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectAssignedWithWrongTypeTest.*
+                        import tech.mappie.testing.objects.WrongTypeAssignmentTest.*
     
                         class Mapper : ObjectMappie<Input, Output>() {
                             override fun map(from: Input) = mapping {

@@ -1,4 +1,4 @@
-package tech.mappie.testing
+package tech.mappie.testing.enums
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -6,6 +6,8 @@ import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.KotlinCompilation
 import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.containsError
+import tech.mappie.testing.loadEnumMappieClass
 import java.io.File
 import kotlin.test.Test
 
@@ -25,7 +27,7 @@ class EnumsWithDifferentEntriesTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.EnumMappie
-                        import tech.mappie.testing.EnumsWithDifferentEntriesTest.*
+                        import tech.mappie.testing.enums.EnumsWithDifferentEntriesTest.*
     
                         class Mapper : EnumMappie<Input, Output>() {
                             override fun map(from: Input) = mapping {
@@ -59,7 +61,7 @@ class EnumsWithDifferentEntriesTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.EnumMappie
-                        import tech.mappie.testing.EnumsWithDifferentEntriesTest.*
+                        import tech.mappie.testing.enums.EnumsWithDifferentEntriesTest.*
     
                         class Mapper : EnumMappie<Input, Output>() {
                             override fun map(from: Input) = mapping {
@@ -94,7 +96,7 @@ class EnumsWithDifferentEntriesTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.EnumMappie
-                        import tech.mappie.testing.EnumsWithDifferentEntriesTest.*
+                        import tech.mappie.testing.enums.EnumsWithDifferentEntriesTest.*
     
                         class Mapper : EnumMappie<Input, Output>()
                         """

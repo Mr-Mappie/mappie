@@ -1,4 +1,4 @@
-package tech.mappie.testing
+package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -6,6 +6,8 @@ import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.KotlinCompilation
 import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.containsError
+import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
 class ObjectWithDifferentValuesTest {
@@ -24,7 +26,7 @@ class ObjectWithDifferentValuesTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectWithDifferentValuesTest.*
+                        import tech.mappie.testing.objects.ObjectWithDifferentValuesTest.*
     
                         class Mapper : ObjectMappie<Input, Output>()
                         """
@@ -45,7 +47,7 @@ class ObjectWithDifferentValuesTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectWithDifferentValuesTest.*
+                        import tech.mappie.testing.objects.ObjectWithDifferentValuesTest.*
     
                         class Mapper : ObjectMappie<Input, Output>() {
                             override fun map(from: Input) = mapping {
@@ -78,7 +80,7 @@ class ObjectWithDifferentValuesTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectWithDifferentValuesTest.*
+                        import tech.mappie.testing.objects.ObjectWithDifferentValuesTest.*
     
                         class Mapper : ObjectMappie<Input, Output>() {
                             override fun map(from: Input) = mapping {
@@ -111,7 +113,7 @@ class ObjectWithDifferentValuesTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectWithDifferentValuesTest.*
+                        import tech.mappie.testing.objects.ObjectWithDifferentValuesTest.*
     
                         class Mapper : ObjectMappie<Input, Output>() {
                             override fun map(from: Input) = mapping {

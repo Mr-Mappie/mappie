@@ -1,4 +1,4 @@
-package tech.mappie.testing
+package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -6,9 +6,10 @@ import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.KotlinCompilation
 import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class ObjectWithNestedNullTest {
+class NestedNonNullToNullPropertyTest {
     data class Input(val text: InnerInput?, val int: Int)
     data class InnerInput(val value: String)
     data class Output(val text: InnerOutput?, val int: Int)
@@ -25,7 +26,7 @@ class ObjectWithNestedNullTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectWithNestedNullTest.*
+                        import tech.mappie.testing.objects.NestedNonNullToNullPropertyTest.*
     
                         class Mapper : ObjectMappie<Input, Output>()
 
@@ -57,7 +58,7 @@ class ObjectWithNestedNullTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectWithNestedNullTest.*
+                        import tech.mappie.testing.objects.NestedNonNullToNullPropertyTest.*
     
                         class Mapper : ObjectMappie<Input, Output>()
 
@@ -89,7 +90,7 @@ class ObjectWithNestedNullTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.ObjectWithNestedNullTest.*
+                        import tech.mappie.testing.objects.NestedNonNullToNullPropertyTest.*
     
                         class Mapper : ObjectMappie<Input, Output>()
 

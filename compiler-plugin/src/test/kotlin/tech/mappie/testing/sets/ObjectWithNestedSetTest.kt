@@ -1,4 +1,4 @@
-package tech.mappie.testing
+package tech.mappie.testing.sets
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -6,31 +6,31 @@ import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.KotlinCompilation
 import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class ObjectWithNestedEnumTest {
-    data class Input(val text: InnerEnum)
-    enum class InnerEnum { A, B, C; }
-    data class Output(val text: OuterEnum)
-    enum class OuterEnum(val value: String) { A("A"), B("B"), C("C"); }
+class ObjectWithNestedSetTest {
+    data class Input(val text: Set<InnerInput>, val int: Int)
+    data class InnerInput(val value: String)
+    data class Output(val text: Set<InnerOutput>, val int: Int)
+    data class InnerOutput(val value: String)
 
     @TempDir
     private lateinit var directory: File
 
     @Test
-    fun `map data classes with nested enum using object InnerMapper without declaring mapping should succeed`() {
+    fun `map data classes with nested set using object InnerMapper without declaring mapping should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.api.EnumMappie
-                        import tech.mappie.testing.ObjectWithNestedEnumTest.*
+                        import tech.mappie.testing.sets.ObjectWithNestedSetTest.*
     
                         class Mapper : ObjectMappie<Input, Output>()
 
-                        object InnerMapper : EnumMappie<InnerEnum, OuterEnum>()
+                        object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
                         """
                     )
                 )
@@ -45,8 +45,8 @@ class ObjectWithNestedEnumTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(InnerEnum.A)))
-                .isEqualTo(Output(OuterEnum.A))
+            assertThat(mapper.map(Input(setOf(InnerInput("first"), InnerInput("second")), 20)))
+                .isEqualTo(Output(setOf(InnerOutput("first"), InnerOutput("second")), 20))
         }
     }
 }
