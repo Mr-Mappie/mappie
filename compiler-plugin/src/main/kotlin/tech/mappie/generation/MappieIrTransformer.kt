@@ -53,7 +53,7 @@ class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrEleme
                 declaration.body = with(createScope(declaration)) {
                     val (mapping, validation) = MappingSelector.of(valids).select()
 
-                    logAll(validation.warnings())
+                    logAll(validation.warnings(), location(declaration))
 
                     when (mapping) {
                         is ConstructorCallMapping -> {
@@ -92,9 +92,7 @@ class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrEleme
                     }
                 }
             } else {
-                invalids.first().second.problems.forEach { problem ->
-                    logError(problem.description, problem.location ?: location(declaration))
-                }
+                logAll(invalids.first().second.problems, location(declaration))
             }
         }
         return declaration
@@ -117,7 +115,7 @@ fun ExpressionSource.toIr(builder: IrBuilderWithScope): IrExpression {
 }
 
 fun ResolvedSource.toIr(builder: IrBuilderWithScope): IrExpression {
-    val getter = builder.irCall(property).apply {
+    val getter = builder.irCall(property.function).apply {
         dispatchReceiver = this@toIr.dispatchReceiver
     }
     return via?.let {

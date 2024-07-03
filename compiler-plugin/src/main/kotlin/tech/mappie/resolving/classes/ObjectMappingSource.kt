@@ -15,13 +15,13 @@ sealed interface ObjectMappingSource {
 }
 
 data class ResolvedSource(
-    val property: IrSimpleFunctionSymbol,
+    val property: MappieGetter,
     val dispatchReceiver: IrExpression,
     val via: IrSimpleFunction? = null,
     val viaDispatchReceiver: IrExpression? = null,
 ) : ObjectMappingSource {
     override val type: IrType
-        get() = via?.returnType ?: property.owner.returnType
+        get() = via?.returnType ?: property.type
 }
 
 data class PropertySource(

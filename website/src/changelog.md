@@ -10,6 +10,7 @@ changelog:
         - "[#28](https://github.com/Mr-Mappie/mappie/issues/28) added implicit mapping inference of mappers with the same name but a different type, but a mapper for those types are defined."
         - "[#42](https://github.com/Mr-Mappie/mappie/issues/42) added a configuration option to disable resolving via default arguments."
         - "[#40](https://github.com/Mr-Mappie/mappie/issues/40) added `to` alias to refer to for target properties as an alternative to the fully written out `TO` type."
+        - "[#46](https://github.com/Mr-Mappie/mappie/issues/46) added support for Java object getters."
         - "Several other bug fixes."
     - date: "2024-06-27"
       title: "v0.2.0"

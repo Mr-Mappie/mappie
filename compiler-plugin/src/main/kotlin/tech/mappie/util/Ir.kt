@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
 import tech.mappie.resolving.IDENTIFIER_MAP
 import kotlin.reflect.KClass
 
@@ -26,8 +27,13 @@ internal fun IrClass.isStrictSubclassOf(clazz: KClass<*>): Boolean =
 internal fun IrClass.allSuperTypes(): List<IrType> =
     superTypes + superTypes.flatMap { it.erasedUpperBound.allSuperTypes() }
 
-fun IrType.isAssignableFrom(other: IrType): Boolean =
-    other.isSubtypeOf(this, IrTypeSystemContextImpl(context.irBuiltIns)) || isIntegerAssignableFrom(other)
+fun IrType.isAssignableFrom(other: IrType, ignoreFlexibleNullability: Boolean = false): Boolean {
+    val other = if (ignoreFlexibleNullability && other.isFlexibleNullable()) other.makeNotNull() else other
+    return other.isSubtypeOf(this, IrTypeSystemContextImpl(context.irBuiltIns)) || isIntegerAssignableFrom(other)
+}
+
+fun IrType.isFlexibleNullable(): Boolean =
+    hasAnnotation(FlexibleNullability)
 
 fun IrType.isIntegerAssignableFrom(other: IrType): Boolean =
     when (this) {
