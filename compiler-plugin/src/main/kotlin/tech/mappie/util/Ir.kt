@@ -36,11 +36,15 @@ fun IrType.isFlexibleNullable(): Boolean =
     hasAnnotation(FlexibleNullability)
 
 fun IrType.isIntegerAssignableFrom(other: IrType): Boolean =
-    when (this) {
-        context.irBuiltIns.byteType -> other in listOf(context.irBuiltIns.byteType)
-        context.irBuiltIns.shortType -> other in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType)
-        context.irBuiltIns.intType -> other in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType, context.irBuiltIns.intType)
-        context.irBuiltIns.longType -> other in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType, context.irBuiltIns.intType, context.irBuiltIns.longType)
+    when (this.makeNullable()) {
+        context.irBuiltIns.byteType.makeNullable() ->
+            other in listOf(context.irBuiltIns.byteType)
+        context.irBuiltIns.shortType.makeNullable() ->
+            other in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType)
+        context.irBuiltIns.intType.makeNullable() ->
+            other in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType, context.irBuiltIns.intType)
+        context.irBuiltIns.longType.makeNullable() ->
+            other in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType, context.irBuiltIns.intType, context.irBuiltIns.longType)
         else -> false
     }
 
