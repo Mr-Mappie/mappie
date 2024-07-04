@@ -4,17 +4,13 @@ import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.resolving.ConstructorCallMapping
 import tech.mappie.resolving.EnumMapping
 import tech.mappie.resolving.Mapping
-import tech.mappie.resolving.classes.PropertySource
 import tech.mappie.util.isAssignableFrom
 import tech.mappie.util.location
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import tech.mappie.resolving.classes.ExpressionSource
-import tech.mappie.resolving.classes.ResolvedSource
-import tech.mappie.resolving.classes.ValueSource
-import tech.mappie.util.dumpKotlinLike
+import tech.mappie.resolving.classes.*
 
 data class Problem(
     val description: String,

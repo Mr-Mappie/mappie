@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.createExpressionBody
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.name.Name
 
 class ObjectMappingBodyCollector(
     file: IrFileEntry,
-    private val dispatchReceiverSymbol: IrValueSymbol,
+    private val dispatchReceiverSymbols: List<IrValueParameter>,
 ) : BaseVisitor<ObjectMappingsConstructor, ObjectMappingsConstructor>(file) {
 
     override fun visitBlockBody(body: IrBlockBody, data: ObjectMappingsConstructor): ObjectMappingsConstructor {
@@ -49,21 +50,20 @@ class ObjectMappingBodyCollector(
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: ObjectMappingsConstructor): ObjectMappingsConstructor {
         return expression.function.body?.statements?.fold(data) { acc, current ->
-            acc.let { current.accept(ObjectBodyStatementCollector(file!!, dispatchReceiverSymbol), Unit)?.let { acc.explicit(it) } ?: it }
+            acc.let { current.accept(ObjectBodyStatementCollector(file!!), Unit)?.let { acc.explicit(it) } ?: it }
         } ?: data
     }
 }
 
 private class ObjectBodyStatementCollector(
     file: IrFileEntry,
-    private val dispatchReceiverSymbol: IrValueSymbol,
 ) : BaseVisitor<Pair<Name, ObjectMappingSource>?, Unit>(file) {
 
     override fun visitCall(expression: IrCall, data: Unit): Pair<Name, ObjectMappingSource>? {
         return when (expression.symbol.owner.name) {
             IDENTIFIER_FROM_PROPERTY, IDENTIFIER_FROM_CONSTANT -> {
                 val target = expression.extensionReceiver!!.accept(TargetValueCollector(file!!), data)
-                val source = expression.valueArguments.first()!!.accept(SourceValueCollector(dispatchReceiverSymbol), Unit)
+                val source = expression.valueArguments.first()!!.accept(SourceValueCollector(), Unit)
 
                 target to source
             }
@@ -78,7 +78,6 @@ private class ObjectBodyStatementCollector(
                 val source = expression.valueArguments.first() as IrFunctionExpression
 
                 target to ExpressionSource(
-                    dispatchReceiverSymbol,
                     source,
                     expression,
                 )
@@ -195,15 +194,11 @@ private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>
         )
 }
 
-private class SourceValueCollector(
-    private val dispatchReceiverSymbol: IrValueSymbol,
-) : BaseVisitor<ObjectMappingSource, Unit>() {
+private class SourceValueCollector : BaseVisitor<ObjectMappingSource, Unit>() {
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Unit): ObjectMappingSource {
-        val dispatchReceiver = expression.dispatchReceiver ?: irGet(expression.type, dispatchReceiverSymbol)
         return PropertySource(
-            property = expression.getter!!,
-            dispatchReceiver = dispatchReceiver,
+            property = expression,
             transformation = null,
             origin = expression,
         )

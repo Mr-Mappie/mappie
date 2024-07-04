@@ -12,7 +12,7 @@ import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.resolving.*
 import tech.mappie.util.*
 
-class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParameter) {
+class ObjectMappingsConstructor(val targetType: IrType, val sources: List<IrValueParameter>) {
 
     var symbols = listOf<MappieDefinition>()
 
@@ -26,31 +26,39 @@ class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParam
         get() = constructor?.valueParameters ?: emptyList()
 
     fun construct(): ConstructorCallMapping {
-        val mappings = targets.associateWith { target ->
+        val mappings: Map<IrValueParameter, List<ObjectMappingSource>> = targets.associateWith { target ->
             val concreteSource = explicit[target.name]
 
             if (concreteSource != null) {
                 concreteSource
             } else {
-                val getter = getters.firstOrNull { getter ->
-                    getter.name == getterName(target.name)
-                }
-                if (getter != null) {
-                    val clazz = symbols.singleOrNull { it.fits(getter.type, target.type) }?.clazz
-                    val via = when {
-                        clazz == null -> null
-                        getter.type.isList() && target.type.isList() -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP_LIST }
-                        getter.type.isSet() && target.type.isSet() -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP_SET }
-                        getter.type.isNullable() && target.type.isNullable() -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP_NULLABLE }
-                        else -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP }
+                val mappings = getters.filter { getter -> getter.name == getterName(target.name) }
+                    .flatMap { getter ->
+                        val clazz = symbols.singleOrNull { it.fits(getter.type, target.type) }?.clazz
+                        val via = when {
+                            clazz == null -> null
+                            getter.type.isList() && target.type.isList() -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP_LIST }
+                            getter.type.isSet() && target.type.isSet() -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP_SET }
+                            getter.type.isNullable() && target.type.isNullable() -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP_NULLABLE }
+                            else -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP }
+                        }
+                        val viaDispatchReceiver = when {
+                            clazz == null -> null
+                            clazz.isObject -> IrGetObjectValueImpl(
+                                SYNTHETIC_OFFSET,
+                                SYNTHETIC_OFFSET,
+                                clazz.symbol.defaultType,
+                                clazz.symbol
+                            )
+                            else -> clazz.constructors.firstOrNull { it.valueParameters.isEmpty() }
+                                ?.let { irConstructorCall(it) }
+                        }
+                        listOf(ResolvedSource(getter, via, viaDispatchReceiver))
                     }
-                    val viaDispatchReceiver = when {
-                        clazz == null -> null
-                        clazz.isObject -> IrGetObjectValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, clazz.symbol.defaultType, clazz.symbol)
-                        else ->  clazz.constructors.firstOrNull { it.valueParameters.isEmpty() }?.let { irConstructorCall(it) }
-                    }
-                    listOf(ResolvedSource(getter, irGet(source), via, viaDispatchReceiver))
-                }  else if (target.hasDefaultValue() && context.configuration.useDefaultArguments) {
+
+                if (mappings.isNotEmpty()) {
+                    mappings
+                } else if (target.hasDefaultValue() && context.configuration.useDefaultArguments) {
                     listOf(ValueSource(target.defaultValue!!.expression, null))
                 } else {
                     emptyList()
@@ -63,7 +71,7 @@ class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParam
 
         return ConstructorCallMapping(
             targetType = targetType,
-            sourceType = source.type,
+            sourceTypes = sources.map { it.type },
             symbol = constructor!!.symbol,
             mappings = mappings,
             unknowns = unknowns,
@@ -75,12 +83,12 @@ class ObjectMappingsConstructor(val targetType: IrType, val source: IrValueParam
 
     companion object {
         fun of(constructor: ObjectMappingsConstructor) =
-            ObjectMappingsConstructor(constructor.targetType, constructor.source).apply {
+            ObjectMappingsConstructor(constructor.targetType, constructor.sources).apply {
                 getters = constructor.getters
                 explicit = constructor.explicit
             }
 
-        fun of(targetType: IrType, source: IrValueParameter) =
-            ObjectMappingsConstructor(targetType, source)
+        fun of(targetType: IrType, sources: List<IrValueParameter>) =
+            ObjectMappingsConstructor(targetType, sources)
     }
 }

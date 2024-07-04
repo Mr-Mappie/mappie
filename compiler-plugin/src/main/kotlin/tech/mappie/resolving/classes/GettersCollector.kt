@@ -8,21 +8,23 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.properties
 
-class GettersCollector : BaseVisitor<List<MappieGetter>, Unit>() {
+class GettersCollector : BaseVisitor<List<MappieGetter>, IrValueParameter>() {
 
-    override fun visitValueParameter(declaration: IrValueParameter, data: Unit): List<MappieGetter> {
-        return declaration.type.getClass()!!.properties.flatMap { it.accept(data) }.toList() +
-            declaration.type.getClass()!!.declarations.filterIsInstance<IrSimpleFunction>().flatMap { it.accept(data) }
+    override fun visitValueParameter(declaration: IrValueParameter, data: IrValueParameter): List<MappieGetter> {
+        val clazz = declaration.type.getClass()!!
+        val properties = clazz.properties.flatMap { it.accept(data) }.toList()
+        val methods = clazz.declarations.filterIsInstance<IrSimpleFunction>().flatMap { it.accept(data) }
+        return properties + methods
     }
 
-    override fun visitFunction(declaration: IrFunction, data: Unit): List<MappieGetter> {
+    override fun visitFunction(declaration: IrFunction, data: IrValueParameter): List<MappieGetter> {
         if (declaration.name.asString().startsWith("get") && declaration.symbol.owner.valueParameters.isEmpty()) {
-            return listOf(MappieFunctionGetter(declaration))
+            return listOf(MappieFunctionGetter(declaration, data))
         }
         return emptyList()
     }
 
-    override fun visitProperty(declaration: IrProperty, data: Unit): List<MappieGetter> {
-        return declaration.getter?.let { listOf(MappiePropertyGetter(it)) } ?: emptyList()
+    override fun visitProperty(declaration: IrProperty, data: IrValueParameter): List<MappieGetter> {
+        return declaration.getter?.let { listOf(MappiePropertyGetter(it, data)) } ?: emptyList()
     }
 }

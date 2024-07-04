@@ -50,7 +50,7 @@ class ObjectWithSameValuesTest {
 
     @Test
     @Disabled("Not implemented yet")
-    fun `map identical data classes with an explicit mapping should succeed`() {
+    fun `map identical data classes with an explicit mapping should warn`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(

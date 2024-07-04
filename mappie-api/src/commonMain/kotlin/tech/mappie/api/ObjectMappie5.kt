@@ -3,8 +3,6 @@
 package tech.mappie.api
 
 import kotlin.reflect.KProperty
-import kotlin.reflect.KProperty0
-import kotlin.reflect.KProperty1
 
 /**
  * Base class for object mappers. See the [documentation](https://mappie.tech/object-mapping/object-mapping-overview/)
@@ -21,7 +19,7 @@ import kotlin.reflect.KProperty1
  * @param FROM the source type to map from.
  * @param TO the target type to map to.
  */
-public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
+public abstract class ObjectMappie5<in FROM1, in FROM2, in FROM3, in FROM4, in FROM5, out TO> : Mappie<TO> {
 
     /**
      * A mapper for [List] to be used in [TransformableValue.via].
@@ -41,7 +39,7 @@ public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
      * @param from the source value.
      * @return [from] mapped to an instance of [TO].
      */
-    public open fun map(from: FROM): TO = generated()
+    public open fun map(first: FROM1, second: FROM2, third: FROM3, fourth: FROM4, fifth: FROM5): TO = generated()
 
     /**
      * Map nullable [from] to an instance of [TO].
@@ -49,26 +47,8 @@ public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
      * @param from the source value.
      * @return [from] mapped to an instance of [TO].
      */
-    public fun mapNullable(from: FROM?): TO? =
-        if (from == null) null else map(from)
-
-    /**
-     * Map each element in [from] to an instance of [TO].
-     *
-     * @param from the source values.
-     * @return [from] mapped to a list of instances of [TO].
-     */
-    public fun mapList(from: List<FROM>): List<TO> =
-        ArrayList<TO>(from.size).apply { from.forEach { add(map(it)) } }
-
-    /**
-     * Map each element in [from] to an instance of [TO].
-     *
-     * @param from the source values.
-     * @return [from] mapped to a set of instances of [TO].
-     */
-    public fun mapSet(from: Set<FROM>): Set<TO> =
-        HashSet<TO>(from.size).apply { from.forEach { add(map(it)) } }
+    public fun mapNullable(first: FROM1?, second: FROM2?, third: FROM3?, fourth: FROM4?, fifth: FROM5?): TO? =
+        if (first == null || second == null || third == null || fourth == null || fifth == null) null else map(first, second, third, fourth, fifth)
 
     /**
      * Mapping function which instructs Mappie to generate code for this implementation.
@@ -76,10 +56,10 @@ public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
      * @param builder the configuration for the generation of this mapping.
      * @return An instance of the mapped value at runtime.
      */
-    protected fun mapping(builder: ObjectMappingConstructor<FROM, TO>.() -> Unit = { }): TO = generated()
+    protected fun mapping(builder: ObjectMappingConstructor2<TO>.() -> Unit = { }): TO = generated()
 }
 
-public class ObjectMappingConstructor<FROM, out TO> {
+public class ObjectMappingConstructor5<out TO> {
 
     /**
      * Alias for the target type [TO] to simply property references.
@@ -106,6 +86,19 @@ public class ObjectMappingConstructor<FROM, out TO> {
         generated()
 
     /**
+     * Explicitly construct a mapping to [TO] from constant source [value].
+     *
+     * For example
+     * ```kotlin
+     * Person::name fromConstant "John Doe"
+     * ```
+     * will generate an explicit mapping, setting constructor parameter `Person.name` to `"John Doe"`.
+     */
+    @Deprecated("This function is unnecessarily limiting.", replaceWith = ReplaceWith("this fromValue value"))
+    public infix fun <TO_TYPE> KProperty<TO_TYPE>.fromConstant(value: TO_TYPE): Unit =
+        generated()
+
+    /**
      * Explicitly construct a mapping to [TO] from a value source [value].
      *
      * For example
@@ -115,19 +108,6 @@ public class ObjectMappingConstructor<FROM, out TO> {
      * will generate an explicit mapping, setting constructor parameter `Person.name` to `"John Doe"`.
      */
     public infix fun <TO_TYPE> KProperty<TO_TYPE>.fromValue(value: TO_TYPE): Unit =
-        generated()
-
-    /**
-     * Explicitly construct a mapping to [TO] from expression source [function].
-     *
-     * For example
-     * ```kotlin
-     * Person::name fromExpression { personDto -> personDto.fullName + " (full)" }
-     * ```
-     * will generate an explicit mapping, setting constructor parameter `Person.name` to `"John Doe (full)"`,
-     * assuming `personDto.fullName == "John Doe"`.
-     */
-    public infix fun <FROM_TYPE, TO_TYPE> KProperty<TO_TYPE>.fromExpression(function: (FROM) -> FROM_TYPE): Unit =
         generated()
 
     /**
