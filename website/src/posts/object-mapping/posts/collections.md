@@ -4,7 +4,7 @@ summary: "Resolving source- and target properties."
 eleventyNavigation:
   key: Lists & Sets
   parent: Object Mapping
-  order: 8
+  order: 9
 ---
 
 All mappers of Mappie define mapper variants for collections. Specifically, for `List` and `Set`. When we want to map a 

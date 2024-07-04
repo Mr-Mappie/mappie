@@ -2,10 +2,6 @@
 
 package tech.mappie.api
 
-import kotlin.reflect.KProperty
-import kotlin.reflect.KProperty0
-import kotlin.reflect.KProperty1
-
 /**
  * Base class for object mappers. See the [documentation](https://mappie.tech/object-mapping/object-mapping-overview/)
  * for a complete overview of how to generate object mappers.
@@ -21,103 +17,61 @@ import kotlin.reflect.KProperty1
  * @param FROM the source type to map from.
  * @param TO the target type to map to.
  */
-public abstract class ObjectMappie<FROM, TO> : Mappie<FROM, TO>() {
-
-    /**
-     * Alias for the target type [TO] to simply property references.
-     *
-     * For example, suppose we are constructing a mapper with target type `Person`
-     * ```kotlin
-     *  to::name fromProperty PersonDto::fullName
-     * ```
-     * is equivalent to `Person::name fromProperty PersonDto::fullName`.
-     */
-    protected val to: TO
-        get() = error("The to property should only be used in the context of `to::property fromX y`.")
+public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
 
     /**
      * A mapper for [List] to be used in [TransformableValue.via].
      */
-    public val forList: ListMappie<FROM, TO> get() =
+    public val forList: ListMappie<TO> get() =
         error("The mapper forList should only be used in the context of 'via'. Use mapList instead.")
 
     /**
      * A mapper for [Set] to be used in [TransformableValue.via].
      */
-    public val forSet: SetMappie<FROM, TO> get() =
+    public val forSet: SetMappie<TO> get() =
         error("The mapper forSet should only be used in the context of 'via'. Use mapSet instead.")
 
     /**
-     * Explicitly construct a mapping to [TO] from property source [source].
+     * Map [from] to an instance of [TO].
      *
-     * For example
-     * ```kotlin
-     * Person::name fromProperty PersonDto::fullName
-     * ```
-     * will generate an explicit mapping, setting constructor parameter `Person.name` to `PersonDto.fullName`.
+     * @param from the source value.
+     * @return [from] mapped to an instance of [TO].
      */
-    protected infix fun <TO_TYPE, FROM_TYPE> KProperty<TO_TYPE>.fromProperty(source: KProperty0<FROM_TYPE>): TransformableValue<FROM_TYPE, TO_TYPE> =
-        generated()
+    public open fun map(from: FROM): TO = generated()
 
     /**
-     * Explicitly construct a mapping to [TO] from property source [source].
+     * Map nullable [from] to an instance of [TO].
      *
-     * For example
-     * ```kotlin
-     * Person::name fromProperty PersonDto::fullName
-     * ```
-     * will generate an explicit mapping, setting constructor parameter `Person.name` to `PersonDto.fullName`.
+     * @param from the source value.
+     * @return [from] mapped to an instance of [TO].
      */
-    protected infix fun <TO_TYPE, FROM_TYPE> KProperty<TO_TYPE>.fromProperty(source: KProperty1<FROM, FROM_TYPE>): TransformableValue<FROM_TYPE, TO_TYPE> =
-        generated()
+    public fun mapNullable(from: FROM?): TO? =
+        if (from == null) null else map(from)
 
     /**
-     * Explicitly construct a mapping to [TO] from constant source [value].
+     * Map each element in [from] to an instance of [TO].
      *
-     * For example
-     * ```kotlin
-     * Person::name fromConstant "John Doe"
-     * ```
-     * will generate an explicit mapping, setting constructor parameter `Person.name` to `"John Doe"`.
+     * @param from the source values.
+     * @return [from] mapped to a list of instances of [TO].
      */
-    @Deprecated("This function is unnecessarily limiting.", replaceWith = ReplaceWith("this fromValue value"))
-    protected infix fun <TO_TYPE> KProperty<TO_TYPE>.fromConstant(value: TO_TYPE): Unit =
-        generated()
+    public fun mapList(from: List<FROM>): List<TO> =
+        ArrayList<TO>(from.size).apply { from.forEach { add(map(it)) } }
 
     /**
-     * Explicitly construct a mapping to [TO] from a value source [value].
+     * Map each element in [from] to an instance of [TO].
      *
-     * For example
-     * ```kotlin
-     * Person::name fromValue "John Doe"
-     * ```
-     * will generate an explicit mapping, setting constructor parameter `Person.name` to `"John Doe"`.
+     * @param from the source values.
+     * @return [from] mapped to a set of instances of [TO].
      */
-    protected infix fun <TO_TYPE> KProperty<TO_TYPE>.fromValue(value: TO_TYPE): Unit =
-        generated()
+    public fun mapSet(from: Set<FROM>): Set<TO> =
+        HashSet<TO>(from.size).apply { from.forEach { add(map(it)) } }
 
     /**
-     * Explicitly construct a mapping to [TO] from expression source [function].
+     * Mapping function which instructs Mappie to generate code for this implementation.
      *
-     * For example
-     * ```kotlin
-     * Person::name fromExpression { personDto -> personDto.fullName + " (full)" }
-     * ```
-     * will generate an explicit mapping, setting constructor parameter `Person.name` to `"John Doe (full)"`,
-     * assuming `personDto.fullName == "John Doe"`.
+     * @param builder the configuration for the generation of this mapping.
+     * @return An instance of the mapped value at runtime.
      */
-    protected infix fun <FROM_TYPE, TO_TYPE> KProperty<TO_TYPE>.fromExpression(function: (FROM) -> FROM_TYPE): Unit =
-        generated()
-
-    /**
-     * Reference a constructor parameter in lieu of a property reference, if it not exists as a property.
-     *
-     * For example
-     * ```kotlin
-     * parameter("name") fromProperty PersonDto::fullName
-     * ```
-     * will generate an explicit mapping, setting constructor parameter `name` to `PersonDto.fullName`.
-     */
-    protected fun parameter(name: String): KProperty1<TO, *> =
-        generated()
+    protected fun mapping(builder: ObjectMappingConstructor<FROM, TO>.() -> Unit = { }): TO = generated()
 }
+

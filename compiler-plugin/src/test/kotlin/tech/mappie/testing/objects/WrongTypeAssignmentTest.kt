@@ -39,7 +39,7 @@ class WrongTypeAssignmentTest {
         }.compile {
             assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
             assertThat(messages)
-                .containsError("Target Output::value of type Int cannot be assigned from Input::value of type String")
+                .containsError("Target Output::value of type Int cannot be assigned from from::value of type String")
         }
     }
 

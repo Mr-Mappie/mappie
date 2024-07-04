@@ -8,17 +8,17 @@ import org.jetbrains.kotlin.ir.util.isClass
 
 class ClassResolver(private val declaration: IrFunction, private val symbols: List<MappieDefinition>) {
 
-    private val sourceParameter = declaration.valueParameters.first()
+    private val sourceParameters = declaration.valueParameters
 
     init {
         require(declaration.returnType.getClass()!!.isClass)
     }
 
     fun resolve(): List<ConstructorCallMapping> {
-        val constructor = ObjectMappingsConstructor.of(declaration.returnType, sourceParameter)
-            .apply { getters.addAll(sourceParameter.accept(GettersCollector(), Unit)) }
+        val constructor = ObjectMappingsConstructor.of(declaration.returnType, sourceParameters)
+            .apply { getters.addAll(sourceParameters.flatMap { it.accept(GettersCollector(), it) }) }
 
-        declaration.body?.accept(ObjectMappingBodyCollector(declaration.fileEntry, sourceParameter.symbol), constructor)
+        declaration.body?.accept(ObjectMappingBodyCollector(declaration.fileEntry), constructor)
 
         return declaration.accept(ConstructorsCollector(), Unit).map {
             ObjectMappingsConstructor.of(constructor).apply {

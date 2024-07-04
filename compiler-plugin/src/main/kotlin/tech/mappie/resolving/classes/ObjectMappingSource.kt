@@ -1,8 +1,11 @@
 package tech.mappie.resolving.classes
 
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
+import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -16,7 +19,6 @@ sealed interface ObjectMappingSource {
 
 data class ResolvedSource(
     val property: MappieGetter,
-    val dispatchReceiver: IrExpression,
     val via: IrSimpleFunction? = null,
     val viaDispatchReceiver: IrExpression? = null,
 ) : ObjectMappingSource {
@@ -25,15 +27,16 @@ data class ResolvedSource(
 }
 
 data class PropertySource(
-    val property: IrSimpleFunctionSymbol,
-    val dispatchReceiver: IrExpression,
+    val property: IrPropertyReference,
     val transformation: IrFunctionExpression? = null,
     val origin: IrExpression,
 ) : ObjectMappingSource {
 
+    val getter = property.getter!!
+
     override val type: IrType
         get() = if (transformation == null) {
-            property.owner.returnType
+            getter.owner.returnType
         } else if (transformation.type.isFunction()) {
             (transformation.type as IrSimpleType).arguments[1].typeOrFail
         } else {
@@ -42,7 +45,6 @@ data class PropertySource(
 }
 
 data class ExpressionSource(
-    val extensionReceiverSymbol: IrValueSymbol,
     val expression: IrFunctionExpression,
     val origin: IrExpression,
 ) : ObjectMappingSource {

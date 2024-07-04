@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -34,6 +35,13 @@ fun IrType.isAssignableFrom(other: IrType, ignoreFlexibleNullability: Boolean = 
 
 fun IrType.isFlexibleNullable(): Boolean =
     hasAnnotation(FlexibleNullability)
+
+val IrPropertyReference.targetType: IrType
+    get() = when (type.classOrFail) {
+        context.irBuiltIns.kProperty0Class -> dispatchReceiver!!.type
+        context.irBuiltIns.kProperty1Class -> (this.type as IrSimpleType).arguments.first().typeOrFail
+        else -> error("Unknown KProperty ${dumpKotlinLike()}")
+    }
 
 fun IrType.isIntegerAssignableFrom(other: IrType): Boolean =
     when (this.makeNullable()) {

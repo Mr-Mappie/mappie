@@ -22,7 +22,7 @@ sealed interface Mapping
 
 data class ConstructorCallMapping(
     val targetType: IrType,
-    val sourceType: IrType,
+    val sourceTypes: List<IrType>,
     val symbol: IrConstructorSymbol,
     val mappings: Map<IrValueParameter, List<ObjectMappingSource>>,
     val unknowns: Map<Name, List<ObjectMappingSource>>,

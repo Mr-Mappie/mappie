@@ -27,5 +27,5 @@ public class TransformableValue<FROM, TO> {
      *
      * @param mapper the mapper to transform the value with.
      */
-    public infix fun <M : Mappie<FROM, TO>> via(mapper: M): M = generated()
+    public infix fun <M : Mappie<TO>> via(mapper: M): M = generated()
 }
