@@ -18,7 +18,7 @@ class ClassResolver(private val declaration: IrFunction, private val symbols: Li
         val constructor = ObjectMappingsConstructor.of(declaration.returnType, sourceParameters)
             .apply { getters.addAll(sourceParameters.flatMap { it.accept(GettersCollector(), it) }) }
 
-        declaration.body?.accept(ObjectMappingBodyCollector(declaration.fileEntry, sourceParameters), constructor)
+        declaration.body?.accept(ObjectMappingBodyCollector(declaration.fileEntry), constructor)
 
         return declaration.accept(ConstructorsCollector(), Unit).map {
             ObjectMappingsConstructor.of(constructor).apply {

@@ -23,7 +23,6 @@ import tech.mappie.MappieIrRegistrar
 import tech.mappie.resolving.enums.ExplicitEnumMappingTarget
 import tech.mappie.resolving.enums.ResolvedEnumMappingTarget
 import tech.mappie.resolving.enums.ThrowingEnumMappingTarget
-import java.beans.Expression
 
 class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrElementTransformerVoidWithContext() {
 
@@ -135,18 +134,10 @@ fun IrBuilderWithScope.generateResolvedValueArgument(source: ResolvedSource): Ir
     } ?: getter
 }
 
-fun IrPropertyReference.classType(): IrType {
-    return when (type.classOrFail) {
-        context.irBuiltIns.kProperty0Class -> dispatchReceiver!!.type
-        context.irBuiltIns.kProperty1Class -> (this.type as IrSimpleType).arguments.first().typeOrFail
-        else -> error("Unknown KProperty ${dumpKotlinLike()}")
-    }
-}
-
 fun IrBuilderWithScope.generatePropertyValueArgument(file: IrFileEntry, source: PropertySource, parameters: List<IrValueParameter>): IrFunctionAccessExpression {
     val getter = irCall(source.getter).apply {
         dispatchReceiver = source.property.dispatchReceiver
-            ?: irGet(parameters.singleOrNull { it.type == source.property.classType() } ?: run {
+            ?: irGet(parameters.singleOrNull { it.type == source.property.targetType } ?: run {
                 logError("Could not determine value parameters for property reference. Please use a property reference of an object instead of the class", location(file, source.property))
                 error("Mappie resolving failed")
             })

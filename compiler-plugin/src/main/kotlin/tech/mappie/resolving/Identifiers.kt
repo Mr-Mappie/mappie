@@ -18,8 +18,6 @@ val IDENTIFIER_THROWN_BY_ENUM_ENTRY = Name.identifier("thrownByEnumEntry")
 
 val IDENTIFIER_FROM_PROPERTY = Name.identifier("fromProperty")
 
-val IDENTIFIER_FROM_CONSTANT = Name.identifier("fromConstant")
-
 val IDENTIFIER_FROM_VALUE = Name.identifier("fromValue")
 
 val IDENTIFIER_FROM_EXPRESSION = Name.identifier("fromExpression")

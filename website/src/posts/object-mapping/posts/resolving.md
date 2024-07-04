@@ -4,7 +4,7 @@ summary: "Resolving source- and target properties."
 eleventyNavigation:
   key: Resolving
   parent: Object Mapping
-  order: 5
+  order: 6
 ---
 
 Not all data classes you want to map are equivalent. Mappie supports defining explicit mapping for those which cannot

@@ -2,6 +2,12 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+    - date: "tbd"
+      title: "v0.4.0"
+      items:
+        - "[#45](https://github.com/Mr-Mappie/mappie/issues/45) mapper can now have multiple from parameters."
+        - "Removed deprecated `fromConstant`."
+        - "Several other bug fixes."  
     - date: "2024-07-03"
       title: "v0.3.0"
       items:

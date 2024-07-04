@@ -13,21 +13,17 @@ import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.createExpressionBody
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
-class ObjectMappingBodyCollector(
-    file: IrFileEntry,
-    private val dispatchReceiverSymbols: List<IrValueParameter>,
-) : BaseVisitor<ObjectMappingsConstructor, ObjectMappingsConstructor>(file) {
+class ObjectMappingBodyCollector(file: IrFileEntry)
+    : BaseVisitor<ObjectMappingsConstructor, ObjectMappingsConstructor>(file) {
 
     override fun visitBlockBody(body: IrBlockBody, data: ObjectMappingsConstructor): ObjectMappingsConstructor {
         return body.statements.single().accept(data)
@@ -61,7 +57,7 @@ private class ObjectBodyStatementCollector(
 
     override fun visitCall(expression: IrCall, data: Unit): Pair<Name, ObjectMappingSource>? {
         return when (expression.symbol.owner.name) {
-            IDENTIFIER_FROM_PROPERTY, IDENTIFIER_FROM_CONSTANT -> {
+            IDENTIFIER_FROM_PROPERTY -> {
                 val target = expression.extensionReceiver!!.accept(TargetValueCollector(file!!), data)
                 val source = expression.valueArguments.first()!!.accept(SourceValueCollector(), Unit)
 
