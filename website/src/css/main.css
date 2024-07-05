@@ -603,15 +603,16 @@ table {
   color: var(--spruce-table-color-caption);
   margin-block-end: 1rem;
 }
-.table th,
-.table td {
+table th {
+  text-align: left;
+}
+table td {
   border-block-end: 1px solid var(--spruce-table-color-border);
   line-height: var(--spruce-line-height);
   padding: var(--spruce-padding);
 }
-.table th {
+table th {
   color: var(--spruce-table-color-heading);
-  text-align: left;
   text-align: -webkit-match-parent;
   padding: var(--spruce-padding);
 }
