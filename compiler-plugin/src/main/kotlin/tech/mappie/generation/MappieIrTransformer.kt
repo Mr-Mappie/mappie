@@ -13,11 +13,6 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrFail
-import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.MappieIrRegistrar
 import tech.mappie.resolving.enums.ExplicitEnumMappingTarget
@@ -34,7 +29,7 @@ class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrEleme
         if (declaration.accept(ShouldTransformCollector(), Unit)) {
             var function = declaration.declarations
                 .filterIsInstance<IrSimpleFunction>()
-                .first { it.name == IDENTIFIER_MAP }
+                .first { it.name == IDENTIFIER_MAP && it.overriddenSymbols.isNotEmpty() }
 
             if (function.isFakeOverride) {
                 declaration.declarations.removeIf { it is IrSimpleFunction && function.name == IDENTIFIER_MAP }
