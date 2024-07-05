@@ -3,6 +3,7 @@ package tech.mappie.generation
 import tech.mappie.api.Mappie
 import tech.mappie.resolving.IDENTIFIER_MAPPING
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -12,7 +13,7 @@ import tech.mappie.BaseVisitor
 import tech.mappie.resolving.IDENTIFIER_MAP
 import tech.mappie.util.isStrictSubclassOf
 
-class ShouldTransformCollector : BaseVisitor<Boolean, Unit>() {
+class ShouldTransformCollector(file: IrFileEntry) : BaseVisitor<Boolean, Unit>(file) {
     override fun visitClass(declaration: IrClass, data: Unit): Boolean {
         return declaration.isStrictSubclassOf(Mappie::class)
     }

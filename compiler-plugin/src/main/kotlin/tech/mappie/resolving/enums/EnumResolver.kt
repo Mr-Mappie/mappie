@@ -19,11 +19,11 @@ class EnumResolver(private val declaration: IrFunction) {
 
     fun resolve(): EnumMapping {
         val constructor = EnumMappingsConstructor.of(targetType, sourceType).apply {
-            targets.addAll(targetType.getClass()!!.accept(EnumEntriesCollector(), Unit))
-            sources.addAll(sourceType.getClass()!!.accept(EnumEntriesCollector(), Unit))
+            targets.addAll(targetType.getClass()!!.accept(EnumEntriesCollector(declaration.fileEntry), Unit))
+            sources.addAll(sourceType.getClass()!!.accept(EnumEntriesCollector(declaration.fileEntry), Unit))
         }
 
-        declaration.body?.accept(EnumMappingBodyCollector(), constructor)
+        declaration.body?.accept(EnumMappingBodyCollector(declaration.fileEntry), constructor)
 
         validate(constructor)
 

@@ -1,5 +1,6 @@
 package tech.mappie.resolving.classes
 
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import tech.mappie.BaseVisitor
 import org.jetbrains.kotlin.ir.declarations.IrProperty
@@ -8,7 +9,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.properties
 
-class GettersCollector : BaseVisitor<List<MappieGetter>, IrValueParameter>() {
+class GettersCollector(file: IrFileEntry) : BaseVisitor<List<MappieGetter>, IrValueParameter>(file) {
 
     override fun visitValueParameter(declaration: IrValueParameter, data: IrValueParameter): List<MappieGetter> {
         val clazz = declaration.type.getClass()!!

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import tech.mappie.mappieTerminate
 
 class ObjectMappingBodyCollector(file: IrFileEntry)
     : BaseVisitor<ObjectMappingsConstructor, ObjectMappingsConstructor>(file) {
@@ -51,15 +52,14 @@ class ObjectMappingBodyCollector(file: IrFileEntry)
     }
 }
 
-private class ObjectBodyStatementCollector(
-    file: IrFileEntry,
-) : BaseVisitor<Pair<Name, ObjectMappingSource>?, Unit>(file) {
+private class ObjectBodyStatementCollector(file: IrFileEntry)
+    : BaseVisitor<Pair<Name, ObjectMappingSource>?, Unit>(file) {
 
     override fun visitCall(expression: IrCall, data: Unit): Pair<Name, ObjectMappingSource>? {
         return when (expression.symbol.owner.name) {
             IDENTIFIER_FROM_PROPERTY -> {
                 val target = expression.extensionReceiver!!.accept(TargetValueCollector(file!!), data)
-                val source = expression.valueArguments.first()!!.accept(SourceValueCollector(), Unit)
+                val source = expression.valueArguments.first()!!.accept(SourceValueCollector(file!!), Unit)
 
                 target to source
             }
@@ -85,7 +85,7 @@ private class ObjectBodyStatementCollector(
             }
             IDENTIFIER_VIA -> {
                 val mapping = expression.dispatchReceiver!!.accept(data)!!
-                val transformation = expression.valueArguments.first()!!.accept(MapperReferenceCollector(), Unit)
+                val transformation = expression.valueArguments.first()!!.accept(MapperReferenceCollector(file!!), Unit)
                 mapping.first to (mapping.second as PropertySource).copy(
                     transformation = transformation
                 )
@@ -100,7 +100,7 @@ private class ObjectBodyStatementCollector(
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): Pair<Name, ObjectMappingSource>? {
         return when (expression.operator.name) {
             "IMPLICIT_COERCION_TO_UNIT" -> expression.argument.accept(data)
-            else -> error(expression.operator.name)
+            else -> super.visitTypeOperator(expression, data)
         }
     }
 
@@ -113,7 +113,7 @@ private class ObjectBodyStatementCollector(
     }
 }
 
-private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>() {
+private class MapperReferenceCollector(file: IrFileEntry) : BaseVisitor<IrFunctionExpression, Unit>(file) {
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Unit): IrFunctionExpression {
         return context.referenceClass(expression.symbol.owner.classId!!)!!
@@ -153,8 +153,7 @@ private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>
                 function.symbol.wrap(expression.dispatchReceiver!!)
             }
             else -> {
-                logError("Unexpected call of ${name.asString()}, expected forList or forSet", file?.let { location(it, expression) })
-                error("Expected forList or forSet")
+                mappieTerminate("Unexpected call of ${name.asString()}, expected forList or forSet", file?.let { location(it, expression) })
             }
         }
     }
@@ -190,7 +189,7 @@ private class MapperReferenceCollector : BaseVisitor<IrFunctionExpression, Unit>
         )
 }
 
-private class SourceValueCollector : BaseVisitor<ObjectMappingSource, Unit>() {
+private class SourceValueCollector(file: IrFileEntry) : BaseVisitor<ObjectMappingSource, Unit>(file) {
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Unit): ObjectMappingSource {
         return PropertySource(

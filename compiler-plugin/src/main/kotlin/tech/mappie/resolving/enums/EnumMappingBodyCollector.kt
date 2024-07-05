@@ -1,5 +1,6 @@
 package tech.mappie.resolving.enums
 
+import org.jetbrains.kotlin.ir.IrFileEntry
 import tech.mappie.resolving.IDENTIFIER_FROM_ENUM_ENTRY
 import tech.mappie.resolving.IDENTIFIER_MAPPING
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
@@ -25,7 +26,7 @@ data class ThrowingEnumMappingTarget(
     val origin: IrExpression,
 ) : EnumMappingTarget
 
-class EnumMappingBodyCollector : BaseVisitor<EnumMappingsConstructor, EnumMappingsConstructor>() {
+class EnumMappingBodyCollector(file: IrFileEntry) : BaseVisitor<EnumMappingsConstructor, EnumMappingsConstructor>(file) {
 
     override fun visitCall(expression: IrCall, data: EnumMappingsConstructor): EnumMappingsConstructor {
         return when (expression.symbol.owner.name) {

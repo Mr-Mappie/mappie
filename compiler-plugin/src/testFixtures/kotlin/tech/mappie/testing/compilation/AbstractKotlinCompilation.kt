@@ -21,7 +21,6 @@ import java.io.OutputStream
 import java.io.PrintStream
 import java.net.URI
 import java.net.URL
-import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.absolutePathString
@@ -282,6 +281,7 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
     }
 
     protected fun warn(s: String) = internalMessageStream.println("warning: $s")
+
     protected fun error(s: String) = internalMessageStream.println("error: $s")
 
     internal val internalMessageStreamAccess: PrintStream get() = internalMessageStream

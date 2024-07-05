@@ -3,6 +3,7 @@ package tech.mappie.util
 import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.MappiePluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
+import tech.mappie.mappieTerminate
 import tech.mappie.resolving.IDENTIFIER_MAP
 import kotlin.reflect.KClass
 
@@ -36,11 +38,11 @@ fun IrType.isAssignableFrom(other: IrType, ignoreFlexibleNullability: Boolean = 
 fun IrType.isFlexibleNullable(): Boolean =
     hasAnnotation(FlexibleNullability)
 
-val IrPropertyReference.targetType: IrType
-    get() = when (type.classOrFail) {
+fun IrPropertyReference.targetType(file: IrFileEntry): IrType =
+    when (type.classOrFail) {
         context.irBuiltIns.kProperty0Class -> dispatchReceiver!!.type
         context.irBuiltIns.kProperty1Class -> (this.type as IrSimpleType).arguments.first().typeOrFail
-        else -> error("Unknown KProperty ${dumpKotlinLike()}")
+        else -> mappieTerminate("Unknown KProperty ${dumpKotlinLike()}", location(file, this))
     }
 
 fun IrType.isIntegerAssignableFrom(other: IrType): Boolean =

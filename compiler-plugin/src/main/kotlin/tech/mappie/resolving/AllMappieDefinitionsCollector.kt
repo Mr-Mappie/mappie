@@ -33,13 +33,15 @@ data class MappieDefinition(
         (targetType.isSet() && ((targetType as IrSimpleType).arguments.first().typeOrFail).isAssignableFrom(toType))
 }
 
-class AllMappieDefinitionsCollector : BaseVisitor<List<MappieDefinition>, Unit>() {
+class AllMappieDefinitionsCollector : BaseVisitor<List<MappieDefinition>, Unit>(null) {
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: Unit) =
         declaration.files.flatMap { it.accept(data) }
 
-    override fun visitFile(declaration: IrFile, data: Unit) =
-        declaration.declarations.flatMap { it.accept(data) }
+    override fun visitFile(declaration: IrFile, data: Unit): List<MappieDefinition> {
+        file = declaration.fileEntry
+        return declaration.declarations.flatMap { it.accept(data) }
+    }
 
     override fun visitClass(declaration: IrClass, data: Unit) =
         buildList {

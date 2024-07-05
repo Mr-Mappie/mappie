@@ -1,5 +1,6 @@
 package tech.mappie.resolving
 
+import org.jetbrains.kotlin.ir.IrFileEntry
 import tech.mappie.resolving.classes.ClassResolver
 import tech.mappie.resolving.classes.ObjectMappingSource
 import tech.mappie.resolving.enums.EnumResolver
@@ -16,7 +17,9 @@ import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.BaseVisitor
+import tech.mappie.mappieTerminate
 import tech.mappie.resolving.enums.EnumMappingTarget
+import tech.mappie.util.location
 
 sealed interface Mapping
 
@@ -39,7 +42,7 @@ data class SingleValueMapping(
     val value: IrExpression,
 ) : Mapping
 
-class MappingResolver : BaseVisitor<List<Mapping>, List<MappieDefinition>>() {
+class MappingResolver(file: IrFileEntry) : BaseVisitor<List<Mapping>, List<MappieDefinition>>(file) {
 
     override fun visitFunction(declaration: IrFunction, data: List<MappieDefinition>): List<Mapping> {
         val type = declaration.returnType
@@ -48,7 +51,7 @@ class MappingResolver : BaseVisitor<List<Mapping>, List<MappieDefinition>>() {
             type.isPrimitiveType() || type.isString() -> listOf(PrimitiveResolver(declaration).resolve())
             clazz.isEnumClass -> listOf(EnumResolver(declaration).resolve())
             clazz.isClass -> ClassResolver(declaration, data).resolve()
-            else -> error("Only mapping of data- and enum classes are supported yet.")
+            else -> mappieTerminate("Only mapping of data- and enum classes are supported yet", location(declaration))
         }
     }
 }

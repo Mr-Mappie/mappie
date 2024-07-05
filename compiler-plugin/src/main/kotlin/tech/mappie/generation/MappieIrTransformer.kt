@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.MappieIrRegistrar
+import tech.mappie.mappieTerminate
 import tech.mappie.resolving.enums.ExplicitEnumMappingTarget
 import tech.mappie.resolving.enums.ResolvedEnumMappingTarget
 import tech.mappie.resolving.enums.ThrowingEnumMappingTarget
@@ -26,7 +27,7 @@ class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrEleme
             inner.transform(MappieIrTransformer(symbols), null)
         }
 
-        if (declaration.accept(ShouldTransformCollector(), Unit)) {
+        if (declaration.accept(ShouldTransformCollector(declaration.fileEntry), Unit)) {
             var function = declaration.declarations
                 .filterIsInstance<IrSimpleFunction>()
                 .first { it.name == IDENTIFIER_MAP && it.overriddenSymbols.isNotEmpty() }
@@ -46,9 +47,9 @@ class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrEleme
     }
 
     override fun visitFunctionNew(declaration: IrFunction): IrStatement {
-        if (declaration.accept(ShouldTransformCollector(), Unit)) {
+        if (declaration.accept(ShouldTransformCollector(declaration.fileEntry), Unit)) {
             val (valids, invalids) = declaration
-                .accept(MappingResolver(), symbols)
+                .accept(MappingResolver(declaration.fileEntry), symbols)
                 .map { it to MappingValidation.of(declaration.fileEntry, it) }
                 .partition { it.second.isValid() }
 
@@ -132,10 +133,9 @@ fun IrBuilderWithScope.generateResolvedValueArgument(source: ResolvedSource): Ir
 fun IrBuilderWithScope.generatePropertyValueArgument(file: IrFileEntry, source: PropertySource, parameters: List<IrValueParameter>): IrFunctionAccessExpression {
     val getter = irCall(source.getter).apply {
         dispatchReceiver = source.property.dispatchReceiver
-            ?: irGet(parameters.singleOrNull { it.type == source.property.targetType } ?: run {
-                logError("Could not determine value parameters for property reference. Please use a property reference of an object instead of the class", location(file, source.property))
-                error("Mappie resolving failed")
-            })
+            ?: irGet(parameters.singleOrNull { it.type == source.property.targetType(file) } ?:
+                mappieTerminate("Could not determine value parameters for property reference. Please use a property reference of an object instead of the class", location(file, source.property))
+            )
     }
     return source.transformation?.let {
         irCall(MappieIrRegistrar.context.referenceLetFunction()).apply {

@@ -16,11 +16,11 @@ class ClassResolver(private val declaration: IrFunction, private val symbols: Li
 
     fun resolve(): List<ConstructorCallMapping> {
         val constructor = ObjectMappingsConstructor.of(declaration.returnType, sourceParameters)
-            .apply { getters.addAll(sourceParameters.flatMap { it.accept(GettersCollector(), it) }) }
+            .apply { getters.addAll(sourceParameters.flatMap { it.accept(GettersCollector(declaration.fileEntry), it) }) }
 
         declaration.body?.accept(ObjectMappingBodyCollector(declaration.fileEntry), constructor)
 
-        return declaration.accept(ConstructorsCollector(), Unit).map {
+        return declaration.accept(ConstructorsCollector(declaration.fileEntry), Unit).map {
             ObjectMappingsConstructor.of(constructor).apply {
                 this.constructor = it
                 this.symbols = this@ClassResolver.symbols
