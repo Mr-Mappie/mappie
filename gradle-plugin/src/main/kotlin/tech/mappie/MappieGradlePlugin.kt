@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package tech.mappie
 
 import org.gradle.api.Project

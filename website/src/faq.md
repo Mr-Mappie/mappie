@@ -25,7 +25,7 @@ faqs:
     -   title: "How does Mappie compare to ShapeShift?"
         description: "
         Both Mappie and ShapeShift are built for the Kotlin ecosystem. Mappie generates code at compile-time, while
-        ShapeShift resolves it's mappings via reflection. This results in a big performance penalty.
+        ShapeShift resolves its mappings via reflection. This results in a big performance penalty.
         
         
         The design choices of ShapeShift and Mappie are different. For example, ShapeShift requires the target 
@@ -33,7 +33,7 @@ faqs:
         base. 
       
 
-        As Mappie in it's early stages, ShapeShift does has more built-in support for advanced use-cases while Mappie
+        As Mappie in its early stages, ShapeShift does have more built-in support for advanced use-cases while Mappie
         sometimes needs to fall back on more generic operations.
         "
 ---

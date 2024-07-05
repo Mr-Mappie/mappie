@@ -7,7 +7,6 @@ import tech.mappie.testing.compilation.KotlinCompilation
 import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import tech.mappie.testing.containsError
-import tech.mappie.testing.loadObjectMappie2Class
 import tech.mappie.testing.loadObjectMappie3Class
 import java.io.File
 

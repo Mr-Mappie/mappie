@@ -1,9 +1,6 @@
 package tech.mappie.testing.compilation
 
 import java.io.*
-import java.net.URL
-import java.net.URLClassLoader
-import java.nio.file.*
 import javax.lang.model.SourceVersion
 
 internal fun getJavaHome(): File {
@@ -26,7 +23,7 @@ internal fun isJdk9OrLater(): Boolean =
     SourceVersion.latestSupported() > SourceVersion.RELEASE_8
 
 internal fun File.listFilesRecursively(): List<File> {
-    return (listFiles() ?: throw RuntimeException("listFiles() was null. File is not a directory or I/O error occured"))
+    return (listFiles() ?: throw RuntimeException("listFiles() was null. File is not a directory or I/O error occurred"))
         .flatMap { file ->
         if(file.isDirectory)
             file.listFilesRecursively()
@@ -36,8 +33,6 @@ internal fun File.listFilesRecursively(): List<File> {
 }
 
 internal fun File.hasKotlinFileExtension() = hasFileExtension(listOf("kt", "kts"))
-
-internal fun File.hasJavaFileExtension() = hasFileExtension(listOf("java"))
 
 internal fun File.hasFileExtension(extensions: List<String>)
     = extensions.any{ it.equals(extension, ignoreCase = true) }

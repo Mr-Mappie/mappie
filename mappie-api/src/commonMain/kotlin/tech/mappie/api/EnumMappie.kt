@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_PARAMETER")
+@file:Suppress("unused", "UNUSED_PARAMETER")
 
 package tech.mappie.api
 

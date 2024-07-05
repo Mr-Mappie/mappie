@@ -22,7 +22,7 @@ and we have a data class `BookDto` containing a list of strings
 data class BookDto(val pages: List<String>)
 ```
 
-We can defined a mapping between `Book` and `BookDto` by defining two mappers: a mapper for `Page` to `String`, which simply
+We can define a mapping between `Book` and `BookDto` by defining two mappers: a mapper for `Page` to `String`, which simply
 gets the `text` property, and mapper between `Book` and `BookDto` using the inner `forList` mapper of the `PageMapper`
 ```kotlin
 object PageMapper : ObjectMappie<Page, String>() {

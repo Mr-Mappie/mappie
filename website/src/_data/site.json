@@ -3,7 +3,7 @@
   "authorName": "Stefan Koppier",
   "copyright": "Some rights reserved.",
   "name": "Mappie",
-  "slogen": "Mappie: a Kotlin object mapper",
+  "slogan": "Mappie: a Kotlin object mapper",
   "social": {
     "github": "https://github.com/Mr-Mappie/mappie",
     "discord": ""

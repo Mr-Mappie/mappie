@@ -256,7 +256,7 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
 
     protected val hostClasspaths by lazy { HostEnvironment.classpath }
 
-    /* This internal buffer and stream is used so it can be easily converted to a string
+    /* This internal buffer and stream is used, so it can be easily converted to a string
     that is put into the [Result] object, in addition to printing immediately to the user's
     stream. */
     protected val internalMessageBuffer = Buffer()

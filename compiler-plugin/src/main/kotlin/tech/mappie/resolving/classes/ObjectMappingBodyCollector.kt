@@ -78,7 +78,7 @@ private class ObjectBodyStatementCollector(file: IrFileEntry)
                     expression,
                 )
             }
-            IDENTIFIER_TRANFORM -> {
+            IDENTIFIER_TRANSFORM -> {
                 val mapping = expression.dispatchReceiver!!.accept(data)!!
                 val transformation = expression.valueArguments.first()!! as IrFunctionExpression
                 mapping.first to (mapping.second as PropertySource).copy(transformation = transformation)

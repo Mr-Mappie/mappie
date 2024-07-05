@@ -13,7 +13,7 @@ compile-time with minimal overhead.
 Mappie can generate mappers for objects and enums. It aims to be easy to use, infer as much implicit mappings as possible, 
 have a consistent API, and have the same runtime performance as if one would write the mapping code manually.
 
-The following snipper gives a small overview of the features of Mappie
+The following snippet gives a small overview of the features of Mappie
 ```kotlin
 data class Person(
     val name: String, 
