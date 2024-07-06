@@ -16,7 +16,7 @@ class ObjectWithNestedListTest {
     data class InnerOutput(val value: String)
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `map data classes with nested list using object InnerMapper without declaring mapping should succeed`() {

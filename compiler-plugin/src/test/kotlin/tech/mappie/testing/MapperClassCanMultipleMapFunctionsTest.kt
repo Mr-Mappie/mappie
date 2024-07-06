@@ -14,7 +14,7 @@ class MapperClassCanMultipleMapFunctionsTest {
     data class Output(val text: String, val int: Int)
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `mapper with multiple map functions should succeed`() {
@@ -33,7 +33,7 @@ class MapperClassCanMultipleMapFunctionsTest {
                                 Output::int fromValue int
                             }
 
-                            fun map(value: Int) = int
+                            fun map(value: Int) = value
                         }
                         """
                     )

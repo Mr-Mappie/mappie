@@ -18,7 +18,7 @@ class ByteTest {
     data class LongOutput(val value: Long)
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `map byte value to byte value should succeed`() {

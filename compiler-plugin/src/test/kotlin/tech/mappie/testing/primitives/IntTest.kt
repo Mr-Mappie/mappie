@@ -18,7 +18,7 @@ class IntTest {
     data class LongOutput(val value: Long)
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `map int value to short value should fail`() {

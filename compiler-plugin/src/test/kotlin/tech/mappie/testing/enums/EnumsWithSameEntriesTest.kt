@@ -16,7 +16,7 @@ class EnumsWithSameEntriesTest {
     enum class Output { SOME, OTHER }
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `map identical enums should succeed`() {

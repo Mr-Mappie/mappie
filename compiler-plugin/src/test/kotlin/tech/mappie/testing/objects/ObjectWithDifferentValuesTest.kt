@@ -16,7 +16,7 @@ class ObjectWithDifferentValuesTest {
     data class Output(val name: String, val age: Int)
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `map two data classes with the different values should fail`() {

@@ -17,7 +17,7 @@ class Object3WithSameValuesTest {
     data class Output(val value: String, val age: Int, val char: Char)
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `map identical data classes should succeed`() {
