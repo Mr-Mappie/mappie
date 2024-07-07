@@ -19,6 +19,7 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
         val extension = kotlinCompilation.project.extensions.getByType(MappieExtension::class.java)
+        kotlinCompilation.project.logger.info("Mappie plugin ${getPluginArtifact().version} applied")
         return kotlinCompilation.target.project.provider {
             buildList {
                 extension.warningsAsErrors.orNull?.apply {
