@@ -184,8 +184,7 @@ private class TargetValueCollector(file: IrFileEntry) : BaseVisitor<Name, Unit>(
                 return if (value.isConstantLike && value is IrConst<*>) {
                     Name.identifier(value.value as String)
                 } else {
-                    logError("Parameter name must be a constant", location(file!!, expression))
-                    throw AssertionError()
+                    mappieTerminate("Parameter name must be a constant", location(file!!, expression))
                 }
             }
             else -> {

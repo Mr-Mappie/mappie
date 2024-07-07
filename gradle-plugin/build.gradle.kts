@@ -21,7 +21,9 @@ gradlePlugin {
     }
 }
 
-tasks.register("useVersion") {
+tasks.register("updateCompilerPluginVersion") {
+    group = "build"
+    description = "Update version.properties file for Gradle plugin."
     doLast {
         val directory = project.mkdir("src/main/resources")
         File(directory, "version.properties").writeText("version=${project.version}")
@@ -29,5 +31,5 @@ tasks.register("useVersion") {
 }
 
 tasks.compileKotlin {
-    dependsOn("useVersion")
+    dependsOn("updateCompilerPluginVersion")
 }
