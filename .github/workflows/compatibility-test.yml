@@ -41,4 +41,5 @@ jobs:
         run: ./gradlew publishToMavenLocal
 
       - name: Compatibility Test
-        run: ./test/kotlin-${{ matrix.version }}/gradlew build --info
+        working-directory: test/kotlin-${{ matrix.version }}
+        run: ./gradlew build --info
