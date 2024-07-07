@@ -4,16 +4,12 @@ import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.MappiePluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.ir.IrFileEntry
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.CallableId
@@ -22,6 +18,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
 import tech.mappie.mappieTerminate
 import tech.mappie.resolving.IDENTIFIER_MAP
+import tech.mappie.resolving.IDENTIFIER_MAP_LIST
+import tech.mappie.resolving.IDENTIFIER_MAP_SET
 import kotlin.reflect.KClass
 
 internal fun IrClass.isStrictSubclassOf(clazz: KClass<*>): Boolean =
@@ -36,7 +34,7 @@ fun IrType.isAssignableFrom(other: IrType, ignoreFlexibleNullability: Boolean = 
 }
 
 fun IrType.isFlexibleNullable(): Boolean =
-    hasAnnotation(FlexibleNullability)
+    annotations.any { it.symbol.owner.parentAsClass.classId == FlexibleNullability }
 
 fun IrPropertyReference.targetType(file: IrFileEntry): IrType =
     when (type.classOrFail) {
@@ -76,54 +74,16 @@ fun MappiePluginContext.referenceLetFunction() =
 fun irGetEnumValue(type: IrType, symbol: IrEnumEntrySymbol): IrGetEnumValue =
     IrGetEnumValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, type, symbol)
 
-fun irGet(declaration: IrValueDeclaration) =
-    irGet(declaration.type, declaration.symbol)
-
-fun irGet(type: IrType, symbol: IrValueSymbol): IrGetValue =
-    IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, type, symbol)
-
-fun irConstructorCall(constructor: IrConstructor) =
-    IrConstructorCallImpl(
-        SYNTHETIC_OFFSET,
-        SYNTHETIC_OFFSET,
-        constructor.returnType,
-        constructor.symbol,
-        0,
-        0,
-        0,
-    )
-
-fun IrSimpleFunction.realImplementation(parent: IrDeclarationParent) =
-    factory.createSimpleFunction(
-        parent.startOffset,
-        parent.endOffset,
-        IrDeclarationOrigin.DEFINED,
-        name,
-        visibility,
-        isInline,
-        isExpect,
-        returnType,
-        modality,
-        IrSimpleFunctionSymbolImpl(),
-        false,
-        isSuspend,
-        isOperator,
-        isInfix,
-        isExternal,
-        isFakeOverride = false
-    ).also {
-        val parentClass = parentAsClass.superClass!!
-        val parentFunction = parentClass.getSimpleFunction(IDENTIFIER_MAP.asString())!!
-        it.parent = parent
-        it.overriddenSymbols = listOf(parentFunction.owner.symbol)
-        it.dispatchReceiverParameter = dispatchReceiverParameter
-        valueParameters.forEach { valueParameter ->
-            it.addValueParameter(valueParameter.name, valueParameter.type)
-        }
-    }
-
-
 fun IrSimpleFunctionSymbol.dumpKotlinLike(): String =
     owner.run {
         parentAsClass.name.asString() + "::" + name.asString().removeSurrounding("<", ">").removePrefix("get-")
     }
+
+fun IrSimpleFunction.isMappieMapFunction() =
+    name == IDENTIFIER_MAP && overriddenSymbols.isNotEmpty()
+
+fun IrSimpleFunction.isMappieMapListFunction() =
+    name == IDENTIFIER_MAP_LIST
+
+fun IrSimpleFunction.isMappieMapSetFunction() =
+    name == IDENTIFIER_MAP_SET

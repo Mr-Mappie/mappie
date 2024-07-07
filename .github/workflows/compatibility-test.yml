@@ -1,0 +1,46 @@
+name: Compatibility Test
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**'
+      - '!website/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '**'
+      - '!website/**'
+      -
+jobs:
+  compatibility:
+    strategy:
+      matrix:
+        version: ['1.9.24', '2.0.0', '2.0.20-Beta1']
+  build:
+    name: Build and Analysis
+    permissions:
+      pull-requests: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Publish to Maven Local
+        run: ./gradlew publishToMavenLocal
+
+      - name: Build
+        run: ./test/kotlin-${{ matrix.version }}/gradlew build
