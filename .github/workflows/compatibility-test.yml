@@ -14,15 +14,15 @@ on:
       - '!website/**'
       -
 jobs:
-  build:
-    name: Build and Analysis
-    permissions:
-      pull-requests: read
-    runs-on: ubuntu-latest
   compatibility:
     strategy:
       matrix:
         version: ['1.9.24', '2.0.0', '2.0.20-Beta1']
+    build:
+      name: Build and Analysis
+      permissions:
+        pull-requests: read
+      runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
