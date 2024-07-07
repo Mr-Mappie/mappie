@@ -8,11 +8,13 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import java.util.*
 
 class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun apply(target: Project) {
         target.extensions.create("mappie", MappieExtension::class.java)
+        checkCompatibility(target)
     }
 
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
@@ -41,9 +43,33 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
         SubpluginArtifact(
             groupId = "tech.mappie",
             artifactId = "mappie-compiler-plugin",
-            version = "0.3.0",
+            version = javaClass.classLoader.getResourceAsStream("version.properties").use {
+                Properties().apply { load(it) }.getProperty("version")
+            },
         )
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) =
         kotlinCompilation.target.project.plugins.hasPlugin(MappieGradlePlugin::class.java)
+
+    private fun checkCompatibility(target: Project) {
+        val version = target.buildscript.configurations
+            .getByName("classpath")
+            .resolvedConfiguration
+            .resolvedArtifacts
+            .firstOrNull { it.name == KOTLIN_GRADLE_PLUGIN_NAME }
+            ?.moduleVersion
+            ?.id
+            ?.version
+
+        if (version == null) {
+            target.logger.warn("No Kotlin version could be determined.")
+        } else if (version !in SUPPORTED_KOTLIN_VERSIONS) {
+            target.logger.warn("Unsupported Kotlin version $version. Expected one of ${SUPPORTED_KOTLIN_VERSIONS.joinToString()}. This may lead to compilation failure.")
+        }
+    }
+
+    private companion object {
+        private const val KOTLIN_GRADLE_PLUGIN_NAME = "kotlin-gradle-plugin"
+        private val SUPPORTED_KOTLIN_VERSIONS = listOf("1.9.24", "2.0.0", "2.0.20-Beta1")
+    }
 }

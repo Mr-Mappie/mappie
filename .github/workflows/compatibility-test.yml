@@ -12,7 +12,6 @@ on:
     paths:
       - '**'
       - '!website/**'
-      -
 jobs:
   compatibility:
     strategy:

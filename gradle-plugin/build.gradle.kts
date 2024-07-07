@@ -20,3 +20,13 @@ gradlePlugin {
         }
     }
 }
+
+tasks.register("useVersion") {
+    val file = layout.projectDirectory.file("src/main/resources/version.properties").asFile
+    file.createNewFile()
+    file.writeText("version=${project.version}")
+}
+
+tasks.compileKotlin {
+    dependsOn("useVersion")
+}
