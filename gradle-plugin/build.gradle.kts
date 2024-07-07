@@ -1,5 +1,3 @@
-import kotlin.io.path.createDirectories
-
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.gradle.plugin.publish)
@@ -24,10 +22,10 @@ gradlePlugin {
 }
 
 tasks.register("useVersion") {
-    val file = layout.projectDirectory.file("src/main/resources/version.properties").asFile
-    file.toPath().createDirectories()
-    file.createNewFile()
-    file.writeText("version=${project.version}")
+    doLast {
+        val directory = project.mkdir("src/main/resources")
+        File(directory, "version.properties").writeText("version=${project.version}")
+    }
 }
 
 tasks.compileKotlin {
