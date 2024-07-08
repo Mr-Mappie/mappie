@@ -17,7 +17,7 @@ class ConstructorSelectionTest {
     }
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `map data class with all values should call primary constructor`() {

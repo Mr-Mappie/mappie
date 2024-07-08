@@ -28,14 +28,12 @@ class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrEleme
         }
 
         if (declaration.accept(ShouldTransformCollector(declaration.fileEntry), Unit)) {
-            var function = declaration.declarations
+            val function = declaration.declarations
                 .filterIsInstance<IrSimpleFunction>()
-                .first { it.name == IDENTIFIER_MAP && it.overriddenSymbols.isNotEmpty() }
+                .first { it.isMappieMapFunction() }
 
             if (function.isFakeOverride) {
-                declaration.declarations.removeIf { it is IrSimpleFunction && function.name == IDENTIFIER_MAP }
-                function = function.realImplementation(declaration)
-                declaration.declarations.add(function)
+                function.isFakeOverride = false
             }
 
             val transformed = function.transform(this, null)
@@ -66,7 +64,7 @@ class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrEleme
                                     mapping.mappings.map { (target, source) ->
                                         val file = declaration.fileEntry
                                         val index = mapping.symbol.owner.valueParameters.indexOf(target)
-                                        putValueArgument(index, generateValueArgument(file, source.single(), declaration.valueParameters))
+                                        putValueArgument(index, generateValueArgument(file, source.single(), declaration))
                                     }
                                 })
                             }
@@ -109,22 +107,32 @@ class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrEleme
     }
 }
 
-fun IrBuilderWithScope.generateValueArgument(file: IrFileEntry, source: ObjectMappingSource, parameters: List<IrValueParameter>): IrExpression {
+fun IrBuilderWithScope.generateValueArgument(file: IrFileEntry, source: ObjectMappingSource, function: IrFunction): IrExpression {
     return when (source) {
-        is ResolvedSource -> generateResolvedValueArgument(source)
-        is PropertySource -> generatePropertyValueArgument(file, source, parameters)
-        is ExpressionSource -> generateExpressionValueArgument(source, parameters)
+        is ResolvedSource -> generateResolvedValueArgument(source, function)
+        is PropertySource -> generatePropertyValueArgument(file, source, function.valueParameters)
+        is ExpressionSource -> generateExpressionValueArgument(source, function.valueParameters)
         is ValueSource -> source.value
     }
 }
 
-fun IrBuilderWithScope.generateResolvedValueArgument(source: ResolvedSource): IrFunctionAccessExpression {
+fun IrBuilderWithScope.generateResolvedValueArgument(source: ResolvedSource, function: IrFunction): IrFunctionAccessExpression {
     val getter = irCall(source.property.function).apply {
         dispatchReceiver = irGet(source.property.holder)
     }
-    return source.via?.let {
-        irCall(source.via).apply {
-            dispatchReceiver = source.viaDispatchReceiver
+    return source.via?.let { (clazz, via) ->
+        irCall(via).apply {
+            dispatchReceiver = when {
+                clazz.isObject -> irGetObject(clazz.symbol)
+                else -> {
+                    val constructor = clazz.constructors.firstOrNull { it.valueParameters.isEmpty() }
+                    if (constructor != null) {
+                        irCallConstructor(constructor.symbol, emptyList())
+                    } else {
+                        mappieTerminate("Resolved mapping via ${clazz.name.asString()}, but it does not have a constructor without arguments", location(function))
+                    }
+                }
+            }
             putValueArgument(0, getter)
         }
     } ?: getter
@@ -137,11 +145,22 @@ fun IrBuilderWithScope.generatePropertyValueArgument(file: IrFileEntry, source: 
                 mappieTerminate("Could not determine value parameters for property reference. Please use a property reference of an object instead of the class", location(file, source.property))
             )
     }
-    return source.transformation?.let {
-        irCall(MappieIrRegistrar.context.referenceLetFunction()).apply {
-            extensionReceiver = getter
-            putValueArgument(0, source.transformation)
-    } } ?: getter
+    return source.transformation?.let { transformation ->
+        when (transformation) {
+            is MappieTransformTransformation -> {
+                irCall(MappieIrRegistrar.context.referenceLetFunction()).also { letCall ->
+                    letCall.extensionReceiver = getter
+                    letCall.putValueArgument(0, transformation.function)
+                }
+            }
+            is MappieViaTransformation -> {
+                irCall(transformation.function.symbol).apply {
+                    dispatchReceiver = transformation.dispatchReceiver
+                    putValueArgument(0, getter)
+                }
+            }
+        }
+    } ?: getter
 }
 
 fun IrBuilderWithScope.generateExpressionValueArgument(source: ExpressionSource, parameters: List<IrValueParameter>): IrFunctionAccessExpression {

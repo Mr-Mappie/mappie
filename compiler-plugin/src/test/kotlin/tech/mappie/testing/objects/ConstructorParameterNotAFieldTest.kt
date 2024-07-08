@@ -22,7 +22,7 @@ class ConstructorParameterNotAFieldTest {
     }
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `map two classes with unknown parameter set should fail`() {

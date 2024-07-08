@@ -6,6 +6,8 @@ changelog:
       title: "v0.4.0"
       items:
         - "[#45](https://github.com/Mr-Mappie/mappie/issues/45) mapper can now have multiple from parameters."
+        - "[#50](https://github.com/Mr-Mappie/mappie/issues/50) added compatibility with Kotlin `1.9.24` and `2.0.20-Beta1`."
+        - "Improved code generation, resulting in less intermediate code being generated."
         - "Removed deprecated `fromConstant`."
         - "Several other bug fixes."  
     - date: "2024-07-03"

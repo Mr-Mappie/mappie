@@ -15,7 +15,7 @@ class ViaSetTest {
     data class Output(val text: Set<String>)
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `map via forSet should succeed`() {

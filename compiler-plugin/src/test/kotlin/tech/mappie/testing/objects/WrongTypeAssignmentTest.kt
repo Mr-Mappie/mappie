@@ -15,7 +15,7 @@ class WrongTypeAssignmentTest {
     data class Output(val value: Int)
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `explicit mapping using fromProperty with wrong type should fail`() {

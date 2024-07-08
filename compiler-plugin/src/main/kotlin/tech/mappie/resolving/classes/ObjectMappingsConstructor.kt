@@ -1,10 +1,10 @@
 package tech.mappie.resolving.classes
 
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -35,25 +35,14 @@ class ObjectMappingsConstructor(val targetType: IrType, val sources: List<IrValu
                 val mappings = getters.filter { getter -> getter.name == getterName(target.name) }
                     .flatMap { getter ->
                         val clazz = symbols.singleOrNull { it.fits(getter.type, target.type) }?.clazz
-                        val via = when {
+                        val via: Pair<IrClass, IrSimpleFunction>? = when {
                             clazz == null -> null
-                            getter.type.isList() && target.type.isList() -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP_LIST }
-                            getter.type.isSet() && target.type.isSet() -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP_SET }
-                            getter.type.isNullable() && target.type.isNullable() -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP_NULLABLE }
-                            else -> clazz.functions.firstOrNull { it.name == IDENTIFIER_MAP }
+                            getter.type.isList() && target.type.isList() -> clazz to clazz.functions.first { it.name == IDENTIFIER_MAP_LIST }
+                            getter.type.isSet() && target.type.isSet() -> clazz to clazz.functions.first { it.name == IDENTIFIER_MAP_SET }
+                            getter.type.isNullable() && target.type.isNullable() -> clazz to clazz.functions.first { it.name == IDENTIFIER_MAP_NULLABLE }
+                            else -> clazz to clazz.functions.first { it.name == IDENTIFIER_MAP }
                         }
-                        val viaDispatchReceiver = when {
-                            clazz == null -> null
-                            clazz.isObject -> IrGetObjectValueImpl(
-                                SYNTHETIC_OFFSET,
-                                SYNTHETIC_OFFSET,
-                                clazz.symbol.defaultType,
-                                clazz.symbol
-                            )
-                            else -> clazz.constructors.firstOrNull { it.valueParameters.isEmpty() }
-                                ?.let { irConstructorCall(it) }
-                        }
-                        listOf(ResolvedSource(getter, via, viaDispatchReceiver))
+                        listOf(ResolvedSource(getter, via))
                     }
 
                 if (mappings.isNotEmpty()) {

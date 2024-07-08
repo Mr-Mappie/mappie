@@ -16,7 +16,7 @@ class ObjectWithNestedSetTest {
     data class InnerOutput(val value: String)
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `map data classes with nested set using object InnerMapper without declaring mapping should succeed`() {

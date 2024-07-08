@@ -4,24 +4,15 @@ import tech.mappie.BaseVisitor
 import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.api.ObjectMappie
 import tech.mappie.resolving.*
-import tech.mappie.util.getterName
-import tech.mappie.util.irGet
-import tech.mappie.util.location
-import tech.mappie.util.logError
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.createExpressionBody
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.mappieTerminate
+import tech.mappie.util.*
 
 class ObjectMappingBodyCollector(file: IrFileEntry)
     : BaseVisitor<ObjectMappingsConstructor, ObjectMappingsConstructor>(file) {
@@ -80,7 +71,7 @@ private class ObjectBodyStatementCollector(file: IrFileEntry)
             }
             IDENTIFIER_TRANSFORM -> {
                 val mapping = expression.dispatchReceiver!!.accept(data)!!
-                val transformation = expression.valueArguments.first()!! as IrFunctionExpression
+                val transformation = MappieTransformTransformation(expression.valueArguments.first()!! as IrFunctionExpression)
                 mapping.first to (mapping.second as PropertySource).copy(transformation = transformation)
             }
             IDENTIFIER_VIA -> {
@@ -113,24 +104,26 @@ private class ObjectBodyStatementCollector(file: IrFileEntry)
     }
 }
 
-private class MapperReferenceCollector(file: IrFileEntry) : BaseVisitor<IrFunctionExpression, Unit>(file) {
+private class MapperReferenceCollector(file: IrFileEntry) : BaseVisitor<MappieTransformation, Unit>(file) {
 
-    override fun visitGetObjectValue(expression: IrGetObjectValue, data: Unit): IrFunctionExpression {
-        return context.referenceClass(expression.symbol.owner.classId!!)!!
+    override fun visitGetObjectValue(expression: IrGetObjectValue, data: Unit): MappieTransformation {
+        val function = context.referenceClass(expression.symbol.owner.classId!!)!!
             .functions
-            .filter { it.owner.name == IDENTIFIER_MAP }
+            .filter { it.owner.isMappieMapFunction() }
             .first()
-            .wrap(expression)
+
+        return MappieViaTransformation(function.owner, expression)
     }
 
-    override fun visitConstructorCall(expression: IrConstructorCall, data: Unit): IrFunctionExpression {
-        return expression.type.getClass()!!.symbol.functions
-            .filter { it.owner.name == IDENTIFIER_MAP }
+    override fun visitConstructorCall(expression: IrConstructorCall, data: Unit): MappieTransformation {
+        val function = expression.type.getClass()!!.functions
+            .filter { it.isMappieMapFunction() }
             .first()
-            .wrap(expression)
+
+        return MappieViaTransformation(function, expression)
     }
 
-    override fun visitCall(expression: IrCall, data: Unit): IrFunctionExpression {
+    override fun visitCall(expression: IrCall, data: Unit): MappieTransformation {
         require(expression.origin == IrStatementOrigin.GET_PROPERTY)
 
         return when (val name = expression.symbol.owner.name) {
@@ -138,55 +131,29 @@ private class MapperReferenceCollector(file: IrFileEntry) : BaseVisitor<IrFuncti
                 val mapper = expression.symbol.owner.parent as IrClass
 
                 val function = mapper.functions
-                    .filter { it.name == IDENTIFIER_MAP_LIST }
+                    .filter { it.isMappieMapListFunction() }
                     .first()
 
-                function.symbol.wrap(expression.dispatchReceiver!!)
+                MappieViaTransformation(function, expression.dispatchReceiver!!)
             }
+
             getterName(ObjectMappie<*, *>::forSet.name) -> {
                 val mapper = expression.symbol.owner.parent as IrClass
 
                 val function = mapper.functions
-                    .filter { it.name == IDENTIFIER_MAP_SET }
+                    .filter { it.isMappieMapSetFunction() }
                     .first()
 
-                function.symbol.wrap(expression.dispatchReceiver!!)
+                MappieViaTransformation(function, expression.dispatchReceiver!!)
             }
+
             else -> {
-                mappieTerminate("Unexpected call of ${name.asString()}, expected forList or forSet", file?.let { location(it, expression) })
+                mappieTerminate(
+                    "Unexpected call of ${name.asString()}, expected forList or forSet",
+                    file?.let { location(it, expression) })
             }
         }
     }
-
-    private fun IrSimpleFunctionSymbol.wrap(receiver: IrExpression): IrFunctionExpression =
-        IrFunctionExpressionImpl(
-            SYNTHETIC_OFFSET,
-            SYNTHETIC_OFFSET,
-            owner.returnType,
-            context.irFactory.buildFun {
-                name = Name.identifier("stub_for_inlining")
-                returnType = owner.returnType
-            }.apply {
-                parent = owner.parent
-                val itParameter = addValueParameter {
-                    name = IDENTIFIER_IT
-                    type = owner.valueParameters.single().type
-                    index = 0
-                }
-                body = context.irFactory.createExpressionBody(IrCallImpl(
-                    SYNTHETIC_OFFSET,
-                    SYNTHETIC_OFFSET,
-                    owner.returnType,
-                    owner.symbol,
-                    0,
-                    1,
-                ).apply {
-                    dispatchReceiver = receiver
-                    putValueArgument(0, irGet(itParameter))
-                })
-            },
-            IrStatementOrigin.LAMBDA
-        )
 }
 
 private class SourceValueCollector(file: IrFileEntry) : BaseVisitor<ObjectMappingSource, Unit>(file) {
@@ -217,8 +184,7 @@ private class TargetValueCollector(file: IrFileEntry) : BaseVisitor<Name, Unit>(
                 return if (value.isConstantLike && value is IrConst<*>) {
                     Name.identifier(value.value as String)
                 } else {
-                    logError("Parameter name must be a constant", location(file!!, expression))
-                    throw AssertionError()
+                    mappieTerminate("Parameter name must be a constant", location(file!!, expression))
                 }
             }
             else -> {

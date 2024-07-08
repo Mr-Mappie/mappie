@@ -1,5 +1,6 @@
 package tech.mappie.resolving.classes
 
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
@@ -15,16 +16,15 @@ sealed interface ObjectMappingSource {
 
 data class ResolvedSource(
     val property: MappieGetter,
-    val via: IrSimpleFunction? = null,
-    val viaDispatchReceiver: IrExpression? = null,
+    val via: Pair<IrClass, IrSimpleFunction>? = null,
 ) : ObjectMappingSource {
     override val type: IrType
-        get() = via?.returnType ?: property.type
+        get() = via?.second?.returnType ?: property.type
 }
 
 data class PropertySource(
     val property: IrPropertyReference,
-    val transformation: IrFunctionExpression? = null,
+    val transformation: MappieTransformation? = null,
     val origin: IrExpression,
 ) : ObjectMappingSource {
 

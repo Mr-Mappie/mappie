@@ -15,7 +15,7 @@ class NoVisibleConstructorTest {
     data class Output private constructor(val name: String)
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `map data class without a visible constructor should fail`() {

@@ -16,7 +16,7 @@ class MapperClassCanContainPropertiesUsedInForListTest {
     data class InnerOutput(val text: String, val int: Int)
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `map a property in constructor of mapper should succeed`() {

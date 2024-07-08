@@ -16,7 +16,7 @@ class ObjectWithNestedNullableEnumTest {
     enum class OuterEnum { A, B, C; }
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `map data classes with nested non-null enum using object InnerMapper without declaring mapping should succeed`() {

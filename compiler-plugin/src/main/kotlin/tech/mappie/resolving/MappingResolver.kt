@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import tech.mappie.resolving.classes.ClassResolver
 import tech.mappie.resolving.classes.ObjectMappingSource
 import tech.mappie.resolving.enums.EnumResolver
-import tech.mappie.resolving.primitives.PrimitiveResolver
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -12,8 +11,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.types.isPrimitiveType
-import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.BaseVisitor
@@ -48,7 +45,6 @@ class MappingResolver(file: IrFileEntry) : BaseVisitor<List<Mapping>, List<Mappi
         val type = declaration.returnType
         val clazz = type.getClass()!!
         return when {
-            type.isPrimitiveType() || type.isString() -> listOf(PrimitiveResolver(declaration).resolve())
             clazz.isEnumClass -> listOf(EnumResolver(declaration).resolve())
             clazz.isClass -> ClassResolver(declaration, data).resolve()
             else -> mappieTerminate("Only mapping of data- and enum classes are supported yet", location(declaration))

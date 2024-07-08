@@ -14,7 +14,7 @@ class FromValueTest {
     data class Output(val value: String)
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `map value fromValue should succeed`() {

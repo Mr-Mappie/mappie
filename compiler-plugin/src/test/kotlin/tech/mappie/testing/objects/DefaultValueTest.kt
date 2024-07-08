@@ -15,7 +15,7 @@ class DefaultValueTest {
     data class Output(val name: String = "unknown", val age: Int)
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     @Disabled("Default values do not seem to work via KotlinCompilation")

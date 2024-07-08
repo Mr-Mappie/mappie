@@ -17,7 +17,7 @@ class EnumsWithDifferentEntriesTest {
     enum class Output { FIRST, SECOND }
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `map two enums with the different entries should succeed`() {

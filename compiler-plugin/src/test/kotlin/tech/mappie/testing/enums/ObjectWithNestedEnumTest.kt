@@ -16,7 +16,7 @@ class ObjectWithNestedEnumTest {
     enum class OuterEnum(val value: String) { A("A"), B("B"), C("C"); }
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `map data classes with nested enum using object InnerMapper without declaring mapping should succeed`() {

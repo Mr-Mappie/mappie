@@ -15,7 +15,7 @@ class ViaListTest {
     data class Output(val text: List<String>)
 
     @TempDir
-    private lateinit var directory: File
+    lateinit var directory: File
 
     @Test
     fun `map via forList should succeed`() {
