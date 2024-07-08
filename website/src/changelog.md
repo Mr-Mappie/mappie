@@ -2,7 +2,7 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-    - date: "tbd"
+    - date: "2024-07-08"
       title: "v0.4.0"
       items:
         - "[#45](https://github.com/Mr-Mappie/mappie/issues/45) mapper can now have multiple from parameters."
