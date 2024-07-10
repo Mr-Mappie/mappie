@@ -4,10 +4,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.types.typeOrFail
+import org.jetbrains.kotlin.ir.types.*
 import tech.mappie.BaseVisitor
 import tech.mappie.api.Mappie
 import tech.mappie.util.*
@@ -18,9 +15,14 @@ data class MappieDefinition(
     val clazz: IrClass,
 ) {
     fun fits(sourceType: IrType, targetType: IrType): Boolean =
-        (fromType.makeNullable().isAssignableFrom(sourceType) && targetType.makeNullable().isAssignableFrom(toType))
-                || fitsList(sourceType, targetType)
-                || fitsSet(sourceType, targetType)
+        sourceType.isNullAssignable(targetType) &&
+                (fitsSimpleType(sourceType, targetType) || fitsList(sourceType, targetType) || fitsSet(sourceType, targetType))
+
+    private fun IrType.isNullAssignable(target: IrType) =
+        !(isNullable() && !target.isNullable())
+
+    private fun fitsSimpleType(sourceType: IrType, targetType: IrType) =
+        fromType.makeNullable().isAssignableFrom(sourceType) && targetType.makeNullable().isAssignableFrom(toType)
 
     private fun fitsList(sourceType: IrType, targetType: IrType) =
         (sourceType.isList() && fromType.isAssignableFrom((sourceType as IrSimpleType).arguments.first().typeOrFail))
