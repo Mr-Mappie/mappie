@@ -6,27 +6,27 @@ import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.KotlinCompilation
 import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
-import tech.mappie.testing.loadObjectMappieClass
+import tech.mappie.testing.containsError
 import java.io.File
 
-class NestedNonNullToNullPropertyTest {
-    data class Input(val text: InnerInput, val int: Int)
+class NestedNullToNonNullPropertyTest {
+    data class Input(val text: InnerInput?, val int: Int)
     data class InnerInput(val value: String)
-    data class Output(val text: InnerOutput?, val int: Int)
+    data class Output(val text: InnerOutput, val int: Int)
     data class InnerOutput(val value: String)
 
     @TempDir
     lateinit var directory: File
 
     @Test
-    fun `map data classes with nested non-null to null should succeed`() {
+    fun `map data classes with nested null to non-null should fail`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.NestedNonNullToNullPropertyTest.*
+                        import tech.mappie.testing.objects.NestedNullToNonNullPropertyTest.*
     
                         class Mapper : ObjectMappie<Input, Output>()
 
@@ -36,17 +36,9 @@ class NestedNonNullToNullPropertyTest {
                 )
             }
         }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
-
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
-            assertThat(mapper.map(Input(InnerInput("value"), 30)))
-                .isEqualTo(Output(InnerOutput("value"), 30))
+            assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
+            assertThat(messages)
+                .containsError("Target Output::text automatically resolved from Input::text but cannot assign source type InnerInput? to target type InnerOutput")
         }
     }
 }

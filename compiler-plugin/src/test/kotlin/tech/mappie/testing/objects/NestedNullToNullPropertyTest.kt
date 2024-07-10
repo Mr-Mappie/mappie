@@ -9,8 +9,8 @@ import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class NestedNonNullToNullPropertyTest {
-    data class Input(val text: InnerInput, val int: Int)
+class NestedNullToNullPropertyTest {
+    data class Input(val text: InnerInput?, val int: Int)
     data class InnerInput(val value: String)
     data class Output(val text: InnerOutput?, val int: Int)
     data class InnerOutput(val value: String)
@@ -19,14 +19,14 @@ class NestedNonNullToNullPropertyTest {
     lateinit var directory: File
 
     @Test
-    fun `map data classes with nested non-null to null should succeed`() {
+    fun `map nested non-null to non-null should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.NestedNonNullToNullPropertyTest.*
+                        import tech.mappie.testing.objects.NestedNullToNullPropertyTest.*
     
                         class Mapper : ObjectMappie<Input, Output>()
 
@@ -45,8 +45,40 @@ class NestedNonNullToNullPropertyTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(InnerInput("value"), 30)))
-                .isEqualTo(Output(InnerOutput("value"), 30))
+            assertThat(mapper.map(Input(InnerInput("value"), 20)))
+                .isEqualTo(Output(InnerOutput("value"), 20))
+        }
+    }
+
+    @Test
+    fun `map nested null to null should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.objects.NestedNullToNullPropertyTest.*
+    
+                        class Mapper : ObjectMappie<Input, Output>()
+
+                        object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input(null, 20)))
+                .isEqualTo(Output(null, 20))
         }
     }
 }
