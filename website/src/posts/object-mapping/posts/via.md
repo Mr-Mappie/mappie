@@ -1,8 +1,8 @@
 ---
-title: "Reusing Mappers"
-summary: "Reusing other mappers."
+title: "The Via Operator"
+summary: "Reusing other mappers using the via operator."
 eleventyNavigation:
-  key: Reusing Mappers
+  key: The Via Operator
   parent: Object Mapping
   order: 7
 ---
@@ -24,7 +24,7 @@ and we have the data class `PersonDto` referencing the data class `AddressDto`
 ```kotlin
 data class PersonDto(
     val name: String, 
-    val address: AddressDto,
+    val addressDto: AddressDto,
 )
 
 data class AddressDto(
@@ -34,16 +34,14 @@ data class AddressDto(
 
 We start by defining a mapper for `Address` and `AddressDto`
 ```kotlin
-object AddressMapper : ObjectMappie<Address, AddressDto>() {
-    override fun map(from: Address) = mapping()
-}
+object AddressMapper : ObjectMappie<Address, AddressDto>()
 ```
 we can then reuse `AddressMapper` to construct a mapper for `Person` and `PersonDto` by referencing `AddressMapper` using
 the operator `via`
 ```kotlin
 object PersonMapper : ObjectMappie<Person, PersonDto>() {
     override fun map(from: Address) = mapping {
-        PersonDto::address fromProperty PersonDto::address via AddressMapper
+        to::addressDto fromProperty from::address via AddressMapper
     }
 }
 ```

@@ -4,7 +4,7 @@ summary: "Object Mapping Configuration."
 eleventyNavigation:
   key: Object Mapping Configuration
   parent: Object Mapping
-  order: 11
+  order: 12
 ---
 
 By default, only constructors visible from the current scope can be used to called in a mapping.
