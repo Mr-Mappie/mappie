@@ -86,12 +86,6 @@ class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrEleme
                                     } + irElseBranch(irCall(context.irBuiltIns.noWhenBranchMatchedExceptionSymbol))))
                             }
                         }
-
-                        is SingleValueMapping -> {
-                            context.blockBody(scope) {
-                                +irReturn(mapping.value)
-                            }
-                        }
                     }
                 }
             } else {

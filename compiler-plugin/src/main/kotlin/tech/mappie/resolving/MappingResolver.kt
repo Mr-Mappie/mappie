@@ -7,7 +7,6 @@ import tech.mappie.resolving.enums.EnumResolver
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
@@ -32,11 +31,6 @@ data class EnumMapping(
     val targetType: IrType,
     val sourceType: IrType,
     val mappings: Map<IrEnumEntry, List<EnumMappingTarget>>,
-) : Mapping
-
-data class SingleValueMapping(
-    val type: IrType,
-    val value: IrExpression,
 ) : Mapping
 
 class MappingResolver(file: IrFileEntry) : BaseVisitor<List<Mapping>, List<MappieDefinition>>(file) {
