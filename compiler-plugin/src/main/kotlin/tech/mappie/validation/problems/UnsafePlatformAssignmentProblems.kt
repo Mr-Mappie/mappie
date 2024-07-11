@@ -1,4 +1,4 @@
-package tech.mappie.validation
+package tech.mappie.validation.problems
 
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -9,6 +9,7 @@ import tech.mappie.resolving.ConstructorCallMapping
 import tech.mappie.resolving.classes.*
 import tech.mappie.util.isAssignableFrom
 import tech.mappie.util.location
+import tech.mappie.validation.Problem
 
 class UnsafePlatformAssignmentProblems(
     private val file: IrFileEntry,

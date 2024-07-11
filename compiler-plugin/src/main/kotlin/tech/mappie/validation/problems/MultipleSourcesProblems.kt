@@ -1,10 +1,11 @@
-package tech.mappie.validation
+package tech.mappie.validation.problems
 
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import tech.mappie.resolving.ConstructorCallMapping
 import tech.mappie.resolving.classes.ObjectMappingSource
+import tech.mappie.validation.Problem
 
 class MultipleSourcesProblems(
     private val targetType: IrType,
@@ -14,7 +15,6 @@ class MultipleSourcesProblems(
     fun all(): List<Problem> = mappings.map { (target, sources) ->
         Problem.error("Target ${targetType.dumpKotlinLike()}::${target.name.asString()} has ${if (sources.isEmpty()) "no source defined" else "multiple sources defined"}")
     }
-
 
     companion object {
         fun of(mapping: ConstructorCallMapping): MultipleSourcesProblems =
