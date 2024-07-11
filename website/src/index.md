@@ -10,7 +10,7 @@ btns:
     caption: "Changelog"
     url: "/changelog/"
     type: "outline"
-summary: "Mappie is a Kotlin compiler plugin generating performant object mapping code at compile-time while minimizing development effort."
+summary: "Mappie is a Kotlin compiler plugin generating performant object mapping code at compile-time while minimizing your development effort."
 displaySummary: true
 layout: "layouts/front-page.html"
 overview:

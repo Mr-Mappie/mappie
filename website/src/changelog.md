@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+    - date: "tbd"
+      title: "v0.5.0"
+      items:
+        - "Several other bug fixes."
     - date: "2024-07-08"
       title: "v0.4.0"
       items:

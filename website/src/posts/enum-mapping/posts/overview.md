@@ -4,7 +4,7 @@ summary: "Performing enum mapping."
 eleventyNavigation:
   key: Enum Mapping Overview
   parent: Enum Mapping
-  order: 12
+  order: 13
 ---
 
 Mappie supports mapping an enum class to another enum class. This can be achieved by implementing a mapper object which
@@ -22,12 +22,6 @@ enum class Colour { RED, GREEN, BLUE; }
 Mappie will resolve all mappings automatically, as the enum classes have identical entries. 
 
 This can be achieved by writing the following enum mapper
-```kotlin
-object ColorMapper : EnumMappie<Color, Colour>() {
-    override fun map(from: Color): Colour = mapping()
-}
-```
-or equivalently without an explicit body
 ```kotlin
 object ColorMapper : EnumMappie<Color, Colour>()
 ```

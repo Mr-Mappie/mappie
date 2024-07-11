@@ -4,7 +4,7 @@ summary: "Multiple Sources."
 eleventyNavigation:
   key: Multiple Sources
   parent: Object Mapping
-  order: 5
+  order: 9
 ---
 
 The standard Mappie `ObjectMappie` base class maps a single source parameter to a single

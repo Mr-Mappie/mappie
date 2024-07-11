@@ -1,8 +1,8 @@
 ---
-title: "Transforming"
-summary: "Transforming source properties."
+title: "The Transform Operator"
+summary: "Transforming source properties using the transform operator."
 eleventyNavigation:
-  key: Transforming
+  key: The Transform Operator
   parent: Object Mapping
   order: 8
 ---

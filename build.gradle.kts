@@ -49,9 +49,6 @@ jreleaser {
         }
         inceptionYear = "2024"
     }
-}
-
-jreleaser {
     signing {
         active = org.jreleaser.model.Active.ALWAYS
         armored = true

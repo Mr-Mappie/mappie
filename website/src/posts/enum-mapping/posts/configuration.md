@@ -4,7 +4,7 @@ summary: "Enum mapping configuration."
 eleventyNavigation:
   key: Enum Mapping Configuration
   parent: Enum Mapping
-  order: 14
+  order: 15
 ---
 
 By default, all enum sources must have a defined target. This can be disabled by adding the following
