@@ -7,10 +7,8 @@ eleventyNavigation:
   order: 2
 ---
 
-Mappie is a Kotlin compiler plugin. The preferred way to use Mappie is to apply the Gradle plugin which in term 
-applies the compiler plugin to the Kotlin compilation.
-
-This can be achieved by adding the following snippet to the `build.gradle.kts` file.
+Mappie is a Kotlin compiler plugin which comes with a Gradle plugin to automatically apply and configure the compiler 
+plugin. We can apply Mappie by adding the following plugin to the `build.gradle.kts` file
 ```kotlin
 plugins {
     id("tech.mappie.plugin") version "x.y.z"

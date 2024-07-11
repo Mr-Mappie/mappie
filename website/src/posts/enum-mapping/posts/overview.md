@@ -23,11 +23,5 @@ Mappie will resolve all mappings automatically, as the enum classes have identic
 
 This can be achieved by writing the following enum mapper
 ```kotlin
-object ColorMapper : EnumMappie<Color, Colour>() {
-    override fun map(from: Color): Colour = mapping()
-}
-```
-or equivalently without an explicit body
-```kotlin
 object ColorMapper : EnumMappie<Color, Colour>()
 ```
