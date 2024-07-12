@@ -7,10 +7,10 @@ eleventyNavigation:
   order: 5
 ---
 
-Mappie infers implicit mappings by name, type, default arguments, and other mappers that are defined. An implicit 
-mapping for a target property is inferred automatically if it has the same name as a source property, and it is 
-assignable from that source property. If it is not assignable, Mappie will check if there is a single mapper defined 
-that can map the source type to the target type, and will automatically apply it.
+Mappie infers implicit mappings by name, type, default arguments, getter- and setter methods, and other mappers that 
+are defined. An implicit mapping for a target property is inferred automatically if it has the same name as a source
+property, and it is assignable from that source property. If it is not assignable, Mappie will check if there is a 
+single mapper defined that can map the source type to the target type, and will automatically apply it.
 
 For example, suppose we have a data class `Person` and a data class `PersonDto`
 ```kotlin

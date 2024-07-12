@@ -5,6 +5,7 @@ changelog:
     - date: "tbd"
       title: "v0.5.0"
       items:
+        - "[#57](https://github.com/Mr-Mappie/mappie/issues/57) object mappers can now use property setters."
         - "Several other bug fixes."
     - date: "2024-07-08"
       title: "v0.4.0"
