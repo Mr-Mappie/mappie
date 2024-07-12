@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.name.Name
 import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.resolving.*
 import tech.mappie.resolving.classes.sources.MappieSource
-import tech.mappie.resolving.classes.targets.MappieSetterTarget
 import tech.mappie.resolving.classes.targets.MappieTarget
 import tech.mappie.resolving.classes.targets.MappieValueParameterTarget
 import tech.mappie.util.*
@@ -50,7 +49,7 @@ class ObjectMappingsConstructor(
                     emptyList()
                 }
             }
-        }.filter { it.key is MappieValueParameterTarget || (it.key is MappieSetterTarget && it.value.isNotEmpty()) }
+        }.filter { it.key is MappieValueParameterTarget || it.value.isNotEmpty() }
 
         val unknowns = explicit
             .filter { it.key !in mappings.map { it.key.name } }

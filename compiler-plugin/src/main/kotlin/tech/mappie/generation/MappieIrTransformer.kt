@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.MappieIrRegistrar
 import tech.mappie.mappieTerminate
+import tech.mappie.resolving.classes.targets.MappieFunctionTarget
 import tech.mappie.resolving.classes.targets.MappieSetterTarget
 import tech.mappie.resolving.classes.targets.MappieValueParameterTarget
 import tech.mappie.resolving.enums.ExplicitEnumMappingTarget
@@ -76,11 +77,20 @@ class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrEleme
                                 val variable = createTmpVariable(constructorCall)
 
                                 mapping.mappings.forEach { (target, source) ->
-                                    if (target is MappieSetterTarget) {
-                                        +irCall(target.value.setter!!).apply {
-                                            dispatchReceiver = irGet(variable)
-                                            putValueArgument(0, generateValueArgument(file, source.single(), declaration))
+                                    when (target) {
+                                        is MappieSetterTarget -> {
+                                            +irCall(target.value.setter!!).apply {
+                                                dispatchReceiver = irGet(variable)
+                                                putValueArgument(0, generateValueArgument(file, source.single(), declaration))
+                                            }
                                         }
+                                        is MappieFunctionTarget -> {
+                                            +irCall(target.value).apply {
+                                                dispatchReceiver = irGet(variable)
+                                                putValueArgument(0, generateValueArgument(file, source.single(), declaration))
+                                            }
+                                        }
+                                        is MappieValueParameterTarget -> { /* Applied as a constructor call argument */ }
                                     }
                                 }
 
