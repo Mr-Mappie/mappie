@@ -4,7 +4,6 @@ import tech.mappie.mappieTerminate
 import tech.mappie.resolving.ConstructorCallMapping
 import tech.mappie.resolving.EnumMapping
 import tech.mappie.resolving.Mapping
-import tech.mappie.resolving.SingleValueMapping
 import tech.mappie.resolving.classes.PropertySource
 import tech.mappie.validation.MappingValidation
 
@@ -30,7 +29,6 @@ interface MappingSelector {
             when {
                 mappings.all { it.first is ConstructorCallMapping } -> ConstructorMappingSelector(mappings.map { it.first as ConstructorCallMapping to it.second })
                 mappings.all { it.first is EnumMapping } -> object : MappingSelector { override fun select() = mappings.single() }
-                mappings.all { it.first is SingleValueMapping } -> object : MappingSelector { override fun select() = mappings.single() }
                 else -> mappieTerminate("Not all mappings are of the same type. This is a bug.", null)
             }
     }

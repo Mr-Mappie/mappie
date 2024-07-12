@@ -6,6 +6,7 @@ import tech.mappie.resolving.EnumMapping
 import tech.mappie.resolving.Mapping
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
+import tech.mappie.validation.problems.*
 
 interface MappingValidation {
     val problems: List<Problem>
@@ -22,7 +23,7 @@ interface MappingValidation {
             buildList {
                 addAll(MultipleSourcesProblems.of(mapping).all())
                 addAll(UnsafeTypeAssignmentProblems.of(file, mapping).all())
-                addAll(UnsafePlatformAssignmentProblems.of(file, mapping).all())
+                addAll(UnsafePlatformTypeAssignmentProblems.of(file, mapping).all())
                 addAll(UnknownParameterNameProblems.of(mapping).all())
                 addAll(VisibilityProblems.of(mapping).all())
             }
@@ -47,7 +48,6 @@ interface MappingValidation {
             when (mapping) {
                 is EnumMapping -> EnumMappingValidation(mapping)
                 is ConstructorCallMapping -> ConstructorCallMappingValidation(file, mapping)
-                else -> object : MappingValidation { override val problems = emptyList<Problem>() }
             }
     }
 }

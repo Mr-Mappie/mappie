@@ -81,9 +81,9 @@ object PersonMapper : ObjectMappie<Person, PersonDto>() {
 All mappings can be defined using `fromExpression`, but to keep the mappings clean and give Mappie the most information
 to suggest improvements to your code, `fromProperty` combined with either `via` or `transform` is preferred.
 
-## Constructor Parameters without a Backing Property
-It is possible that a constructor parameter is declared without a backing property. We can handle those constructor 
-parameters via the function `parameter`.
+## Handling non-referenceable Targets
+We can use the `to` function to refer to construct parameters which do not have a property or to refer to a setter
+method.
 
 For example, suppose that we use the same example as above, but `PersonDto.description` does not declare a backing property.
 ```kotlin
@@ -93,17 +93,17 @@ data class PersonDto(
     description: String,
 )
 ```
-We cannot reference `description` via a property reference `PersonDto::description`. To target the constructor parameter, 
-we can use `parameter("description")` to reference the constructor parameter
+We cannot reference `description` via a property reference `to::description`. To target the constructor parameter,
+we can use `to("description")` to reference the constructor parameter
 ```kotlin
 object PersonMapper : ObjectMappie<Person, PersonDto>() {
     override fun map(from: Person): PersonDto = mapping {
-        parameter("description") fromValue "a constant"
+        to("description") fromValue "a constant"
     }
 }
 ```
 
-## The Target Type Alias 
+## The to Alias
 We can access the target properties via the target type of the mapper. This can clutter the mapping definition when
 many explicit mappings are defined. Mappie defines a special `to` property which can be used instead of the target type.
 

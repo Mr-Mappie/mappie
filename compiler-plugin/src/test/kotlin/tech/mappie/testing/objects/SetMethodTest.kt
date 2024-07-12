@@ -1,67 +1,41 @@
 package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.kotlin.com.google.common.base.Objects
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.KotlinCompilation
 import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
-import tech.mappie.testing.containsError
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class ConstructorParameterNotAFieldTest {
+class SetMethodTest {
+    data class Input(val age: Int)
+    class Output {
+        private var _age: Int = 0
 
-    data class Input(val input: String, val age: Int)
-    class Output(output: String, val age: Int) {
-        val value = output
-
-        override fun equals(other: Any?) = other is Output && value == other.value && age == other.age
-        override fun hashCode(): Int = Objects.hashCode(value, age)
+        fun setAge(age: Int) {
+            this._age = age
+        }
     }
 
     @TempDir
     lateinit var directory: File
 
     @Test
-    fun `map two classes with unknown parameter set should fail`() {
+    fun `map class via setter explicitly should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.ConstructorParameterNotAFieldTest.*
+                        import tech.mappie.testing.objects.SetMethodTest.*
     
                         class Mapper : ObjectMappie<Input, Output>() {
                             override fun map(from: Input) = mapping {
-                                parameter("fake") fromProperty Input::input
-                            }
-                        }
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
-            assertThat(messages).containsError("Identifier fake does not occur as as setter or as a parameter in constructor")
-        }
-    }
-
-    @Test
-    fun `map two classes with parameter set should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.ConstructorParameterNotAFieldTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>() {
-                            override fun map(from: Input) = mapping {
-                                to("output") fromProperty Input::input
+                                to("age") fromProperty from::age
                             }
                         }
                         """
@@ -78,7 +52,40 @@ class ConstructorParameterNotAFieldTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input("Sjon", 58))).isEqualTo(Output("Sjon", 58))
+            assertThat(mapper.map(Input(25)))
+                .usingRecursiveComparison()
+                .isEqualTo(Output().apply { setAge(25) })
+        }
+    }
+
+    @Test
+    fun `map class via setter implicitly should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.objects.SetMethodTest.*
+    
+                        class Mapper : ObjectMappie<Input, Output>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input(50)))
+                .usingRecursiveComparison()
+                .isEqualTo(Output().apply { setAge(50) })
         }
     }
 

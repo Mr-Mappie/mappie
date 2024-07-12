@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.MappieIrRegistrar
 import tech.mappie.mappieTerminate
+import tech.mappie.resolving.classes.targets.MappieFunctionTarget
+import tech.mappie.resolving.classes.targets.MappieSetterTarget
+import tech.mappie.resolving.classes.targets.MappieValueParameterTarget
 import tech.mappie.resolving.enums.ExplicitEnumMappingTarget
 import tech.mappie.resolving.enums.ResolvedEnumMappingTarget
 import tech.mappie.resolving.enums.ThrowingEnumMappingTarget
@@ -46,9 +49,11 @@ class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrEleme
 
     override fun visitFunctionNew(declaration: IrFunction): IrStatement {
         if (declaration.accept(ShouldTransformCollector(declaration.fileEntry), Unit)) {
+            val file = declaration.fileEntry
+
             val (valids, invalids) = declaration
-                .accept(MappingResolver(declaration.fileEntry), symbols)
-                .map { it to MappingValidation.of(declaration.fileEntry, it) }
+                .accept(MappingResolver(file), symbols)
+                .map { it to MappingValidation.of(file, it) }
                 .partition { it.second.isValid() }
 
             if (valids.isNotEmpty()) {
@@ -60,13 +65,36 @@ class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrEleme
                     when (mapping) {
                         is ConstructorCallMapping -> {
                             context.blockBody(scope) {
-                                +irReturn(irCallConstructor(mapping.symbol, emptyList()).apply {
-                                    mapping.mappings.map { (target, source) ->
-                                        val file = declaration.fileEntry
-                                        val index = mapping.symbol.owner.valueParameters.indexOf(target)
-                                        putValueArgument(index, generateValueArgument(file, source.single(), declaration))
+                                val constructorCall = irCallConstructor(mapping.symbol, emptyList()).apply {
+                                    mapping.mappings.toList().forEach { (target, source) ->
+                                        if (target is MappieValueParameterTarget) {
+                                            val index = mapping.symbol.owner.valueParameters.indexOf(target.value)
+                                            putValueArgument(index, generateValueArgument(file, source.single(), declaration))
+                                        }
                                     }
-                                })
+                                }
+
+                                val variable = createTmpVariable(constructorCall)
+
+                                mapping.mappings.forEach { (target, source) ->
+                                    when (target) {
+                                        is MappieSetterTarget -> {
+                                            +irCall(target.value.setter!!).apply {
+                                                dispatchReceiver = irGet(variable)
+                                                putValueArgument(0, generateValueArgument(file, source.single(), declaration))
+                                            }
+                                        }
+                                        is MappieFunctionTarget -> {
+                                            +irCall(target.value).apply {
+                                                dispatchReceiver = irGet(variable)
+                                                putValueArgument(0, generateValueArgument(file, source.single(), declaration))
+                                            }
+                                        }
+                                        is MappieValueParameterTarget -> { /* Applied as a constructor call argument */ }
+                                    }
+                                }
+
+                                +irReturn(irGet(variable))
                             }
                         }
 
@@ -84,12 +112,6 @@ class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrEleme
                                         }
                                         irBranch(irEqeqeq(lhs, rhs), result)
                                     } + irElseBranch(irCall(context.irBuiltIns.noWhenBranchMatchedExceptionSymbol))))
-                            }
-                        }
-
-                        is SingleValueMapping -> {
-                            context.blockBody(scope) {
-                                +irReturn(mapping.value)
                             }
                         }
                     }

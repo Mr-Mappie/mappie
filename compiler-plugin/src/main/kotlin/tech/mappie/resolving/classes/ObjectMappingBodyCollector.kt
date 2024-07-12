@@ -179,12 +179,12 @@ private class TargetValueCollector(file: IrFileEntry) : BaseVisitor<Name, Unit>(
 
     override fun visitCall(expression: IrCall, data: Unit): Name {
         return when (expression.symbol.owner.name) {
-            IDENTIFIER_PARAMETER -> {
+            IDENTIFIER_PARAMETER, IDENTIFIER_TO -> {
                 val value = expression.valueArguments.first()!!
                 return if (value.isConstantLike && value is IrConst<*>) {
                     Name.identifier(value.value as String)
                 } else {
-                    mappieTerminate("Parameter name must be a constant", location(file!!, expression))
+                    mappieTerminate("Identifier must be a constant", location(file!!, expression))
                 }
             }
             else -> {

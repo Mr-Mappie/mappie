@@ -86,8 +86,9 @@ tasks.withType<Test> {
 }
 
 tasks.withType<KotlinCompile>().configureEach {
-    compilerOptions.freeCompilerArgs.addAll(
-        "-opt-in=org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI",
-        "-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi"
-    )
+    compilerOptions.freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI")
+}
+
+tasks.compileTestFixturesKotlin.configure {
+    compilerOptions.freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
 }

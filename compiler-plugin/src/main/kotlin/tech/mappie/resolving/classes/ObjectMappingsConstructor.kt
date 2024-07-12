@@ -1,38 +1,34 @@
 package tech.mappie.resolving.classes
 
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.resolving.*
+import tech.mappie.resolving.classes.sources.MappieSource
+import tech.mappie.resolving.classes.targets.MappieTarget
+import tech.mappie.resolving.classes.targets.MappieValueParameterTarget
 import tech.mappie.util.*
 
-class ObjectMappingsConstructor(val targetType: IrType, val sources: List<IrValueParameter>) {
+class ObjectMappingsConstructor(
+    private val symbols: List<MappieDefinition>,
+    private val constructor: IrConstructor,
+    private val sources: List<MappieSource>,
+    private val targets: List<MappieTarget>,
+    private val explicit: MutableMap<Name, List<ObjectMappingSource>> = mutableMapOf(),
+) {
 
-    var symbols = listOf<MappieDefinition>()
-
-    var getters = mutableListOf<MappieGetter>()
-
-    var explicit = mutableMapOf<Name, List<ObjectMappingSource>>()
-
-    var constructor: IrConstructor? = null
-
-    val targets
-        get() = constructor?.valueParameters ?: emptyList()
+    private val targetType = constructor.returnType
 
     fun construct(): ConstructorCallMapping {
-        val mappings: Map<IrValueParameter, List<ObjectMappingSource>> = targets.associateWith { target ->
+        val mappings: Map<MappieTarget, List<ObjectMappingSource>> = targets.associateWith { target ->
             val concreteSource = explicit[target.name]
 
             if (concreteSource != null) {
                 concreteSource
             } else {
-                val mappings = getters.filter { getter -> getter.name == getterName(target.name) }
+                val mappings = sources.filter { source -> source.name == getterName(target.name) }
                     .flatMap { getter ->
                         val clazz = symbols.singleOrNull { it.fits(getter.type, target.type) }?.clazz
                         val via: Pair<IrClass, IrSimpleFunction>? = when {
@@ -47,13 +43,13 @@ class ObjectMappingsConstructor(val targetType: IrType, val sources: List<IrValu
 
                 if (mappings.isNotEmpty()) {
                     mappings
-                } else if (target.hasDefaultValue() && context.configuration.useDefaultArguments) {
-                    listOf(ValueSource(target.defaultValue!!.expression, null))
+                } else if (target is MappieValueParameterTarget && target.value.hasDefaultValue() && context.configuration.useDefaultArguments) {
+                    listOf(ValueSource(target.value.defaultValue!!.expression, null))
                 } else {
                     emptyList()
                 }
             }
-        }
+        }.filter { it.key is MappieValueParameterTarget || it.value.isNotEmpty() }
 
         val unknowns = explicit
             .filter { it.key !in mappings.map { it.key.name } }
@@ -61,7 +57,7 @@ class ObjectMappingsConstructor(val targetType: IrType, val sources: List<IrValu
         return ConstructorCallMapping(
             targetType = targetType,
             sourceTypes = sources.map { it.type },
-            symbol = constructor!!.symbol,
+            symbol = constructor.symbol,
             mappings = mappings,
             unknowns = unknowns,
         )
@@ -69,15 +65,4 @@ class ObjectMappingsConstructor(val targetType: IrType, val sources: List<IrValu
 
     fun explicit(entry: Pair<Name, ObjectMappingSource>): ObjectMappingsConstructor =
         apply { explicit.merge(entry.first, listOf(entry.second), Collection<ObjectMappingSource>::plus) }
-
-    companion object {
-        fun of(constructor: ObjectMappingsConstructor) =
-            ObjectMappingsConstructor(constructor.targetType, constructor.sources).apply {
-                getters = constructor.getters
-                explicit = constructor.explicit
-            }
-
-        fun of(targetType: IrType, sources: List<IrValueParameter>) =
-            ObjectMappingsConstructor(targetType, sources)
-    }
 }

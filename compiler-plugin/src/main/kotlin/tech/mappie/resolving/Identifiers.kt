@@ -24,8 +24,8 @@ val IDENTIFIER_FROM_EXPRESSION = Name.identifier("fromExpression")
 
 val IDENTIFIER_PARAMETER = Name.identifier("parameter")
 
+val IDENTIFIER_TO = Name.identifier("to")
+
 val IDENTIFIER_TRANSFORM = Name.identifier("transform")
 
 val IDENTIFIER_VIA = Name.identifier("via")
-
-val IDENTIFIER_IT = Name.identifier("it")

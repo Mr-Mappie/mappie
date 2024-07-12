@@ -11,9 +11,9 @@ Java classes are different from those of Kotlin. The main difference for Mappie 
 of properties. Instead, the convention is to have a field `x`, and a getter `getX()` and setter `setX(Person value)`
 method.
 
-Mappie uses these getter methods in implicit mappings. They must follow the convention `getX()` for the property `x` to 
-be inferred. Also note that in Java all types are nullable. Mappie will give a warning if a Java getter is used to assign
-to a non-nullable target.
+Mappie uses these getter- and setter methods in implicit mappings. They must follow the convention `getX()` and 
+`setX(...)` for the property `x` to be inferred. Also note that in Java all types are nullable. Mappie will give a 
+warning if a Java type is used to assign to a non-nullable target.
 
 For example, suppose we have the Java class `Person`
 ```java

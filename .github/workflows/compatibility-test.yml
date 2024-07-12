@@ -16,7 +16,7 @@ jobs:
   compatibility:
     strategy:
       matrix:
-        version: ['1.9.24', '2.0.0', '2.0.20-Beta1']
+        version: ['kotlin-1.9.24', 'kotlin-2.0.0', 'kotlin-2.0.20-Beta1', 'java']
     name: Compatibility
     permissions:
       pull-requests: read
@@ -41,5 +41,5 @@ jobs:
         run: ./gradlew publishToMavenLocal
 
       - name: Compatibility Test
-        working-directory: test/kotlin-${{ matrix.version }}
+        working-directory: test/${{ matrix.version }}
         run: ./gradlew build --info

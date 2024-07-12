@@ -5,6 +5,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.ir.util.isClass
+import tech.mappie.resolving.classes.sources.MappieSourcesCollector
+import tech.mappie.resolving.classes.targets.MappieTargetsCollector
 
 class ClassResolver(private val declaration: IrFunction, private val symbols: List<MappieDefinition>) {
 
@@ -15,15 +17,14 @@ class ClassResolver(private val declaration: IrFunction, private val symbols: Li
     }
 
     fun resolve(): List<ConstructorCallMapping> {
-        val constructor = ObjectMappingsConstructor.of(declaration.returnType, sourceParameters)
-            .apply { getters.addAll(sourceParameters.flatMap { it.accept(GettersCollector(declaration.fileEntry), it) }) }
-
-        declaration.body?.accept(ObjectMappingBodyCollector(declaration.fileEntry), constructor)
-
-        return declaration.accept(ConstructorsCollector(declaration.fileEntry), Unit).map {
-            ObjectMappingsConstructor.of(constructor).apply {
-                this.constructor = it
-                this.symbols = this@ClassResolver.symbols
+        return declaration.accept(ConstructorsCollector(declaration.fileEntry), Unit).map { constructor ->
+            ObjectMappingsConstructor(
+                symbols,
+                constructor,
+                sourceParameters.flatMap { it.accept(MappieSourcesCollector(declaration.fileEntry), it) },
+                MappieTargetsCollector(constructor).all()
+            ).also {
+                declaration.body?.accept(ObjectMappingBodyCollector(declaration.fileEntry), it)
             }.construct()
         }
     }

@@ -32,7 +32,6 @@ typealias OptionName = String
 typealias OptionValue = String
 
 @Suppress("MemberVisibilityCanBePrivate")
-@ExperimentalCompilerApi
 class KotlinCompilation(workingDir: File) : AbstractKotlinCompilation<K2JVMCompilerArguments>(workingDir) {
 
 	/** Include Kotlin runtime in to resulting .jar */

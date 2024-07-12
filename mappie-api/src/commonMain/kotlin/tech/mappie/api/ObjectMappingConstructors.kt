@@ -62,7 +62,20 @@ public class ObjectMappingConstructor<FROM, out TO> {
      * ```
      * will generate an explicit mapping, setting constructor parameter `name` to `PersonDto.fullName`.
      */
+    @Deprecated("Replace with to", ReplaceWith("to(name)"))
     public fun parameter(name: String): KProperty<*> =
+        generated()
+
+    /**
+     * Reference a constructor parameter or target property in lieu of a property reference, if it not exists as a property.
+     *
+     * For example
+     * ```kotlin
+     * to("name") fromProperty PersonDto::fullName
+     * ```
+     * will generate an explicit mapping, setting constructor parameter `name` to `PersonDto.fullName`.
+     */
+    public fun to(name: String): KProperty<*> =
         generated()
 }
 
@@ -113,6 +126,19 @@ public class MultipleObjectMappingConstructor<out TO> {
      * ```
      * will generate an explicit mapping, setting constructor parameter `name` to `PersonDto.fullName`.
      */
+    @Deprecated("Replace with to", ReplaceWith("to(name)"))
     public fun parameter(name: String): KProperty<*> =
+        generated()
+
+    /**
+     * Reference a constructor parameter or target property in lieu of a property reference, if it not exists as a property.
+     *
+     * For example
+     * ```kotlin
+     * to("name") fromProperty PersonDto::fullName
+     * ```
+     * will generate an explicit mapping, setting constructor parameter `name` to `PersonDto.fullName`.
+     */
+    public fun to(name: String): KProperty<*> =
         generated()
 }
