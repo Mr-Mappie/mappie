@@ -1,8 +1,6 @@
 package tech.mappie.resolving.classes
 
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -14,26 +12,15 @@ import tech.mappie.resolving.classes.targets.MappieTarget
 import tech.mappie.resolving.classes.targets.MappieValueParameterTarget
 import tech.mappie.util.*
 
-class ObjectMappingsConstructor(val targetType: IrType, val sources: List<IrValueParameter>) {
+class ObjectMappingsConstructor(
+    private val symbols: List<MappieDefinition>,
+    private val constructor: IrConstructor,
+    private val sources: List<MappieSource>,
+    private val targets: List<MappieTarget>,
+    private val explicit: MutableMap<Name, List<ObjectMappingSource>> = mutableMapOf(),
+) {
 
-    var symbols = listOf<MappieDefinition>()
-
-    var getters = mutableListOf<MappieSource>()
-
-    var explicit = mutableMapOf<Name, List<ObjectMappingSource>>()
-
-    var constructor: IrConstructor? = null
-
-    val targets: List<MappieTarget>
-        get() = constructParameters + setters
-
-    val constructParameters: List<MappieTarget>
-        get() = constructor?.valueParameters?.map { MappieValueParameterTarget(it) } ?: emptyList()
-
-    val setters: Sequence<MappieTarget>
-        get() = targetType.classOrFail.owner.properties
-            .filter { it.setter != null && it.name.toString() !in constructParameters.map { it.name.toString() } }
-            .map { MappieSetterTarget(it) }
+    private val targetType = constructor.returnType
 
     fun construct(): ConstructorCallMapping {
         val mappings: Map<MappieTarget, List<ObjectMappingSource>> = targets.associateWith { target ->
@@ -42,7 +29,7 @@ class ObjectMappingsConstructor(val targetType: IrType, val sources: List<IrValu
             if (concreteSource != null) {
                 concreteSource
             } else {
-                val mappings = getters.filter { getter -> getter.name == getterName(target.name) }
+                val mappings = sources.filter { source -> source.name == getterName(target.name) }
                     .flatMap { getter ->
                         val clazz = symbols.singleOrNull { it.fits(getter.type, target.type) }?.clazz
                         val via: Pair<IrClass, IrSimpleFunction>? = when {
@@ -71,7 +58,7 @@ class ObjectMappingsConstructor(val targetType: IrType, val sources: List<IrValu
         return ConstructorCallMapping(
             targetType = targetType,
             sourceTypes = sources.map { it.type },
-            symbol = constructor!!.symbol,
+            symbol = constructor.symbol,
             mappings = mappings,
             unknowns = unknowns,
         )
@@ -79,15 +66,4 @@ class ObjectMappingsConstructor(val targetType: IrType, val sources: List<IrValu
 
     fun explicit(entry: Pair<Name, ObjectMappingSource>): ObjectMappingsConstructor =
         apply { explicit.merge(entry.first, listOf(entry.second), Collection<ObjectMappingSource>::plus) }
-
-    companion object {
-        fun of(constructor: ObjectMappingsConstructor) =
-            ObjectMappingsConstructor(constructor.targetType, constructor.sources).apply {
-                getters = constructor.getters
-                explicit = constructor.explicit
-            }
-
-        fun of(targetType: IrType, sources: List<IrValueParameter>) =
-            ObjectMappingsConstructor(targetType, sources)
-    }
 }
