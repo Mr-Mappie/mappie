@@ -82,7 +82,7 @@ All mappings can be defined using `fromExpression`, but to keep the mappings cle
 to suggest improvements to your code, `fromProperty` combined with either `via` or `transform` is preferred.
 
 ## Handling non-referenceable Targets
-We can use the `to` function to refer to construct parameters which do not have a property or to refer to a setter
+We can use the `to` function to refer to constructor parameters which do not have a property or to refer to a setter
 method.
 
 For example, suppose that we use the same example as above, but `PersonDto.description` does not declare a backing property.
@@ -93,7 +93,7 @@ data class PersonDto(
     description: String,
 )
 ```
-We cannot reference `description` via a property reference `to::description`. To target the constructor parameter,
+We cannot reference `description` via a property reference `Person::description`. To target the constructor parameter,
 we can use `to("description")` to reference the constructor parameter
 ```kotlin
 object PersonMapper : ObjectMappie<Person, PersonDto>() {

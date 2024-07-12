@@ -4,7 +4,7 @@ summary: "Transforming source properties using the transform operator."
 eleventyNavigation:
   key: The Transform Operator
   parent: Object Mapping
-  order: 8
+  order: 7
 ---
 
 Mappie can transform source parameters using the operator `transform`. This is useful when we want to change the source

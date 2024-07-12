@@ -4,7 +4,7 @@ summary: "Reusing other mappers using the via operator."
 eleventyNavigation:
   key: The Via Operator
   parent: Object Mapping
-  order: 7
+  order: 8
 ---
 
 Mappie has support for reusing mappers in other mappers using the `via` operator.
@@ -45,5 +45,7 @@ object PersonMapper : ObjectMappie<Person, PersonDto>() {
     }
 }
 ```
+Do note, that in this case, if `PersonDto::addressDto` was named `PersonDto::address` the mapping does not have to
+be defined explicitly. Mappie will construct an implicit mapping using the via operator.
 
 We can also use `via` to map collections. See [List & Sets](/object-mapping/lists-and-sets/).
