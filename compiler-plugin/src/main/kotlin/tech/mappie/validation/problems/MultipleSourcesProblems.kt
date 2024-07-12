@@ -1,15 +1,15 @@
 package tech.mappie.validation.problems
 
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import tech.mappie.resolving.ConstructorCallMapping
+import tech.mappie.resolving.classes.targets.MappieTarget
 import tech.mappie.resolving.classes.ObjectMappingSource
 import tech.mappie.validation.Problem
 
 class MultipleSourcesProblems(
     private val targetType: IrType,
-    private val mappings: List<Pair<IrValueParameter, List<ObjectMappingSource>>>
+    private val mappings: List<Pair<MappieTarget, List<ObjectMappingSource>>>
 ) {
 
     fun all(): List<Problem> = mappings.map { (target, sources) ->

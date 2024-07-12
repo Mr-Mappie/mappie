@@ -9,13 +9,14 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.util.isFunction
+import tech.mappie.resolving.classes.sources.MappieSource
 
 sealed interface ObjectMappingSource {
     val type: IrType
 }
 
 data class ResolvedSource(
-    val property: MappieGetter,
+    val property: MappieSource,
     val via: Pair<IrClass, IrSimpleFunction>? = null,
 ) : ObjectMappingSource {
     override val type: IrType

@@ -1,32 +1,42 @@
 package tech.mappie.resolving.classes
 
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.resolving.*
+import tech.mappie.resolving.classes.sources.MappieSource
+import tech.mappie.resolving.classes.targets.MappieSetterTarget
+import tech.mappie.resolving.classes.targets.MappieTarget
+import tech.mappie.resolving.classes.targets.MappieValueParameterTarget
 import tech.mappie.util.*
 
 class ObjectMappingsConstructor(val targetType: IrType, val sources: List<IrValueParameter>) {
 
     var symbols = listOf<MappieDefinition>()
 
-    var getters = mutableListOf<MappieGetter>()
+    var getters = mutableListOf<MappieSource>()
 
     var explicit = mutableMapOf<Name, List<ObjectMappingSource>>()
 
     var constructor: IrConstructor? = null
 
-    val targets
-        get() = constructor?.valueParameters ?: emptyList()
+    val targets: List<MappieTarget>
+        get() = constructParameters + setters
+
+    val constructParameters: List<MappieTarget>
+        get() = constructor?.valueParameters?.map { MappieValueParameterTarget(it) } ?: emptyList()
+
+    val setters: Sequence<MappieTarget>
+        get() = targetType.classOrFail.owner.properties
+            .filter { it.setter != null && it.name.toString() !in constructParameters.map { it.name.toString() } }
+            .map { MappieSetterTarget(it) }
 
     fun construct(): ConstructorCallMapping {
-        val mappings: Map<IrValueParameter, List<ObjectMappingSource>> = targets.associateWith { target ->
+        val mappings: Map<MappieTarget, List<ObjectMappingSource>> = targets.associateWith { target ->
             val concreteSource = explicit[target.name]
 
             if (concreteSource != null) {
@@ -47,13 +57,13 @@ class ObjectMappingsConstructor(val targetType: IrType, val sources: List<IrValu
 
                 if (mappings.isNotEmpty()) {
                     mappings
-                } else if (target.hasDefaultValue() && context.configuration.useDefaultArguments) {
-                    listOf(ValueSource(target.defaultValue!!.expression, null))
+                } else if (target is MappieValueParameterTarget && target.value.hasDefaultValue() && context.configuration.useDefaultArguments) {
+                    listOf(ValueSource(target.value.defaultValue!!.expression, null))
                 } else {
                     emptyList()
                 }
             }
-        }
+        }.filter { it.key is MappieValueParameterTarget || (it.key is MappieSetterTarget && it.value.isNotEmpty()) }
 
         val unknowns = explicit
             .filter { it.key !in mappings.map { it.key.name } }

@@ -23,7 +23,7 @@ interface MappingValidation {
             buildList {
                 addAll(MultipleSourcesProblems.of(mapping).all())
                 addAll(UnsafeTypeAssignmentProblems.of(file, mapping).all())
-                addAll(UnsafePlatformAssignmentProblems.of(file, mapping).all())
+                addAll(UnsafePlatformTypeAssignmentProblems.of(file, mapping).all())
                 addAll(UnknownParameterNameProblems.of(mapping).all())
                 addAll(VisibilityProblems.of(mapping).all())
             }

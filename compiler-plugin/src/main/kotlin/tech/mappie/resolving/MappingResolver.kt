@@ -6,7 +6,6 @@ import tech.mappie.resolving.classes.ObjectMappingSource
 import tech.mappie.resolving.enums.EnumResolver
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.BaseVisitor
 import tech.mappie.mappieTerminate
+import tech.mappie.resolving.classes.targets.MappieTarget
 import tech.mappie.resolving.enums.EnumMappingTarget
 import tech.mappie.util.location
 
@@ -23,7 +23,7 @@ data class ConstructorCallMapping(
     val targetType: IrType,
     val sourceTypes: List<IrType>,
     val symbol: IrConstructorSymbol,
-    val mappings: Map<IrValueParameter, List<ObjectMappingSource>>,
+    val mappings: Map<MappieTarget, List<ObjectMappingSource>>,
     val unknowns: Map<Name, List<ObjectMappingSource>>,
 ) : Mapping
 
