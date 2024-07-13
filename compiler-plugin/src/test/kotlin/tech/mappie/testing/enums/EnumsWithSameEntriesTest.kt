@@ -70,7 +70,7 @@ class EnumsWithSameEntriesTest {
             }
         }.compile {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).containsWarning("Unnecessary explicit mapping of target EnumsWithSameEntriesTest.Output.SOME")
+            assertThat(messages).containsWarning("Unnecessary explicit mapping of target Output.SOME")
 
             val mapper = classLoader
                 .loadEnumMappieClass<Input, Output>("Mapper")

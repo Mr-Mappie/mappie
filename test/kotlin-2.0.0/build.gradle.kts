@@ -11,3 +11,7 @@ tasks.register<Copy>("sources") {
     from(project.rootDir.resolve("../src"))
     into(project.rootDir.resolve("src"))
 }
+
+tasks.compileKotlin {
+    dependsOn("sources")
+}

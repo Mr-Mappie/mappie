@@ -17,7 +17,7 @@ data class ResolvedEnumMappingTarget(
 ) : EnumMappingTarget
 
 data class ExplicitEnumMappingTarget(
-    val target: IrEnumEntry,
+    val target: IrExpression,
     val origin: IrExpression,
 ) : EnumMappingTarget
 
@@ -34,7 +34,7 @@ class EnumMappingBodyCollector(file: IrFileEntry) : BaseVisitor<EnumMappingsCons
                 expression.valueArguments.first()?.accept(data) ?: data
             }
             IDENTIFIER_FROM_ENUM_ENTRY -> {
-                val target = (expression.extensionReceiver!! as IrGetEnumValue).symbol.owner
+                val target = expression.extensionReceiver!!
                 val source = (expression.valueArguments.first()!! as IrGetEnumValue).symbol.owner
                 data.explicit(source to ExplicitEnumMappingTarget(target, expression))
             }

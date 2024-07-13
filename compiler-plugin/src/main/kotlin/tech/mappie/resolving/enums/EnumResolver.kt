@@ -13,10 +13,6 @@ class EnumResolver(private val declaration: IrFunction) {
 
     private val sourceType = declaration.valueParameters.first().type
 
-    init {
-        check(targetType.getClass()!!.isEnumClass)
-    }
-
     fun resolve(): EnumMapping {
         val constructor = EnumMappingsConstructor.of(targetType, sourceType).apply {
             targets.addAll(targetType.getClass()!!.accept(EnumEntriesCollector(declaration.fileEntry), Unit))
@@ -38,7 +34,7 @@ class EnumResolver(private val declaration: IrFunction) {
             if (resolved.isNotEmpty() && explicit != null) {
                 when (val mapping = explicit.first()) {
                     is ExplicitEnumMappingTarget -> {
-                        val target = "${mapping.target.symbol.owner.callableId.className}.${mapping.target.name.asString()}"
+                        val target = mapping.target.dumpKotlinLike()
                         logWarn("Unnecessary explicit mapping of target $target", location(declaration.fileEntry, mapping.origin))
                     }
                     else -> Unit
