@@ -106,7 +106,7 @@ class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrEleme
                                         val lhs = irGet(declaration.valueParameters.first())
                                         val rhs = irGetEnumValue(mapping.targetType, source.symbol)
                                         val result: IrExpression = when (val target = targets.single()) {
-                                            is ExplicitEnumMappingTarget -> irGetEnumValue(mapping.targetType, target.target.symbol)
+                                            is ExplicitEnumMappingTarget -> target.target
                                             is ResolvedEnumMappingTarget -> irGetEnumValue(mapping.targetType, target.target.symbol)
                                             is ThrowingEnumMappingTarget -> irThrow(target.exception)
                                         }

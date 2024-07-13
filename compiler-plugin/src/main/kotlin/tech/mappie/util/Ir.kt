@@ -22,6 +22,9 @@ import tech.mappie.resolving.IDENTIFIER_MAP_LIST
 import tech.mappie.resolving.IDENTIFIER_MAP_SET
 import kotlin.reflect.KClass
 
+internal fun IrClass.isStrictSubclassOf(vararg classes: KClass<*>): Boolean =
+    allSuperTypes().any { classes.any { clazz -> it.erasedUpperBound.fqNameWhenAvailable?.asString() == clazz.java.name } }
+
 internal fun IrClass.isStrictSubclassOf(clazz: KClass<*>): Boolean =
     allSuperTypes().any { it.erasedUpperBound.fqNameWhenAvailable?.asString() == clazz.java.name }
 
