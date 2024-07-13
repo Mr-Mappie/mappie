@@ -4,10 +4,7 @@ package tech.mappie
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
-import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
-import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.gradle.plugin.*
 import java.util.*
 
 class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
@@ -53,19 +50,9 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
         kotlinCompilation.target.project.plugins.hasPlugin(MappieGradlePlugin::class.java)
 
     private fun checkCompatibility(target: Project) {
-        val version = target.buildscript.configurations
-            .getByName("classpath")
-            .resolvedConfiguration
-            .resolvedArtifacts
-            .firstOrNull { it.name == KOTLIN_GRADLE_PLUGIN_NAME }
-            ?.moduleVersion
-            ?.id
-            ?.version
-
-        if (version == null) {
-            target.logger.warn("No Kotlin version could be determined.")
-        } else if (version !in SUPPORTED_KOTLIN_VERSIONS) {
-            target.logger.warn("Unsupported Kotlin version $version. Expected one of ${SUPPORTED_KOTLIN_VERSIONS.joinToString()}. This may lead to compilation failure.")
+        val version = target.getKotlinPluginVersion()
+        if (version !in SUPPORTED_KOTLIN_VERSIONS) {
+            target.logger.warn("Mappie: unsupported Kotlin version $version. Expected one of ${SUPPORTED_KOTLIN_VERSIONS.joinToString()}. This may lead to compilation failure.")
         }
     }
 

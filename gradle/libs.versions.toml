@@ -4,6 +4,7 @@ kotlin = "2.0.0"
 [libraries]
 kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
 kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin" }
 junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version = "5.10.3" }
 classgraph = { module = "io.github.classgraph:classgraph", version = "4.8.174" }
 okio = { module = "com.squareup.okio:okio", version = "3.9.0" }
