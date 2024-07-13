@@ -7,7 +7,7 @@ eleventyNavigation:
   order: 14
 ---
 
-Not all enums classes that one wants to map have identical entries. If this is the case,
+Not all enums classes that one wants to map have identical entries, or are not even both an enum class. If this is the case,
 Mappie cannot determine which source must map to which target.
 
 Suppose `Color` has an extra entry `Color.ORANGE`, whilst `Colour` does
