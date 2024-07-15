@@ -11,21 +11,22 @@ import java.io.File
 
 class DefaultValueTest {
 
+    data class Input(val name: String)
+    data class Output(val name: String, val age: Int = 10)
+
     @TempDir
     lateinit var directory: File
 
     @Test
-    fun `map two data classes with an unknown target having a default value should succeed`() {
+    fun `map two data classes with a default argument not set should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.objects.DefaultValueTest.*
 
-                        data class Input(val name: String)
-                        data class Output(val name: String, val age: Int = 10)
-    
                         class Mapper : ObjectMappie<Input, Output>()
                         """
                     )
@@ -36,16 +37,45 @@ class DefaultValueTest {
             assertThat(messages).isEmpty()
 
             val mapper = classLoader
-                .loadObjectMappieClass<Any, Any>("Mapper")
+                .loadObjectMappieClass<Input, Output>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            val input = classLoader.loadClass("Input").kotlin.constructors.first()
-            val output = classLoader.loadClass("Output").kotlin.constructors.first()
-
-            assertThat(mapper.map(input.call("name"))).isEqualTo(output.call("name", 10))
+            assertThat(mapper.map(Input("name"))).isEqualTo(Output("name", 10))
         }
     }
 
+    @Test
+    fun `map two data classes with a default argument set should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.objects.DefaultValueTest.*
+
+                        class Mapper : ObjectMappie<Input, Output>() {
+                            override fun map(from: Input) = mapping {
+                                to::age fromValue 20
+                            }
+                        }
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input("name"))).isEqualTo(Output("name", 20))
+        }
+    }
 }

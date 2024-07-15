@@ -54,3 +54,5 @@ data class ValueSource(
 ) : ObjectMappingSource {
     override val type = value.type
 }
+
+class DefaultArgumentSource(override val type: IrType) : ObjectMappingSource

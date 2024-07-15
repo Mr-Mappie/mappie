@@ -27,7 +27,7 @@ class ConstructorCallMappingConstructor(private val mapping: ConstructorCallMapp
         context.blockBody(scope) {
             val constructorCall = irCallConstructor(mapping.symbol, emptyList()).apply {
                 mapping.mappings.toList().forEach { (target, source) ->
-                    if (target is MappieValueParameterTarget) {
+                    if (target is MappieValueParameterTarget && source.single() !is DefaultArgumentSource) {
                         val index = mapping.symbol.owner.valueParameters.indexOf(target.value)
                         putValueArgument(index, generateValueArgument(file, source.single(), declaration))
                     }
@@ -63,6 +63,7 @@ class ConstructorCallMappingConstructor(private val mapping: ConstructorCallMapp
             is PropertySource -> generatePropertyValueArgument(file, source, function.valueParameters)
             is ExpressionSource -> generateExpressionValueArgument(source, function.valueParameters)
             is ValueSource -> source.value
+            is DefaultArgumentSource -> mappieTerminate("generateValueArgument called on DefaultArgumentSource. This is a bug.", location(function))
         }
     }
 

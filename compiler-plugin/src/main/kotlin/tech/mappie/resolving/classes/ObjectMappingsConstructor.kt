@@ -1,7 +1,6 @@
 package tech.mappie.resolving.classes
 
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -44,8 +43,8 @@ class ObjectMappingsConstructor(
 
                 if (mappings.isNotEmpty()) {
                     mappings
-                } else if (target is MappieValueParameterTarget && target.value.defaultValue != null && context.configuration.useDefaultArguments && target.value.defaultValue!!.expression !is IrErrorExpression) {
-                    listOf(ValueSource(target.value.defaultValue!!.expression, null))
+                } else if (target is MappieValueParameterTarget && target.value.hasDefaultValue() && context.configuration.useDefaultArguments) {
+                    listOf(DefaultArgumentSource(target.value.type))
                 } else {
                     emptyList()
                 }
