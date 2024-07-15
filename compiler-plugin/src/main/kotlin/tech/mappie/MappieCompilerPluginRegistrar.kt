@@ -32,5 +32,4 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
             )
         )
     }
-
 }

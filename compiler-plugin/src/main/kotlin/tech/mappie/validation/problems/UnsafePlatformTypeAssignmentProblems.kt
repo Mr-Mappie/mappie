@@ -17,9 +17,9 @@ class UnsafePlatformTypeAssignmentProblems(
     private val mappings: List<Pair<MappieTarget, ObjectMappingSource>>,
 ) {
 
-    fun all(): List<Problem> = mappings.map { warning(it.first, it.second) }
+    fun all(): List<Problem> = mappings.map { warning(it.first, it.second) }.filterNotNull()
 
-    private fun warning(target: MappieTarget, source: ObjectMappingSource): Problem {
+    private fun warning(target: MappieTarget, source: ObjectMappingSource): Problem? {
         val sourceTypeString = source.type.removeAnnotations().dumpKotlinLike()
         val targetTypeString = targetType.dumpKotlinLike()
         val targetString = "$targetTypeString::${target.name.asString()}"
@@ -43,6 +43,9 @@ class UnsafePlatformTypeAssignmentProblems(
                 val location = source.origin?.let { location(file, it) }
                 val description = "Target $targetString of type $targetTypeString is unsafe to assigned from value of platform type $sourceTypeString"
                 Problem.warning(description, location)
+            }
+            is DefaultArgumentSource -> {
+                null
             }
         }
     }

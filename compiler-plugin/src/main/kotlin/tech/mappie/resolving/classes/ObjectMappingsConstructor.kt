@@ -44,7 +44,7 @@ class ObjectMappingsConstructor(
                 if (mappings.isNotEmpty()) {
                     mappings
                 } else if (target is MappieValueParameterTarget && target.value.hasDefaultValue() && context.configuration.useDefaultArguments) {
-                    listOf(ValueSource(target.value.defaultValue!!.expression, null))
+                    listOf(DefaultArgumentSource(target.value.type))
                 } else {
                     emptyList()
                 }

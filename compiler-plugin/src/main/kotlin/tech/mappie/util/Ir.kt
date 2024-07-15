@@ -47,7 +47,7 @@ fun IrPropertyReference.targetType(file: IrFileEntry): IrType =
     }
 
 fun IrType.isIntegerAssignableFrom(other: IrType): Boolean =
-    when (this.makeNullable()) {
+    when (makeNullable()) {
         context.irBuiltIns.byteType.makeNullable() ->
             other in listOf(context.irBuiltIns.byteType)
         context.irBuiltIns.shortType.makeNullable() ->

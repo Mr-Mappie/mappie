@@ -16,9 +16,9 @@ class UnsafeTypeAssignmentProblems(
     private val mappings: List<Pair<MappieTarget, ObjectMappingSource>>,
 ) {
 
-    fun all(): List<Problem> = mappings.map { warning(it.first, it.second) }
+    fun all(): List<Problem> = mappings.map { warning(it.first, it.second) }.filterNotNull()
 
-    private fun warning(target: MappieTarget, source: ObjectMappingSource): Problem {
+    private fun warning(target: MappieTarget, source: ObjectMappingSource): Problem? {
         val sourceTypeString = source.type.dumpKotlinLike()
         val targetTypeString = target.type.dumpKotlinLike()
         val targetString = "${targetType.dumpKotlinLike()}::${target.name.asString()}"
@@ -42,6 +42,9 @@ class UnsafeTypeAssignmentProblems(
                 val location = source.origin?.let { location(file, it) }
                 val description = "Target $targetString of type $targetTypeString cannot be assigned from value of type $sourceTypeString"
                 Problem.error(description, location)
+            }
+            is DefaultArgumentSource -> {
+                null
             }
         }
     }

@@ -1,27 +1,12 @@
 package tech.mappie.generation
 
-import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.resolving.*
-import tech.mappie.resolving.classes.*
 import tech.mappie.util.*
 import tech.mappie.validation.MappingValidation
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.lower.irThrow
-import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.*
-import tech.mappie.MappieIrRegistrar
-import tech.mappie.mappieTerminate
-import tech.mappie.resolving.classes.targets.MappieFunctionTarget
-import tech.mappie.resolving.classes.targets.MappieSetterTarget
-import tech.mappie.resolving.classes.targets.MappieValueParameterTarget
-import tech.mappie.resolving.enums.ExplicitEnumMappingTarget
-import tech.mappie.resolving.enums.ResolvedEnumMappingTarget
-import tech.mappie.resolving.enums.ThrowingEnumMappingTarget
 
 class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrElementTransformerVoidWithContext() {
 
@@ -63,57 +48,8 @@ class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrEleme
                     logAll(validation.warnings(), location(declaration))
 
                     when (mapping) {
-                        is ConstructorCallMapping -> {
-                            context.blockBody(scope) {
-                                val constructorCall = irCallConstructor(mapping.symbol, emptyList()).apply {
-                                    mapping.mappings.toList().forEach { (target, source) ->
-                                        if (target is MappieValueParameterTarget) {
-                                            val index = mapping.symbol.owner.valueParameters.indexOf(target.value)
-                                            putValueArgument(index, generateValueArgument(file, source.single(), declaration))
-                                        }
-                                    }
-                                }
-
-                                val variable = createTmpVariable(constructorCall)
-
-                                mapping.mappings.forEach { (target, source) ->
-                                    when (target) {
-                                        is MappieSetterTarget -> {
-                                            +irCall(target.value.setter!!).apply {
-                                                dispatchReceiver = irGet(variable)
-                                                putValueArgument(0, generateValueArgument(file, source.single(), declaration))
-                                            }
-                                        }
-                                        is MappieFunctionTarget -> {
-                                            +irCall(target.value).apply {
-                                                dispatchReceiver = irGet(variable)
-                                                putValueArgument(0, generateValueArgument(file, source.single(), declaration))
-                                            }
-                                        }
-                                        is MappieValueParameterTarget -> { /* Applied as a constructor call argument */ }
-                                    }
-                                }
-
-                                +irReturn(irGet(variable))
-                            }
-                        }
-
-                        is EnumMapping -> {
-                            context.blockBody(scope) {
-                                +irReturn(irWhen(mapping.targetType, mapping.mappings
-                                    .filter { (_, targets) -> targets.isNotEmpty() }
-                                    .map { (source, targets) ->
-                                        val lhs = irGet(declaration.valueParameters.first())
-                                        val rhs = irGetEnumValue(mapping.targetType, source.symbol)
-                                        val result: IrExpression = when (val target = targets.single()) {
-                                            is ExplicitEnumMappingTarget -> target.target
-                                            is ResolvedEnumMappingTarget -> irGetEnumValue(mapping.targetType, target.target.symbol)
-                                            is ThrowingEnumMappingTarget -> irThrow(target.exception)
-                                        }
-                                        irBranch(irEqeqeq(lhs, rhs), result)
-                                    } + irElseBranch(irCall(context.irBuiltIns.noWhenBranchMatchedExceptionSymbol))))
-                            }
-                        }
+                        is ConstructorCallMapping -> ConstructorCallMappingConstructor(mapping, declaration).construct(scope)
+                        is EnumMapping -> EnumMappingConstructor(mapping, declaration).construct(scope)
                     }
                 }
             } else {
@@ -126,68 +62,5 @@ class MappieIrTransformer(private val symbols: List<MappieDefinition>) : IrEleme
             }
         }
         return declaration
-    }
-}
-
-fun IrBuilderWithScope.generateValueArgument(file: IrFileEntry, source: ObjectMappingSource, function: IrFunction): IrExpression {
-    return when (source) {
-        is ResolvedSource -> generateResolvedValueArgument(source, function)
-        is PropertySource -> generatePropertyValueArgument(file, source, function.valueParameters)
-        is ExpressionSource -> generateExpressionValueArgument(source, function.valueParameters)
-        is ValueSource -> source.value
-    }
-}
-
-fun IrBuilderWithScope.generateResolvedValueArgument(source: ResolvedSource, function: IrFunction): IrFunctionAccessExpression {
-    val getter = irCall(source.property.function).apply {
-        dispatchReceiver = irGet(source.property.holder)
-    }
-    return source.via?.let { (clazz, via) ->
-        irCall(via).apply {
-            dispatchReceiver = when {
-                clazz.isObject -> irGetObject(clazz.symbol)
-                else -> {
-                    val constructor = clazz.constructors.firstOrNull { it.valueParameters.isEmpty() }
-                    if (constructor != null) {
-                        irCallConstructor(constructor.symbol, emptyList())
-                    } else {
-                        mappieTerminate("Resolved mapping via ${clazz.name.asString()}, but it does not have a constructor without arguments", location(function))
-                    }
-                }
-            }
-            putValueArgument(0, getter)
-        }
-    } ?: getter
-}
-
-fun IrBuilderWithScope.generatePropertyValueArgument(file: IrFileEntry, source: PropertySource, parameters: List<IrValueParameter>): IrFunctionAccessExpression {
-    val getter = irCall(source.getter).apply {
-        dispatchReceiver = source.property.dispatchReceiver
-            ?: irGet(parameters.singleOrNull { it.type == source.property.targetType(file) } ?:
-                mappieTerminate("Could not determine value parameters for property reference. Please use a property reference of an object instead of the class", location(file, source.property))
-            )
-    }
-    return source.transformation?.let { transformation ->
-        when (transformation) {
-            is MappieTransformTransformation -> {
-                irCall(MappieIrRegistrar.context.referenceLetFunction()).also { letCall ->
-                    letCall.extensionReceiver = getter
-                    letCall.putValueArgument(0, transformation.function)
-                }
-            }
-            is MappieViaTransformation -> {
-                irCall(transformation.function.symbol).apply {
-                    dispatchReceiver = transformation.dispatchReceiver
-                    putValueArgument(0, getter)
-                }
-            }
-        }
-    } ?: getter
-}
-
-fun IrBuilderWithScope.generateExpressionValueArgument(source: ExpressionSource, parameters: List<IrValueParameter>): IrFunctionAccessExpression {
-    return irCall(MappieIrRegistrar.context.referenceLetFunction()).apply {
-        extensionReceiver = irGet(parameters.single())
-        putValueArgument(0, source.expression)
     }
 }
