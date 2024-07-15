@@ -1,7 +1,6 @@
 package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.KotlinCompilation
@@ -11,14 +10,11 @@ import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
 class DefaultValueTest {
-    data class Input(val age: Int)
-    data class Output(val name: String = "unknown", val age: Int)
 
     @TempDir
     lateinit var directory: File
 
     @Test
-    @Disabled("Default values do not seem to work via KotlinCompilation")
     fun `map two data classes with an unknown target having a default value should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
@@ -26,7 +22,9 @@ class DefaultValueTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.DefaultValueTest.*
+
+                        data class Input(val name: String)
+                        data class Output(val name: String, val age: Int = 10)
     
                         class Mapper : ObjectMappie<Input, Output>()
                         """
@@ -38,12 +36,15 @@ class DefaultValueTest {
             assertThat(messages).isEmpty()
 
             val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
+                .loadObjectMappieClass<Any, Any>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(25))).isEqualTo(Output("unknown", 25))
+            val input = classLoader.loadClass("Input").kotlin.constructors.first()
+            val output = classLoader.loadClass("Output").kotlin.constructors.first()
+
+            assertThat(mapper.map(input.call("name"))).isEqualTo(output.call("name", 10))
         }
     }
 

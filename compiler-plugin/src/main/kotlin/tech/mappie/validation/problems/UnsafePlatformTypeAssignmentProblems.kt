@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
+import tech.mappie.mappieTerminate
 import tech.mappie.resolving.ConstructorCallMapping
 import tech.mappie.resolving.classes.*
 import tech.mappie.resolving.classes.targets.MappieTarget
