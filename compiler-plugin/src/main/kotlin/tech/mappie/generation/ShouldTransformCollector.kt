@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import tech.mappie.BaseVisitor
-import tech.mappie.resolving.IDENTIFIER_MAP
+import tech.mappie.util.isMappieMapFunction
 import tech.mappie.util.isStrictSubclassOf
 
 class ShouldTransformCollector(file: IrFileEntry) : BaseVisitor<Boolean, Unit>(file) {
@@ -19,7 +19,7 @@ class ShouldTransformCollector(file: IrFileEntry) : BaseVisitor<Boolean, Unit>(f
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Unit): Boolean {
-        return declaration.body?.accept(data) ?: (declaration.name == IDENTIFIER_MAP)
+        return declaration.body?.accept(data) ?: declaration.isMappieMapFunction()
     }
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): Boolean {
