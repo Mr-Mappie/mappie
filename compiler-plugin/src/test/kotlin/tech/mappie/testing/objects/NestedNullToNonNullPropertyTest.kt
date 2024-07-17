@@ -19,7 +19,7 @@ class NestedNullToNonNullPropertyTest {
     lateinit var directory: File
 
     @Test
-    fun `map data classes with nested null to non-null should fail`() {
+    fun `map data classes with nested null to non-null implicit should fail`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
@@ -39,6 +39,34 @@ class NestedNullToNonNullPropertyTest {
             assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
             assertThat(messages)
                 .containsError("Target Output::text automatically resolved from Input::text but cannot assign source type InnerInput? to target type InnerOutput")
+        }
+    }
+
+    @Test
+    fun `map data classes with nested null to non-null explicit should fail`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.objects.NestedNullToNonNullPropertyTest.*
+    
+                        class Mapper : ObjectMappie<Input, Output>() { 
+                            override fun map(from: Input) = mapping {
+                                to::text fromProperty from::text via InnerMapper
+                            }
+                        }
+
+                        object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
+            assertThat(messages)
+                .containsError("Target Output::text of type InnerOutput cannot be assigned from from::text of type InnerOutput?")
         }
     }
 }

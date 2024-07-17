@@ -5,10 +5,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.typeOrFail
-import org.jetbrains.kotlin.ir.util.isFunction
+import org.jetbrains.kotlin.ir.types.*
 import tech.mappie.resolving.classes.sources.MappieSource
 
 sealed interface ObjectMappingSource {
@@ -19,8 +16,7 @@ data class ResolvedSource(
     val property: MappieSource,
     val via: Pair<IrClass, IrSimpleFunction>? = null,
 ) : ObjectMappingSource {
-    override val type: IrType
-        get() = via?.second?.returnType ?: property.type
+    override val type: IrType get() = via?.second?.returnType ?: property.type
 }
 
 data class PropertySource(
@@ -31,14 +27,11 @@ data class PropertySource(
 
     val getter = property.getter!!
 
-    override val type: IrType
-        get() = if (transformation == null) {
-            getter.owner.returnType
-        } else if (transformation.type.isFunction()) {
-            (transformation.type as IrSimpleType).arguments[1].typeOrFail
-        } else {
-            transformation.type
-        }
+    override val type: IrType get() = when (transformation) {
+        is MappieTransformTransformation -> (transformation.type as IrSimpleType).arguments[1].typeOrFail
+        is MappieViaTransformation -> if (getter.owner.returnType.isNullable()) transformation.type.makeNullable() else transformation.type
+        null -> getter.owner.returnType
+    }
 }
 
 data class ExpressionSource(

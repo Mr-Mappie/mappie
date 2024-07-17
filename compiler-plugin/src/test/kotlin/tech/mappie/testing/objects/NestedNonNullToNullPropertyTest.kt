@@ -19,7 +19,7 @@ class NestedNonNullToNullPropertyTest {
     lateinit var directory: File
 
     @Test
-    fun `map data classes with nested non-null to null should succeed`() {
+    fun `map data classes with nested non-null to null implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
@@ -29,6 +29,42 @@ class NestedNonNullToNullPropertyTest {
                         import tech.mappie.testing.objects.NestedNonNullToNullPropertyTest.*
     
                         class Mapper : ObjectMappie<Input, Output>()
+
+                        object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input(InnerInput("value"), 30)))
+                .isEqualTo(Output(InnerOutput("value"), 30))
+        }
+    }
+
+    @Test
+    fun `map data classes with nested non-null to null explicit should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.objects.NestedNonNullToNullPropertyTest.*
+    
+                        class Mapper : ObjectMappie<Input, Output>() {
+                            override fun map(from: Input) = mapping {
+                                to::text fromProperty from::text via InnerMapper
+                            }
+                        }
 
                         object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
                         """

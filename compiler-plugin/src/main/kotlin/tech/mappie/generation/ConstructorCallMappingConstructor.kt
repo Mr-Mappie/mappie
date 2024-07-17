@@ -89,7 +89,7 @@ class ConstructorCallMappingConstructor(private val mapping: ConstructorCallMapp
         } ?: getter
     }
 
-    private fun IrBuilderWithScope.generatePropertyValueArgument(file: IrFileEntry, source: PropertySource, parameters: List<IrValueParameter>): IrFunctionAccessExpression {
+    private fun IrBuilderWithScope.generatePropertyValueArgument(file: IrFileEntry, source: PropertySource, parameters: List<IrValueParameter>): IrExpression {
         val getter = irCall(source.getter).apply {
             dispatchReceiver = source.property.dispatchReceiver
                 ?: irGet(parameters.singleOrNull { it.type == source.property.targetType(file) }
@@ -104,10 +104,13 @@ class ConstructorCallMappingConstructor(private val mapping: ConstructorCallMapp
                     }
                 }
                 is MappieViaTransformation -> {
-                    irCall(transformation.function.symbol).apply {
-                        dispatchReceiver = transformation.dispatchReceiver
-                        putValueArgument(0, getter)
-                    }
+                    irIfNull(source.type, getter,
+                        irNull(),
+                        irCall(transformation.function.symbol).apply {
+                            dispatchReceiver = transformation.dispatchReceiver
+                            putValueArgument(0, getter)
+                        },
+                    )
                 }
             }
         } ?: getter

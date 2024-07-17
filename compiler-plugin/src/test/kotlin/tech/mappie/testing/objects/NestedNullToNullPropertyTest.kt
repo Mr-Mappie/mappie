@@ -19,7 +19,7 @@ class NestedNullToNullPropertyTest {
     lateinit var directory: File
 
     @Test
-    fun `map nested non-null to non-null should succeed`() {
+    fun `map nested nullable to nullable implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
@@ -47,11 +47,14 @@ class NestedNullToNullPropertyTest {
 
             assertThat(mapper.map(Input(InnerInput("value"), 20)))
                 .isEqualTo(Output(InnerOutput("value"), 20))
+
+            assertThat(mapper.map(Input(null, 20)))
+                .isEqualTo(Output(null, 20))
         }
     }
 
     @Test
-    fun `map nested null to null should succeed`() {
+    fun `map nested nullable to nullable explicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
@@ -60,7 +63,11 @@ class NestedNullToNullPropertyTest {
                         import tech.mappie.api.ObjectMappie
                         import tech.mappie.testing.objects.NestedNullToNullPropertyTest.*
     
-                        class Mapper : ObjectMappie<Input, Output>()
+                        class Mapper : ObjectMappie<Input, Output>() {
+                            override fun map(from: Input) = mapping {
+                                to::text fromProperty from::text via InnerMapper
+                            }
+                        }
 
                         object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
                         """
@@ -76,6 +83,10 @@ class NestedNullToNullPropertyTest {
                 .constructors
                 .first()
                 .call()
+
+            assertThat(mapper.map(Input(InnerInput("value"), 20)))
+                .isEqualTo(Output(InnerOutput("value"), 20))
+
 
             assertThat(mapper.map(Input(null, 20)))
                 .isEqualTo(Output(null, 20))
