@@ -2,7 +2,7 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-    - date: "tbd"
+    - date: "2024-07-17"
       title: "v0.5.0"
       items:
         - "[#57](https://github.com/Mr-Mappie/mappie/issues/57) object mappers can now use property setters."
