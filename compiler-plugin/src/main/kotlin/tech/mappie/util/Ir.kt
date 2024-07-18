@@ -5,10 +5,7 @@ import tech.mappie.MappiePluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
-import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -71,11 +68,13 @@ fun getterName(name: Name) =
 fun getterName(name: String) =
     Name.special("<get-$name>")
 
-fun MappiePluginContext.referenceLetFunction() =
+fun MappiePluginContext.referenceFunctionLet() =
     referenceFunctions(CallableId(FqName("kotlin"), Name.identifier("let"))).first()
 
-fun irGetEnumValue(type: IrType, symbol: IrEnumEntrySymbol): IrGetEnumValue =
-    IrGetEnumValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, type, symbol)
+fun IrEnumEntry.referenceFunctionValueOf(): IrSimpleFunction =
+    parentAsClass.declarations
+        .filterIsInstance<IrSimpleFunction>()
+        .single { it.name == Name.identifier("valueOf") }
 
 fun IrSimpleFunctionSymbol.dumpKotlinLike(): String =
     owner.run {
