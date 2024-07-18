@@ -11,7 +11,7 @@ import tech.mappie.resolving.enums.EnumMappingTarget
 import tech.mappie.resolving.enums.ExplicitEnumMappingTarget
 import tech.mappie.resolving.enums.ResolvedEnumMappingTarget
 import tech.mappie.resolving.enums.ThrowingEnumMappingTarget
-import tech.mappie.util.irGetEnumValue
+import tech.mappie.util.referenceFunctionValueOf
 
 class EnumMappingConstructor(private val mapping: EnumMapping, declaration: IrFunction)
     : MappingConstructor(declaration) {
@@ -27,10 +27,14 @@ class EnumMappingConstructor(private val mapping: EnumMapping, declaration: IrFu
 
     private fun IrBlockBodyBuilder.generateMapping(source: IrEnumEntry, target: EnumMappingTarget): IrBranchImpl {
         val lhs = irGet(declaration.valueParameters.first())
-        val rhs = irGetEnumValue(mapping.targetType, source.symbol)
+        val rhs = irCall(source.referenceFunctionValueOf()).apply {
+            putValueArgument(0, irString(source.name.asString()))
+        }
         return irBranch(irEquals(lhs, rhs), when (target) {
                 is ExplicitEnumMappingTarget -> target.target
-                is ResolvedEnumMappingTarget -> irGetEnumValue(mapping.targetType, target.target.symbol)
+                is ResolvedEnumMappingTarget -> irCall(target.target.referenceFunctionValueOf()).apply {
+                    putValueArgument(0, irString(target.target.name.asString()))
+                }
                 is ThrowingEnumMappingTarget -> irThrow(target.exception)
             }
         )

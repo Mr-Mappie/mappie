@@ -17,7 +17,7 @@ import tech.mappie.resolving.classes.targets.MappieFunctionTarget
 import tech.mappie.resolving.classes.targets.MappieSetterTarget
 import tech.mappie.resolving.classes.targets.MappieValueParameterTarget
 import tech.mappie.util.location
-import tech.mappie.util.referenceLetFunction
+import tech.mappie.util.referenceFunctionLet
 import tech.mappie.util.targetType
 
 class ConstructorCallMappingConstructor(private val mapping: ConstructorCallMapping, declaration: IrFunction)
@@ -98,7 +98,7 @@ class ConstructorCallMappingConstructor(private val mapping: ConstructorCallMapp
         return source.transformation?.let { transformation ->
             when (transformation) {
                 is MappieTransformTransformation -> {
-                    irCall(MappieIrRegistrar.context.referenceLetFunction()).also { letCall ->
+                    irCall(MappieIrRegistrar.context.referenceFunctionLet()).also { letCall ->
                         letCall.extensionReceiver = getter
                         letCall.putValueArgument(0, transformation.function)
                     }
@@ -117,7 +117,7 @@ class ConstructorCallMappingConstructor(private val mapping: ConstructorCallMapp
     }
 
     private fun IrBuilderWithScope.generateExpressionValueArgument(source: ExpressionSource, parameters: List<IrValueParameter>): IrFunctionAccessExpression {
-        return irCall(MappieIrRegistrar.context.referenceLetFunction()).apply {
+        return irCall(MappieIrRegistrar.context.referenceFunctionLet()).apply {
             extensionReceiver = irGet(parameters.single())
             putValueArgument(0, source.expression)
         }
