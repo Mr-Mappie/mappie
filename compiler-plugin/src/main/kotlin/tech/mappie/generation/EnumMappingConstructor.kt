@@ -2,10 +2,12 @@ package tech.mappie.generation
 
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.resolving.EnumMapping
+import tech.mappie.resolving.enums.EnumMappingTarget
 import tech.mappie.resolving.enums.ExplicitEnumMappingTarget
 import tech.mappie.resolving.enums.ResolvedEnumMappingTarget
 import tech.mappie.resolving.enums.ThrowingEnumMappingTarget
@@ -16,17 +18,24 @@ class EnumMappingConstructor(private val mapping: EnumMapping, declaration: IrFu
 
     override fun construct(scope: Scope) =
         context.blockBody(scope) {
-            +irReturn(irWhen(mapping.targetType, mapping.mappings
+            val branches = mapping.mappings
                 .filter { (_, targets) -> targets.isNotEmpty() }
-                .map { (source, targets) ->
-                    val lhs = irGet(declaration.valueParameters.first())
-                    val rhs = irGetEnumValue(mapping.targetType, source.symbol)
-                    val result: IrExpression = when (val target = targets.single()) {
-                        is ExplicitEnumMappingTarget -> target.target
-                        is ResolvedEnumMappingTarget -> irGetEnumValue(mapping.targetType, target.target.symbol)
-                        is ThrowingEnumMappingTarget -> irThrow(target.exception)
-                    }
-                    irBranch(irEqeqeq(lhs, rhs), result)
-                } + irElseBranch(irCall(context.irBuiltIns.noWhenBranchMatchedExceptionSymbol))))
+                .map { generateMapping(it.key, it.value.single()) }
+
+            +irReturn(irWhen(mapping.targetType, branches + generateElseBranch()))
         }
+
+    private fun IrBlockBodyBuilder.generateMapping(source: IrEnumEntry, target: EnumMappingTarget): IrBranchImpl {
+        val lhs = irGet(declaration.valueParameters.first())
+        val rhs = irGetEnumValue(mapping.targetType, source.symbol)
+        return irBranch(irEquals(lhs, rhs), when (target) {
+                is ExplicitEnumMappingTarget -> target.target
+                is ResolvedEnumMappingTarget -> irGetEnumValue(mapping.targetType, target.target.symbol)
+                is ThrowingEnumMappingTarget -> irThrow(target.exception)
+            }
+        )
+    }
+
+    private fun IrBlockBodyBuilder.generateElseBranch() =
+        irElseBranch(irCall(context.irBuiltIns.noWhenBranchMatchedExceptionSymbol))
 }

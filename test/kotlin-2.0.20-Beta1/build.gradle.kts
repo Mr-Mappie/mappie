@@ -5,13 +5,19 @@ plugins {
 
 dependencies {
     implementation("tech.mappie:mappie-api:+")
+
+    testImplementation(kotlin("test"))
 }
 
-tasks.register<Copy>("sources") {
+tasks.register<Sync>("sources") {
     from(project.rootDir.resolve("../src"))
     into(project.rootDir.resolve("src"))
 }
 
 tasks.compileKotlin {
     dependsOn("sources")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
