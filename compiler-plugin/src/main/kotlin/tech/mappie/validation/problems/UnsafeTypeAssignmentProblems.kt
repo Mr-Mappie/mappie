@@ -16,9 +16,9 @@ class UnsafeTypeAssignmentProblems(
     private val mappings: List<Pair<MappieTarget, ObjectMappingSource>>,
 ) {
 
-    fun all(): List<Problem> = mappings.map { warning(it.first, it.second) }.filterNotNull()
+    fun all(): List<Problem> = mappings.map { validate(it.first, it.second) }.filterNotNull()
 
-    private fun warning(target: MappieTarget, source: ObjectMappingSource): Problem? {
+    private fun validate(target: MappieTarget, source: ObjectMappingSource): Problem? {
         val sourceTypeString = source.type.dumpKotlinLike()
         val targetTypeString = target.type.dumpKotlinLike()
         val targetString = "${targetType.dumpKotlinLike()}::${target.name.asString()}"

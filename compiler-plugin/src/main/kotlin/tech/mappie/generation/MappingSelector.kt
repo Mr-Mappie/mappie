@@ -9,19 +9,19 @@ import tech.mappie.validation.MappingValidation
 
 interface MappingSelector {
 
-    fun select(): Pair<Mapping, MappingValidation>
+    fun select(): Pair<Mapping, MappingValidation>?
 
     private class ConstructorMappingSelector(private val mappings: List<Pair<ConstructorCallMapping, MappingValidation>>) : MappingSelector {
 
-        override fun select(): Pair<Mapping, MappingValidation> {
+        override fun select(): Pair<Mapping, MappingValidation>? {
             return selectPrimary() ?: selectLeastResolvedAutomatically()
         }
 
         private fun selectPrimary(): Pair<Mapping, MappingValidation>? =
             mappings.firstOrNull { it.first.symbol.owner.isPrimary }
 
-        private fun selectLeastResolvedAutomatically(): Pair<Mapping, MappingValidation> =
-            mappings.maxBy { it.first.mappings.count { (_, sources) -> sources.single() is PropertySource } }
+        private fun selectLeastResolvedAutomatically(): Pair<Mapping, MappingValidation>? =
+            mappings.maxByOrNull { it.first.mappings.count { (_, sources) -> sources.single() is PropertySource } }
     }
 
     companion object {
