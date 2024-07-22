@@ -20,7 +20,6 @@ class ObjectWithNestedEnumTest {
     lateinit var directory: File
 
     @Test
-    @Disabled
     fun `map data classes with nested enum using object InnerMapper without declaring nested mapping should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {

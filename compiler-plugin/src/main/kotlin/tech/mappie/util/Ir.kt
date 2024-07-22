@@ -6,16 +6,20 @@ import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
+import tech.mappie.api.EnumMappie
 import tech.mappie.mappieTerminate
 import tech.mappie.resolving.IDENTIFIER_MAP
 import tech.mappie.resolving.IDENTIFIER_MAP_LIST
+import tech.mappie.resolving.IDENTIFIER_MAP_NULLABLE
 import tech.mappie.resolving.IDENTIFIER_MAP_SET
 import kotlin.reflect.KClass
 
@@ -76,6 +80,9 @@ fun IrEnumEntry.referenceFunctionValueOf(): IrSimpleFunction =
         .filterIsInstance<IrSimpleFunction>()
         .single { it.name == Name.identifier("valueOf") }
 
+fun referenceEnumMappieClass(): IrClassSymbol =
+    context.referenceClass(ClassId.fromString(EnumMappie::class.qualifiedName!!.replace('.', '/')))!!
+
 fun IrSimpleFunctionSymbol.dumpKotlinLike(): String =
     owner.run {
         parentAsClass.name.asString() + "::" + name.asString().removeSurrounding("<", ">").removePrefix("get-")
@@ -86,6 +93,15 @@ fun IrSimpleFunction.isMappieMapFunction() =
 
 fun IrSimpleFunction.isMappieMapListFunction() =
     name == IDENTIFIER_MAP_LIST
+        && valueParameters.singleOrNull()?.type?.isList() == true
+        && returnType.isList()
 
 fun IrSimpleFunction.isMappieMapSetFunction() =
     name == IDENTIFIER_MAP_SET
+        && valueParameters.singleOrNull()?.type?.isSet() == true
+        && returnType.isSet()
+
+fun IrSimpleFunction.isMappieMapNullableFunction() =
+    name == IDENTIFIER_MAP_NULLABLE
+        && valueParameters.singleOrNull()?.type?.isNullable() == true
+        && returnType.isNullable()

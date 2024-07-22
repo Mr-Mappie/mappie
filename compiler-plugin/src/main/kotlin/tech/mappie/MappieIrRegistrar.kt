@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.fileEntry
 import tech.mappie.generation.*
 import tech.mappie.resolving.AllMappieDefinitionsCollector
+import tech.mappie.resolving.ConstructorCallMapping
 import tech.mappie.resolving.MappingResolver
 import tech.mappie.util.location
 import tech.mappie.util.logAll
@@ -36,7 +37,8 @@ class MappieIrRegistrar(
             }
 
             val generation = MappieGeneration(
-                mappings = selected.mapValues { it.value!!.first }
+                mappings = selected.mapValues { it.value!!.first },
+                generated = selected.flatMap { (it.value!!.first as? ConstructorCallMapping)?.generated ?: emptySet() }.toSet()
             )
             moduleFragment.accept(MappieIrGenerator(generation), null)
         } else {

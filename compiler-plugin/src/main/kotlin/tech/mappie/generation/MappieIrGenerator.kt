@@ -6,12 +6,27 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
+import tech.mappie.resolving.classes.MappieViaClass
+import tech.mappie.resolving.classes.MappieViaGeneratedEnumClass
 
 class MappieIrGenerator(private val generation: MappieGeneration) : IrElementTransformerVoidWithContext() {
 
+    private val generated = mutableListOf<IrClass>()
+
     override fun visitClassNew(declaration: IrClass): IrStatement {
         declaration.declarations.filterIsInstance<IrClass>().forEach { inner ->
-            inner.transform(MappieIrGenerator(generation), null)
+            inner.transform(MappieIrGenerator(MappieGeneration(generation.mappings, emptySet())), null)
+        }
+
+        generation.generated.forEach { generated ->
+            when (generated) {
+                is MappieViaClass -> Unit
+                is MappieViaGeneratedEnumClass -> {
+                    val clazz = EnumMapperClassGenerator(declaration).generate(generated)
+                    declaration.declarations.add(clazz)
+                    this.generated.add(clazz)
+                }
+            }
         }
 
         if (declaration.accept(ShouldTransformCollector(declaration.fileEntry), Unit)) {
@@ -36,7 +51,7 @@ class MappieIrGenerator(private val generation: MappieGeneration) : IrElementTra
         if (mapping != null) {
             declaration.body = with(createScope(declaration)) {
                 when (mapping) {
-                    is ConstructorCallMapping -> ConstructorCallMappingConstructor(mapping, declaration).construct(scope)
+                    is ConstructorCallMapping -> ConstructorCallMappingConstructor(generated, mapping, declaration).construct(scope)
                     is EnumMapping -> EnumMappingConstructor(mapping, declaration).construct(scope)
                 }
             }
