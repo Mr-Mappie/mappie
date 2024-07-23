@@ -72,7 +72,7 @@ class ObjectMappingsConstructor(
     }
 
     private fun tryGenerateMapper(source: IrType, target: IrType): MappieVia? {
-        return if (source.classOrNull?.owner?.hasEnumEntries == true && target.classOrNull?.owner?.hasEnumEntries == true) {
+        return if (source.classOrNull?.owner?.kind == ClassKind.ENUM_CLASS && target.classOrNull?.owner?.kind == ClassKind.ENUM_CLASS) {
             val sourceEntries = source.classOrFail.owner.declarations.filterIsInstance<IrEnumEntry>()
             val targetEntries = target.classOrFail.owner.declarations.filterIsInstance<IrEnumEntry>()
 
