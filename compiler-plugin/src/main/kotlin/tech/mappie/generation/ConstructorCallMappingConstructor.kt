@@ -15,6 +15,8 @@ import tech.mappie.MappieIrRegistrar
 import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.mappieTerminate
 import tech.mappie.resolving.ConstructorCallMapping
+import tech.mappie.resolving.classes.MappieViaClass
+import tech.mappie.resolving.classes.MappieViaGeneratedEnumClass
 import tech.mappie.resolving.classes.*
 import tech.mappie.resolving.classes.targets.MappieFunctionTarget
 import tech.mappie.resolving.classes.targets.MappieSetterTarget

@@ -1,11 +1,7 @@
 package tech.mappie.resolving.classes
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -90,16 +86,3 @@ class ObjectMappingsConstructor(
     fun explicit(entry: Pair<Name, ObjectMappingSource>): ObjectMappingsConstructor =
         apply { explicit.merge(entry.first, listOf(entry.second), Collection<ObjectMappingSource>::plus) }
 }
-
-sealed interface MappieVia
-
-data class MappieViaGeneratedEnumClass(
-    val name: Name,
-    val source: IrType,
-    val sourceEntries: List<IrEnumEntry>,
-    val target: IrType,
-    val targetEntries: List<IrEnumEntry>,
-) : MappieVia
-
-data class MappieViaClass(val clazz: IrClass)
-    : MappieVia
