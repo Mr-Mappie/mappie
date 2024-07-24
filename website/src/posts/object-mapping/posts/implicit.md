@@ -25,6 +25,28 @@ object PersonMapper : ObjectMappie<Person, PersonDto>()
 ```
 which will generate a mapper which calls the primary constructor of `PersonDto` assigned to the fields of `Person`.
 
+## Generated mappers
+Mappie can also generates mappers automatically. When a source type and a target type do not have an existing mapper,
+and one can be written without any explicit mappings, it will be generated automatically. 
+
+For example, suppose we have the data classes `Person` and `PersonDto` containing `Gender` and `GenderDto` enum classes
+```kotlin
+data class Person(val name: String, val gender: Gender)
+enum class Gender { MALE, FEMALE, OTHER; }
+
+data class PersonDto(val name: String, val gender: GenderDto)
+enum class GenderDto { MALE, FEMALE, OTHER; }
+```
+We can generate a mapper from `Person` to `PersonDto` by writing
+```kotlin
+class PersonMapper : ObjectMappie<Person, PersonDto>()
+```
+and the nested mapper from `Gender` to `GenderDto` will be generated automatically as they both contain the same enum
+entries.
+
+Note that at this point, this is implemented only for enum classes. Class mappers is work in progress and will be added 
+soon.
+
 ## Default Arguments
 Mappie also considers default arguments as a possibility.
 
