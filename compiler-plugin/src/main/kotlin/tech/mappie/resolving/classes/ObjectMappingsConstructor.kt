@@ -1,7 +1,8 @@
 package tech.mappie.resolving.classes
 
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.MappieIrRegistrar.Companion.context
@@ -22,6 +23,7 @@ class ObjectMappingsConstructor(
     private val targetType = constructor.returnType
 
     fun construct(): ConstructorCallMapping {
+        val generatedMappers = mutableSetOf<MappieVia>()
         val mappings: Map<MappieTarget, List<ObjectMappingSource>> = targets.associateWith { target ->
             val concreteSource = explicit[target.name]
 
@@ -29,16 +31,17 @@ class ObjectMappingsConstructor(
                 concreteSource
             } else {
                 val mappings = sources.filter { source -> source.name == getterName(target.name) }
-                    .flatMap { getter ->
-                        val clazz = symbols.singleOrNull { it.fits(getter.type, target.type) }?.clazz
-                        val via: Pair<IrClass, IrSimpleFunction>? = when {
-                            clazz == null -> null
-                            getter.type.isList() && target.type.isList() -> clazz to clazz.functions.first { it.name == IDENTIFIER_MAP_LIST }
-                            getter.type.isSet() && target.type.isSet() -> clazz to clazz.functions.first { it.name == IDENTIFIER_MAP_SET }
-                            getter.type.isNullable() && target.type.isNullable() -> clazz to clazz.functions.first { it.name == IDENTIFIER_MAP_NULLABLE }
-                            else -> clazz to clazz.functions.first { it.name == IDENTIFIER_MAP }
+                    .map { getter ->
+                        if (target.type.isAssignableFrom(getter.type)) {
+                            ResolvedSource(getter, null)
+                        } else {
+                            val clazz = symbols
+                                .singleOrNull { it.fits(getter.type, target.type) }
+                                ?.clazz?.let { MappieViaClass(it) }
+                                ?: tryGenerateMapper(getter.type, target.type)?.also { generatedMappers.add(it) }
+
+                            ResolvedSource(getter, clazz, clazz?.let { target.type })
                         }
-                        listOf(ResolvedSource(getter, via))
                     }
 
                 if (mappings.isNotEmpty()) {
@@ -59,8 +62,25 @@ class ObjectMappingsConstructor(
             sourceTypes = sources.map { it.type },
             symbol = constructor.symbol,
             mappings = mappings,
+            generated = generatedMappers,
             unknowns = unknowns,
         )
+    }
+
+    private fun tryGenerateMapper(source: IrType, target: IrType): MappieVia? {
+        return if (source.classOrNull?.owner?.kind == ClassKind.ENUM_CLASS && target.classOrNull?.owner?.kind == ClassKind.ENUM_CLASS) {
+            val sourceEntries = source.classOrFail.owner.declarations.filterIsInstance<IrEnumEntry>()
+            val targetEntries = target.classOrFail.owner.declarations.filterIsInstance<IrEnumEntry>()
+
+            if (sourceEntries.all { it.name in targetEntries.map { it.name } }) {
+                val name = Name.identifier(source.classOrFail.owner.name.asString() + "To" + target.classOrFail.owner.name.asString() + "Mapper")
+                MappieViaGeneratedEnumClass(name, source, sourceEntries, target, targetEntries)
+            } else {
+                null
+            }
+        } else {
+            null
+        }
     }
 
     fun explicit(entry: Pair<Name, ObjectMappingSource>): ObjectMappingsConstructor =
