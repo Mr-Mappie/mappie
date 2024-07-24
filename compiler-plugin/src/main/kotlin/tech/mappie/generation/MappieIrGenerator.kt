@@ -9,15 +9,12 @@ import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.resolving.classes.MappieViaClass
 import tech.mappie.resolving.classes.MappieViaGeneratedEnumClass
 
-class MappieIrGenerator(private val generation: MappieGeneration) : IrElementTransformerVoidWithContext() {
-
-    private val generated = mutableListOf<IrClass>()
+class MappieIrGenerator(
+    private val generation: MappieGeneration,
+    private val generated: MutableList<IrClass> = mutableListOf()
+) : IrElementTransformerVoidWithContext() {
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
-        declaration.declarations.filterIsInstance<IrClass>().forEach { inner ->
-            inner.transform(MappieIrGenerator(MappieGeneration(generation.mappings, emptySet())), null)
-        }
-
         generation.generated.forEach { generated ->
             when (generated) {
                 is MappieViaClass -> Unit
@@ -27,6 +24,10 @@ class MappieIrGenerator(private val generation: MappieGeneration) : IrElementTra
                     this.generated.add(clazz)
                 }
             }
+        }
+
+        declaration.declarations.filterIsInstance<IrClass>().forEach { inner ->
+            inner.transform(MappieIrGenerator(MappieGeneration(generation.mappings, emptySet()), generated), null)
         }
 
         if (declaration.accept(ShouldTransformCollector(declaration.fileEntry), Unit)) {
