@@ -44,6 +44,7 @@ class MappingResolver : BaseVisitor<Map<IrFunction, List<Mapping>>, List<MappieD
 
     override fun visitFile(declaration: IrFile, data: List<MappieDefinition>): Map<IrFunction, List<Mapping>> {
         return declaration.declarations
+            .filterIsInstance<IrClass>()
             .map { it.accept(data) }
             .fold(mapOf(), Map<IrFunction, List<Mapping>>::plus)
     }
@@ -51,6 +52,7 @@ class MappingResolver : BaseVisitor<Map<IrFunction, List<Mapping>>, List<MappieD
     override fun visitClass(declaration: IrClass, data: List<MappieDefinition>): Map<IrFunction, List<Mapping>> {
         return if (declaration.accept(ShouldTransformCollector(declaration.fileEntry), Unit)) {
             declaration.declarations
+                .filter { it is IrClass || it is IrFunction }
                 .map { it.accept(data) }
                 .fold(mapOf(), Map<IrFunction, List<Mapping>>::plus)
         } else {
@@ -78,9 +80,5 @@ class MappingResolver : BaseVisitor<Map<IrFunction, List<Mapping>>, List<MappieD
         } else {
             emptyMap()
         }
-    }
-
-    override fun visitProperty(declaration: IrProperty, data: List<MappieDefinition>): Map<IrFunction, List<Mapping>> {
-        return emptyMap()
     }
 }

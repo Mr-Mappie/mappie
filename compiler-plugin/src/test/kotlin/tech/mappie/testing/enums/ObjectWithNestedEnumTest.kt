@@ -1,7 +1,6 @@
 package tech.mappie.testing.enums
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.KotlinCompilation

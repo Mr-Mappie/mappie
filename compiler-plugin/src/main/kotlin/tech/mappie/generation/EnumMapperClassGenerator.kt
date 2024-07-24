@@ -8,11 +8,9 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.types.typeWithParameters
-import org.jetbrains.kotlin.ir.util.addSimpleDelegatingConstructor
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.resolving.IDENTIFIER_MAP
 import tech.mappie.resolving.classes.MappieViaGeneratedEnumClass
@@ -30,7 +28,7 @@ class EnumMapperClassGenerator(val parent: IrClass) : IrElementTransformerVoidWi
         }.apply {
             parent = this@EnumMapperClassGenerator.parent
             thisReceiver = buildReceiverParameter(this, IrDeclarationOrigin.DEFINED, symbol.typeWithParameters(emptyList()))
-            superTypes = listOf(mappie.owner.defaultType)
+            superTypes = listOf(mappie.owner.symbol.typeWith(listOf(generated.source, generated.target)))
 
             addSimpleDelegatingConstructor(
                 superConstructor = mappie.constructors.single().owner,
@@ -45,6 +43,7 @@ class EnumMapperClassGenerator(val parent: IrClass) : IrElementTransformerVoidWi
                     updateFrom(function.owner)
                 }.apply {
                     dispatchReceiverParameter = function.owner.dispatchReceiverParameter
+                    overriddenSymbols = listOf(function)
                     function.owner.valueParameters.forEach { parameter ->
                         addValueParameter(parameter.name, parameter.type)
                     }
@@ -55,7 +54,6 @@ class EnumMapperClassGenerator(val parent: IrClass) : IrElementTransformerVoidWi
                         }.construct()
 
                         body = EnumMappingConstructor(mapping, this).construct(createScope(this).scope)
-                        overriddenSymbols = listOf(function)
                     } else {
                         body = function.owner.body
                         isFakeOverride = true
