@@ -24,7 +24,7 @@ class MapperClassCanContainMultipleMapFunctionsTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.MapperClassCanMultipleMapFunctionsTest.*
+                        import tech.mappie.testing.MapperClassCanContainMultipleMapFunctionsTest.*
     
                         class Mapper(private val int: Int) : ObjectMappie<Input, Output>() {
                             fun map(value: String) = value
