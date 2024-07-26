@@ -18,6 +18,44 @@ class ViaListTest {
     lateinit var directory: File
 
     @Test
+    fun `map list without declaring via should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.lists.ViaListTest.*
+    
+                        class Mapper : ObjectMappie<Input, Output>() {
+                            override fun map(from: Input) = mapping {
+                                Output::text fromProperty from::text
+                            }
+                        }
+
+                        object InnerMapper : ObjectMappie<InnerInput, String>() {
+                            override fun map(from: InnerInput) = from.value
+                        }
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input(listOf(InnerInput("A"), InnerInput("B")))))
+                .isEqualTo(Output(listOf("A", "B")))
+        }
+    }
+
+    @Test
     fun `map via forList should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {

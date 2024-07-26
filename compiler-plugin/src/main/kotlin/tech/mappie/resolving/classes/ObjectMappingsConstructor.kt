@@ -31,6 +31,11 @@ class ObjectMappingsConstructor(
                 if (source != null && source is PropertySource && source.transformation == null) {
                     if (!target.type.isAssignableFrom(source.type)) {
                         val via = symbols.firstOrNull { it.fits(source.type, target.type) }
+                            ?.let { via -> when {
+                                target.type.isList() -> via.copy(toType = context.irBuiltIns.listClass.typeWith(listOf(via.toType)))
+                                target.type.isSet() -> via.copy(toType = context.irBuiltIns.setClass.typeWith(listOf(via.toType)))
+                                else -> via
+                            } }
                         listOf(source.copy(transformation = via?.let{ MappieViaResolved(it) }))
                     } else {
                         concreteSource
