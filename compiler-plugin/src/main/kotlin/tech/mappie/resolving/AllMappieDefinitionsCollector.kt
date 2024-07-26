@@ -12,10 +12,11 @@ import tech.mappie.api.Mappie
 import tech.mappie.util.*
 
 data class MappieDefinition(
-    val fromType: IrType,
-    val toType: IrType,
     val clazz: IrClass,
+    val fromType: IrType = (clazz.superTypes.first() as IrSimpleType).arguments[0].typeOrFail,
+    val toType: IrType = (clazz.superTypes.first() as IrSimpleType).arguments[1].typeOrFail,
 ) {
+
     fun fits(sourceType: IrType, targetType: IrType): Boolean =
         sourceType.isNullAssignable(targetType) &&
                 (fitsSimpleType(sourceType, targetType) || fitsList(sourceType, targetType) || fitsSet(sourceType, targetType))
@@ -61,7 +62,7 @@ class AllMappieDefinitionsCollector : BaseVisitor<List<MappieDefinition>, Unit>(
         buildList {
             if (declaration.isStrictSubclassOf(Mappie::class)) {
                 (declaration.superTypes.single() as? IrSimpleType)?.let {
-                    add(MappieDefinition(it.arguments[0].typeOrFail, it.arguments[1].typeOrFail, declaration))
+                    add(MappieDefinition(declaration))
                 }
             }
             addAll(declaration.declarations.filterIsInstance<IrClass>().flatMap { it.accept(data) })

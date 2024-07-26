@@ -59,14 +59,15 @@ class UnsafeTypeAssignmentProblems(
             val mappings = mapping.mappings
                 .filter { (_, sources) -> sources.size == 1 }
                 .filter { (target, sources) ->
-//                    when {
-//                        target.type.isList() || target.type.isSet() -> {
-//                            !(target.type as IrSimpleType).arguments.first().typeOrFail.isAssignableFrom(sources.single().type, true)
-//                        }
-//                        else -> {
-                            !target.type.isAssignableFrom(sources.single().type, true)
-//                        }
-//                    }
+                    val source = sources.single()
+                    when {
+                        (source.type.isList() xor target.type.isList()) || (source.type.isSet() xor target.type.isSet()) -> {
+                            !(target.type as IrSimpleType).arguments.first().typeOrFail.isAssignableFrom(source.type, true)
+                        }
+                        else -> {
+                            !target.type.isAssignableFrom(source.type, true)
+                        }
+                    }
                 }
                 .map { (target, sources) -> target to sources.single() }
 

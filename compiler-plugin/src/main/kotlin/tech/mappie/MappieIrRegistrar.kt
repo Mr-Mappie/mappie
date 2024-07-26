@@ -4,8 +4,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -63,7 +61,7 @@ class MappieIrRegistrar(
     private fun getBuiltInMappers(): List<MappieDefinition> =
         listOf("LocalDateTimeToLocalTimeMapper")
             .map { name -> context.referenceClass(ClassId(FqName("tech.mappie.api.builtin"), Name.identifier(name)))!!.owner }
-            .map { MappieDefinition((it.superTypes.single() as IrSimpleType).arguments[0].typeOrFail, (it.superTypes.single() as IrSimpleType).arguments[1].typeOrFail, it) }
+            .map { MappieDefinition(it) }
 
     companion object {
         lateinit var context: MappiePluginContext

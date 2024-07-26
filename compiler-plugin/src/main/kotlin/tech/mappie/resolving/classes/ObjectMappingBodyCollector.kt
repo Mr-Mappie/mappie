@@ -107,20 +107,13 @@ private class ObjectBodyStatementCollector(file: IrFileEntry)
 private class MapperReferenceCollector(file: IrFileEntry) : BaseVisitor<MappieTransformation, Unit>(file) {
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Unit): MappieTransformation {
-        val function = context.referenceClass(expression.symbol.owner.classId!!)!!
-            .functions
-            .filter { it.owner.isMappieMapFunction() }
-            .first()
-
-        return MappieViaOperator(function.owner, expression)
+        val mapper = context.referenceClass(expression.symbol.owner.classId!!)!!
+        return MappieViaOperator(MappieDefinition(mapper.owner), expression)
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: Unit): MappieTransformation {
-        val function = expression.type.getClass()!!.functions
-            .filter { it.isMappieMapFunction() }
-            .first()
-
-        return MappieViaOperator(function, expression)
+        val mapper = expression.type.getClass()!!
+        return MappieViaOperator(MappieDefinition(mapper), expression)
     }
 
     override fun visitCall(expression: IrCall, data: Unit): MappieTransformation {
@@ -129,24 +122,12 @@ private class MapperReferenceCollector(file: IrFileEntry) : BaseVisitor<MappieTr
         return when (val name = expression.symbol.owner.name) {
             getterName(ObjectMappie<*, *>::forList.name) -> {
                 val mapper = expression.symbol.owner.parent as IrClass
-
-                val function = mapper.functions
-                    .filter { it.isMappieMapListFunction() }
-                    .first()
-
-                MappieViaOperator(function, expression.dispatchReceiver!!)
+                MappieViaOperator(MappieDefinition(mapper), expression.dispatchReceiver!!)
             }
-
             getterName(ObjectMappie<*, *>::forSet.name) -> {
                 val mapper = expression.symbol.owner.parent as IrClass
-
-                val function = mapper.functions
-                    .filter { it.isMappieMapSetFunction() }
-                    .first()
-
-                MappieViaOperator(function, expression.dispatchReceiver!!)
+                MappieViaOperator(MappieDefinition(mapper), expression.dispatchReceiver!!)
             }
-
             else -> {
                 mappieTerminate(
                     "Unexpected call of ${name.asString()}, expected forList or forSet",

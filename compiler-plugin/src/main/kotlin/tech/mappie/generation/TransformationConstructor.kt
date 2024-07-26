@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.constructors
 import tech.mappie.MappieIrRegistrar
 import tech.mappie.mappieTerminate
@@ -20,15 +21,15 @@ fun IrBuilderWithScope.generateTransformation(
     target: MappieTarget,
 ): IrExpression =
     when (transformation) {
-        is MappieTransformOperator -> generateTransformOperator(value, transformation)
-        is MappieViaOperator -> generateViaOperator(source, value, transformation)
-        is MappieViaResolved -> generateViaResolved(transformation, source, target, value)
-        is MappieViaGeneratedClass -> generateViaGeneratedClass(generated, transformation, source, target, value)
+        is MappieTransformOperator -> generateTransformOperator(transformation, value)
+        is MappieViaOperator -> generateViaOperator(transformation, target, value)
+        is MappieViaResolved -> generateViaResolved(transformation, target, value)
+        is MappieViaGeneratedClass -> generateViaGeneratedClass(transformation, generated, source, target, value)
     }
 
 private fun IrBuilderWithScope.generateViaGeneratedClass(
-    generated: List<IrClass>,
     transformation: MappieViaGeneratedClass,
+    generated: List<IrClass>,
     source: ObjectMappingSource,
     target: MappieTarget,
     value: IrExpression,
@@ -36,7 +37,7 @@ private fun IrBuilderWithScope.generateViaGeneratedClass(
     val clazz = generated.find { it.name == transformation.definition.name }
         ?: mappieTerminate("Could not find generated class ${transformation.definition.name.asString()}. This is a bug.", null)
 
-    val definition = MappieDefinition(source.type, target.type, clazz)
+    val definition = MappieDefinition(clazz)
     val receiver = when (clazz.kind) {
         ClassKind.CLASS -> {
             val constructor = clazz.constructors.firstOrNull { it.valueParameters.isEmpty() }
@@ -49,18 +50,16 @@ private fun IrBuilderWithScope.generateViaGeneratedClass(
                 )
             }
         }
-
         ClassKind.OBJECT -> {
             irGetObject(clazz.symbol)
         }
-
         else -> {
             mappieTerminate("", null) // TODO
         }
     }
     return irIfNull(source.type, receiver,
         irNull(),
-        irCall(definition.function(source.type, target.type)).apply {
+        irCall(definition.function(value.type, target.type)).apply {
             dispatchReceiver = receiver
             putValueArgument(0, value)
         }
@@ -69,7 +68,6 @@ private fun IrBuilderWithScope.generateViaGeneratedClass(
 
 private fun IrBuilderWithScope.generateViaResolved(
     transformation: MappieViaResolved,
-    source: ObjectMappingSource,
     target: MappieTarget,
     value: IrExpression,
 ): IrExpression {
@@ -94,25 +92,27 @@ private fun IrBuilderWithScope.generateViaResolved(
             mappieTerminate("", null) // TODO
         }
     }
-    return irIfNull(source.type, receiver,
-        irNull(),
-        irCall(transformation.definition.function(source.type, target.type)).apply {
-            dispatchReceiver = receiver
-            putValueArgument(0, value)
-        }
-    )
+
+    val transformation = transformation.definition.function(value.type, target.type)
+    return irCall(transformation).apply {
+        dispatchReceiver = receiver
+        putValueArgument(0, value)
+    }
 }
 
-private fun IrBuilderWithScope.generateViaOperator(source: ObjectMappingSource, value: IrExpression, transformation: MappieViaOperator) =
-    irIfNull(source.type, value,
-        irNull(),
-        irCall(transformation.function.symbol).apply {
-            dispatchReceiver = transformation.dispatchReceiver
-            putValueArgument(0, value)
-        },
-    )
+private fun IrBuilderWithScope.generateViaOperator(
+    transformation: MappieViaOperator,
+    target: MappieTarget,
+    value: IrExpression,
+): IrFunctionAccessExpression {
+    val function = transformation.definition.function(value.type, target.type)
+    return irCall(function.symbol).apply {
+        dispatchReceiver = transformation.dispatchReceiver
+        putValueArgument(0, value)
+    }
+}
 
-private fun IrBuilderWithScope.generateTransformOperator(value: IrExpression, transformation: MappieTransformOperator) =
+private fun IrBuilderWithScope.generateTransformOperator(transformation: MappieTransformOperator, value: IrExpression) =
     irCall(MappieIrRegistrar.context.referenceFunctionLet()).also { letCall ->
         letCall.extensionReceiver = value
         letCall.putValueArgument(0, transformation.function)
