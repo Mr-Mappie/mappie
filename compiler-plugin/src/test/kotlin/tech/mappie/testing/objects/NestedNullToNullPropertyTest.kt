@@ -54,6 +54,46 @@ class NestedNullToNullPropertyTest {
     }
 
     @Test
+    fun `map nested nullable to nullable explicit without via should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.objects.NestedNullToNullPropertyTest.*
+    
+                        class Mapper : ObjectMappie<Input, Output>() {
+                            override fun map(from: Input) = mapping {
+                                to::text fromProperty from::text
+                            }
+                        }
+
+                        object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input(InnerInput("value"), 20)))
+                .isEqualTo(Output(InnerOutput("value"), 20))
+
+
+            assertThat(mapper.map(Input(null, 20)))
+                .isEqualTo(Output(null, 20))
+        }
+    }
+
+    @Test
     fun `map nested nullable to nullable explicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {

@@ -24,14 +24,14 @@ class ObjectMappingsConstructor(
 
     fun construct(): ConstructorCallMapping {
         val generatedMappers = mutableSetOf<GeneratedMappieClass>()
-        val mappings: Map<MappieTarget, List<ObjectMappingSource>> = targets.associateWith { target ->
+        val mappings = targets.associateWith { target ->
             val concreteSource = explicit[target.name]
             if (concreteSource != null) {
                 val source = concreteSource.singleOrNull()
                 if (source != null && source is PropertySource && source.transformation == null) {
                     if (!target.type.isAssignableFrom(source.type)) {
                         val via = symbols.firstOrNull { it.fits(source.type, target.type) }
-                        listOf(source.copy(transformation = via?.let{ MappieViaResolvedTransformation(it) }))
+                        listOf(source.copy(transformation = via?.let{ MappieViaResolved(it) }))
                     } else {
                         concreteSource
                     }
@@ -46,10 +46,10 @@ class ObjectMappingsConstructor(
                         } else {
                             val transformation = symbols
                                 .singleOrNull { it.fits(getter.type, target.type) }
-                                ?.let { MappieViaResolvedTransformation(it) }
+                                ?.let { MappieViaResolved(it) }
                                 ?: tryGenerateMapper(getter.type, target.type)
                                     ?.also { generatedMappers.add(it) }
-                                    ?.let { MappieViaGeneratedMappieClassTransformation(it) }
+                                    ?.let { MappieViaGeneratedClass(it) }
 
                             ResolvedSource(
                                 getter,

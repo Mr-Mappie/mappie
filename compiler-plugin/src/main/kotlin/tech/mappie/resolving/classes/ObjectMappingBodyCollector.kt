@@ -71,7 +71,7 @@ private class ObjectBodyStatementCollector(file: IrFileEntry)
             }
             IDENTIFIER_TRANSFORM -> {
                 val mapping = expression.dispatchReceiver!!.accept(data)!!
-                val transformation = MappieTransformTransformation(expression.valueArguments.first()!! as IrFunctionExpression)
+                val transformation = MappieTransformOperator(expression.valueArguments.first()!! as IrFunctionExpression)
                 mapping.first to (mapping.second as PropertySource).copy(transformation = transformation)
             }
             IDENTIFIER_VIA -> {
@@ -112,7 +112,7 @@ private class MapperReferenceCollector(file: IrFileEntry) : BaseVisitor<MappieTr
             .filter { it.owner.isMappieMapFunction() }
             .first()
 
-        return MappieViaTransformation(function.owner, expression)
+        return MappieViaOperator(function.owner, expression)
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: Unit): MappieTransformation {
@@ -120,7 +120,7 @@ private class MapperReferenceCollector(file: IrFileEntry) : BaseVisitor<MappieTr
             .filter { it.isMappieMapFunction() }
             .first()
 
-        return MappieViaTransformation(function, expression)
+        return MappieViaOperator(function, expression)
     }
 
     override fun visitCall(expression: IrCall, data: Unit): MappieTransformation {
@@ -134,7 +134,7 @@ private class MapperReferenceCollector(file: IrFileEntry) : BaseVisitor<MappieTr
                     .filter { it.isMappieMapListFunction() }
                     .first()
 
-                MappieViaTransformation(function, expression.dispatchReceiver!!)
+                MappieViaOperator(function, expression.dispatchReceiver!!)
             }
 
             getterName(ObjectMappie<*, *>::forSet.name) -> {
@@ -144,7 +144,7 @@ private class MapperReferenceCollector(file: IrFileEntry) : BaseVisitor<MappieTr
                     .filter { it.isMappieMapSetFunction() }
                     .first()
 
-                MappieViaTransformation(function, expression.dispatchReceiver!!)
+                MappieViaOperator(function, expression.dispatchReceiver!!)
             }
 
             else -> {

@@ -10,26 +10,26 @@ sealed interface MappieTransformation {
     val type: IrType
 }
 
-data class MappieTransformTransformation(
+data class MappieTransformOperator(
     val function: IrFunctionExpression,
 ) : MappieTransformation {
     override val type: IrType = function.type
 }
 
-data class MappieViaTransformation(
+data class MappieViaOperator(
     val function: IrSimpleFunction,
     val dispatchReceiver: IrExpression,
 ) : MappieTransformation {
     override val type = function.returnType
 }
 
-data class MappieViaResolvedTransformation(
+data class MappieViaResolved(
     val definition: MappieDefinition,
 ) : MappieTransformation {
     override val type = definition.toType
 }
 
-data class MappieViaGeneratedMappieClassTransformation(
+data class MappieViaGeneratedClass(
     val definition: GeneratedMappieClass,
 ) : MappieTransformation {
     override val type = definition.target

@@ -27,10 +27,10 @@ data class PropertySource(
     val getter = property.getter!!
 
     override val type: IrType get() = when (transformation) {
-        is MappieTransformTransformation -> (transformation.type as IrSimpleType).arguments[1].typeOrFail
-        is MappieViaTransformation -> if (getter.owner.returnType.isNullable()) transformation.type.makeNullable() else transformation.type
-        is MappieViaResolvedTransformation -> transformation.type
-        is MappieViaGeneratedMappieClassTransformation -> if (getter.owner.returnType.isNullable()) transformation.type.makeNullable() else transformation.type
+        is MappieTransformOperator -> (transformation.type as IrSimpleType).arguments[1].typeOrFail
+        is MappieViaOperator -> if (getter.owner.returnType.isNullable()) transformation.type.makeNullable() else transformation.type
+        is MappieViaResolved -> if (getter.owner.returnType.isNullable()) transformation.type.makeNullable() else transformation.type
+        is MappieViaGeneratedClass -> if (getter.owner.returnType.isNullable()) transformation.type.makeNullable() else transformation.type
         null -> getter.owner.returnType
     }
 }
