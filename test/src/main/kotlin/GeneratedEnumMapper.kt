@@ -1,7 +1,15 @@
 import tech.mappie.api.ObjectMappie
 
-data class NestedGeneratedInputObject(val enum: InputEnum)
+data class NestedGeneratedInputObject(val enum: InputEnumTwo)
 
-data class NestedGeneratedOutputObject(val enum: OutputEnum)
+enum class InputEnumTwo {
+    A, B, C, D;
+}
+
+data class NestedGeneratedOutputObject(val enum: OutputEnumTwo)
+
+enum class OutputEnumTwo {
+    A, B, C, D, E;
+}
 
 object NestedGeneratedInputToOutputMapper : ObjectMappie<NestedGeneratedInputObject, NestedGeneratedOutputObject>()

@@ -27,7 +27,7 @@ class NestedNestedGeneratedEnumTest {
     lateinit var directory: File
 
     @Test
-    fun `mapper with multiple map functions should succeed`() {
+    fun `mapper nested generated mapper should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(

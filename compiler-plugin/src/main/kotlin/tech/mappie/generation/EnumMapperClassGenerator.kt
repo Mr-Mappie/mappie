@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.types.typeWithParameters
 import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.resolving.IDENTIFIER_MAP
-import tech.mappie.resolving.classes.MappieViaGeneratedEnumClass
+import tech.mappie.resolving.classes.GeneratedMappieEnumClass
 import tech.mappie.resolving.enums.EnumMappingsConstructor
 import tech.mappie.util.referenceEnumMappieClass
 
@@ -21,7 +21,7 @@ class EnumMapperClassGenerator(val parent: IrClass) : IrElementTransformerVoidWi
 
     private val mappie = referenceEnumMappieClass()
 
-    fun generate(generated: MappieViaGeneratedEnumClass): IrClass =
+    fun generate(generated: GeneratedMappieEnumClass): IrClass =
         context.irFactory.buildClass {
             name = generated.name
             kind = ClassKind.OBJECT

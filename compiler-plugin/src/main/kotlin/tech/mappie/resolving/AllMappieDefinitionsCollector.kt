@@ -3,8 +3,10 @@ package tech.mappie.resolving
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.functions
 import tech.mappie.BaseVisitor
 import tech.mappie.api.Mappie
 import tech.mappie.util.*
@@ -17,6 +19,16 @@ data class MappieDefinition(
     fun fits(sourceType: IrType, targetType: IrType): Boolean =
         sourceType.isNullAssignable(targetType) &&
                 (fitsSimpleType(sourceType, targetType) || fitsList(sourceType, targetType) || fitsSet(sourceType, targetType))
+
+    fun function(sourceType: IrType, targetType: IrType): IrFunction =
+        clazz.functions.let { functions ->
+            when {
+                sourceType.isList() && targetType.isList() -> functions.first { it.isMappieMapListFunction() }
+                sourceType.isSet() && targetType.isSet() -> functions.first { it.isMappieMapSetFunction() }
+                sourceType.isNullable() && targetType.isNullable() -> functions.first { it.isMappieMapNullableFunction() }
+                else -> functions.first { it.isMappieMapFunction() }
+            }
+        }
 
     private fun IrType.isNullAssignable(target: IrType) =
         !(isNullable() && !target.isNullable())

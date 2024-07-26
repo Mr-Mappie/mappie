@@ -12,7 +12,7 @@ sealed interface ObjectMappingSource {
 
 data class ResolvedSource(
     val property: MappieSource,
-    val via: MappieVia? = null,
+    val via: MappieTransformation? = null,
     val viaType: IrType? = null,
 ) : ObjectMappingSource {
     override val type: IrType get() = viaType ?: property.type
@@ -29,6 +29,8 @@ data class PropertySource(
     override val type: IrType get() = when (transformation) {
         is MappieTransformTransformation -> (transformation.type as IrSimpleType).arguments[1].typeOrFail
         is MappieViaTransformation -> if (getter.owner.returnType.isNullable()) transformation.type.makeNullable() else transformation.type
+        is MappieViaResolvedTransformation -> transformation.type
+        is MappieViaGeneratedMappieClassTransformation -> if (getter.owner.returnType.isNullable()) transformation.type.makeNullable() else transformation.type
         null -> getter.owner.returnType
     }
 }
