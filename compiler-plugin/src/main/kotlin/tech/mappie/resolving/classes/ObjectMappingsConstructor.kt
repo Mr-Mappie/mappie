@@ -1,6 +1,7 @@
 package tech.mappie.resolving.classes
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -22,7 +23,7 @@ class ObjectMappingsConstructor(
 
     private val targetType = constructor.returnType
 
-    fun construct(): ConstructorCallMapping {
+    fun construct(origin: IrElement): ConstructorCallMapping {
         val generatedMappers = mutableSetOf<GeneratedMappieClass>()
         val mappings = targets.associateWith { target ->
             val concreteSource = explicit[target.name]
@@ -47,7 +48,7 @@ class ObjectMappingsConstructor(
                 val mappings = sources.filter { source -> source.name == getterName(target.name) }
                     .map { getter ->
                         if (target.type.isAssignableFrom(getter.type)) {
-                            ResolvedSource(getter, null)
+                            ResolvedSource(getter, null, null, origin)
                         } else {
                             val transformation = symbols
                                 .singleOrNull { it.fits(getter.type, target.type) }
@@ -59,7 +60,8 @@ class ObjectMappingsConstructor(
                             ResolvedSource(
                                 getter,
                                 transformation,
-                                transformation?.let { target.type }
+                                transformation?.let { target.type },
+                                origin,
                             )
                         }
                     }
@@ -67,7 +69,7 @@ class ObjectMappingsConstructor(
                 if (mappings.isNotEmpty()) {
                     mappings
                 } else if (target is MappieValueParameterTarget && target.value.hasDefaultValue() && context.configuration.useDefaultArguments) {
-                    listOf(DefaultArgumentSource(target.value.type))
+                    listOf(DefaultArgumentSource(target.value.type, origin))
                 } else {
                     emptyList()
                 }

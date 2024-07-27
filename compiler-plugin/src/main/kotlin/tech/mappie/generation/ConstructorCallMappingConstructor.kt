@@ -77,7 +77,7 @@ class ConstructorCallMappingConstructor(
         val getter = irCall(source.property.function).apply {
             dispatchReceiver = irGet(source.property.holder)
         }
-        return source.via?.let { generateTransformation(generated, it, getter, source, target) } ?: getter
+        return source.via?.let { generateTransformation(generated, it, getter, source, target, file) } ?: getter
     }
 
     private fun IrBuilderWithScope.generatePropertyValueArgument(
@@ -91,7 +91,8 @@ class ConstructorCallMappingConstructor(
                 ?: irGet(parameters.singleOrNull { it.type == source.property.targetType(file) }
                     ?: mappieTerminate("Could not determine value parameters for property reference. Please use a property reference of an object instead of the class", location(file, source.property)))
         }
-        return source.transformation?.let { generateTransformation(generated, it, getter, source, target) } ?: getter
+        return source.transformation?.let { generateTransformation(generated, it, getter, source, target, file) }
+            ?: getter
     }
 
     private fun IrBuilderWithScope.generateExpressionValueArgument(source: ExpressionSource, parameters: List<IrValueParameter>): IrFunctionAccessExpression {

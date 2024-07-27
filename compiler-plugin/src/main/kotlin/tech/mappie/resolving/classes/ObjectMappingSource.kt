@@ -1,5 +1,6 @@
 package tech.mappie.resolving.classes
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
@@ -8,12 +9,14 @@ import tech.mappie.resolving.classes.sources.MappieSource
 
 sealed interface ObjectMappingSource {
     val type: IrType
+    val origin: IrElement
 }
 
 data class ResolvedSource(
     val property: MappieSource,
     val via: MappieTransformation? = null,
     val viaType: IrType? = null,
+    override val origin: IrElement,
 ) : ObjectMappingSource {
     override val type: IrType get() = viaType ?: property.type
 }
@@ -21,7 +24,7 @@ data class ResolvedSource(
 data class PropertySource(
     val property: IrPropertyReference,
     val transformation: MappieTransformation? = null,
-    val origin: IrExpression,
+    override val origin: IrElement,
 ) : ObjectMappingSource {
 
     val getter = property.getter!!
@@ -37,16 +40,19 @@ data class PropertySource(
 
 data class ExpressionSource(
     val expression: IrFunctionExpression,
-    val origin: IrExpression,
+    override val origin: IrElement,
 ) : ObjectMappingSource {
     override val type = expression.function.returnType
 }
 
 data class ValueSource(
     val value: IrExpression,
-    val origin: IrExpression?,
+    override val origin: IrElement,
 ) : ObjectMappingSource {
     override val type = value.type
 }
 
-class DefaultArgumentSource(override val type: IrType) : ObjectMappingSource
+class DefaultArgumentSource(
+    override val type: IrType,
+    override val origin: IrElement,
+) : ObjectMappingSource

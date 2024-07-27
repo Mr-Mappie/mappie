@@ -19,7 +19,7 @@ class ClassResolver(private val declaration: IrFunction, private val symbols: Li
                 MappieTargetsCollector(constructor).all()
             ).also {
                 declaration.body?.accept(ObjectMappingBodyCollector(declaration.fileEntry), it)
-            }.construct()
+            }.construct(declaration)
         }
     }
 }
