@@ -8,6 +8,7 @@ import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
+import java.math.BigInteger
 
 class IntMappersTest {
 
@@ -17,6 +18,8 @@ class IntMappersTest {
     data class IntInput(val value: Int)
 
     data class LongOutput(val value: Long)
+
+    data class BigIntegerOutput(val value: BigInteger)
 
     @Test
     fun `map Int to Long implicit should succeed`() {
@@ -84,6 +87,75 @@ class IntMappersTest {
 
             assertThat(mapper.map(IntInput(input)))
                 .isEqualTo(LongOutput(input.toLong()))
+        }
+    }
+
+    @Test
+    fun `map Int to BigInteger implicit should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.builtin.IntMappersTest.*
+
+                        class Mapper : ObjectMappie<IntInput, BigIntegerOutput>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val input = 2
+
+            val mapper = classLoader
+                .loadObjectMappieClass<IntInput, BigIntegerOutput>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(IntInput(input)))
+                .isEqualTo(BigIntegerOutput(input.toBigInteger()))
+        }
+    }
+
+    @Test
+    fun `map Int to BigInteger explicit should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.api.builtin.*
+                        import tech.mappie.testing.builtin.IntMappersTest.*
+
+                        class Mapper : ObjectMappie<IntInput, BigIntegerOutput>() {
+                            override fun map(from: IntInput) = mapping {
+                                to::value fromProperty from::value via IntToBigIntegerMapper()
+                            }
+                        }
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val input = 5
+
+            val mapper = classLoader
+                .loadObjectMappieClass<IntInput, BigIntegerOutput>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(IntInput(input)))
+                .isEqualTo(BigIntegerOutput(input.toBigInteger()))
         }
     }
 }

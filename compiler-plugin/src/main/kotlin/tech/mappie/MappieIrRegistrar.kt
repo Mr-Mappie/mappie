@@ -59,12 +59,16 @@ class MappieIrRegistrar(
         listOf(
             "LocalDateTimeToLocalTimeMapper",
             "LocalDateTimeToLocalDateMapper",
+            "LongToBigIntegerMapper",
             "IntToLongMapper",
+            "IntToBigIntegerMapper",
             "ShortToIntMapper",
             "ShortToLongMapper",
+            "ShortToBigIntegerMapper",
             "ByteToShortMapper",
             "ByteToIntMapper",
             "ByteToLongMapper",
+            "ByteToBigIntegerMapper",
         )
             .map { name -> context.referenceClass(ClassId(FqName("tech.mappie.api.builtin"), Name.identifier(name)))!!.owner }
             .map { MappieDefinition(it) }

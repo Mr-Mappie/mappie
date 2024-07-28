@@ -8,6 +8,7 @@ import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
+import java.math.BigInteger
 
 class ByteMappersTest {
 
@@ -22,8 +23,10 @@ class ByteMappersTest {
 
     data class LongOutput(val value: Long)
 
+    data class BigIntegerOutput(val value: BigInteger)
+
     @Test
-    fun `map Short to Short implicit should succeed`() {
+    fun `map Byte to Short implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
@@ -55,7 +58,7 @@ class ByteMappersTest {
     }
 
     @Test
-    fun `map Short to Short explicit should succeed`() {
+    fun `map Byte to Short explicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
@@ -92,7 +95,7 @@ class ByteMappersTest {
     }
 
     @Test
-    fun `map Short to Int implicit should succeed`() {
+    fun `map Byte to Int implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
@@ -124,7 +127,7 @@ class ByteMappersTest {
     }
 
     @Test
-    fun `map Short to Int explicit should succeed`() {
+    fun `map Byte to Int explicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
@@ -161,7 +164,7 @@ class ByteMappersTest {
     }
 
     @Test
-    fun `map Short to Long implicit should succeed`() {
+    fun `map Byte to Long implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
@@ -193,7 +196,7 @@ class ByteMappersTest {
     }
 
     @Test
-    fun `map Short to Long explicit should succeed`() {
+    fun `map Byte to Long explicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
@@ -226,6 +229,75 @@ class ByteMappersTest {
 
             assertThat(mapper.map(ByteInput(input)))
                 .isEqualTo(LongOutput(input.toLong()))
+        }
+    }
+
+    @Test
+    fun `map Byte to BigInteger implicit should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.builtin.ByteMappersTest.*
+
+                        class Mapper : ObjectMappie<ByteInput, BigIntegerOutput>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val input: Byte = 2
+
+            val mapper = classLoader
+                .loadObjectMappieClass<ByteInput, BigIntegerOutput>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(ByteInput(input)))
+                .isEqualTo(BigIntegerOutput(BigInteger.valueOf(input.toLong())))
+        }
+    }
+
+    @Test
+    fun `map Byte to BigInteger explicit should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.api.builtin.*
+                        import tech.mappie.testing.builtin.ByteMappersTest.*
+
+                        class Mapper : ObjectMappie<ByteInput, BigIntegerOutput>() {
+                            override fun map(from: ByteInput) = mapping {
+                                to::value fromProperty from::value via ByteToBigIntegerMapper()
+                            }
+                        }
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val input: Byte = 5
+
+            val mapper = classLoader
+                .loadObjectMappieClass<ByteInput, BigIntegerOutput>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(ByteInput(input)))
+                .isEqualTo(BigIntegerOutput(BigInteger.valueOf(input.toLong())))
         }
     }
 }
