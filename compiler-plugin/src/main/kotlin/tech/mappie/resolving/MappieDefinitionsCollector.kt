@@ -13,6 +13,7 @@ import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.api.Mappie
 import tech.mappie.util.*
 
+// TODO: we should collect al publicly visible, and add those during resolving that are visible from the current scope.
 class MappieDefinitionsCollector {
     fun collect(module: IrModuleFragment) =
         MappieDefinitions(
