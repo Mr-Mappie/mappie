@@ -8,6 +8,7 @@ import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
+import java.math.BigDecimal
 import java.math.BigInteger
 
 class ShortMappersTest {
@@ -22,6 +23,8 @@ class ShortMappersTest {
     data class LongOutput(val value: Long)
 
     data class BigIntegerOutput(val value: BigInteger)
+
+    data class BigDecimalOutput(val value: BigDecimal)
 
     @Test
     fun `map Short to Int implicit should succeed`() {
@@ -227,6 +230,75 @@ class ShortMappersTest {
 
             assertThat(mapper.map(ShortInput(input)))
                 .isEqualTo(BigIntegerOutput(BigInteger.valueOf(input.toLong())))
+        }
+    }
+
+    @Test
+    fun `map Short to BigDecimal implicit should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.builtin.ShortMappersTest.*
+
+                        class Mapper : ObjectMappie<ShortInput, BigDecimalOutput>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val input: Short = 2
+
+            val mapper = classLoader
+                .loadObjectMappieClass<ShortInput, BigDecimalOutput>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(ShortInput(input)))
+                .isEqualTo(BigDecimalOutput(BigDecimal.valueOf(input.toLong())))
+        }
+    }
+
+    @Test
+    fun `map Short to BigDecimal explicit should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.api.builtin.*
+                        import tech.mappie.testing.builtin.ShortMappersTest.*
+
+                        class Mapper : ObjectMappie<ShortInput, BigDecimalOutput>() {
+                            override fun map(from: ShortInput) = mapping {
+                                to::value fromProperty from::value via ShortToBigDecimalMapper()
+                            }
+                        }
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val input: Short = 5
+
+            val mapper = classLoader
+                .loadObjectMappieClass<ShortInput, BigDecimalOutput>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(ShortInput(input)))
+                .isEqualTo(BigDecimalOutput(BigDecimal.valueOf(input.toLong())))
         }
     }
 }

@@ -16,23 +16,25 @@ on the JVM platform.
 ## Numeric Mappers
 The following numeric mappers are built-int.
 
-|              | Byte | Short | Int | Long | *BigInteger* |
-|--------------|------|-------|-----|------|--------------|
-| Byte         |      | X     | X   | X    | X            |
-| Short        |      |       | X   | X    | X            |
-| Int          |      |       |     | X    | X            |
-| Long         |      |       |     |      | X            |
+|        | Byte | Short | Int | Long | Float | Double | *BigInteger* | *BigDecimal* |
+|--------|------|-------|-----|------|-------|--------|--------------|--------------|
+| Byte   | -    | X     | X   | X    |       |        | X            | X            |
+| Short  |      | -     | X   | X    |       |        | X            | X            |
+| Int    |      |       | -   | X    |       |        | X            | X            |
+| Long   |      |       |     | -    |       |        | X            | X            |
+| Float  |      |       |     |      | -     | X      |              | X            |
+| Double |      |       |     |      |       | -      |              | X            |
 
 ## Char Mappers
 The following char mappers are built-int
 
 |        | Char | String |
 |--------|------|--------|
-| Char   |      | X      | 
+| Char   | -    | X      | 
 
 ## LocalDate Mappers
 The following numeric mappers are built-int
 
-|                 | *LocalDateTime* | *LocalTime* | *LocalDate* |
-|-----------------|-----------------|-------------|-------------|
-| *LocalDateTime* |                 | X           | X           |
+|                 |  *LocalTime* | *LocalDate* |
+|-----------------|--------------|-------------|
+| *LocalDateTime* |  X           | X           |

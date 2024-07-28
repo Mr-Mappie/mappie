@@ -32,17 +32,24 @@ class BuiltinMappieDefinitionsCollector {
         private val MAPPERS = listOf(
             "LocalDateTimeToLocalTimeMapper",
             "LocalDateTimeToLocalDateMapper",
+            "CharToStringMapper",
             "LongToBigIntegerMapper",
+            "LongToBigDecimalMapper",
             "IntToLongMapper",
             "IntToBigIntegerMapper",
+            "IntToBigDecimalMapper",
             "ShortToIntMapper",
             "ShortToLongMapper",
             "ShortToBigIntegerMapper",
+            "ShortToBigDecimalMapper",
             "ByteToShortMapper",
             "ByteToIntMapper",
             "ByteToLongMapper",
             "ByteToBigIntegerMapper",
-            "CharToStringMapper",
+            "ByteToBigDecimalMapper",
+            "FloatToDoubleMapper",
+            "FloatToBigDecimalMapper",
+            "DoubleToBigDecimalMapper",
         )
     }
 }

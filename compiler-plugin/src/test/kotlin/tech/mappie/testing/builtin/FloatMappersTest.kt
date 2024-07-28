@@ -11,28 +11,28 @@ import java.io.File
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class LongMappersTest {
+class FloatMappersTest {
 
     @TempDir
     lateinit var directory: File
 
-    data class LongInput(val value: Long)
+    data class FloatInput(val value: Float)
 
-    data class BigIntegerOutput(val value: BigInteger)
+    data class DoubleOutput(val value: Double)
 
     data class BigDecimalOutput(val value: BigDecimal)
 
     @Test
-    fun `map Long to BigInteger implicit should succeed`() {
+    fun `map Float to Double implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.builtin.LongMappersTest.*
+                        import tech.mappie.testing.builtin.FloatMappersTest.*
 
-                        class Mapper : ObjectMappie<LongInput, BigIntegerOutput>()
+                        class Mapper : ObjectMappie<FloatInput, DoubleOutput>()
                         """
                     )
                 )
@@ -41,21 +41,21 @@ class LongMappersTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
-            val input: Long = 2
+            val input = 2.0f
 
             val mapper = classLoader
-                .loadObjectMappieClass<LongInput, BigIntegerOutput>("Mapper")
+                .loadObjectMappieClass<FloatInput, DoubleOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(LongInput(input)))
-                .isEqualTo(BigIntegerOutput(input.toBigInteger()))
+            assertThat(mapper.map(FloatInput(input)))
+                .isEqualTo(DoubleOutput(input.toDouble()))
         }
     }
 
     @Test
-    fun `map Long to BigInteger explicit should succeed`() {
+    fun `map Float to Double explicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
@@ -63,11 +63,11 @@ class LongMappersTest {
                         """
                         import tech.mappie.api.ObjectMappie
                         import tech.mappie.api.builtin.*
-                        import tech.mappie.testing.builtin.LongMappersTest.*
+                        import tech.mappie.testing.builtin.FloatMappersTest.*
 
-                        class Mapper : ObjectMappie<LongInput, BigIntegerOutput>() {
-                            override fun map(from: LongInput) = mapping {
-                                to::value fromProperty from::value via LongToBigIntegerMapper()
+                        class Mapper : ObjectMappie<FloatInput, DoubleOutput>() {
+                            override fun map(from: FloatInput) = mapping {
+                                to::value fromProperty from::value via FloatToDoubleMapper()
                             }
                         }
                         """
@@ -78,30 +78,30 @@ class LongMappersTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
-            val input: Long = 5
+            val input = 5.0f
 
             val mapper = classLoader
-                .loadObjectMappieClass<LongInput, BigIntegerOutput>("Mapper")
+                .loadObjectMappieClass<FloatInput, DoubleOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(LongInput(input)))
-                .isEqualTo(BigIntegerOutput(input.toBigInteger()))
+            assertThat(mapper.map(FloatInput(input)))
+                .isEqualTo(DoubleOutput(input.toDouble()))
         }
     }
 
     @Test
-    fun `map Long to BigDecimal implicit should succeed`() {
+    fun `map Float to BigDecimal implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.builtin.LongMappersTest.*
+                        import tech.mappie.testing.builtin.FloatMappersTest.*
 
-                        class Mapper : ObjectMappie<LongInput, BigDecimalOutput>()
+                        class Mapper : ObjectMappie<FloatInput, BigDecimalOutput>()
                         """
                     )
                 )
@@ -110,21 +110,21 @@ class LongMappersTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
-            val input: Long = 2
+            val input = 2.0f
 
             val mapper = classLoader
-                .loadObjectMappieClass<LongInput, BigDecimalOutput>("Mapper")
+                .loadObjectMappieClass<FloatInput, BigDecimalOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(LongInput(input)))
+            assertThat(mapper.map(FloatInput(input)))
                 .isEqualTo(BigDecimalOutput(input.toBigDecimal()))
         }
     }
 
     @Test
-    fun `map Long to BigDecimal explicit should succeed`() {
+    fun `map Float to BigDecimal explicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
@@ -132,11 +132,11 @@ class LongMappersTest {
                         """
                         import tech.mappie.api.ObjectMappie
                         import tech.mappie.api.builtin.*
-                        import tech.mappie.testing.builtin.LongMappersTest.*
+                        import tech.mappie.testing.builtin.FloatMappersTest.*
 
-                        class Mapper : ObjectMappie<LongInput, BigDecimalOutput>() {
-                            override fun map(from: LongInput) = mapping {
-                                to::value fromProperty from::value via LongToBigDecimalMapper()
+                        class Mapper : ObjectMappie<FloatInput, BigDecimalOutput>() {
+                            override fun map(from: FloatInput) = mapping {
+                                to::value fromProperty from::value via FloatToBigDecimalMapper()
                             }
                         }
                         """
@@ -147,15 +147,15 @@ class LongMappersTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
-            val input: Long = 5
+            val input = 5.0f
 
             val mapper = classLoader
-                .loadObjectMappieClass<LongInput, BigDecimalOutput>("Mapper")
+                .loadObjectMappieClass<FloatInput, BigDecimalOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(LongInput(input)))
+            assertThat(mapper.map(FloatInput(input)))
                 .isEqualTo(BigDecimalOutput(input.toBigDecimal()))
         }
     }
