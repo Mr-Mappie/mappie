@@ -23,7 +23,7 @@ class MappieIrRegistrar(
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         context = MappiePluginContext(messageCollector, configuration, pluginContext)
 
-        val symbols = MappieDefinitions(moduleFragment.accept(MappieDefinitionsCollector(), Unit) + getBuiltInMappers())
+        val symbols = MappieDefinitionsCollector().collect(moduleFragment)
         val mappings = moduleFragment.accept(MappingResolver(), symbols)
 
         val validated = mappings.mapValues {
@@ -54,25 +54,6 @@ class MappieIrRegistrar(
             }
         }
     }
-
-    private fun getBuiltInMappers(): MappieDefinitions =
-        listOf(
-            "LocalDateTimeToLocalTimeMapper",
-            "LocalDateTimeToLocalDateMapper",
-            "LongToBigIntegerMapper",
-            "IntToLongMapper",
-            "IntToBigIntegerMapper",
-            "ShortToIntMapper",
-            "ShortToLongMapper",
-            "ShortToBigIntegerMapper",
-            "ByteToShortMapper",
-            "ByteToIntMapper",
-            "ByteToLongMapper",
-            "ByteToBigIntegerMapper",
-        )
-            .map { name -> context.referenceClass(ClassId(FqName("tech.mappie.api.builtin"), Name.identifier(name)))!!.owner }
-            .map { MappieDefinition(it) }
-            .let { MappieDefinitions(it) }
 
     companion object {
         lateinit var context: MappiePluginContext

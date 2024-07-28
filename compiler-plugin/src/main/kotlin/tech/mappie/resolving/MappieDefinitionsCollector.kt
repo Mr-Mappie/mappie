@@ -5,30 +5,66 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import tech.mappie.BaseVisitor
+import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.api.Mappie
 import tech.mappie.util.*
 
-class MappieDefinitionsCollector : BaseVisitor<MappieDefinitions, Unit>(null) {
+class MappieDefinitionsCollector {
+    fun collect(module: IrModuleFragment) =
+        MappieDefinitions(
+            module.accept(ProjectMappieDefinitionsCollector(), Unit).toList() +
+            BuiltinMappieDefinitionsCollector().collect()
+        )
+}
+
+class BuiltinMappieDefinitionsCollector {
+    fun collect() = MAPPERS
+        .map { name -> context.referenceClass(ClassId(FqName(PACKAGE), Name.identifier(name)))!!.owner }
+        .map { MappieDefinition(it) }
+
+    companion object {
+        private const val PACKAGE = "tech.mappie.api.builtin"
+        private val MAPPERS = listOf(
+            "LocalDateTimeToLocalTimeMapper",
+            "LocalDateTimeToLocalDateMapper",
+            "LongToBigIntegerMapper",
+            "IntToLongMapper",
+            "IntToBigIntegerMapper",
+            "ShortToIntMapper",
+            "ShortToLongMapper",
+            "ShortToBigIntegerMapper",
+            "ByteToShortMapper",
+            "ByteToIntMapper",
+            "ByteToLongMapper",
+            "ByteToBigIntegerMapper",
+        )
+    }
+}
+
+class ProjectMappieDefinitionsCollector : BaseVisitor<List<MappieDefinition>, Unit>(null) {
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: Unit) =
-        MappieDefinitions(declaration.files.flatMap { it.accept(data).toList() })
+        declaration.files.flatMap { it.accept(data) }
 
-    override fun visitFile(declaration: IrFile, data: Unit): MappieDefinitions {
+    override fun visitFile(declaration: IrFile, data: Unit): List<MappieDefinition> {
         file = declaration.fileEntry
-        return MappieDefinitions(declaration.declarations.flatMap { it.accept(data).toList() })
+        return declaration.declarations.flatMap { it.accept(data) }
     }
 
     override fun visitClass(declaration: IrClass, data: Unit) =
-        MappieDefinitions(buildList {
+        buildList {
             if (declaration.isStrictSubclassOf(Mappie::class)) {
                 (declaration.superTypes.single() as? IrSimpleType)?.let {
                     add(MappieDefinition(declaration))
                 }
             }
             addAll(declaration.declarations.filterIsInstance<IrClass>().flatMap { it.accept(data) })
-        })
+        }
 
     override fun visitElement(element: IrElement, data: Unit) =
-        MappieDefinitions(emptyList())
+        emptyList<MappieDefinition>()
 }
