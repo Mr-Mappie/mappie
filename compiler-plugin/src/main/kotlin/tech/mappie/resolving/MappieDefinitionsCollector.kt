@@ -42,6 +42,7 @@ class BuiltinMappieDefinitionsCollector {
             "ByteToIntMapper",
             "ByteToLongMapper",
             "ByteToBigIntegerMapper",
+            "CharToStringMapper",
         )
     }
 }
