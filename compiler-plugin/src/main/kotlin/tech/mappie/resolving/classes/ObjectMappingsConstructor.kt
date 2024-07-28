@@ -14,7 +14,7 @@ import tech.mappie.resolving.classes.targets.MappieValueParameterTarget
 import tech.mappie.util.*
 
 class ObjectMappingsConstructor(
-    private val symbols: List<MappieDefinition>,
+    private val symbols: MappieDefinitions,
     private val constructor: IrConstructor,
     private val sources: List<MappieSource>,
     private val targets: List<MappieTarget>,
@@ -31,7 +31,8 @@ class ObjectMappingsConstructor(
                 val source = concreteSource.singleOrNull()
                 if (source != null && source is PropertySource && source.transformation == null) {
                     if (!target.type.isAssignableFrom(source.type)) {
-                        val via = symbols.firstOrNull { it.fits(source.type, target.type) }
+                        val via = symbols
+                            .select(source.type, target.type)
                             ?.let { via -> when {
                                 target.type.isList() -> via.copy(toType = context.irBuiltIns.listClass.typeWith(listOf(via.toType)))
                                 target.type.isSet() -> via.copy(toType = context.irBuiltIns.setClass.typeWith(listOf(via.toType)))
@@ -51,7 +52,7 @@ class ObjectMappingsConstructor(
                             ResolvedSource(getter, null, null, origin)
                         } else {
                             val transformation = symbols
-                                .singleOrNull { it.fits(getter.type, target.type) }
+                                .select(getter.type, target.type)
                                 ?.let { MappieViaResolved(it) }
                                 ?: tryGenerateMapper(getter.type, target.type)
                                     ?.also { generatedMappers.add(it) }

@@ -1,4 +1,4 @@
-package tech.mappie.testing.primitives
+package tech.mappie.testing.builtin
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -9,28 +9,28 @@ import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-@Suppress("unused")
-class ByteTest {
-    data class Input(val value: Byte)
-    data class ByteOutput(val value: Byte)
-    data class ShortOutput(val value: Short)
-    data class IntOutput(val value: Int)
-    data class LongOutput(val value: Long)
+class ShortMappersTest {
 
     @TempDir
     lateinit var directory: File
 
+    data class ShortInput(val value: Short)
+
+    data class IntOutput(val value: Int)
+
+    data class LongOutput(val value: Long)
+
     @Test
-    fun `map byte value to byte value should succeed`() {
+    fun `map Short to Int implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.primitives.ByteTest.*
-    
-                        class Mapper : ObjectMappie<Input, ByteOutput>()
+                        import tech.mappie.testing.builtin.ShortMappersTest.*
+
+                        class Mapper : ObjectMappie<ShortInput, IntOutput>()
                         """
                     )
                 )
@@ -39,27 +39,35 @@ class ByteTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
+            val input: Short = 2
+
             val mapper = classLoader
-                .loadObjectMappieClass<Input, IntOutput>("Mapper")
+                .loadObjectMappieClass<ShortInput, IntOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(1))).isEqualTo(ByteOutput(1))
+            assertThat(mapper.map(ShortInput(input)))
+                .isEqualTo(IntOutput(input.toInt()))
         }
     }
 
     @Test
-    fun `map byte value to short value should succeed`() {
+    fun `map Short to Int explicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.primitives.ByteTest.*
-    
-                        class Mapper : ObjectMappie<Input, ShortOutput>()
+                        import tech.mappie.api.builtin.*
+                        import tech.mappie.testing.builtin.ShortMappersTest.*
+
+                        class Mapper : ObjectMappie<ShortInput, IntOutput>() {
+                            override fun map(from: ShortInput) = mapping {
+                                to::value fromProperty from::value via ShortToIntMapper()
+                            }
+                        }
                         """
                     )
                 )
@@ -68,27 +76,30 @@ class ByteTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
+            val input: Short = 5
+
             val mapper = classLoader
-                .loadObjectMappieClass<Input, IntOutput>("Mapper")
+                .loadObjectMappieClass<ShortInput, IntOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(1))).isEqualTo(ShortOutput(1))
+            assertThat(mapper.map(ShortInput(input)))
+                .isEqualTo(IntOutput(input.toInt()))
         }
     }
 
     @Test
-    fun `map short value to int value should succeed`() {
+    fun `map Short to Long implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.primitives.ByteTest.*
-    
-                        class Mapper : ObjectMappie<Input, IntOutput>()
+                        import tech.mappie.testing.builtin.ShortMappersTest.*
+
+                        class Mapper : ObjectMappie<ShortInput, LongOutput>()
                         """
                     )
                 )
@@ -97,27 +108,35 @@ class ByteTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
+            val input: Short = 2
+
             val mapper = classLoader
-                .loadObjectMappieClass<Input, IntOutput>("Mapper")
+                .loadObjectMappieClass<ShortInput, LongOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(1))).isEqualTo(IntOutput(1))
+            assertThat(mapper.map(ShortInput(input)))
+                .isEqualTo(LongOutput(input.toLong()))
         }
     }
 
     @Test
-    fun `map short value to long value should succeed`() {
+    fun `map Short to Long explicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.primitives.ByteTest.*
-    
-                        class Mapper : ObjectMappie<Input, LongOutput>()
+                        import tech.mappie.api.builtin.*
+                        import tech.mappie.testing.builtin.ShortMappersTest.*
+
+                        class Mapper : ObjectMappie<ShortInput, LongOutput>() {
+                            override fun map(from: ShortInput) = mapping {
+                                to::value fromProperty from::value via ShortToLongMapper()
+                            }
+                        }
                         """
                     )
                 )
@@ -126,13 +145,16 @@ class ByteTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
+            val input: Short = 5
+
             val mapper = classLoader
-                .loadObjectMappieClass<Input, LongOutput>("Mapper")
+                .loadObjectMappieClass<ShortInput, LongOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(1))).isEqualTo(LongOutput(1L))
+            assertThat(mapper.map(ShortInput(input)))
+                .isEqualTo(LongOutput(input.toLong()))
         }
     }
 }
