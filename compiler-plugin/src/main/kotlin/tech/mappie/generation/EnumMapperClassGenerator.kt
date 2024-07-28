@@ -7,13 +7,12 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.types.typeWithParameters
 import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.resolving.IDENTIFIER_MAP
-import tech.mappie.resolving.classes.MappieViaGeneratedEnumClass
+import tech.mappie.resolving.classes.GeneratedMappieEnumClass
 import tech.mappie.resolving.enums.EnumMappingsConstructor
 import tech.mappie.util.referenceEnumMappieClass
 
@@ -21,13 +20,13 @@ class EnumMapperClassGenerator(val parent: IrClass) : IrElementTransformerVoidWi
 
     private val mappie = referenceEnumMappieClass()
 
-    fun generate(generated: MappieViaGeneratedEnumClass): IrClass =
+    fun generate(generated: GeneratedMappieEnumClass): IrClass =
         context.irFactory.buildClass {
             name = generated.name
             kind = ClassKind.OBJECT
         }.apply {
             parent = this@EnumMapperClassGenerator.parent
-            thisReceiver = buildReceiverParameter(this, IrDeclarationOrigin.DEFINED, symbol.typeWithParameters(emptyList()))
+            thisReceiver = buildReceiverParameter(this, origin, symbol.typeWithParameters(emptyList()))
             superTypes = listOf(mappie.owner.symbol.typeWith(listOf(generated.source, generated.target)))
 
             addSimpleDelegatingConstructor(

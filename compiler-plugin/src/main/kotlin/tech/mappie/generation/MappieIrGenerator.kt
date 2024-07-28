@@ -6,8 +6,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
-import tech.mappie.resolving.classes.MappieViaClass
-import tech.mappie.resolving.classes.MappieViaGeneratedEnumClass
+import tech.mappie.resolving.classes.GeneratedMappieEnumClass
 
 class MappieIrGenerator(
     private val generation: MappieGeneration,
@@ -17,8 +16,7 @@ class MappieIrGenerator(
     override fun visitClassNew(declaration: IrClass): IrStatement {
         generation.generated.forEach { generated ->
             when (generated) {
-                is MappieViaClass -> Unit
-                is MappieViaGeneratedEnumClass -> {
+                is GeneratedMappieEnumClass -> {
                     val clazz = EnumMapperClassGenerator(declaration).generate(generated)
                     declaration.declarations.add(clazz)
                     this.generated.add(clazz)

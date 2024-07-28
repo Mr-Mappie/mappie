@@ -1,12 +1,16 @@
 package tech.mappie.validation.problems
 
 import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import tech.mappie.resolving.ConstructorCallMapping
 import tech.mappie.resolving.classes.*
 import tech.mappie.resolving.classes.targets.MappieTarget
 import tech.mappie.util.isAssignableFrom
+import tech.mappie.util.isList
+import tech.mappie.util.isSet
 import tech.mappie.util.location
 import tech.mappie.validation.Problem
 
@@ -55,7 +59,15 @@ class UnsafeTypeAssignmentProblems(
             val mappings = mapping.mappings
                 .filter { (_, sources) -> sources.size == 1 }
                 .filter { (target, sources) ->
-                    !target.type.isAssignableFrom(sources.single().type, true)
+                    val source = sources.single()
+                    when {
+                        (source.type.isList() xor target.type.isList()) || (source.type.isSet() xor target.type.isSet()) -> {
+                            !(target.type as IrSimpleType).arguments.first().typeOrFail.isAssignableFrom(source.type, true)
+                        }
+                        else -> {
+                            !target.type.isAssignableFrom(source.type, true)
+                        }
+                    }
                 }
                 .map { (target, sources) -> target to sources.single() }
 

@@ -25,7 +25,7 @@ object PersonMapper : ObjectMappie<Person, PersonDto>()
 ```
 which will generate a mapper which calls the primary constructor of `PersonDto` assigned to the fields of `Person`.
 
-## Generated mappers
+## Mapper Generation
 Mappie can also generates mappers automatically. When a source type and a target type do not have an existing mapper,
 and one can be written without any explicit mappings, it will be generated automatically. 
 

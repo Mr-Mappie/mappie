@@ -6,6 +6,7 @@ changelog:
       title: "v0.6.0"
       items:
         - "[#69](https://github.com/Mr-Mappie/mappie/issues/69) enum mappers can now be generated automatically if source and target contain the same entries."
+        - "[#68](https://github.com/Mr-Mappie/mappie/issues/68) other mappers are automatically resolved in mappings and applied using the via operator."
     - date: "2024-07-17"
       title: "v0.5.0"
       items:

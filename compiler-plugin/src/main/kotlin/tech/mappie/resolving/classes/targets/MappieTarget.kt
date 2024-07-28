@@ -22,7 +22,6 @@ data class MappieSetterTarget(val value: IrProperty) : MappieTarget {
 }
 
 data class MappieFunctionTarget(val value: IrSimpleFunctionSymbol) : MappieTarget {
-
     override val name = Name.identifier(value.owner.name.asString().removePrefix("set").replaceFirstChar { it.lowercaseChar() })
     override val type = value.owner.valueParameters.first().type
 }

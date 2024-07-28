@@ -1,4 +1,4 @@
-package tech.mappie.testing.objects
+package tech.mappie.testing.builtin
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -8,29 +8,29 @@ import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
+import java.time.LocalDateTime
+import java.time.LocalTime
 
-class NestedNonNullToNullPropertyTest {
-    data class Input(val text: InnerInput, val int: Int)
-    data class InnerInput(val value: String)
-    data class Output(val text: InnerOutput?, val int: Int)
-    data class InnerOutput(val value: String)
+class LocalDateTimeMappersTest {
 
     @TempDir
     lateinit var directory: File
 
+    data class LocalDateTimeInput(val value: LocalDateTime)
+
+    data class LocalTimeOutput(val value: LocalTime)
+
     @Test
-    fun `map data classes with nested non-null to null implicit should succeed`() {
+    fun `map LocalDateTime to LocalTime implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.NestedNonNullToNullPropertyTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>()
+                        import tech.mappie.testing.builtin.LocalDateTimeMappersTest.*
 
-                        object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                        class Mapper : ObjectMappie<LocalDateTimeInput, LocalTimeOutput>()
                         """
                     )
                 )
@@ -39,34 +39,35 @@ class NestedNonNullToNullPropertyTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
+            val input = LocalDateTime.now()
+
             val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
+                .loadObjectMappieClass<LocalDateTimeInput, LocalTimeOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(InnerInput("value"), 30)))
-                .isEqualTo(Output(InnerOutput("value"), 30))
+            assertThat(mapper.map(LocalDateTimeInput(input)))
+                .isEqualTo(LocalTimeOutput(input.toLocalTime()))
         }
     }
 
     @Test
-    fun `map data classes with nested non-null to null explicit without via should succeed`() {
+    fun `map LocalDateTime to LocalTime explicit without via should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.NestedNonNullToNullPropertyTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>() {
-                            override fun map(from: Input) = mapping {
-                                to::text fromProperty from::text
+                        import tech.mappie.api.builtin.*
+                        import tech.mappie.testing.builtin.LocalDateTimeMappersTest.*
+
+                        class Mapper : ObjectMappie<LocalDateTimeInput, LocalTimeOutput>() {
+                            override fun map(from: LocalDateTimeInput) = mapping {
+                                to::value fromProperty from::value
                             }
                         }
-
-                        object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
                         """
                     )
                 )
@@ -75,34 +76,35 @@ class NestedNonNullToNullPropertyTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
+            val input = LocalDateTime.now()
+
             val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
+                .loadObjectMappieClass<LocalDateTimeInput, LocalTimeOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(InnerInput("value"), 30)))
-                .isEqualTo(Output(InnerOutput("value"), 30))
+            assertThat(mapper.map(LocalDateTimeInput(input)))
+                .isEqualTo(LocalTimeOutput(input.toLocalTime()))
         }
     }
 
     @Test
-    fun `map data classes with nested non-null to null explicit should succeed`() {
+    fun `map LocalDateTime to LocalTime explicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.NestedNonNullToNullPropertyTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>() {
-                            override fun map(from: Input) = mapping {
-                                to::text fromProperty from::text via InnerMapper
+                        import tech.mappie.api.builtin.*
+                        import tech.mappie.testing.builtin.LocalDateTimeMappersTest.*
+
+                        class Mapper : ObjectMappie<LocalDateTimeInput, LocalTimeOutput>() {
+                            override fun map(from: LocalDateTimeInput) = mapping {
+                                to::value fromProperty from::value via LocalDateTimeToLocalTimeMapper()
                             }
                         }
-
-                        object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
                         """
                     )
                 )
@@ -111,14 +113,16 @@ class NestedNonNullToNullPropertyTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
+            val input = LocalDateTime.now()
+
             val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
+                .loadObjectMappieClass<LocalDateTimeInput, LocalTimeOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(InnerInput("value"), 30)))
-                .isEqualTo(Output(InnerOutput("value"), 30))
+            assertThat(mapper.map(LocalDateTimeInput(input)))
+                .isEqualTo(LocalTimeOutput(input.toLocalTime()))
         }
     }
 }

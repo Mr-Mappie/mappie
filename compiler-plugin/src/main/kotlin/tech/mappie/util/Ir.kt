@@ -81,7 +81,7 @@ fun IrEnumEntry.referenceFunctionValueOf(): IrSimpleFunction =
         .single { it.name == Name.identifier("valueOf") }
 
 fun referenceEnumMappieClass(): IrClassSymbol =
-    context.referenceClass(ClassId.fromString(EnumMappie::class.qualifiedName!!.replace('.', '/')))!!
+    context.referenceClass(ClassId(FqName("tech.mappie.api"), Name.identifier(EnumMappie::class.simpleName!!)))!!
 
 fun IrSimpleFunctionSymbol.dumpKotlinLike(): String =
     owner.run {

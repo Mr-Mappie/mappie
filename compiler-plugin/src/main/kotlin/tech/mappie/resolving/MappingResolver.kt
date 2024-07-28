@@ -12,7 +12,7 @@ import tech.mappie.BaseVisitor
 import tech.mappie.api.*
 import tech.mappie.generation.ShouldTransformCollector
 import tech.mappie.mappieTerminate
-import tech.mappie.resolving.classes.MappieVia
+import tech.mappie.resolving.classes.GeneratedMappieClass
 import tech.mappie.resolving.classes.targets.MappieTarget
 import tech.mappie.resolving.enums.EnumMappingTarget
 import tech.mappie.util.isStrictSubclassOf
@@ -26,7 +26,7 @@ data class ConstructorCallMapping(
     val symbol: IrConstructorSymbol,
     val mappings: Map<MappieTarget, List<ObjectMappingSource>>,
     val unknowns: Map<Name, List<ObjectMappingSource>>,
-    val generated: Set<MappieVia>,
+    val generated: Set<GeneratedMappieClass>,
 ) : Mapping
 
 data class EnumMapping(

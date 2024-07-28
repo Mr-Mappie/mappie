@@ -19,7 +19,7 @@ class ObjectWithNestedSetTest {
     lateinit var directory: File
 
     @Test
-    fun `map data classes with nested set using object InnerMapper without declaring mapping should succeed`() {
+    fun `map nested set implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(

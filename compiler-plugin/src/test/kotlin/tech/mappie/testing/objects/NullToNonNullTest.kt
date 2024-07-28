@@ -1,4 +1,4 @@
-package tech.mappie.testing.lists
+package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -25,7 +25,7 @@ class NullToNonNullTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.lists.NullToNonNullTest.*
+                        import tech.mappie.testing.objects.NullToNonNullTest.*
     
                         class Mapper : ObjectMappie<Input, Output>()
                         """
@@ -47,7 +47,7 @@ class NullToNonNullTest {
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.lists.NullToNonNullTest.*
+                        import tech.mappie.testing.objects.NullToNonNullTest.*
     
                         class Mapper : ObjectMappie<Input, Output>() {
                             override fun map(from: Input) = mapping {

@@ -43,6 +43,34 @@ class NestedNullToNonNullPropertyTest {
     }
 
     @Test
+    fun `map data classes with nested null to non-null explicit without via should fail`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.objects.NestedNullToNonNullPropertyTest.*
+    
+                        class Mapper : ObjectMappie<Input, Output>() { 
+                            override fun map(from: Input) = mapping {
+                                to::text fromProperty from::text
+                            }
+                        }
+
+                        object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
+            assertThat(messages)
+                .containsError("Target Output::text of type InnerOutput cannot be assigned from from::text of type InnerInput?")
+        }
+    }
+
+    @Test
     fun `map data classes with nested null to non-null explicit should fail`() {
         KotlinCompilation(directory).apply {
             sources = buildList {

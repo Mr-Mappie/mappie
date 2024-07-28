@@ -7,16 +7,10 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isObject
 import tech.mappie.MappieIrRegistrar
 import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.mappieTerminate
 import tech.mappie.resolving.ConstructorCallMapping
-import tech.mappie.resolving.classes.MappieViaClass
-import tech.mappie.resolving.classes.MappieViaGeneratedEnumClass
 import tech.mappie.resolving.classes.*
 import tech.mappie.resolving.classes.targets.MappieFunctionTarget
 import tech.mappie.resolving.classes.targets.MappieSetterTarget
@@ -71,100 +65,34 @@ class ConstructorCallMappingConstructor(
         function: IrFunction
     ): IrExpression {
         return when (source) {
-            is ResolvedSource -> generateResolvedValueArgument(source, target, function)
-            is PropertySource -> generatePropertyValueArgument(file, source, function.valueParameters)
+            is ResolvedSource -> generateResolvedValueArgument(source, target)
+            is PropertySource -> generatePropertyValueArgument(file, source, target, function.valueParameters)
             is ExpressionSource -> generateExpressionValueArgument(source, function.valueParameters)
             is ValueSource -> source.value
             is DefaultArgumentSource -> mappieTerminate("generateValueArgument called on DefaultArgumentSource. This is a bug.", location(function))
         }
     }
 
-    private fun IrBuilderWithScope.generateResolvedValueArgument(
-        source: ResolvedSource,
-        target: MappieTarget,
-        function: IrFunction
-    ): IrFunctionAccessExpression {
+    private fun IrBuilderWithScope.generateResolvedValueArgument(source: ResolvedSource, target: MappieTarget): IrExpression {
         val getter = irCall(source.property.function).apply {
             dispatchReceiver = irGet(source.property.holder)
         }
-        return source.via?.let { via ->
-            when (via) {
-                is MappieViaClass -> {
-                    generateVia(source, target, via.clazz, function, getter)
-                }
-                is MappieViaGeneratedEnumClass -> {
-                    val clazz = generated.find { it.name == via.name }
-                    generateVia(source, target, clazz!!, function, getter)
-                }
-            }
-        } ?: getter
+        return source.via?.let { generateTransformation(generated, it, getter, source, target, file) } ?: getter
     }
 
-    private fun IrBuilderWithScope.generateVia(
-        source: ResolvedSource,
+    private fun IrBuilderWithScope.generatePropertyValueArgument(
+        file: IrFileEntry,
+        source: PropertySource,
         target: MappieTarget,
-        via: IrClass,
-        function: IrFunction,
-        getter: IrFunctionAccessExpression,
-    ): IrFunctionAccessExpression {
-        val viaFunction = when {
-            source.type.isList() && target.type.isList() ->
-                via.functions.first { it.isMappieMapListFunction() }
-
-            source.type.isSet() && target.type.isSet() ->
-                via.functions.first { it.isMappieMapSetFunction() }
-
-            source.type.isNullable() && target.type.isNullable() ->
-                via.functions.first { it.isMappieMapNullableFunction() }
-
-            else ->
-                via.functions.first { it.isMappieMapFunction() }
-        }
-
-        return irCall(viaFunction).apply {
-            dispatchReceiver = when {
-                via.isObject -> irGetObject(via.symbol)
-                else -> {
-                    val constructor = via.constructors.firstOrNull { it.valueParameters.isEmpty() }
-                    if (constructor != null) {
-                        irCallConstructor(constructor.symbol, emptyList())
-                    } else {
-                        mappieTerminate(
-                            "Resolved mapping via ${via.name.asString()}, but it does not have a constructor without arguments",
-                            location(function)
-                        )
-                    }
-                }
-            }
-            putValueArgument(0, getter)
-        }
-    }
-
-    private fun IrBuilderWithScope.generatePropertyValueArgument(file: IrFileEntry, source: PropertySource, parameters: List<IrValueParameter>): IrExpression {
+        parameters: List<IrValueParameter>
+    ): IrExpression {
         val getter = irCall(source.getter).apply {
             dispatchReceiver = source.property.dispatchReceiver
                 ?: irGet(parameters.singleOrNull { it.type == source.property.targetType(file) }
                     ?: mappieTerminate("Could not determine value parameters for property reference. Please use a property reference of an object instead of the class", location(file, source.property)))
         }
-        return source.transformation?.let { transformation ->
-            when (transformation) {
-                is MappieTransformTransformation -> {
-                    irCall(MappieIrRegistrar.context.referenceFunctionLet()).also { letCall ->
-                        letCall.extensionReceiver = getter
-                        letCall.putValueArgument(0, transformation.function)
-                    }
-                }
-                is MappieViaTransformation -> {
-                    irIfNull(source.type, getter,
-                        irNull(),
-                        irCall(transformation.function.symbol).apply {
-                            dispatchReceiver = transformation.dispatchReceiver
-                            putValueArgument(0, getter)
-                        },
-                    )
-                }
-            }
-        } ?: getter
+        return source.transformation?.let { generateTransformation(generated, it, getter, source, target, file) }
+            ?: getter
     }
 
     private fun IrBuilderWithScope.generateExpressionValueArgument(source: ExpressionSource, parameters: List<IrValueParameter>): IrFunctionAccessExpression {

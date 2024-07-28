@@ -18,6 +18,44 @@ class ViaSetTest {
     lateinit var directory: File
 
     @Test
+    fun `map set without declaring via succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.sets.ViaSetTest.*
+    
+                        class Mapper : ObjectMappie<Input, Output>() {
+                            override fun map(from: Input) = mapping {
+                                Output::text fromProperty from::text
+                            }
+                        }
+
+                        object InnerMapper : ObjectMappie<InnerInput, String>() {
+                            override fun map(from: InnerInput) = from.value
+                        }
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input(setOf(InnerInput("A"), InnerInput("B")))))
+                .isEqualTo(Output(setOf("A", "B")))
+        }
+    }
+
+    @Test
     fun `map via forSet should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
@@ -54,5 +92,4 @@ class ViaSetTest {
                 .isEqualTo(Output(setOf("A", "B")))
         }
     }
-
 }
