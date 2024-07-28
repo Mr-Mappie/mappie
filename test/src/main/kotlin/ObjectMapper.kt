@@ -17,29 +17,20 @@ data class OutputObject(
 )
 
 object ObjectMapperWithoutVia : ObjectMappie<InputObject, OutputObject>() {
-
     override fun map(from: InputObject) = mapping {
         to::boolean fromProperty from.nested::boolean
-    }
-
-    private object BooleanEnumToBooleanMapper : ObjectMappie<NestedInput.BooleanEnum, Boolean>() {
-        override fun map(from: NestedInput.BooleanEnum) = when (from) {
-            NestedInput.BooleanEnum.TRUE -> !false
-            NestedInput.BooleanEnum.FALSE -> !true
-        }
     }
 }
 
 object ObjectMapper : ObjectMappie<InputObject, OutputObject>() {
-
     override fun map(from: InputObject) = mapping {
         to::boolean fromProperty from.nested::boolean via BooleanEnumToBooleanMapper
     }
+}
 
-    private object BooleanEnumToBooleanMapper : ObjectMappie<NestedInput.BooleanEnum, Boolean>() {
-        override fun map(from: NestedInput.BooleanEnum) = when (from) {
-            NestedInput.BooleanEnum.TRUE -> !false
-            NestedInput.BooleanEnum.FALSE -> !true
-        }
+object BooleanEnumToBooleanMapper : ObjectMappie<NestedInput.BooleanEnum, Boolean>() {
+    override fun map(from: NestedInput.BooleanEnum) = when (from) {
+        NestedInput.BooleanEnum.TRUE -> !false
+        NestedInput.BooleanEnum.FALSE -> !true
     }
 }
