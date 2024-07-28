@@ -52,6 +52,40 @@ class ViaResolvingTest {
     }
 
     @Test
+    fun `map without explicit without via and two inner mappers should fail`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.objects.ViaResolvingTest.*
+    
+                        class Mapper : ObjectMappie<Input, Output>() {
+                            override fun map(from: Input) = mapping {
+                                to::text fromProperty from::text
+                            }
+                        }
+
+                        class InnerMapperA : ObjectMappie<InnerInput, InnerOutput>()
+                        class InnerMapperB : ObjectMappie<InnerInput, InnerOutput>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
+            assertThat(messages).containsError(
+                "Multiple mappers resolved to be used in an implicit via",
+                listOf(
+                    "Explicitly call one of InnerMapperA, InnerMapperB explicitly.",
+                    "Delete all except one of InnerMapperA, InnerMapperB.",
+                )
+            )
+        }
+    }
+
+    @Test
     fun `map without implicit without via and two inner mappers should fail`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
@@ -71,8 +105,13 @@ class ViaResolvingTest {
             }
         }.compile {
             assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
-            assertThat(messages)
-                .containsError("Target Output::text automatically resolved from Input::text but cannot assign source type InnerInput to target type InnerOutput")
+            assertThat(messages).containsError(
+                "Multiple mappers resolved to be used in an implicit via",
+                   listOf(
+                       "Explicitly call one of InnerMapperA, InnerMapperB explicitly.",
+                       "Delete all except one of InnerMapperA, InnerMapperB.",
+                )
+            )
         }
     }
 }

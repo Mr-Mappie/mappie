@@ -29,16 +29,20 @@ class ObjectMappingsConstructor(
             val concreteSource = explicit[target.name]
             if (concreteSource != null) {
                 val source = concreteSource.singleOrNull()
-                if (source != null && source is PropertySource && source.transformation == null) {
+                if (source != null && source is PropertySource && source.transformation.isEmpty()) {
                     if (!target.type.isAssignableFrom(source.type)) {
-                        val via = symbols
+                        val vias = symbols
                             .select(source.type, target.type)
-                            ?.let { via -> when {
-                                target.type.isList() -> via.copy(toType = context.irBuiltIns.listClass.typeWith(listOf(via.toType)))
-                                target.type.isSet() -> via.copy(toType = context.irBuiltIns.setClass.typeWith(listOf(via.toType)))
-                                else -> via
-                            } }
-                        listOf(source.copy(transformation = via?.let{ MappieViaResolved(it) }))
+                            .let { vias ->
+                                vias.map { via ->
+                                    when {
+                                        target.type.isList() -> via.copy(toType = context.irBuiltIns.listClass.typeWith(listOf(via.toType)))
+                                        target.type.isSet() -> via.copy(toType = context.irBuiltIns.setClass.typeWith(listOf(via.toType)))
+                                        else -> via
+                                    }
+                                }
+                            }
+                        listOf(source.copy(transformation = vias.map { MappieViaResolved(it) }))
                     } else {
                         concreteSource
                     }
@@ -49,19 +53,21 @@ class ObjectMappingsConstructor(
                 val mappings = sources.filter { source -> source.name == getterName(target.name) }
                     .map { getter ->
                         if (target.type.isAssignableFrom(getter.type)) {
-                            ResolvedSource(getter, null, null, origin)
+                            ResolvedSource(getter, emptyList(), null, origin)
                         } else {
                             val transformation = symbols
                                 .select(getter.type, target.type)
-                                ?.let { MappieViaResolved(it) }
-                                ?: tryGenerateMapper(getter.type, target.type)
-                                    ?.also { generatedMappers.add(it) }
-                                    ?.let { MappieViaGeneratedClass(it) }
-
+                                .map { MappieViaResolved(it) }
+                                .ifEmpty {
+                                    tryGenerateMapper(getter.type, target.type)
+                                        ?.also { generatedMappers.add(it) }
+                                        ?.let { listOf(MappieViaGeneratedClass(it)) }
+                                        ?: emptyList()
+                                }
                             ResolvedSource(
                                 getter,
                                 transformation,
-                                transformation?.let { target.type },
+                                transformation.let { if (transformation.isEmpty()) null else target.type },
                                 origin,
                             )
                         }

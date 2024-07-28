@@ -72,13 +72,13 @@ private class ObjectBodyStatementCollector(file: IrFileEntry)
             IDENTIFIER_TRANSFORM -> {
                 val mapping = expression.dispatchReceiver!!.accept(data)!!
                 val transformation = MappieTransformOperator(expression.valueArguments.first()!! as IrFunctionExpression)
-                mapping.first to (mapping.second as PropertySource).copy(transformation = transformation)
+                mapping.first to (mapping.second as PropertySource).copy(transformation = listOf(transformation))
             }
             IDENTIFIER_VIA -> {
                 val mapping = expression.dispatchReceiver!!.accept(data)!!
                 val transformation = expression.valueArguments.first()!!.accept(MapperReferenceCollector(file!!), Unit)
                 mapping.first to (mapping.second as PropertySource).copy(
-                    transformation = transformation
+                    transformation = listOf(transformation)
                 )
             }
             else -> {
@@ -142,7 +142,7 @@ private class SourceValueCollector(file: IrFileEntry) : BaseVisitor<ObjectMappin
     override fun visitPropertyReference(expression: IrPropertyReference, data: Unit): ObjectMappingSource {
         return PropertySource(
             property = expression,
-            transformation = null,
+            transformation = emptyList(),
             origin = expression,
         )
     }

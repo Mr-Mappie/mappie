@@ -15,9 +15,9 @@ fun logAll(problems: List<Problem>, location: CompilerMessageSourceLocation? = n
     problems.forEach { log(it, location) }
 
 fun log(problem: Problem, location: CompilerMessageSourceLocation?) =
-    when(problem.severity) {
-        Problem.Severity.ERROR -> logError(problem.description, problem.location ?: location)
-        Problem.Severity.WARNING -> logWarn(problem.description, problem.location ?: location)
+    when (problem.severity) {
+        Problem.Severity.ERROR -> logError(messageOf(problem), problem.location ?: location)
+        Problem.Severity.WARNING -> logWarn(messageOf(problem), problem.location ?: location)
     }
 
 fun logInfo(message: String, location: CompilerMessageSourceLocation? = null) =
@@ -53,3 +53,7 @@ fun location(file: IrFileEntry, element: IrElement) =
 fun location(element: IrDeclaration) =
     location(element.fileEntry, element)
 
+private fun messageOf(problem: Problem) =
+    problem.description + System.lineSeparator() + problem.suggestions
+        .mapIndexed { i, it -> i + 1 to it }
+        .joinToString(separator = "") { "    ${it.first}. ${it.second}" + System.lineSeparator() }

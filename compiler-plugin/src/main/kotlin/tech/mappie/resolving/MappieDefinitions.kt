@@ -8,8 +8,9 @@ import tech.mappie.util.*
 
 class MappieDefinitions(definition: List<MappieDefinition>) : List<MappieDefinition> by definition {
 
-    fun select(source: IrType, target: IrType): MappieDefinition? =
-        singleOrNull { it.fromType == source && it.toType == target } ?: singleOrNull { it.fits(source, target) }
+    fun select(source: IrType, target: IrType): List<MappieDefinition> =
+        singleOrNull { it.fromType == source && it.toType == target }?.let { listOf(it) }
+            ?: filter { it.fits(source, target) }
 }
 
 data class MappieDefinition(
