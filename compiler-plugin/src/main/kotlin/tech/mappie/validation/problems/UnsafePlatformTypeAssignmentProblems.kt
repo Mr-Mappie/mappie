@@ -36,11 +36,12 @@ class UnsafePlatformTypeAssignmentProblems(
                 Problem.warning(description, location)
             }
             is ResolvedSource -> {
+                val location = location(file, source.origin)
                 val description = "Target $targetString automatically resolved from ${source.property.dumpKotlinLike()} but it is unsafe to assign source platform type $sourceTypeString to target type ${target.type.dumpKotlinLike()}"
-                Problem.warning(description, null)
+                Problem.warning(description, location)
             }
             is ValueSource -> {
-                val location = source.origin?.let { location(file, it) }
+                val location = location(file, source.origin)
                 val description = "Target $targetString of type $targetTypeString is unsafe to assigned from value of platform type $sourceTypeString"
                 Problem.warning(description, location)
             }
@@ -55,8 +56,9 @@ class UnsafePlatformTypeAssignmentProblems(
             val mappings = mapping.mappings
                 .filter { (_, sources) -> sources.size == 1 }
                 .filter { (target, sources) ->
-                    target.type.isAssignableFrom(sources.single().type, true) &&
-                            !target.type.isAssignableFrom(sources.single().type, false)
+                    val source = sources.single()
+                    target.type.isAssignableFrom(source.type, true) &&
+                            !target.type.isAssignableFrom(source.type, false)
                 }
                 .map { (target, sources) -> target to sources.single() }
 
