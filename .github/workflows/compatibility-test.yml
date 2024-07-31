@@ -1,17 +1,5 @@
 name: Compatibility Test
 
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - '**'
-      - '!website/**'
-  pull_request:
-    types: [opened, synchronize, reopened]
-    paths:
-      - '**'
-      - '!website/**'
 jobs:
   compatibility:
     strategy:

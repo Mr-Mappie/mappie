@@ -15,6 +15,7 @@ on:
 
 jobs:
   build:
+    needs: compatibility
     name: Build and Analysis
     permissions:
       pull-requests: read
