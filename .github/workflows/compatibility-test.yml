@@ -1,11 +1,17 @@
 name: Compatibility Test
 
 on:
-  workflow_run:
-    workflows: ["Build"]
-    types:
-      - requested
-
+  push:
+    branches:
+      - main
+    paths:
+      - '**'
+      - '!website/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '**'
+      - '!website/**'
 jobs:
   compatibility:
     strategy:
