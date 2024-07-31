@@ -1,5 +1,11 @@
 name: Compatibility Test
 
+on:
+  workflow_run:
+    workflows: ["Build"]
+    types:
+      - requested
+
 jobs:
   compatibility:
     strategy:
