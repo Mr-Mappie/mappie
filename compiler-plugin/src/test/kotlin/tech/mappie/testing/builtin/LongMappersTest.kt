@@ -8,32 +8,31 @@ import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
+import java.math.BigDecimal
+import java.math.BigInteger
 
-class LocalDateTimeMappersTest {
+class LongMappersTest {
 
     @TempDir
     lateinit var directory: File
 
-    data class LocalDateTimeInput(val value: LocalDateTime)
+    data class LongInput(val value: Long)
 
-    data class LocalTimeOutput(val value: LocalTime)
+    data class BigIntegerOutput(val value: BigInteger)
 
-    data class LocalDateOutput(val value: LocalDate)
+    data class BigDecimalOutput(val value: BigDecimal)
 
     @Test
-    fun `map LocalDateTime to LocalTime implicit should succeed`() {
+    fun `map Long to BigInteger implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.builtin.LocalDateTimeMappersTest.*
+                        import tech.mappie.testing.builtin.LongMappersTest.*
 
-                        class Mapper : ObjectMappie<LocalDateTimeInput, LocalTimeOutput>()
+                        class Mapper : ObjectMappie<LongInput, BigIntegerOutput>()
                         """
                     )
                 )
@@ -42,21 +41,21 @@ class LocalDateTimeMappersTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
-            val input = LocalDateTime.now()
+            val input: Long = 2
 
             val mapper = classLoader
-                .loadObjectMappieClass<LocalDateTimeInput, LocalTimeOutput>("Mapper")
+                .loadObjectMappieClass<LongInput, BigIntegerOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(LocalDateTimeInput(input)))
-                .isEqualTo(LocalTimeOutput(input.toLocalTime()))
+            assertThat(mapper.map(LongInput(input)))
+                .isEqualTo(BigIntegerOutput(input.toBigInteger()))
         }
     }
 
     @Test
-    fun `map LocalDateTime to LocalTime explicit should succeed`() {
+    fun `map Long to BigInteger explicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
@@ -64,11 +63,11 @@ class LocalDateTimeMappersTest {
                         """
                         import tech.mappie.api.ObjectMappie
                         import tech.mappie.api.builtin.*
-                        import tech.mappie.testing.builtin.LocalDateTimeMappersTest.*
+                        import tech.mappie.testing.builtin.LongMappersTest.*
 
-                        class Mapper : ObjectMappie<LocalDateTimeInput, LocalTimeOutput>() {
-                            override fun map(from: LocalDateTimeInput) = mapping {
-                                to::value fromProperty from::value via LocalDateTimeToLocalTimeMapper()
+                        class Mapper : ObjectMappie<LongInput, BigIntegerOutput>() {
+                            override fun map(from: LongInput) = mapping {
+                                to::value fromProperty from::value via LongToBigIntegerMapper()
                             }
                         }
                         """
@@ -79,30 +78,30 @@ class LocalDateTimeMappersTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
-            val input = LocalDateTime.now()
+            val input: Long = 5
 
             val mapper = classLoader
-                .loadObjectMappieClass<LocalDateTimeInput, LocalTimeOutput>("Mapper")
+                .loadObjectMappieClass<LongInput, BigIntegerOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(LocalDateTimeInput(input)))
-                .isEqualTo(LocalTimeOutput(input.toLocalTime()))
+            assertThat(mapper.map(LongInput(input)))
+                .isEqualTo(BigIntegerOutput(input.toBigInteger()))
         }
     }
 
     @Test
-    fun `map LocalDateTime to LocalDate implicit should succeed`() {
+    fun `map Long to BigDecimal implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.builtin.LocalDateTimeMappersTest.*
+                        import tech.mappie.testing.builtin.LongMappersTest.*
 
-                        class Mapper : ObjectMappie<LocalDateTimeInput, LocalDateOutput>()
+                        class Mapper : ObjectMappie<LongInput, BigDecimalOutput>()
                         """
                     )
                 )
@@ -111,21 +110,21 @@ class LocalDateTimeMappersTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
-            val input = LocalDateTime.now()
+            val input: Long = 2
 
             val mapper = classLoader
-                .loadObjectMappieClass<LocalDateTimeInput, LocalDateOutput>("Mapper")
+                .loadObjectMappieClass<LongInput, BigDecimalOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(LocalDateTimeInput(input)))
-                .isEqualTo(LocalDateOutput(input.toLocalDate()))
+            assertThat(mapper.map(LongInput(input)))
+                .isEqualTo(BigDecimalOutput(input.toBigDecimal()))
         }
     }
 
     @Test
-    fun `map LocalDateTime to LocalDate explicit should succeed`() {
+    fun `map Long to BigDecimal explicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
@@ -133,11 +132,11 @@ class LocalDateTimeMappersTest {
                         """
                         import tech.mappie.api.ObjectMappie
                         import tech.mappie.api.builtin.*
-                        import tech.mappie.testing.builtin.LocalDateTimeMappersTest.*
+                        import tech.mappie.testing.builtin.LongMappersTest.*
 
-                        class Mapper : ObjectMappie<LocalDateTimeInput, LocalDateOutput>() {
-                            override fun map(from: LocalDateTimeInput) = mapping {
-                                to::value fromProperty from::value via LocalDateTimeToLocalDateMapper()
+                        class Mapper : ObjectMappie<LongInput, BigDecimalOutput>() {
+                            override fun map(from: LongInput) = mapping {
+                                to::value fromProperty from::value via LongToBigDecimalMapper()
                             }
                         }
                         """
@@ -148,16 +147,16 @@ class LocalDateTimeMappersTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
-            val input = LocalDateTime.now()
+            val input: Long = 5
 
             val mapper = classLoader
-                .loadObjectMappieClass<LocalDateTimeInput, LocalDateOutput>("Mapper")
+                .loadObjectMappieClass<LongInput, BigDecimalOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(LocalDateTimeInput(input)))
-                .isEqualTo(LocalDateOutput(input.toLocalDate()))
+            assertThat(mapper.map(LongInput(input)))
+                .isEqualTo(BigDecimalOutput(input.toBigDecimal()))
         }
     }
 }

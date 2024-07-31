@@ -35,21 +35,21 @@ data class EnumMapping(
     val mappings: Map<IrEnumEntry, List<EnumMappingTarget>>,
 ) : Mapping
 
-class MappingResolver : BaseVisitor<Map<IrFunction, List<Mapping>>, List<MappieDefinition>>(null) {
+class MappingResolver : BaseVisitor<Map<IrFunction, List<Mapping>>, MappieDefinitions>(null) {
 
-    override fun visitModuleFragment(declaration: IrModuleFragment, data: List<MappieDefinition>): Map<IrFunction, List<Mapping>> {
+    override fun visitModuleFragment(declaration: IrModuleFragment, data: MappieDefinitions): Map<IrFunction, List<Mapping>> {
         return declaration.files.map { file -> file.accept(data) }
             .fold(mapOf(), Map<IrFunction, List<Mapping>>::plus)
     }
 
-    override fun visitFile(declaration: IrFile, data: List<MappieDefinition>): Map<IrFunction, List<Mapping>> {
+    override fun visitFile(declaration: IrFile, data: MappieDefinitions): Map<IrFunction, List<Mapping>> {
         return declaration.declarations
             .filterIsInstance<IrClass>()
             .map { it.accept(data) }
             .fold(mapOf(), Map<IrFunction, List<Mapping>>::plus)
     }
 
-    override fun visitClass(declaration: IrClass, data: List<MappieDefinition>): Map<IrFunction, List<Mapping>> {
+    override fun visitClass(declaration: IrClass, data: MappieDefinitions): Map<IrFunction, List<Mapping>> {
         return if (declaration.accept(ShouldTransformCollector(declaration.fileEntry), Unit)) {
             declaration.declarations
                 .filter { it is IrClass || it is IrFunction }
@@ -60,7 +60,7 @@ class MappingResolver : BaseVisitor<Map<IrFunction, List<Mapping>>, List<MappieD
         }
     }
 
-    override fun visitFunction(declaration: IrFunction, data: List<MappieDefinition>): Map<IrFunction, List<Mapping>> {
+    override fun visitFunction(declaration: IrFunction, data: MappieDefinitions): Map<IrFunction, List<Mapping>> {
         return if (declaration.accept(ShouldTransformCollector(declaration.fileEntry), Unit)) {
             val type = declaration.parentAsClass
             return when {

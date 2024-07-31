@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.ir.util.fileEntry
 import tech.mappie.resolving.classes.sources.MappieSourcesCollector
 import tech.mappie.resolving.classes.targets.MappieTargetsCollector
 
-class ClassResolver(private val declaration: IrFunction, private val symbols: List<MappieDefinition>) {
+class ClassResolver(private val declaration: IrFunction, private val symbols: MappieDefinitions) {
 
     private val sourceParameters = declaration.valueParameters
 

@@ -1,15 +1,17 @@
 package tech.mappie.resolving
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.functions
-import tech.mappie.BaseVisitor
-import tech.mappie.api.Mappie
 import tech.mappie.util.*
+
+class MappieDefinitions(definition: List<MappieDefinition>) : List<MappieDefinition> by definition {
+
+    fun select(source: IrType, target: IrType): List<MappieDefinition> =
+        singleOrNull { it.fromType == source && it.toType == target }?.let { listOf(it) }
+            ?: filter { it.fits(source, target) }
+}
 
 data class MappieDefinition(
     val clazz: IrClass,
@@ -40,34 +42,10 @@ data class MappieDefinition(
     private fun fitsList(sourceType: IrType, targetType: IrType) =
         (sourceType.isList() && fromType.isAssignableFrom((sourceType as IrSimpleType).arguments.first().typeOrFail))
                 &&
-        (targetType.isList() && ((targetType as IrSimpleType).arguments.first().typeOrFail).isAssignableFrom(toType))
+                (targetType.isList() && ((targetType as IrSimpleType).arguments.first().typeOrFail).isAssignableFrom(toType))
 
     private fun fitsSet(sourceType: IrType, targetType: IrType) =
         (sourceType.isSet() && fromType.isAssignableFrom((sourceType as IrSimpleType).arguments.first().typeOrFail))
                 &&
-        (targetType.isSet() && ((targetType as IrSimpleType).arguments.first().typeOrFail).isAssignableFrom(toType))
-}
-
-class AllMappieDefinitionsCollector : BaseVisitor<List<MappieDefinition>, Unit>(null) {
-
-    override fun visitModuleFragment(declaration: IrModuleFragment, data: Unit) =
-        declaration.files.flatMap { it.accept(data) }
-
-    override fun visitFile(declaration: IrFile, data: Unit): List<MappieDefinition> {
-        file = declaration.fileEntry
-        return declaration.declarations.flatMap { it.accept(data) }
-    }
-
-    override fun visitClass(declaration: IrClass, data: Unit) =
-        buildList {
-            if (declaration.isStrictSubclassOf(Mappie::class)) {
-                (declaration.superTypes.single() as? IrSimpleType)?.let {
-                    add(MappieDefinition(declaration))
-                }
-            }
-            addAll(declaration.declarations.filterIsInstance<IrClass>().flatMap { it.accept(data) })
-        }
-
-    override fun visitElement(element: IrElement, data: Unit) =
-        emptyList<MappieDefinition>()
+                (targetType.isSet() && ((targetType as IrSimpleType).arguments.first().typeOrFail).isAssignableFrom(toType))
 }

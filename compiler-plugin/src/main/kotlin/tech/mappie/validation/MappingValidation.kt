@@ -22,6 +22,7 @@ interface MappingValidation {
         override val problems: List<Problem> =
             buildList {
                 addAll(MultipleSourcesProblems.of(mapping).all())
+                addAll(MultipleTransformationsProblems.of(mapping).all())
                 addAll(UnsafeTypeAssignmentProblems.of(file, mapping).all())
                 addAll(UnsafePlatformTypeAssignmentProblems.of(file, mapping).all())
                 addAll(UnknownParameterNameProblems.of(mapping).all())

@@ -34,7 +34,7 @@ internal fun IrClass.allSuperTypes(): List<IrType> =
 
 fun IrType.isAssignableFrom(other: IrType, ignoreFlexibleNullability: Boolean = false): Boolean {
     val other = if (ignoreFlexibleNullability && other.isFlexibleNullable()) other.makeNotNull() else other
-    return other.isSubtypeOf(this, IrTypeSystemContextImpl(context.irBuiltIns)) || isIntegerAssignableFrom(other)
+    return other.isSubtypeOf(this, IrTypeSystemContextImpl(context.irBuiltIns))
 }
 
 fun IrType.isFlexibleNullable(): Boolean =
@@ -45,19 +45,6 @@ fun IrPropertyReference.targetType(file: IrFileEntry): IrType =
         context.irBuiltIns.kProperty0Class -> dispatchReceiver!!.type
         context.irBuiltIns.kProperty1Class -> (this.type as IrSimpleType).arguments.first().typeOrFail
         else -> mappieTerminate("Unknown KProperty ${dumpKotlinLike()}", location(file, this))
-    }
-
-fun IrType.isIntegerAssignableFrom(other: IrType): Boolean =
-    when (makeNullable()) {
-        context.irBuiltIns.byteType.makeNullable() ->
-            other in listOf(context.irBuiltIns.byteType)
-        context.irBuiltIns.shortType.makeNullable() ->
-            other in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType)
-        context.irBuiltIns.intType.makeNullable() ->
-            other in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType, context.irBuiltIns.intType)
-        context.irBuiltIns.longType.makeNullable() ->
-            other in listOf(context.irBuiltIns.byteType, context.irBuiltIns.shortType, context.irBuiltIns.intType, context.irBuiltIns.longType)
-        else -> false
     }
 
 fun IrType.isList() =

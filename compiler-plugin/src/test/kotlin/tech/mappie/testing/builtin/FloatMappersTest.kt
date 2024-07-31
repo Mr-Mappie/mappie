@@ -1,4 +1,4 @@
-package tech.mappie.testing.primitives
+package tech.mappie.testing.builtin
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -8,29 +8,31 @@ import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
+import java.math.BigDecimal
+import java.math.BigInteger
 
-@Suppress("unused")
-class ByteTest {
-    data class Input(val value: Byte)
-    data class ByteOutput(val value: Byte)
-    data class ShortOutput(val value: Short)
-    data class IntOutput(val value: Int)
-    data class LongOutput(val value: Long)
+class FloatMappersTest {
 
     @TempDir
     lateinit var directory: File
 
+    data class FloatInput(val value: Float)
+
+    data class DoubleOutput(val value: Double)
+
+    data class BigDecimalOutput(val value: BigDecimal)
+
     @Test
-    fun `map byte value to byte value should succeed`() {
+    fun `map Float to Double implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.primitives.ByteTest.*
-    
-                        class Mapper : ObjectMappie<Input, ByteOutput>()
+                        import tech.mappie.testing.builtin.FloatMappersTest.*
+
+                        class Mapper : ObjectMappie<FloatInput, DoubleOutput>()
                         """
                     )
                 )
@@ -39,27 +41,35 @@ class ByteTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
+            val input = 2.0f
+
             val mapper = classLoader
-                .loadObjectMappieClass<Input, IntOutput>("Mapper")
+                .loadObjectMappieClass<FloatInput, DoubleOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(1))).isEqualTo(ByteOutput(1))
+            assertThat(mapper.map(FloatInput(input)))
+                .isEqualTo(DoubleOutput(input.toDouble()))
         }
     }
 
     @Test
-    fun `map byte value to short value should succeed`() {
+    fun `map Float to Double explicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.primitives.ByteTest.*
-    
-                        class Mapper : ObjectMappie<Input, ShortOutput>()
+                        import tech.mappie.api.builtin.*
+                        import tech.mappie.testing.builtin.FloatMappersTest.*
+
+                        class Mapper : ObjectMappie<FloatInput, DoubleOutput>() {
+                            override fun map(from: FloatInput) = mapping {
+                                to::value fromProperty from::value via FloatToDoubleMapper()
+                            }
+                        }
                         """
                     )
                 )
@@ -68,27 +78,30 @@ class ByteTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
+            val input = 5.0f
+
             val mapper = classLoader
-                .loadObjectMappieClass<Input, IntOutput>("Mapper")
+                .loadObjectMappieClass<FloatInput, DoubleOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(1))).isEqualTo(ShortOutput(1))
+            assertThat(mapper.map(FloatInput(input)))
+                .isEqualTo(DoubleOutput(input.toDouble()))
         }
     }
 
     @Test
-    fun `map short value to int value should succeed`() {
+    fun `map Float to BigDecimal implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.primitives.ByteTest.*
-    
-                        class Mapper : ObjectMappie<Input, IntOutput>()
+                        import tech.mappie.testing.builtin.FloatMappersTest.*
+
+                        class Mapper : ObjectMappie<FloatInput, BigDecimalOutput>()
                         """
                     )
                 )
@@ -97,27 +110,35 @@ class ByteTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
+            val input = 2.0f
+
             val mapper = classLoader
-                .loadObjectMappieClass<Input, IntOutput>("Mapper")
+                .loadObjectMappieClass<FloatInput, BigDecimalOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(1))).isEqualTo(IntOutput(1))
+            assertThat(mapper.map(FloatInput(input)))
+                .isEqualTo(BigDecimalOutput(input.toBigDecimal()))
         }
     }
 
     @Test
-    fun `map short value to long value should succeed`() {
+    fun `map Float to BigDecimal explicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.primitives.ByteTest.*
-    
-                        class Mapper : ObjectMappie<Input, LongOutput>()
+                        import tech.mappie.api.builtin.*
+                        import tech.mappie.testing.builtin.FloatMappersTest.*
+
+                        class Mapper : ObjectMappie<FloatInput, BigDecimalOutput>() {
+                            override fun map(from: FloatInput) = mapping {
+                                to::value fromProperty from::value via FloatToBigDecimalMapper()
+                            }
+                        }
                         """
                     )
                 )
@@ -126,13 +147,16 @@ class ByteTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
+            val input = 5.0f
+
             val mapper = classLoader
-                .loadObjectMappieClass<Input, LongOutput>("Mapper")
+                .loadObjectMappieClass<FloatInput, BigDecimalOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(1))).isEqualTo(LongOutput(1L))
+            assertThat(mapper.map(FloatInput(input)))
+                .isEqualTo(BigDecimalOutput(input.toBigDecimal()))
         }
     }
 }

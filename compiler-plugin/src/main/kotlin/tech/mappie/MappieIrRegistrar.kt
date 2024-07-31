@@ -5,14 +5,8 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.fileEntry
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import tech.mappie.generation.*
-import tech.mappie.resolving.AllMappieDefinitionsCollector
-import tech.mappie.resolving.ConstructorCallMapping
-import tech.mappie.resolving.MappieDefinition
-import tech.mappie.resolving.MappingResolver
+import tech.mappie.resolving.*
 import tech.mappie.util.location
 import tech.mappie.util.logAll
 import tech.mappie.util.logError
@@ -26,7 +20,7 @@ class MappieIrRegistrar(
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         context = MappiePluginContext(messageCollector, configuration, pluginContext)
 
-        val symbols = moduleFragment.accept(AllMappieDefinitionsCollector(), Unit) + getBuiltInMappers()
+        val symbols = MappieDefinitionsCollector().collect(moduleFragment)
         val mappings = moduleFragment.accept(MappingResolver(), symbols)
 
         val validated = mappings.mapValues {
@@ -57,11 +51,6 @@ class MappieIrRegistrar(
             }
         }
     }
-
-    private fun getBuiltInMappers(): List<MappieDefinition> =
-        listOf("LocalDateTimeToLocalTimeMapper")
-            .map { name -> context.referenceClass(ClassId(FqName("tech.mappie.api.builtin"), Name.identifier(name)))!!.owner }
-            .map { MappieDefinition(it) }
 
     companion object {
         lateinit var context: MappiePluginContext
