@@ -1,4 +1,4 @@
-rootProject.name = "mappie-test-kotlin-2.0.20-Beta1"
+rootProject.name = "mappie-test-kotlin-2.0.20-RC"
 
 pluginManagement {
     repositories {

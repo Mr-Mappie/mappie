@@ -74,6 +74,10 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
     private companion object {
         private const val KOTLIN_GRADLE_PLUGIN_NAME = "kotlin-gradle-plugin"
-        private val SUPPORTED_KOTLIN_VERSIONS = listOf("1.9.24", "2.0.0", "2.0.20-Beta1")
+        private val SUPPORTED_KOTLIN_VERSIONS = listOf(
+            "1.9.24",
+            "2.0.0",
+            "2.0.20-RC",
+        )
     }
 }
