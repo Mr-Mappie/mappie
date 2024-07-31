@@ -13,7 +13,9 @@ method.
 
 Mappie uses these getter- and setter methods in implicit mappings. They must follow the convention `getX()` and 
 `setX(...)` for the property `x` to be inferred. Also note that in Java all types are nullable. Mappie will give a 
-warning if a Java type is used to assign to a non-nullable target.
+warning if a Java type is used to assign to a non-nullable target. The Kotlin compiler uses several nullability 
+annotations to determine whether the platform type is nullable or not. See for more information 
+[Nullability annotations](https://kotlinlang.org/docs/java-interop.html#nullability-annotations).
 
 For example, suppose we have the Java class `Person`
 ```java
