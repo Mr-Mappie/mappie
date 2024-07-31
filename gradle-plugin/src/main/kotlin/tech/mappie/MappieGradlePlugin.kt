@@ -59,10 +59,7 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
         plugins.hasPlugin(MappieGradlePlugin::class.java)
 
     private fun Project.hasMappieDependency(kotlinCompilation: KotlinCompilation<*>): Boolean =
-        runCatching { getMappieDependency(kotlinCompilation) != null }.getOrElse {
-            logger.warn("Mappie could not determine runtime dependency configuration name and is not applied.")
-            false
-        }
+        runCatching { getMappieDependency(kotlinCompilation) != null }.getOrElse { false }
 
     private fun Project.getMappieDependency(kotlinCompilation: KotlinCompilation<*>): Dependency? =
         configurations.getByName(kotlinCompilation.runtimeDependencyConfigurationName ?: "implementation")
