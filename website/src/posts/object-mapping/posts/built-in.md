@@ -16,14 +16,16 @@ on the JVM platform.
 ## Numeric Mappers
 The following numeric mappers are built-int.
 
-|        | Byte | Short | Int | Long | Float | Double | *BigInteger* | *BigDecimal* |
-|--------|------|-------|-----|------|-------|--------|--------------|--------------|
-| Byte   | -    | X     | X   | X    |       |        | X            | X            |
-| Short  |      | -     | X   | X    |       |        | X            | X            |
-| Int    |      |       | -   | X    |       |        | X            | X            |
-| Long   |      |       |     | -    |       |        | X            | X            |
-| Float  |      |       |     |      | -     | X      |              | X            |
-| Double |      |       |     |      |       | -      |              | X            |
+|               | Byte | Short | Int | Long | Float | Double | *BigInteger* | *BigDecimal* | String |
+|---------------|------|-------|-----|------|-------|--------|--------------|--------------|--------|
+| Byte          | -    | X     | X   | X    |       |        | X            | X            | X      |
+| Short         |      | -     | X   | X    |       |        | X            | X            | X      |
+| Int           |      |       | -   | X    |       |        | X            | X            | X      |
+| Long          |      |       |     | -    |       |        | X            | X            | X      |
+| Float         |      |       |     |      | -     | X      |              | X            | X      |
+| Double        |      |       |     |      |       | -      |              | X            | X      |
+| *BigInteger*  |      |       |     |      |       |        | -            |              | X      |
+| *BigDecimal*  |      |       |     |      |       |        |              | -            | X      |
 
 ## Char Mappers
 The following char mappers are built-int
@@ -35,6 +37,14 @@ The following char mappers are built-int
 ## LocalDate Mappers
 The following numeric mappers are built-int
 
-|                 |  *LocalTime* | *LocalDate* |
-|-----------------|--------------|-------------|
-| *LocalDateTime* |  X           | X           |
+|                 | *LocalTime* | *LocalTime* | *LocalDate* |
+|-----------------|-------------|-------------|-------------|
+| *LocalDateTime* | -           |  X          | X           |
+
+
+## Char Mappers
+The following UUID mappers are built-int
+
+|        | *UUID* | String |
+|--------|--------|--------|
+| *UUID* | -      | X      | 
