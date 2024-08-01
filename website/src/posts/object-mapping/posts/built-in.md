@@ -14,18 +14,29 @@ The types below that are in *cursive* are not available on all platforms. For ex
 on the JVM platform.
 
 ## Numeric Mappers
-The following numeric mappers are built-int.
+The following integer mappers are built-int.
 
-|               | Byte | Short | Int | Long | Float | Double | *BigInteger* | *BigDecimal* | String |
-|---------------|------|-------|-----|------|-------|--------|--------------|--------------|--------|
-| Byte          | -    | X     | X   | X    |       |        | X            | X            | X      |
-| Short         |      | -     | X   | X    |       |        | X            | X            | X      |
-| Int           |      |       | -   | X    |       |        | X            | X            | X      |
-| Long          |      |       |     | -    |       |        | X            | X            | X      |
-| Float         |      |       |     |      | -     | X      |              | X            | X      |
-| Double        |      |       |     |      |       | -      |              | X            | X      |
-| *BigInteger*  |      |       |     |      |       |        | -            |              | X      |
-| *BigDecimal*  |      |       |     |      |       |        |              | -            | X      |
+|              | Byte | Short | Int | Long | *BigInteger* | *BigDecimal*  |
+|--------------|------|-------|-----|------|--------------|---------------|
+| Byte         | -    | X     | X   | X    | X            | X             |
+| Short        |      | -     | X   | X    | X            | X             |
+| Int          |      |       | -   | X    | X            | X             |
+| Long         |      |       |     | -    | X            | X             |
+| *BigInteger* |      |       |     |      | -            |               |
+| *BigDecimal* |      |       |     |      |              | -             |
+
+{.table-matrix}
+
+The following floating point mappers are built-int.
+
+|              | Float | Double | *BigDecimal*  |
+|--------------|-------|--------|---------------|
+| Float        | -     | X      | X             |
+| Double       |       | -      | X             |
+
+{.table-matrix}
+
+There also exist a mapper for all numeric types to `String`.
 
 ## Char Mappers
 The following char mappers are built-int
@@ -34,6 +45,8 @@ The following char mappers are built-int
 |--------|------|--------|
 | Char   | -    | X      | 
 
+{.table-matrix}
+
 ## LocalDate Mappers
 The following numeric mappers are built-int
 
@@ -41,10 +54,13 @@ The following numeric mappers are built-int
 |-----------------|-------------|-------------|-------------|
 | *LocalDateTime* | -           |  X          | X           |
 
+{.table-matrix}
 
 ## Char Mappers
 The following UUID mappers are built-int
 
 |        | *UUID* | String |
 |--------|--------|--------|
-| *UUID* | -      | X      | 
+| *UUID* | -      | X      |
+
+{.table-matrix}
