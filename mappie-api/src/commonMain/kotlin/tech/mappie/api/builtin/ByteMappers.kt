@@ -16,3 +16,8 @@ public class ByteToLongMapper : ObjectMappie<Byte, Long>() {
     override fun map(from: Byte): Long =
         from.toLong()
 }
+
+public class ByteToStringMapper : ObjectMappie<Byte, String>() {
+    override fun map(from: Byte): String =
+        from.toString()
+}

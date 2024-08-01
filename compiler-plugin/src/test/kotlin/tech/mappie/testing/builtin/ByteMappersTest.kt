@@ -28,6 +28,8 @@ class ByteMappersTest {
 
     data class BigDecimalOutput(val value: BigDecimal)
 
+    data class StringOutput(val value: String)
+
     @Test
     fun `map Byte to Short implicit should succeed`() {
         KotlinCompilation(directory).apply {
@@ -370,6 +372,75 @@ class ByteMappersTest {
 
             assertThat(mapper.map(ByteInput(input)))
                 .isEqualTo(BigDecimalOutput(BigDecimal.valueOf(input.toLong())))
+        }
+    }
+
+    @Test
+    fun `map Byte to String implicit should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.builtin.ByteMappersTest.*
+
+                        class Mapper : ObjectMappie<ByteInput, StringOutput>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val input: Byte = 2
+
+            val mapper = classLoader
+                .loadObjectMappieClass<ByteInput, BigDecimalOutput>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(ByteInput(input)))
+                .isEqualTo(StringOutput(input.toString()))
+        }
+    }
+
+    @Test
+    fun `map Byte to String explicit should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.api.builtin.*
+                        import tech.mappie.testing.builtin.ByteMappersTest.*
+
+                        class Mapper : ObjectMappie<ByteInput, StringOutput>() {
+                            override fun map(from: ByteInput) = mapping {
+                                to::value fromProperty from::value via ByteToStringMapper()
+                            }
+                        }
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val input: Byte = 5
+
+            val mapper = classLoader
+                .loadObjectMappieClass<ByteInput, StringOutput>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(ByteInput(input)))
+                .isEqualTo(StringOutput(input.toString()))
         }
     }
 }

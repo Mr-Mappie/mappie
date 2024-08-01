@@ -21,6 +21,8 @@ class FloatMappersTest {
 
     data class BigDecimalOutput(val value: BigDecimal)
 
+    data class StringOutput(val value: String)
+
     @Test
     fun `map Float to Double implicit should succeed`() {
         KotlinCompilation(directory).apply {
@@ -156,6 +158,75 @@ class FloatMappersTest {
 
             assertThat(mapper.map(FloatInput(input)))
                 .isEqualTo(BigDecimalOutput(input.toBigDecimal()))
+        }
+    }
+
+    @Test
+    fun `map Float to String implicit should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.builtin.FloatMappersTest.*
+
+                        class Mapper : ObjectMappie<FloatInput, StringOutput>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val input = 2.0f
+
+            val mapper = classLoader
+                .loadObjectMappieClass<FloatInput, StringOutput>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(FloatInput(input)))
+                .isEqualTo(StringOutput(input.toString()))
+        }
+    }
+
+    @Test
+    fun `map Float to String explicit should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.api.builtin.*
+                        import tech.mappie.testing.builtin.FloatMappersTest.*
+
+                        class Mapper : ObjectMappie<FloatInput, StringOutput>() {
+                            override fun map(from: FloatInput) = mapping {
+                                to::value fromProperty from::value via FloatToStringMapper()
+                            }
+                        }
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val input = 5.0f
+
+            val mapper = classLoader
+                .loadObjectMappieClass<FloatInput, StringOutput>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(FloatInput(input)))
+                .isEqualTo(StringOutput(input.toString()))
         }
     }
 }

@@ -8,27 +8,28 @@ import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
+import java.math.BigDecimal
 
-class CharMappersTest {
+class BigDecimalMappersTest {
 
     @TempDir
     lateinit var directory: File
 
-    data class CharInput(val value: Char)
+    data class BigDecimalInput(val value: BigDecimal)
 
     data class StringOutput(val value: String)
 
     @Test
-    fun `map Char to String implicit should succeed`() {
+    fun `map BigDecimal to String implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.builtin.CharMappersTest.*
+                        import tech.mappie.testing.builtin.BigDecimalMappersTest.*
 
-                        class Mapper : ObjectMappie<CharInput, StringOutput>()
+                        class Mapper : ObjectMappie<BigDecimalInput, StringOutput>()
                         """
                     )
                 )
@@ -37,21 +38,21 @@ class CharMappersTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
-            val input = 'b'
+            val input = BigDecimal.valueOf(10)
 
             val mapper = classLoader
-                .loadObjectMappieClass<CharInput, StringOutput>("Mapper")
+                .loadObjectMappieClass<BigDecimalInput, StringOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(CharInput(input)))
+            assertThat(mapper.map(BigDecimalInput(input)))
                 .isEqualTo(StringOutput(input.toString()))
         }
     }
 
     @Test
-    fun `map Char to String explicit should succeed`() {
+    fun `map BigDecimal to String explicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
@@ -59,11 +60,11 @@ class CharMappersTest {
                         """
                         import tech.mappie.api.ObjectMappie
                         import tech.mappie.api.builtin.*
-                        import tech.mappie.testing.builtin.CharMappersTest.*
+                        import tech.mappie.testing.builtin.BigDecimalMappersTest.*
 
-                        class Mapper : ObjectMappie<CharInput, StringOutput>() {
-                            override fun map(from: CharInput) = mapping {
-                                to::value fromProperty from::value via CharToStringMapper()
+                        class Mapper : ObjectMappie<BigDecimalInput, StringOutput>() {
+                            override fun map(from: BigDecimalInput) = mapping {
+                                to::value fromProperty from::value via BigDecimalToStringMapper()
                             }
                         }
                         """
@@ -74,15 +75,15 @@ class CharMappersTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
-            val input = 'b'
+            val input = BigDecimal.valueOf(100)
 
             val mapper = classLoader
-                .loadObjectMappieClass<CharInput, StringOutput>("Mapper")
+                .loadObjectMappieClass<BigDecimalInput, StringOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(CharInput(input)))
+            assertThat(mapper.map(BigDecimalInput(input)))
                 .isEqualTo(StringOutput(input.toString()))
         }
     }

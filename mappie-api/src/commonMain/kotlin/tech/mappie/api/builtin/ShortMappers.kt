@@ -11,3 +11,8 @@ public class ShortToLongMapper : ObjectMappie<Short, Long>() {
     override fun map(from: Short): Long =
         from.toLong()
 }
+
+public class ShortToStringMapper : ObjectMappie<Short, String>() {
+    override fun map(from: Short): String =
+        from.toString()
+}

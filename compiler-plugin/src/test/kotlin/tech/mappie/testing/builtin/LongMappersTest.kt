@@ -22,6 +22,8 @@ class LongMappersTest {
 
     data class BigDecimalOutput(val value: BigDecimal)
 
+    data class StringOutput(val value: String)
+
     @Test
     fun `map Long to BigInteger implicit should succeed`() {
         KotlinCompilation(directory).apply {

@@ -8,27 +8,28 @@ import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
+import java.math.BigInteger
 
-class CharMappersTest {
+class BigIntegerMappersTest {
 
     @TempDir
     lateinit var directory: File
 
-    data class CharInput(val value: Char)
+    data class BigIntegerInput(val value: BigInteger)
 
     data class StringOutput(val value: String)
 
     @Test
-    fun `map Char to String implicit should succeed`() {
+    fun `map BigInteger to String implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.builtin.CharMappersTest.*
+                        import tech.mappie.testing.builtin.BigIntegerMappersTest.*
 
-                        class Mapper : ObjectMappie<CharInput, StringOutput>()
+                        class Mapper : ObjectMappie<BigIntegerInput, StringOutput>()
                         """
                     )
                 )
@@ -37,21 +38,21 @@ class CharMappersTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
-            val input = 'b'
+            val input = BigInteger.valueOf(10)
 
             val mapper = classLoader
-                .loadObjectMappieClass<CharInput, StringOutput>("Mapper")
+                .loadObjectMappieClass<BigIntegerInput, StringOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(CharInput(input)))
+            assertThat(mapper.map(BigIntegerInput(input)))
                 .isEqualTo(StringOutput(input.toString()))
         }
     }
 
     @Test
-    fun `map Char to String explicit should succeed`() {
+    fun `map BigInteger to String explicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
@@ -59,11 +60,11 @@ class CharMappersTest {
                         """
                         import tech.mappie.api.ObjectMappie
                         import tech.mappie.api.builtin.*
-                        import tech.mappie.testing.builtin.CharMappersTest.*
+                        import tech.mappie.testing.builtin.BigIntegerMappersTest.*
 
-                        class Mapper : ObjectMappie<CharInput, StringOutput>() {
-                            override fun map(from: CharInput) = mapping {
-                                to::value fromProperty from::value via CharToStringMapper()
+                        class Mapper : ObjectMappie<BigIntegerInput, StringOutput>() {
+                            override fun map(from: BigIntegerInput) = mapping {
+                                to::value fromProperty from::value via BigIntegerToStringMapper()
                             }
                         }
                         """
@@ -74,15 +75,15 @@ class CharMappersTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
-            val input = 'b'
+            val input = BigInteger.valueOf(100)
 
             val mapper = classLoader
-                .loadObjectMappieClass<CharInput, StringOutput>("Mapper")
+                .loadObjectMappieClass<BigIntegerInput, StringOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(CharInput(input)))
+            assertThat(mapper.map(BigIntegerInput(input)))
                 .isEqualTo(StringOutput(input.toString()))
         }
     }

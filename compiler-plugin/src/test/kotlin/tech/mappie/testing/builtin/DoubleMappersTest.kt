@@ -3,6 +3,7 @@ package tech.mappie.testing.builtin
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import tech.mappie.testing.builtin.ByteMappersTest.*
 import tech.mappie.testing.compilation.KotlinCompilation
 import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
@@ -18,6 +19,8 @@ class DoubleMappersTest {
     data class DoubleInput(val value: Double)
 
     data class BigDecimalOutput(val value: BigDecimal)
+
+    data class StringOutput(val value: String)
 
     @Test
     fun `map Double to BigDecimal implicit should succeed`() {
@@ -85,6 +88,75 @@ class DoubleMappersTest {
 
             assertThat(mapper.map(DoubleInput(input)))
                 .isEqualTo(BigDecimalOutput(input.toBigDecimal()))
+        }
+    }
+
+    @Test
+    fun `map Double to String implicit should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.builtin.DoubleMappersTest.*
+
+                        class Mapper : ObjectMappie<DoubleInput, StringOutput>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val input = 2.0
+
+            val mapper = classLoader
+                .loadObjectMappieClass<DoubleInput, StringOutput>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(DoubleInput(input)))
+                .isEqualTo(StringOutput(input.toString()))
+        }
+    }
+
+    @Test
+    fun `map Double to String explicit should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.api.builtin.*
+                        import tech.mappie.testing.builtin.DoubleMappersTest.*
+
+                        class Mapper : ObjectMappie<DoubleInput, StringOutput>() {
+                            override fun map(from: DoubleInput) = mapping {
+                                to::value fromProperty from::value via DoubleToStringMapper()
+                            }
+                        }
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val input = 5.0
+
+            val mapper = classLoader
+                .loadObjectMappieClass<DoubleInput, StringOutput>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(DoubleInput(input)))
+                .isEqualTo(StringOutput(input.toString()))
         }
     }
 }

@@ -24,6 +24,8 @@ class IntMappersTest {
 
     data class BigDecimalOutput(val value: BigDecimal)
 
+    data class StringOutput(val value: String)
+
     @Test
     fun `map Int to Long implicit should succeed`() {
         KotlinCompilation(directory).apply {
@@ -228,6 +230,75 @@ class IntMappersTest {
 
             assertThat(mapper.map(IntInput(input)))
                 .isEqualTo(BigDecimalOutput(input.toBigDecimal()))
+        }
+    }
+
+    @Test
+    fun `map Int to String implicit should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.builtin.IntMappersTest.*
+
+                        class Mapper : ObjectMappie<IntInput, StringOutput>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val input = 2
+
+            val mapper = classLoader
+                .loadObjectMappieClass<IntInput, StringOutput>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(IntInput(input)))
+                .isEqualTo(StringOutput(input.toString()))
+        }
+    }
+
+    @Test
+    fun `map Int to String explicit should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.api.builtin.*
+                        import tech.mappie.testing.builtin.IntMappersTest.*
+
+                        class Mapper : ObjectMappie<IntInput, StringOutput>() {
+                            override fun map(from: IntInput) = mapping {
+                                to::value fromProperty from::value via IntToStringMapper()
+                            }
+                        }
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val input = 5
+
+            val mapper = classLoader
+                .loadObjectMappieClass<IntInput, StringOutput>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(IntInput(input)))
+                .isEqualTo(StringOutput(input.toString()))
         }
     }
 }
