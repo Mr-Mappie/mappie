@@ -58,6 +58,7 @@ class BuiltinMappieDefinitionsCollector {
             "DoubleToStringMapper",
             "BigIntegerToStringMapper",
             "BigDecimalToStringMapper",
+            "UUIDToStringMapper",
         )
     }
 }
