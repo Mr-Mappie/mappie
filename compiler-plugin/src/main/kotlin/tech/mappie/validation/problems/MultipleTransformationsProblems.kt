@@ -8,8 +8,7 @@ import tech.mappie.validation.Problem
 class MultipleTransformationsProblems(private val mappings: Map<MappieTarget, List<ObjectMappingSource>>) {
     fun all(): List<Problem> =
         mappings.map { (_, sources) ->
-            val source = sources.single()
-            when (source) {
+            when (val source = sources.single()) {
                 is ResolvedSource -> source.transformation
                 is PropertySource -> source.transformation
                 else -> null

@@ -9,7 +9,6 @@ import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 import java.math.BigDecimal
-import java.math.BigInteger
 
 class FloatMappersTest {
 

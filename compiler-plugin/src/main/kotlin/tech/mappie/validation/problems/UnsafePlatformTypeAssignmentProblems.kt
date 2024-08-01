@@ -17,7 +17,7 @@ class UnsafePlatformTypeAssignmentProblems(
     private val mappings: List<Pair<MappieTarget, ObjectMappingSource>>,
 ) {
 
-    fun all(): List<Problem> = mappings.map { validate(it.first, it.second) }.filterNotNull()
+    fun all(): List<Problem> = mappings.mapNotNull { validate(it.first, it.second) }
 
     private fun validate(target: MappieTarget, source: ObjectMappingSource): Problem? {
         val sourceTypeString = source.type.removeAnnotations().dumpKotlinLike()

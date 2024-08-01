@@ -33,8 +33,7 @@ data class PropertySource(
         if (transformation.isEmpty()) {
             getter.owner.returnType
         } else {
-            val transformation = transformation.first()
-            when (transformation) {
+            when (val transformation = transformation.first()) {
                 is MappieTransformOperator -> (transformation.type as IrSimpleType).arguments[1].typeOrFail
                 is MappieViaOperator -> if (getter.owner.returnType.isNullable()) transformation.type.makeNullable() else transformation.type
                 is MappieViaResolved -> if (getter.owner.returnType.isNullable()) transformation.type.makeNullable() else transformation.type
