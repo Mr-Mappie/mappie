@@ -14,7 +14,7 @@ The types below that are in *cursive* are not available on all platforms. For ex
 on the JVM platform.
 
 ## Numeric Mappers
-The following integer mappers are built-int.
+The following integer mappers are built-in
 
 |              | Byte | Short | Int | Long | *BigInteger* | *BigDecimal*  |
 |--------------|------|-------|-----|------|--------------|---------------|
@@ -27,7 +27,7 @@ The following integer mappers are built-int.
 
 {.table-matrix}
 
-The following floating point mappers are built-int.
+The following floating point mappers are built-in
 
 |              | Float | Double | *BigDecimal*  |
 |--------------|-------|--------|---------------|
@@ -39,7 +39,7 @@ The following floating point mappers are built-int.
 There also exist a mapper for all numeric types to `String`.
 
 ## Char Mappers
-The following char mappers are built-int
+The following char mappers are built-in
 
 |        | Char | String |
 |--------|------|--------|
@@ -48,7 +48,7 @@ The following char mappers are built-int
 {.table-matrix}
 
 ## LocalDate Mappers
-The following numeric mappers are built-int
+The following numeric mappers are built-in
 
 |                 | *LocalTime* | *LocalTime* | *LocalDate* |
 |-----------------|-------------|-------------|-------------|
@@ -56,8 +56,8 @@ The following numeric mappers are built-int
 
 {.table-matrix}
 
-## Char Mappers
-The following UUID mappers are built-int
+## UUID Mappers
+The following UUID mappers are built-in
 
 |        | *UUID* | String |
 |--------|--------|--------|
