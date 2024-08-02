@@ -18,7 +18,7 @@ class MapperClassCanContainAllDeclarationsTest {
     lateinit var directory: File
 
     @Test
-    fun `"mapper containaining all kind of declarations should succeed`() {
+    fun `mapper containing all kind of declarations should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(

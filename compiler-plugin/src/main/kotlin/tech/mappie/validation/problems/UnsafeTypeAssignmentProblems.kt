@@ -20,7 +20,7 @@ class UnsafeTypeAssignmentProblems(
     private val mappings: List<Pair<MappieTarget, ObjectMappingSource>>,
 ) {
 
-    fun all(): List<Problem> = mappings.map { validate(it.first, it.second) }.filterNotNull()
+    fun all(): List<Problem> = mappings.mapNotNull { validate(it.first, it.second) }
 
     private fun validate(target: MappieTarget, source: ObjectMappingSource): Problem? {
         val sourceTypeString = source.type.dumpKotlinLike()
@@ -43,7 +43,7 @@ class UnsafeTypeAssignmentProblems(
                 Problem.error(description, null)
             }
             is ValueSource -> {
-                val location = source.origin?.let { location(file, it) }
+                val location = location(file, source.origin)
                 val description = "Target $targetString of type $targetTypeString cannot be assigned from value of type $sourceTypeString"
                 Problem.error(description, location)
             }
@@ -52,7 +52,6 @@ class UnsafeTypeAssignmentProblems(
             }
         }
     }
-
 
     companion object {
         fun of(file: IrFileEntry, mapping: ConstructorCallMapping): UnsafeTypeAssignmentProblems {

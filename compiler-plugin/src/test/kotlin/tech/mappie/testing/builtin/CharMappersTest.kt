@@ -51,7 +51,7 @@ class CharMappersTest {
     }
 
     @Test
-    fun `map Long to BigInteger explicit should succeed`() {
+    fun `map Char to String explicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(

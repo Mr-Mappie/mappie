@@ -3,6 +3,10 @@ title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
     - date: "tbd"
+      title: "v0.7.0"
+      items:
+        - "Added more built-in mappers."
+    - date: "2024-08-31"
       title: "v0.6.0"
       items:
         - "[#69](https://github.com/Mr-Mappie/mappie/issues/69) enum mappers can now be generated automatically if source and target contain the same entries."

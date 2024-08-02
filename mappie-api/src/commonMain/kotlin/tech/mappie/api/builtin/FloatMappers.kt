@@ -6,3 +6,8 @@ public class FloatToDoubleMapper : ObjectMappie<Float, Double>() {
     override fun map(from: Float): Double =
         from.toDouble()
 }
+
+public class FloatToStringMapper : ObjectMappie<Float, String>() {
+    override fun map(from: Float): String =
+        from.toString()
+}

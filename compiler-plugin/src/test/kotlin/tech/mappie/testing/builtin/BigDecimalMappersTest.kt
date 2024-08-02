@@ -1,4 +1,4 @@
-package tech.mappie.testing.objects
+package tech.mappie.testing.builtin
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -8,33 +8,63 @@ import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
+import java.math.BigDecimal
 
-class SetMethodTest {
-    data class Input(val age: Int)
-    class Output {
-        private var _age: Int = 0
-
-        fun setAge(age: Int) {
-            this._age = age
-        }
-    }
+class BigDecimalMappersTest {
 
     @TempDir
     lateinit var directory: File
 
+    data class BigDecimalInput(val value: BigDecimal)
+
+    data class StringOutput(val value: String)
+
     @Test
-    fun `map class via setter explicitly should succeed`() {
+    fun `map BigDecimal to String implicit should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(
                     kotlin("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.SetMethodTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>() {
-                            override fun map(from: Input) = mapping {
-                                to("age") fromProperty from::age
+                        import tech.mappie.testing.builtin.BigDecimalMappersTest.*
+
+                        class Mapper : ObjectMappie<BigDecimalInput, StringOutput>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val input = BigDecimal.valueOf(10)
+
+            val mapper = classLoader
+                .loadObjectMappieClass<BigDecimalInput, StringOutput>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(BigDecimalInput(input)))
+                .isEqualTo(StringOutput(input.toString()))
+        }
+    }
+
+    @Test
+    fun `map BigDecimal to String explicit should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.api.builtin.*
+                        import tech.mappie.testing.builtin.BigDecimalMappersTest.*
+
+                        class Mapper : ObjectMappie<BigDecimalInput, StringOutput>() {
+                            override fun map(from: BigDecimalInput) = mapping {
+                                to::value fromProperty from::value via BigDecimalToStringMapper()
                             }
                         }
                         """
@@ -45,47 +75,16 @@ class SetMethodTest {
             assertThat(exitCode).isEqualTo(ExitCode.OK)
             assertThat(messages).isEmpty()
 
+            val input = BigDecimal.valueOf(100)
+
             val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
+                .loadObjectMappieClass<BigDecimalInput, StringOutput>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(25)))
-                .usingRecursiveComparison()
-                .isEqualTo(Output().apply { setAge(25) })
+            assertThat(mapper.map(BigDecimalInput(input)))
+                .isEqualTo(StringOutput(input.toString()))
         }
     }
-
-    @Test
-    fun `map class via setter implicitly should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.SetMethodTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
-
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
-            assertThat(mapper.map(Input(50)))
-                .usingRecursiveComparison()
-                .isEqualTo(Output().apply { setAge(50) })
-        }
-    }
-
 }

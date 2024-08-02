@@ -580,6 +580,13 @@ figure figcaption {
   text-align: center;
 }
 
+.table-matrix {
+  overflow-x: auto;
+  max-width: 95%;
+  display: block;
+  width: fit-content;
+}
+
 .table-responsive {
   --inline-size: 40rem;
   -webkit-overflow-scrolling: touch;
