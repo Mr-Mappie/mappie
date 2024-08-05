@@ -6,6 +6,7 @@ changelog:
       title: "v0.7.0"
       items:
         - "Added more built-in mappers."
+        - "Fixed a bug where mappers nested inside classes which are not a mapper are not generated."
     - date: "2024-08-31"
       title: "v0.6.0"
       items:

@@ -67,5 +67,4 @@ class MapperClassCanContainAllDeclarationsTest {
                 .isEqualTo(Output("test"))
         }
     }
-
 }
