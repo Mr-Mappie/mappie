@@ -50,13 +50,17 @@ class MappingResolver : BaseVisitor<Map<IrFunction, List<Mapping>>, MappieDefini
     }
 
     override fun visitClass(declaration: IrClass, data: MappieDefinitions): Map<IrFunction, List<Mapping>> {
+        val nested = declaration.declarations
+            .filterIsInstance<IrClass>().map { it.accept(data) }
+            .fold(mapOf(), Map<IrFunction, List<Mapping>>::plus)
+
         return if (declaration.accept(ShouldTransformCollector(declaration.fileEntry), Unit)) {
             declaration.declarations
-                .filter { it is IrClass || it is IrFunction }
+                .filterIsInstance<IrFunction>()
                 .map { it.accept(data) }
-                .fold(mapOf(), Map<IrFunction, List<Mapping>>::plus)
+                .fold(nested, Map<IrFunction, List<Mapping>>::plus)
         } else {
-            emptyMap()
+            nested
         }
     }
 
