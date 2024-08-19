@@ -67,8 +67,8 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
     private fun Project.checkCompatibility() {
         val version = getKotlinPluginVersion()
-        if (SUPPORTED_KOTLIN_VERSIONS.any { regex -> regex.matches(version) }) {
-            logger.warn("Mappie unsupported Kotlin version $version. This may lead to compilation failure.")
+        if (SUPPORTED_KOTLIN_VERSIONS.none { regex -> regex.matches(version) }) {
+            logger.warn("Mappie unsupported Kotlin version '$version'. this may lead to compilation failure.")
         }
     }
 
