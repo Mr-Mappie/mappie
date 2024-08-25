@@ -2,11 +2,12 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-    - date: "tbd"
+    - date: "2024-08-25"
       title: "v0.7.0"
       items:
         - "Added more built-in mappers."
         - "Fixed a bug where mappers nested inside classes which are not a mapper are not generated."
+        - "Fixed warnings for newest Kotlin versions."
     - date: "2024-08-31"
       title: "v0.6.0"
       items:

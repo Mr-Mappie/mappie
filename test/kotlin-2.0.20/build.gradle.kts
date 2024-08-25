@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "2.0.20-RC"
+    id("org.jetbrains.kotlin.jvm") version "2.0.20"
     id("tech.mappie.plugin") version "+"
 }
 
