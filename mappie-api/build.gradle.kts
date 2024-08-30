@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.dokka)
@@ -6,18 +8,28 @@ plugins {
 
 kotlin {
     explicitApi()
+    withSourcesJar(publish = false)
+    applyDefaultHierarchyTemplate()
 
-    withSourcesJar()
+    jvm {
+        withSourcesJar(publish = true)
+    }
 
-    jvm()
+    js {
+        browser()
+        binaries.library()
+    }
+
+    mingwX64 { binaries { sharedLib { baseName = "libnative" } } }
 }
 
+val dokkaHtml by tasks.dokkaHtml
 tasks.register<Jar>("javadocJar") {
     group = "build"
     description = "Assemble a javadoc jar containing the Dokka pages of the 'main' feature."
     archiveClassifier = "javadoc"
-    from(layout.buildDirectory.dir("dokka/javadoc"))
-    dependsOn("dokkaJavadoc")
+    from(dokkaHtml.outputDirectory)
+    dependsOn(dokkaHtml)
 }
 
 publishing {
