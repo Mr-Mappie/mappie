@@ -1,8 +1,11 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.dokka)
+    alias(libs.plugins.android.library) apply false
     id("maven-publish")
 }
 
@@ -15,12 +18,30 @@ kotlin {
         withSourcesJar(publish = true)
     }
 
+    androidNativeX64()
+    androidNativeArm64()
+
+    iosArm64()
+    iosSimulatorArm64()
+    iosX64()
+
     js {
         browser()
-        binaries.library()
+        nodejs()
     }
 
-    mingwX64 { binaries { sharedLib { baseName = "libnative" } } }
+    wasmJs {
+        browser()
+        nodejs()
+    }
+
+    mingwX64()
+
+    macosX64()
+    macosArm64()
+
+    linuxX64()
+    linuxArm64()
 }
 
 val dokkaHtml by tasks.dokkaHtml
