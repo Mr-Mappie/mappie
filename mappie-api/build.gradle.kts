@@ -25,6 +25,10 @@ kotlin {
     iosSimulatorArm64()
     iosX64()
 
+    tvosX64()
+    tvosSimulatorArm64()
+    tvosArm64()
+
     js {
         browser()
         nodejs()
