@@ -1,88 +1,25 @@
 package tech.mappie.resolving
 
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.util.parentAsClass
+import tech.mappie.api.EnumMappie
 import tech.mappie.resolving.classes.ClassResolver
-import tech.mappie.resolving.classes.ObjectMappingSource
 import tech.mappie.resolving.enums.EnumResolver
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.Name
-import tech.mappie.BaseVisitor
-import tech.mappie.api.*
-import tech.mappie.generation.ShouldTransformCollector
-import tech.mappie.mappieTerminate
-import tech.mappie.resolving.classes.GeneratedMappieClass
-import tech.mappie.resolving.classes.targets.MappieTarget
-import tech.mappie.resolving.enums.EnumMappingTarget
-import tech.mappie.util.isStrictSubclassOf
-import tech.mappie.util.location
+import tech.mappie.util.isSubclassOf
 
-sealed interface Mapping
+interface MappingResolver {
 
-data class ConstructorCallMapping(
-    val targetType: IrType,
-    val sourceTypes: List<IrType>,
-    val symbol: IrConstructorSymbol,
-    val mappings: Map<MappieTarget, List<ObjectMappingSource>>,
-    val unknowns: Map<Name, List<ObjectMappingSource>>,
-    val generated: Set<GeneratedMappieClass>,
-) : Mapping
+    fun resolve(): List<MappingRequest>
 
-data class EnumMapping(
-    val targetType: IrType,
-    val sourceType: IrType,
-    val mappings: Map<IrEnumEntry, List<EnumMappingTarget>>,
-) : Mapping
-
-class MappingResolver : BaseVisitor<Map<IrFunction, List<Mapping>>, MappieDefinitions>(null) {
-
-    override fun visitModuleFragment(declaration: IrModuleFragment, data: MappieDefinitions): Map<IrFunction, List<Mapping>> {
-        return declaration.files.map { file -> file.accept(data) }
-            .fold(mapOf(), Map<IrFunction, List<Mapping>>::plus)
-    }
-
-    override fun visitFile(declaration: IrFile, data: MappieDefinitions): Map<IrFunction, List<Mapping>> {
-        return declaration.declarations
-            .filterIsInstance<IrClass>()
-            .map { it.accept(data) }
-            .fold(mapOf(), Map<IrFunction, List<Mapping>>::plus)
-    }
-
-    override fun visitClass(declaration: IrClass, data: MappieDefinitions): Map<IrFunction, List<Mapping>> {
-        val nested = declaration.declarations
-            .filterIsInstance<IrClass>().map { it.accept(data) }
-            .fold(mapOf(), Map<IrFunction, List<Mapping>>::plus)
-
-        return if (declaration.accept(ShouldTransformCollector(declaration.fileEntry), Unit)) {
-            declaration.declarations
-                .filterIsInstance<IrFunction>()
-                .map { it.accept(data) }
-                .fold(nested, Map<IrFunction, List<Mapping>>::plus)
-        } else {
-            nested
-        }
-    }
-
-    override fun visitFunction(declaration: IrFunction, data: MappieDefinitions): Map<IrFunction, List<Mapping>> {
-        return if (declaration.accept(ShouldTransformCollector(declaration.fileEntry), Unit)) {
-            val type = declaration.parentAsClass
-            return when {
-                type.isStrictSubclassOf(EnumMappie::class) -> {
-                    mapOf(declaration to listOf(EnumResolver(declaration).resolve()))
-                }
-                type.isStrictSubclassOf(ObjectMappie::class, ObjectMappie2::class, ObjectMappie3::class, ObjectMappie4::class, ObjectMappie5::class) -> {
-                    mapOf(declaration to ClassResolver(declaration, data).resolve())
+    companion object {
+        fun of(declaration: IrFunction, context: ResolverContext) =
+            when {
+                declaration.parentAsClass.isSubclassOf(EnumMappie::class) -> {
+                    EnumResolver(declaration, context)
                 }
                 else -> {
-                    mappieTerminate(
-                        "Declaration ${declaration.name.asString()} is not a Mappie subclass",
-                        location(declaration)
-                    )
+                    ClassResolver(declaration, context)
                 }
             }
-        } else {
-            emptyMap()
-        }
     }
 }

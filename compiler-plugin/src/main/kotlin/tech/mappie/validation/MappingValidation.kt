@@ -1,12 +1,9 @@
 package tech.mappie.validation
 
-import tech.mappie.MappieIrRegistrar.Companion.context
-import tech.mappie.resolving.ConstructorCallMapping
-import tech.mappie.resolving.EnumMapping
-import tech.mappie.resolving.Mapping
-import org.jetbrains.kotlin.ir.IrFileEntry
-import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import tech.mappie.validation.problems.*
+import tech.mappie.resolving.*
+import tech.mappie.validation.problems.classes.*
+import tech.mappie.validation.problems.enums.AllSourcesMappedProblems
+import tech.mappie.validation.problems.enums.UnnecessaryExplicitMappingProblems
 
 interface MappingValidation {
     val problems: List<Problem>
@@ -17,38 +14,37 @@ interface MappingValidation {
     fun warnings(): List<Problem> =
         problems.filter { it.severity == Problem.Severity.WARNING }
 
-    private class ConstructorCallMappingValidation(private val file: IrFileEntry, private val mapping: ConstructorCallMapping) : MappingValidation {
+    private class ClassMappingRequestValidation(
+        private val context: ValidationContext,
+        private val mapping: ClassMappingRequest,
+    ) : MappingValidation {
 
         override val problems: List<Problem> =
             buildList {
                 addAll(MultipleSourcesProblems.of(mapping).all())
-                addAll(MultipleTransformationsProblems.of(mapping).all())
-                addAll(UnsafeTypeAssignmentProblems.of(file, mapping).all())
-                addAll(UnsafePlatformTypeAssignmentProblems.of(file, mapping).all())
+                addAll(UnsafeTypeAssignmentProblems.of(context, mapping).all())
+                addAll(UnsafePlatformTypeAssignmentProblems.of(context, mapping).all())
                 addAll(UnknownParameterNameProblems.of(mapping).all())
-                addAll(VisibilityProblems.of(mapping).all())
+                addAll(VisibilityProblems.of(context, mapping).all())
             }
     }
 
-    private class EnumMappingValidation(private val mapping: EnumMapping) : MappingValidation {
+    private class EnumMappingRequestValidation(
+        private val context: ValidationContext,
+        private val mapping: EnumMappingRequest,
+    ) : MappingValidation {
 
-        override val problems: List<Problem> =
-            if (context.configuration.strictness.enums) {
-                mapping.mappings
-                    .filter { (_, targets) -> targets.size != 1 }
-                    .map { (source, targets) ->
-                        Problem.error("Source ${mapping.sourceType.dumpKotlinLike()}.${source.name.asString()} has ${if (targets.isEmpty()) "no target defined" else "multiple targets defined"}")
-                    }
-            } else {
-                emptyList()
-            }
+        override val problems: List<Problem> = buildList {
+            addAll(UnnecessaryExplicitMappingProblems.of(context, mapping).all())
+            addAll(AllSourcesMappedProblems.of(context, mapping).all())
+        }
     }
 
     companion object {
-        fun of(file: IrFileEntry, mapping: Mapping): MappingValidation =
+        fun of(context: ValidationContext, mapping: MappingRequest): MappingValidation =
             when (mapping) {
-                is EnumMapping -> EnumMappingValidation(mapping)
-                is ConstructorCallMapping -> ConstructorCallMappingValidation(file, mapping)
+                is EnumMappingRequest -> EnumMappingRequestValidation(context, mapping)
+                is ClassMappingRequest -> ClassMappingRequestValidation(context, mapping)
             }
     }
 }

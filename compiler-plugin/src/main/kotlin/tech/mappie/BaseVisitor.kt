@@ -1,14 +1,14 @@
 package tech.mappie
 
-import tech.mappie.util.location
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import tech.mappie.exceptions.MappiePanicException
 
-abstract class BaseVisitor<R, D>(protected var file: IrFileEntry?) : IrElementVisitor<R, D> {
+abstract class BaseVisitor<R, D> : IrElementVisitor<R, D> {
 
     override fun visitElement(element: IrElement, data: D): R {
-        mappieTerminate("Unexpected element", file?.let { location(it, element) })
+        throw MappiePanicException("Unexpected element ${element.dump()}")
     }
 
     fun IrElement.accept(data: D): R =

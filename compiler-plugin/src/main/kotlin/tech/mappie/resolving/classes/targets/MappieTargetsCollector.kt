@@ -5,24 +5,23 @@ import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.properties
 
-class MappieTargetsCollector(val constructor: IrConstructor) {
+class MappieTargetsCollector(constructor: IrConstructor) {
 
     private val type = constructor.returnType
 
-    private val parameters: List<MappieTarget> =
-        constructor.valueParameters.map { MappieValueParameterTarget(it) }
+    private val parameters: List<ClassMappingTarget> =
+        constructor.valueParameters.map { ValueParameterTarget(it) }
 
-    private val setters: Sequence<MappieTarget> =
+    private val setters: Sequence<ClassMappingTarget> =
         type.classOrFail.owner.properties
             .filter { property -> property.setter != null && property.name !in parameters.map { it.name } }
-            .map { MappieSetterTarget(it) }
+            .map { SetterTarget(it) }
 
-    private val setMethods: Sequence<MappieTarget> =
+    private val setMethods: Sequence<ClassMappingTarget> =
         type.classOrFail.functions
             .filter { it.owner.name.asString().startsWith("set") && it.owner.valueParameters.size == 1 }
-            .map { MappieFunctionTarget(it) }
+            .map { FunctionCallTarget(it) }
 
 
-    fun all(): List<MappieTarget> =
-        parameters + setters + setMethods
+    fun collect(): List<ClassMappingTarget> = parameters + setters + setMethods
 }

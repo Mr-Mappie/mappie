@@ -1,26 +1,22 @@
 package tech.mappie
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
-import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
-import org.jetbrains.kotlin.ir.builders.Scope
-import tech.mappie.util.logError
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import tech.mappie.api.ObjectMappie
 
-class MappiePluginContext(
-    val messageCollector: MessageCollector,
-    val configuration: MappieConfiguration,
-    irPluginContext: IrPluginContext,
-): IrPluginContext by irPluginContext {
+interface MappieContext {
+    val pluginContext: IrPluginContext
+    val reporter: MessageCollector
+    val configuration: MappieConfiguration
 
-    fun blockBody(scope: Scope, body: IrBlockBodyBuilder.() -> Unit) =
-        IrBlockBodyBuilder(IrGeneratorContextBase(irBuiltIns), scope, scope.scopeOwnerSymbol.owner.startOffset, scope.scopeOwnerSymbol.owner.endOffset)
-            .blockBody(body)
+    fun referenceObjectMappieClass(): IrClassSymbol =
+        pluginContext.referenceClass(ClassId(FqName("tech.mappie.api"), Name.identifier(ObjectMappie::class.simpleName!!)))!!
 
-}
-
-internal fun mappieTerminate(description: String, location: CompilerMessageLocation?): Nothing {
-    logError(description, location)
-    error("Mappie failed due to $description")
+    fun referenceFunctionLet() =
+        pluginContext.referenceFunctions(CallableId(FqName("kotlin"), Name.identifier("let"))).first()
 }

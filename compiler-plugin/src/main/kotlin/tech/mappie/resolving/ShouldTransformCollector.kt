@@ -1,9 +1,8 @@
-package tech.mappie.generation
+package tech.mappie.resolving
 
 import tech.mappie.api.Mappie
-import tech.mappie.resolving.IDENTIFIER_MAPPING
+import tech.mappie.util.IDENTIFIER_MAPPING
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -11,11 +10,11 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import tech.mappie.BaseVisitor
 import tech.mappie.util.isMappieMapFunction
-import tech.mappie.util.isStrictSubclassOf
+import tech.mappie.util.isSubclassOf
 
-class ShouldTransformCollector(file: IrFileEntry) : BaseVisitor<Boolean, Unit>(file) {
+class ShouldTransformCollector : BaseVisitor<Boolean, Unit>() {
     override fun visitClass(declaration: IrClass, data: Unit): Boolean {
-        return declaration.isStrictSubclassOf(Mappie::class)
+        return declaration.isSubclassOf(Mappie::class)
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Unit): Boolean {

@@ -50,6 +50,31 @@ class ConstructorParameterNotAFieldTest {
     }
 
     @Test
+    fun `map two classes with not compile-time parameter set should fail`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.objects.ConstructorParameterNotAFieldTest.*
+    
+                        class Mapper : ObjectMappie<Input, Output>() {
+                            override fun map(from: Input) = mapping {
+                                parameter(0.toString()) fromProperty Input::input
+                            }
+                        }
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
+            assertThat(messages).containsError("Identifier must be a compile-time constant.")
+        }
+    }
+
+    @Test
     fun `map two classes with parameter set should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {

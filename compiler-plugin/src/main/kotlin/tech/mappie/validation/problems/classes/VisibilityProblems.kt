@@ -1,16 +1,16 @@
-package tech.mappie.validation.problems
+package tech.mappie.validation.problems.classes
 
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import tech.mappie.MappieIrRegistrar
-import tech.mappie.resolving.ConstructorCallMapping
+import tech.mappie.resolving.ClassMappingRequest
 import tech.mappie.util.location
 import tech.mappie.validation.Problem
+import tech.mappie.validation.ValidationContext
 
-class VisibilityProblems(private val owner: IrConstructor) {
+class VisibilityProblems(private val context: ValidationContext, private val owner: IrConstructor) {
 
     fun all(): List<Problem> =
-        if (!owner.visibility.isPublicAPI && MappieIrRegistrar.context.configuration.strictness.visibility) {
+        if (!owner.visibility.isPublicAPI && context.configuration.strictness.visibility) {
             val constructor = owner.valueParameters.joinToString(prefix = owner.name.asString() + "(", postfix = ")") {
                 it.type.dumpKotlinLike()
             }
@@ -20,7 +20,7 @@ class VisibilityProblems(private val owner: IrConstructor) {
         }
 
     companion object {
-        fun of(mapping: ConstructorCallMapping): VisibilityProblems =
-            VisibilityProblems(mapping.symbol.owner)
+        fun of(context: ValidationContext, mapping: ClassMappingRequest): VisibilityProblems =
+            VisibilityProblems(context, mapping.constructor)
     }
 }

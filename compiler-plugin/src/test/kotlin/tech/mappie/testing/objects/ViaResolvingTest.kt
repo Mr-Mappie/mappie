@@ -78,7 +78,7 @@ class ViaResolvingTest {
             assertThat(messages).containsError(
                 "Multiple mappers resolved to be used in an implicit via",
                 listOf(
-                    "Explicitly call one of InnerMapperA, InnerMapperB explicitly.",
+                    "Call one of InnerMapperA, InnerMapperB explicitly.",
                     "Delete all except one of InnerMapperA, InnerMapperB.",
                 )
             )
@@ -108,7 +108,7 @@ class ViaResolvingTest {
             assertThat(messages).containsError(
                 "Multiple mappers resolved to be used in an implicit via",
                    listOf(
-                       "Explicitly call one of InnerMapperA, InnerMapperB explicitly.",
+                       "Call one of InnerMapperA, InnerMapperB explicitly.",
                        "Delete all except one of InnerMapperA, InnerMapperB.",
                 )
             )

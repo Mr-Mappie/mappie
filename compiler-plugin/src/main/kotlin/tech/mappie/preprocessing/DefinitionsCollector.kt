@@ -1,4 +1,4 @@
-package tech.mappie.resolving
+package tech.mappie.preprocessing
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -9,22 +9,24 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.BaseVisitor
-import tech.mappie.MappieIrRegistrar.Companion.context
+import tech.mappie.MappieContext
+import tech.mappie.resolving.ResolverContext
 import tech.mappie.api.Mappie
+import tech.mappie.resolving.MappieDefinition
 import tech.mappie.util.*
 
 // TODO: we should collect al publicly visible, and add those during resolving that are visible from the current scope.
-class MappieDefinitionsCollector {
-    fun collect(module: IrModuleFragment) =
-        MappieDefinitions(
-            module.accept(ProjectMappieDefinitionsCollector(), Unit).toList() +
-            BuiltinMappieDefinitionsCollector().collect()
-        )
+class DefinitionsCollector(val context: MappieContext) {
+    fun collect(module: IrModuleFragment): ResolverContext {
+        val builtin = BuiltinMappieDefinitionsCollector(context).collect()
+        val defined = module.accept(ProjectMappieDefinitionsCollector(), Unit)
+        return ResolverContext(context, builtin + defined)
+    }
 }
 
-class BuiltinMappieDefinitionsCollector {
+class BuiltinMappieDefinitionsCollector(val context: MappieContext) {
     fun collect() = MAPPERS
-        .map { name -> context.referenceClass(ClassId(FqName(PACKAGE), Name.identifier(name)))!!.owner }
+        .map { name -> context.pluginContext.referenceClass(ClassId(FqName(PACKAGE), Name.identifier(name)))!!.owner }
         .map { MappieDefinition(it) }
 
     companion object {
@@ -63,19 +65,18 @@ class BuiltinMappieDefinitionsCollector {
     }
 }
 
-class ProjectMappieDefinitionsCollector : BaseVisitor<List<MappieDefinition>, Unit>(null) {
+class ProjectMappieDefinitionsCollector : BaseVisitor<List<MappieDefinition>, Unit>() {
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: Unit) =
         declaration.files.flatMap { it.accept(data) }
 
     override fun visitFile(declaration: IrFile, data: Unit): List<MappieDefinition> {
-        file = declaration.fileEntry
         return declaration.declarations.flatMap { it.accept(data) }
     }
 
     override fun visitClass(declaration: IrClass, data: Unit) =
         buildList {
-            if (declaration.isStrictSubclassOf(Mappie::class)) {
+            if (declaration.isSubclassOf(Mappie::class)) {
                 (declaration.superTypes.single() as? IrSimpleType)?.let {
                     add(MappieDefinition(declaration))
                 }

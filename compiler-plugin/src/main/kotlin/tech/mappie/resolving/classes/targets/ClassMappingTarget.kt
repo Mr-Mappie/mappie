@@ -6,27 +6,29 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
-sealed interface MappieTarget {
+sealed interface ClassMappingTarget {
     val name: Name
     val type: IrType
+    val required: Boolean
 }
 
-data class MappieSetterTarget(val value: IrProperty) : MappieTarget {
+data class SetterTarget(val value: IrProperty) : ClassMappingTarget {
 
-    init {
-        value.setter != null
-    }
+    init { value.setter != null }
 
     override val name = value.name
     override val type = value.setter!!.valueParameters.first().type
+    override val required = false
 }
 
-data class MappieFunctionTarget(val value: IrSimpleFunctionSymbol) : MappieTarget {
+data class FunctionCallTarget(val value: IrSimpleFunctionSymbol) : ClassMappingTarget {
     override val name = Name.identifier(value.owner.name.asString().removePrefix("set").replaceFirstChar { it.lowercaseChar() })
     override val type = value.owner.valueParameters.first().type
+    override val required = false
 }
 
-data class MappieValueParameterTarget(val value: IrValueParameter) : MappieTarget {
+data class ValueParameterTarget(val value: IrValueParameter) : ClassMappingTarget {
     override val name = value.name
     override val type = value.type
+    override val required = true
 }

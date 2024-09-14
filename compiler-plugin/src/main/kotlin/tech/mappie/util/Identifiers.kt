@@ -1,4 +1,4 @@
-package tech.mappie.resolving
+package tech.mappie.util
 
 import org.jetbrains.kotlin.name.Name
 
