@@ -18,25 +18,5 @@ class EnumResolver(private val declaration: IrFunction, private val context: Res
             .also { declaration.body?.accept(EnumMappingBodyCollector(), it) }
             .construct(declaration)
             .let { listOf(it) }
-
-
-// TODO: add validation to selection step
-
-//    private fun validate(constructor: EnumMappingRequestBuilder) {
-//        constructor.sources.forEach { source ->
-//            val resolved = constructor.targets.filter { target -> target.name == source.name }
-//            val explicit = constructor.explicit[source]
-//
-//            if (resolved.isNotEmpty() && explicit != null) {
-//                when (val mapping = explicit.first()) {
-//                    is ExplicitEnumMappingTarget -> {
-//                        val target = mapping.target.dumpKotlinLike()
-//                        logWarn("Unnecessary explicit mapping of target $target", location(declaration.fileEntry, mapping.origin))
-//                    }
-//                    else -> Unit
-//                }
-//            }
-//        }
-//    }
 }
 

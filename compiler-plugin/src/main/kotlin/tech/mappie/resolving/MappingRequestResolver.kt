@@ -33,21 +33,3 @@ class MappingRequestResolver : BaseVisitor<Map<IrClass, List<MappingRequest>>, R
             emptyMap()
         }
 }
-
-//sealed interface Mapping
-//
-//data class ConstructorCallMapping(
-//    val targetType: IrType,
-//    val sourceTypes: List<IrType>,
-//    val symbol: IrConstructorSymbol,
-//    val mappings: Map<MappieTarget, List<ObjectMappingSource>>,
-//    val unknowns: Map<Name, List<ObjectMappingSource>>,
-//    val generated: Set<GeneratedMappieClass>,
-//) : Mapping
-//
-//data class EnumMapping(
-//    val targetType: IrType,
-//    val sourceType: IrType,
-//    val mappings: Map<IrEnumEntry, List<EnumMappingTarget>>,
-//) : Mapping
-//

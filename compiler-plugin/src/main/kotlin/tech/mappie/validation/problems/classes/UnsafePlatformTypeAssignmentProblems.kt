@@ -3,8 +3,6 @@ package tech.mappie.validation.problems.classes
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.hasFlexibleNullability
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.isFlexible
 import tech.mappie.resolving.ClassMappingRequest
 import tech.mappie.resolving.classes.sources.*
 import tech.mappie.resolving.classes.targets.ClassMappingTarget

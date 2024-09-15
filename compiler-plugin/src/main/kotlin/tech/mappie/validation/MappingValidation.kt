@@ -26,6 +26,7 @@ interface MappingValidation {
                 addAll(UnsafePlatformTypeAssignmentProblems.of(context, mapping).all())
                 addAll(UnknownParameterNameProblems.of(mapping).all())
                 addAll(VisibilityProblems.of(context, mapping).all())
+                addAll(MapperGenerationRequestProblems.of(mapping).all())
             }
     }
 
