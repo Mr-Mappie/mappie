@@ -18,12 +18,12 @@ class EnumMappingBodyCollector : BaseVisitor<EnumMappingRequestBuilder, EnumMapp
             IDENTIFIER_FROM_ENUM_ENTRY -> {
                 val target = expression.extensionReceiver!!
                 val source = (expression.valueArguments.first()!! as IrGetEnumValue).symbol.owner
-                data.explicit(source to ExplicitEnumMappingTarget(target, expression))
+                data.explicit(source to ExplicitEnumMappingTarget(target))
             }
             IDENTIFIER_THROWN_BY_ENUM_ENTRY -> {
                 val target = expression.extensionReceiver!!
                 val source = (expression.valueArguments.first()!! as IrGetEnumValue).symbol.owner
-                data.explicit(source to ThrowingEnumMappingTarget(target, expression))
+                data.explicit(source to ThrowingEnumMappingTarget(target))
             }
             else -> {
                 super.visitCall(expression, data)
