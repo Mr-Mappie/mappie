@@ -6,17 +6,18 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.typeOrFail
-import tech.mappie.MappieContext
 import tech.mappie.exceptions.MappiePanicException
 import tech.mappie.generation.ClassMappieCodeGenerationModel
+import tech.mappie.generation.CodeGenerationContext
 import tech.mappie.generation.constructTransformation
+import tech.mappie.referenceFunctionLet
 import tech.mappie.resolving.classes.sources.*
 import tech.mappie.resolving.classes.targets.FunctionCallTarget
 import tech.mappie.resolving.classes.targets.SetterTarget
 import tech.mappie.resolving.classes.targets.ValueParameterTarget
 import tech.mappie.util.*
 
-class ObjectMappieCodeGenerator(private val context: MappieContext, private val model: ClassMappieCodeGenerationModel) {
+class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, private val model: ClassMappieCodeGenerationModel) {
 
     fun construct(scope: Scope): IrBody =
         context.pluginContext.blockBody(scope) {

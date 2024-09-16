@@ -35,8 +35,10 @@ class MappieIrRegistrar(
             val requests = moduleFragment.accept(MappingRequestResolver(), context)
 
             requests.forEach { (clazz, options) ->
-                val context = ValidationContext(context, clazz.fileEntry)
-                val selected = MappingSelector.of(options.associateWith { MappingValidation.of(context, it) }).select()
+                val selected = MappingSelector.of(options.associateWith {
+                    MappingValidation.of(ValidationContext(context, context.definitions, it.origin), it)
+                }).select()
+
                 selected?.let { (solution, validation) ->
                     val function = clazz.declarations
                         .filterIsInstance<IrSimpleFunction>()
@@ -55,7 +57,7 @@ class MappieIrRegistrar(
                                 solution
                             )
                         }
-                        clazz.accept(MappieCodeGenerator(CodeGenerationContext(context, model)), null)
+                        clazz.accept(MappieCodeGenerator(CodeGenerationContext(context, model, context.definitions, emptyMap())), null)
                     }
                 } ?: context.log(
                     Problem.error(

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.types.*
 import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.resolving.MappieDefinition
+import tech.mappie.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.util.isList
 import tech.mappie.util.isSet
 
@@ -56,20 +57,27 @@ data class ExpressionMappingSource(val expression: IrExpression) : ExplicitClass
 }
 
 sealed interface PropertyMappingTransformation {
-    val target: IrType
+    val type: IrType
 }
 
 data class PropertyMappingTransformTranformation(
     val function: IrFunctionExpression,
 ) : PropertyMappingTransformation {
-    override val target = function.function.returnType
+    override val type = function.function.returnType
 }
 
 data class PropertyMappingViaMapperTransformation(
     val mapper: MappieDefinition,
     val dispatchReceiver: IrExpression?,
 ) : PropertyMappingTransformation {
-    override val target = mapper.target
+    override val type = mapper.target
+}
+
+data class GeneratedViaMapperTransformation(
+    val source: ClassMappingSource,
+    val target: ClassMappingTarget,
+) : PropertyMappingTransformation {
+    override val type = target.type
 }
 
 private fun type(original: IrType, transformation: PropertyMappingTransformation?): IrType {
@@ -77,15 +85,15 @@ private fun type(original: IrType, transformation: PropertyMappingTransformation
         original
     } else {
         when (transformation) {
-            is PropertyMappingViaMapperTransformation -> {
+            is PropertyMappingViaMapperTransformation, is GeneratedViaMapperTransformation -> {
                 when {
-                    original.isSet() -> context.irBuiltIns.setClass.typeWith(transformation.target)
-                    original.isList() -> context.irBuiltIns.listClass.typeWith(transformation.target)
-                    else -> transformation.target
+                    original.isSet() -> context.irBuiltIns.setClass.typeWith(transformation.type)
+                    original.isList() -> context.irBuiltIns.listClass.typeWith(transformation.type)
+                    else -> transformation.type
                 }.run { if (original.isNullable()) makeNullable() else this }.addAnnotations(original.annotations)
             }
             is PropertyMappingTransformTranformation -> {
-                transformation.target
+                transformation.type
             }
         }
     }

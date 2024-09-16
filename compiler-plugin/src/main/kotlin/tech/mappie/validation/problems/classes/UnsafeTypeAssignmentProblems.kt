@@ -2,6 +2,7 @@ package tech.mappie.validation.problems.classes
 
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
+import org.jetbrains.kotlin.ir.util.fileEntry
 import tech.mappie.resolving.ClassMappingRequest
 import tech.mappie.resolving.classes.sources.*
 import tech.mappie.resolving.classes.targets.ClassMappingTarget
@@ -28,15 +29,15 @@ class UnsafeTypeAssignmentProblems(
             is ExplicitPropertyMappingSource -> {
                 val via = if (source.transformation != null && source.transformation is PropertyMappingViaMapperTransformation) "via ${source.transformation.mapper.clazz.name.asString()} " else ""
                 val description = "Target $targetString of type $targetTypeString cannot be assigned from ${source.reference.dumpKotlinLike()} ${via}of type $sourceTypeString"
-                Problem.error(description, location(context.file, source.reference))
+                Problem.error(description, location(context.function.fileEntry, source.reference))
             }
             is ExpressionMappingSource -> {
                 val description = "Target $targetString of type $targetTypeString cannot be assigned from expression of type $sourceTypeString"
-                Problem.error(description, location(context.file, source.expression))
+                Problem.error(description, location(context.function.fileEntry, source.expression))
             }
             is ValueMappingSource -> {
                 val description = "Target $targetString of type $targetTypeString cannot be assigned from value of type $sourceTypeString"
-                Problem.error(description, location(context.file, source.expression))
+                Problem.error(description, location(context.function.fileEntry, source.expression))
             }
             is FunctionMappingSource -> {
                 val function = "${source.parameter.type.dumpKotlinLike()}::${source.function.name.asString()}"

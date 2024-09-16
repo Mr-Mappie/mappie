@@ -43,12 +43,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
         explicit[target.name]?.let { sources ->
             sources.map { source ->
                 if (source is ExplicitPropertyMappingSource && source.transformation == null && !source.type.isMappableFrom(target.type)) {
-                    val transformation = findTransformation(source, target)
-                    if (transformation != null) {
-                        source.copy(transformation = transformation)
-                    } else {
-                        source
-                    }
+                    source.copy(transformation = transformation(source, target))
                 } else {
                     source
                 }
@@ -61,14 +56,9 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
                 if (source.type.isMappableFrom(target.type)) {
                     source
                 } else {
-                    val transformation = findTransformation(source, target)
-                    if (transformation != null) {
-                        when (source) {
-                            is ImplicitPropertyMappingSource -> source.copy(transformation = transformation)
-                            else -> throw MappiePanicException("Only ImplicitPropertyMappingSource should occur when resolving a transformation.")
-                        }
-                    } else {
-                        source
+                    when (source) {
+                        is ImplicitPropertyMappingSource -> source.copy(transformation = transformation(source, target))
+                        else -> throw MappiePanicException("Only ImplicitPropertyMappingSource should occur when resolving a transformation.")
                     }
                 }
             }.ifEmpty {
@@ -80,7 +70,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
             }
         }
 
-    private fun findTransformation(source: ClassMappingSource, target: ClassMappingTarget): PropertyMappingViaMapperTransformation? {
+    private fun transformation(source: ClassMappingSource, target: ClassMappingTarget): PropertyMappingTransformation {
         val mappers = context.definitions.matching(source.type, target.type)
         return if (mappers.size == 1) {
             PropertyMappingViaMapperTransformation(mappers.single(), null)
@@ -96,15 +86,17 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
             context.log(error)
             PropertyMappingViaMapperTransformation(mappers.first(), null)
         } else {
-            null
+            GeneratedViaMapperTransformation(source, target)
         }
     }
 
     fun explicit(entry: Pair<Name, ExplicitClassMappingSource>): ClassMappingRequestBuilder =
-        apply { explicit.merge(entry.first, listOf(entry.second), Collection<ExplicitClassMappingSource>::plus) }
+        apply { explicit.merge(entry.first, listOf(entry.second), List<ExplicitClassMappingSource>::plus) }
 
     fun sources(sources: Map<Name, ImplicitClassMappingSource>) =
-        apply { sources.forEach { (name, source) -> implicit.merge(name, listOf(source), List<ImplicitClassMappingSource>::plus) } }
+        apply { sources.forEach { (name, source) ->
+            implicit.merge(name, listOf(source), List<ImplicitClassMappingSource>::plus)
+        } }
 
     fun targets(targets: List<ClassMappingTarget>) =
         apply { this.targets.addAll(targets) }

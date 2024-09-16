@@ -39,5 +39,9 @@ fun IrSimpleFunction.isMappieMapNullableFunction() =
         && returnType.isNullable()
 
 fun IrGeneratorContextInterface.blockBody(scope: Scope, body: IrBlockBodyBuilder.() -> Unit) =
-    IrBlockBodyBuilder(IrGeneratorContextBase(irBuiltIns), scope, scope.scopeOwnerSymbol.owner.startOffset, scope.scopeOwnerSymbol.owner.endOffset)
-        .blockBody(body)
+    IrBlockBodyBuilder(
+        IrGeneratorContextBase(irBuiltIns),
+        scope,
+        scope.scopeOwnerSymbol.owner.startOffset,
+        scope.scopeOwnerSymbol.owner.endOffset,
+    ).blockBody(body)
