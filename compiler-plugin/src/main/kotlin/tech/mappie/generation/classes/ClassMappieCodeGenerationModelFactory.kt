@@ -2,6 +2,7 @@ package tech.mappie.generation.classes
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import tech.mappie.generation.ClassMappieCodeGenerationModel
+import tech.mappie.generation.CodeGenerationModelFactory
 import tech.mappie.resolving.ClassMappingRequest
 import tech.mappie.resolving.classes.sources.ClassMappingSource
 import tech.mappie.resolving.classes.sources.ExplicitClassMappingSource
@@ -10,10 +11,10 @@ import tech.mappie.resolving.classes.targets.FunctionCallTarget
 import tech.mappie.resolving.classes.targets.SetterTarget
 import tech.mappie.resolving.classes.targets.ValueParameterTarget
 
-class ClassMappieCodeGenerationModelFactory {
+class ClassMappieCodeGenerationModelFactory(private val request: ClassMappingRequest) : CodeGenerationModelFactory {
 
     @Suppress("UNCHECKED_CAST")
-    fun construct(function: IrFunction, request: ClassMappingRequest): ClassMappieCodeGenerationModel =
+    override fun construct(function: IrFunction): ClassMappieCodeGenerationModel =
         ClassMappieCodeGenerationModel(
             function,
             request.constructor,

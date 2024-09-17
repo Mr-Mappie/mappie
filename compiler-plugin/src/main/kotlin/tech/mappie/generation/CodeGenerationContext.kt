@@ -9,17 +9,12 @@ class CodeGenerationContext(
     context: MappieContext,
     val model: CodeGenerationModel,
     val definitions: List<MappieDefinition>,
-    val generated: Map<Pair<IrType, IrType>, IrClass>
+    val generated: Map<Pair<IrType, IrType>, IrClass>,
 ) : MappieContext by context {
 
-    fun with(key: Pair<IrType, IrType>, clazz: IrClass): CodeGenerationContext =
-        CodeGenerationContext(
-            this,
-            model,
-            definitions,
-            buildMap {
-                putAll(generated)
-                put(key, clazz)
-            },
-        )
+    fun copy(
+        model: CodeGenerationModel = this.model,
+        definitions: List<MappieDefinition> = this.definitions,
+        generated: Map<Pair<IrType, IrType>, IrClass> = this.generated
+    ) = CodeGenerationContext(this, model, definitions, generated)
 }

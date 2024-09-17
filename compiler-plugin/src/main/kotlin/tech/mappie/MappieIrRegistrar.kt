@@ -5,12 +5,10 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.util.fileEntry
 import tech.mappie.exceptions.MappiePanicException
 import tech.mappie.generation.CodeGenerationContext
+import tech.mappie.generation.CodeGenerationModelFactory
 import tech.mappie.generation.MappieCodeGenerator
-import tech.mappie.generation.classes.ClassMappieCodeGenerationModelFactory
-import tech.mappie.generation.enums.EnumMappieCodeGenerationModelFactory
 import tech.mappie.preprocessing.DefinitionsCollector
 import tech.mappie.resolving.*
 import tech.mappie.selection.MappingSelector
@@ -46,25 +44,10 @@ class MappieIrRegistrar(
 
                     context.logAll(validation.problems, location(function))
                     if (solution != null) {
-                        val model = when (solution) {
-                            is ClassMappingRequest -> ClassMappieCodeGenerationModelFactory().construct(
-                                function,
-                                solution
-                            )
-
-                            is EnumMappingRequest -> EnumMappieCodeGenerationModelFactory().construct(
-                                function,
-                                solution
-                            )
-                        }
+                        val model = CodeGenerationModelFactory.of(solution).construct(function)
                         clazz.accept(MappieCodeGenerator(CodeGenerationContext(context, model, context.definitions, emptyMap())), null)
                     }
-                } ?: context.log(
-                    Problem.error(
-                        "Target class has no visible constructor",
-                        location(clazz.fileEntry, clazz)
-                    )
-                )
+                } ?: context.log(Problem.error("Target class has no accessible constructor", location(clazz)))
             }
         }
     }

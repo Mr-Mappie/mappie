@@ -1,14 +1,15 @@
 package tech.mappie.generation.enums
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import tech.mappie.generation.CodeGenerationModelFactory
 import tech.mappie.generation.EnumMappieCodeGenerationModel
 import tech.mappie.resolving.EnumMappingRequest
 import tech.mappie.resolving.enums.EnumMappingTarget
 import tech.mappie.resolving.enums.ResolvedEnumMappingTarget
 
-class EnumMappieCodeGenerationModelFactory {
+class EnumMappieCodeGenerationModelFactory(private val request: EnumMappingRequest) : CodeGenerationModelFactory {
 
-    fun construct(function: IrFunction, request: EnumMappingRequest): EnumMappieCodeGenerationModel =
+    override fun construct(function: IrFunction): EnumMappieCodeGenerationModel =
         EnumMappieCodeGenerationModel(
             function,
             request.source,

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.util.addSimpleDelegatingConstructor
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.name.Name
-import tech.mappie.generation.enums.EnumMappieCodeGenerationModelFactory
 import tech.mappie.referenceEnumMappieClass
 import tech.mappie.resolving.EnumMappingRequest
 import tech.mappie.util.IDENTIFIER_MAP
@@ -27,9 +26,8 @@ class GeneratedMappieClassConstructor(
 
     fun construct(parent: IrDeclarationParent): Map<EnumMappingRequest, IrClass> =
         requests.associateWith {
-            val model = EnumMappieCodeGenerationModelFactory().construct(context.model.declaration, it)
-            val context = CodeGenerationContext(context, model, context.definitions, context.generated)
-            construct(parent, it).transform(MappieCodeGenerator(context), null) as IrClass
+            val model = CodeGenerationModelFactory.of(it).construct(context.model.declaration)
+            construct(parent, it).transform(MappieCodeGenerator(context.copy(model = model)), null) as IrClass
         }
 
     private fun construct(parent: IrDeclarationParent, request: EnumMappingRequest): IrClass =
