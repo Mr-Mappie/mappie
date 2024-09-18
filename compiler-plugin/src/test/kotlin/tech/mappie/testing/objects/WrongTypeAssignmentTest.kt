@@ -61,7 +61,7 @@ class WrongTypeAssignmentTest {
         }.compile {
             assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
             assertThat(messages)
-                .containsError("Target Output::value of type Int cannot be assigned from from::value of type String")
+                .containsError("Target Output::value automatically resolved from from::value but cannot assign source type String to target type Int")
         }
     }
 

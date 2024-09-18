@@ -73,7 +73,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
             }
         }
 
-    private fun transformation(source: ClassMappingSource, target: ClassMappingTarget): PropertyMappingTransformation {
+    private fun transformation(source: ClassMappingSource, target: ClassMappingTarget): PropertyMappingTransformation? {
         val mappers = context.definitions.matching(source.type, target.type)
         return if (mappers.size == 1) {
             PropertyMappingViaMapperTransformation(mappers.single(), null)
@@ -88,8 +88,10 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
             )
             context.log(error)
             PropertyMappingViaMapperTransformation(mappers.first(), null)
-        } else {
+        } else if (!source.type.isPrimitive() && !target.type.isPrimitive()) {
             GeneratedViaMapperTransformation(source, target)
+        } else {
+            null
         }
     }
 

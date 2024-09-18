@@ -23,3 +23,7 @@ fun IrType.isSet() =
 
 fun IrType.hasFlexibleNullabilityAnnotation(): Boolean =
     annotations.any { it.symbol.owner.parentAsClass.classId == FlexibleNullability }
+
+fun IrType.isPrimitive(): Boolean =
+    isBoolean() || isByte() || isShort() || isInt() || isLong() || isChar() || isFloat() || isDouble()
+            || isStringClassType() || isUByte() || isUShort() || isUInt() || isULong() || isNumber()
