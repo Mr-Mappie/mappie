@@ -18,6 +18,8 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
 
     private val targets = mutableListOf<ClassMappingTarget>()
 
+    private val sources = mutableMapOf<Name, IrType>()
+
     private val implicit = mutableMapOf<Name, List<ImplicitClassMappingSource>>()
 
     private val explicit = mutableMapOf<Name, List<ExplicitClassMappingSource>>()
@@ -33,6 +35,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
 
         return ClassMappingRequest(
             origin,
+            sources.map { it.value },
             constructor,
             mappings,
             unknowns,
@@ -93,10 +96,14 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
     fun explicit(entry: Pair<Name, ExplicitClassMappingSource>): ClassMappingRequestBuilder =
         apply { explicit.merge(entry.first, listOf(entry.second), List<ExplicitClassMappingSource>::plus) }
 
-    fun sources(sources: Map<Name, ImplicitClassMappingSource>) =
-        apply { sources.forEach { (name, source) ->
-            implicit.merge(name, listOf(source), List<ImplicitClassMappingSource>::plus)
-        } }
+    fun sources(entries: List<Pair<Name, IrType>>) = apply {
+        sources.putAll(entries)
+        entries.map { (name, type) ->
+            type.getClass()!!.accept(ImplicitClassMappingSourcesCollector(), name).forEach { (name, source) ->
+                implicit.merge(name, listOf(source), List<ImplicitClassMappingSource>::plus)
+            }
+        }
+    }
 
     fun targets(targets: List<ClassMappingTarget>) =
         apply { this.targets.addAll(targets) }

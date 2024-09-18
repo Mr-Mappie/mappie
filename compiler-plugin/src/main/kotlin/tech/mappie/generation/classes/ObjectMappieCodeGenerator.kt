@@ -77,13 +77,13 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
             }
             is ImplicitPropertyMappingSource -> {
                 val getter = irCall(source.property.getter!!).apply {
-                    dispatchReceiver = irGet(source.parameter)
+                    dispatchReceiver = irGet(parameters.first { it.name == source.parameter })
                 }
                 source.transformation?.let { constructTransformation(this@ObjectMappieCodeGenerator.context, it, getter) } ?: getter
             }
             is FunctionMappingSource -> {
                 irCall(source.function.symbol).apply {
-                    dispatchReceiver = irGet(source.parameter)
+                    dispatchReceiver = irGet(parameters.first { it.name == source.parameter })
                 }
             }
             is ParameterDefaultValueMappingSource -> {

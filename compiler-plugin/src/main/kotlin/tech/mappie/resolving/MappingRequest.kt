@@ -11,21 +11,24 @@ import tech.mappie.resolving.enums.EnumMappingTarget
 
 sealed interface MappingRequest {
     val origin: IrFunction
+    val source: IrType
     val target: IrType
 }
 
 class ClassMappingRequest(
     override val origin: IrFunction,
+    val sources: List<IrType>,
     val constructor: IrConstructor,
     val mappings : Map<ClassMappingTarget, List<ClassMappingSource>>,
     val unknowns: Map<Name, List<ClassMappingSource>>,
 ) : MappingRequest {
+    override val source get() = sources.single()
     override val target = constructor.returnType
 }
 
 class EnumMappingRequest(
     override val origin: IrFunction,
-    val source: IrType,
+    override val source: IrType,
     override val target: IrType,
     val mappings: Map<IrEnumEntry, List<EnumMappingTarget>>,
 ) : MappingRequest

@@ -15,37 +15,41 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.referenceEnumMappieClass
-import tech.mappie.resolving.EnumMappingRequest
+import tech.mappie.referenceObjectMappieClass
+import tech.mappie.resolving.MappingRequest
 import tech.mappie.util.IDENTIFIER_MAP
 
 class GeneratedMappieClassConstructor(
     private val context: CodeGenerationContext,
-    private val requests: List<EnumMappingRequest>,
+    private val requests: List<MappingRequest>,
 ) {
-    private val mappie = context.referenceEnumMappieClass()
+    private val base = when (context.model) {
+        is ClassMappieCodeGenerationModel -> context.referenceObjectMappieClass()
+        is EnumMappieCodeGenerationModel -> context.referenceEnumMappieClass()
+    }
 
-    fun construct(parent: IrDeclarationParent): Map<EnumMappingRequest, IrClass> =
+    fun construct(parent: IrDeclarationParent): Map<MappingRequest, IrClass> =
         requests.associateWith {
             val model = CodeGenerationModelFactory.of(it).construct(context.model.declaration)
             construct(parent, it).transform(MappieCodeGenerator(context.copy(model = model)), null) as IrClass
         }
 
-    private fun construct(parent: IrDeclarationParent, request: EnumMappingRequest): IrClass =
+    private fun construct(parent: IrDeclarationParent, request: MappingRequest): IrClass =
         context.pluginContext.irFactory.buildClass {
             name = name(request)
             kind = ClassKind.OBJECT
         }.also {
             it.parent = parent
             it.thisReceiver = buildReceiverParameter(it, it.origin, it.symbol.typeWithParameters(emptyList()))
-            it.superTypes = listOf(mappie.owner.symbol.typeWith(request.source, request.target))
+            it.superTypes = listOf(base.owner.symbol.typeWith(request.source, request.target))
 
             it.addSimpleDelegatingConstructor(
-                mappie.constructors.single().owner,
+                base.constructors.single().owner,
                 context.pluginContext.irBuiltIns,
                 true
             )
 
-            mappie.functions.forEach { function ->
+            base.functions.forEach { function ->
                 it.addFunction {
                     name = function.owner.name
                     returnType = function.owner.returnType
@@ -62,6 +66,6 @@ class GeneratedMappieClassConstructor(
             }
         }
 
-    private fun name(request: EnumMappingRequest) =
+    private fun name(request: MappingRequest) =
         Name.identifier(request.source.classOrFail.owner.name.toString() + "To" + request.target.classOrFail.owner.name.toString() + "Mapper")
 }

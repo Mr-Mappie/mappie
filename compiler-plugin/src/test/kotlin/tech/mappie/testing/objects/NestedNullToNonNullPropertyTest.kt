@@ -38,7 +38,7 @@ class NestedNullToNonNullPropertyTest {
         }.compile {
             assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
             assertThat(messages)
-                .containsError("Target Output::text automatically resolved from Input::text via InnerMapper but cannot assign source type InnerOutput? to target type InnerOutput")
+                .containsError("Target Output::text automatically resolved from from::text via InnerMapper but cannot assign source type InnerOutput? to target type InnerOutput")
         }
     }
 

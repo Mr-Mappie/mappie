@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.name.Name
 import tech.mappie.api.EnumMappie
 import tech.mappie.resolving.classes.ClassResolver
 import tech.mappie.resolving.enums.EnumResolver
@@ -21,7 +22,7 @@ interface MappingResolver {
                     EnumResolver(context, source, target)
                 }
                 else -> {
-                    TODO()
+                    ClassResolver(context, listOf(Name.identifier("from") to source), target)
                 }
             }
 
@@ -31,7 +32,7 @@ interface MappingResolver {
                     EnumResolver(context, declaration.valueParameters.first().type, declaration.returnType)
                 }
                 else -> {
-                    ClassResolver(context, declaration.valueParameters, declaration.returnType)
+                    ClassResolver(context, declaration.valueParameters.map { it.name to it.type }, declaration.returnType)
                 }
             }
     }

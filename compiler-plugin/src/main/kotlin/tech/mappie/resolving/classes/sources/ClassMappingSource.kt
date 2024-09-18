@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.name.Name
 import tech.mappie.MappieIrRegistrar.Companion.context
 import tech.mappie.resolving.MappieDefinition
 import tech.mappie.resolving.classes.targets.ClassMappingTarget
@@ -28,7 +29,7 @@ data class ParameterDefaultValueMappingSource(
 
 data class ImplicitPropertyMappingSource(
     val property: IrProperty,
-    val parameter: IrValueParameter,
+    val parameter: Name,
     val transformation: PropertyMappingTransformation?,
 ) : ImplicitClassMappingSource {
     override val type = type(property.getter!!.returnType, transformation)
@@ -36,7 +37,7 @@ data class ImplicitPropertyMappingSource(
 
 data class FunctionMappingSource(
     val function: IrFunction,
-    val parameter: IrValueParameter,
+    val parameter: Name,
 ) : ImplicitClassMappingSource {
     override val type = function.returnType
 }
