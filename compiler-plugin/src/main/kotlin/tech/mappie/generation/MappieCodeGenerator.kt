@@ -14,25 +14,25 @@ import tech.mappie.util.isMappieMapFunction
 class MappieCodeGenerator(private val context: CodeGenerationContext) : IrElementTransformerVoidWithContext() {
 
     override fun visitClassNew(declaration: IrClass): IrStatement = declaration.apply {
-        // TODO: resolving of the following should happen in the factory
-        // TODO: we should use MappingSelector instead
+        // TODO: Use MappingSelector instead?
         val context = if (context.model is ClassMappieCodeGenerationModel) {
-            val models = context.model.mappings.values.mapNotNull { source ->
-                if (source is ImplicitPropertyMappingSource && source.transformation is GeneratedViaMapperTransformation) {
+            val models = context.model.mappings.values
+                .filter { source -> source is ImplicitPropertyMappingSource && source.transformation is GeneratedViaMapperTransformation }
+                .map { source -> (source as ImplicitPropertyMappingSource).transformation as GeneratedViaMapperTransformation }
+                .distinctBy { it.source.type to it.target.type }
+                .map { transformation ->
                     MappingResolver.of(
-                        source.transformation.source.type,
-                        source.transformation.target.type,
+                        transformation.source.type,
+                        transformation.target.type,
                         ResolverContext(context, context.definitions, context.model.declaration)
                     ).resolve(null).single()
-                } else {
-                    null
                 }
-            }
 
-            val generated = GeneratedMappieClassConstructor(context, models).construct(declaration)
-            generated.entries.fold(context) { context, (request, generated) ->
-                declarations.add(generated)
-                context.copy(generated = context.generated + (request.source to request.target to generated))
+            models.fold(context) { context, request ->
+                GeneratedMappieClassConstructor(context).construct(request, declaration)?.let { (context, generated) ->
+                    declarations.add(generated)
+                    context
+                } ?: context
             }
         } else {
             context

@@ -21,18 +21,24 @@ import tech.mappie.util.IDENTIFIER_MAP
 
 class GeneratedMappieClassConstructor(
     private val context: CodeGenerationContext,
-    private val requests: List<MappingRequest>,
 ) {
     private val base = when (context.model) {
         is ClassMappieCodeGenerationModel -> context.referenceObjectMappieClass()
         is EnumMappieCodeGenerationModel -> context.referenceEnumMappieClass()
     }
 
-    fun construct(parent: IrDeclarationParent): Map<MappingRequest, IrClass> =
-        requests.associateWith {
-            val model = CodeGenerationModelFactory.of(it).construct(context.model.declaration)
-            construct(parent, it).transform(MappieCodeGenerator(context.copy(model = model)), null) as IrClass
+    fun construct(request: MappingRequest, parent: IrDeclarationParent): Pair<CodeGenerationContext, IrClass>? {
+        val existing = context.generated.entries.firstOrNull { it.key.first == request.source && it.key.second == request.target }
+        if (existing == null) {
+            val model = CodeGenerationModelFactory.of(request).construct(context.model.declaration)
+            val clazz = construct(parent, request)
+            val context = context.copy(generated = context.generated + (request.source to request.target to clazz))
+            val generated = clazz.transform(MappieCodeGenerator(context.copy(model = model)), null)
+            return context to (generated as IrClass)
+        } else {
+            return null
         }
+    }
 
     private fun construct(parent: IrDeclarationParent, request: MappingRequest): IrClass =
         context.pluginContext.irFactory.buildClass {

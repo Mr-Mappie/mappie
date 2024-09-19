@@ -1,5 +1,6 @@
 package tech.mappie.validation.problems.classes
 
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import tech.mappie.exceptions.MappiePanicException
 import tech.mappie.resolving.ClassMappingRequest
 import tech.mappie.resolving.MappingResolver
@@ -11,24 +12,32 @@ import tech.mappie.validation.MappingValidation
 import tech.mappie.validation.Problem
 import tech.mappie.validation.ValidationContext
 
-// TODO: Can contain duplicate types
 class MapperGenerationRequestProblems(
     private val context: ValidationContext,
     private val generated: List<Pair<ClassMappingTarget, GeneratedViaMapperTransformation>>,
 ) {
 
-    fun all(): List<Problem> = generated.map { (_, transformation) ->
+    fun all(): List<Problem> = generated
+        .filter { (_, transformation) ->
+            context.generated.none { it.first == transformation.source.type && it.second == transformation.target.type }
+        }.map { (_, transformation) ->
         val requests = MappingResolver.of(transformation.source.type, transformation.target.type, ResolverContext(context, context.definitions, context.function))
             .resolve(null)
 
-        return if (requests.none { request -> MappingValidation.of(context, request).isValid() }) {
-            listOf(
-                // TODO: now almost always overrides UnsafeTypeAssignmentProblems + create a nice error message
-                Problem.error("No mapping can be generated", location(context.function))
-            )
-        } else {
-            emptyList()
-        }
+        val context = context.copy(generated = generated.map { it.second.source.type to it.second.target.type })
+        return requests
+            .associateBy { request -> MappingValidation.of(context, request) }
+            .mapNotNull { (validation, request) ->
+                if (validation.isValid()) {
+                    null
+                } else {
+                    Problem.error(
+                        "No implicit mapping can be generated from ${request.source.type.dumpKotlinLike()} to ${request.target.type.dumpKotlinLike()}",
+                        location(context.function),
+                        validation.errors().map { it.description }
+                    )
+                }
+            }
     }
 
     companion object {

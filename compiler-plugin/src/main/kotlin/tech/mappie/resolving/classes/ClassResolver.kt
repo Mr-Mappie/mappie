@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.name.Name
-import tech.mappie.resolving.classes.sources.ImplicitClassMappingSourcesCollector
 import tech.mappie.resolving.classes.targets.MappieTargetsCollector
 
 class ClassResolver(

@@ -30,6 +30,7 @@ data class ParameterDefaultValueMappingSource(
 data class ImplicitPropertyMappingSource(
     val property: IrProperty,
     val parameter: Name,
+    val parameterType: IrType,
     val transformation: PropertyMappingTransformation?,
 ) : ImplicitClassMappingSource {
     override val type = type(property.getter!!.returnType, transformation)
@@ -38,6 +39,7 @@ data class ImplicitPropertyMappingSource(
 data class FunctionMappingSource(
     val function: IrFunction,
     val parameter: Name,
+    val parameterType: IrType,
 ) : ImplicitClassMappingSource {
     override val type = function.returnType
 }

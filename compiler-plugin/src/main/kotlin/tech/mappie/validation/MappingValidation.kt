@@ -11,6 +11,9 @@ interface MappingValidation {
     fun isValid(): Boolean =
         problems.none { it.severity == Problem.Severity.ERROR }
 
+    fun errors(): List<Problem> =
+        problems.filter { it.severity == Problem.Severity.ERROR }
+
     fun warnings(): List<Problem> =
         problems.filter { it.severity == Problem.Severity.WARNING }
 

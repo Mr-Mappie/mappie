@@ -101,7 +101,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
     fun sources(entries: List<Pair<Name, IrType>>) = apply {
         sources.putAll(entries)
         entries.map { (name, type) ->
-            type.getClass()!!.accept(ImplicitClassMappingSourcesCollector(), name).forEach { (name, source) ->
+            type.getClass()!!.accept(ImplicitClassMappingSourcesCollector(), name to type).forEach { (name, source) ->
                 implicit.merge(name, listOf(source), List<ImplicitClassMappingSource>::plus)
             }
         }

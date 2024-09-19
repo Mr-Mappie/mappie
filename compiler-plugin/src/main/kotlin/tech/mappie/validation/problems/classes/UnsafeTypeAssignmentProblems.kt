@@ -40,12 +40,12 @@ class UnsafeTypeAssignmentProblems(
                 Problem.error(description, location(context.function.fileEntry, source.expression))
             }
             is FunctionMappingSource -> {
-                val function = "${source.parameter.asString()}::${source.function.name.asString()}"
+                val function = "${source.parameterType.dumpKotlinLike()}::${source.function.name.asString()}"
                 val description = "Target $targetString automatically resolved from $function but cannot assign source type $sourceTypeString to target type $targetTypeString"
                 Problem.error(description, location(mapping.origin))
             }
             is ImplicitPropertyMappingSource -> {
-                val property = "${source.parameter.asString()}::${source.property.name.asString()}"
+                val property = "${source.parameterType.dumpKotlinLike()}::${source.property.name.asString()}"
                 val via = if (source.transformation != null && source.transformation is PropertyMappingViaMapperTransformation) "via ${source.transformation.mapper.clazz.name.asString()} " else ""
                 val description = "Target $targetString automatically resolved from $property ${via}but cannot assign source type $sourceTypeString to target type $targetTypeString"
                 Problem.error(description, location(mapping.origin))

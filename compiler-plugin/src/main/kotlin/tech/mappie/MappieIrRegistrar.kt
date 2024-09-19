@@ -34,7 +34,7 @@ class MappieIrRegistrar(
 
             requests.forEach { (clazz, options) ->
                 val selected = MappingSelector.of(options.associateWith {
-                    MappingValidation.of(ValidationContext(context, context.definitions, it.origin), it)
+                    MappingValidation.of(ValidationContext(context, context.definitions, emptyList(), it.origin), it)
                 }).select()
 
                 selected?.let { (solution, validation) ->
