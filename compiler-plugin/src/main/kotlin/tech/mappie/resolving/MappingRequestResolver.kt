@@ -20,7 +20,7 @@ class MappingRequestResolver : BaseVisitor<Map<IrClass, List<MappingRequest>>, R
 
     override fun visitClass(declaration: IrClass, data: ResolverContext) =
         buildList {
-            addAll(declaration.nestedClasses.map { it.accept(data) })
+            addAll(declaration.declarations.filterIsInstance<IrClass>().map { it.accept(data) })
             if (declaration.isSubclassOf(Mappie::class)) {
                 addAll(declaration.functions.map { it.accept(data) })
             }
