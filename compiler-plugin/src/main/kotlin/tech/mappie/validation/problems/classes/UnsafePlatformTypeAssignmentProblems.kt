@@ -39,7 +39,7 @@ class UnsafePlatformTypeAssignmentProblems(
                 Problem.warning(description, location(context.function.fileEntry, source.expression))
             }
             is FunctionMappingSource -> {
-                val function = "${source.parameter.asString()}::${source.function.name.asString()}"
+                val function = "${source.parameterType}::${source.function.name.asString()}"
                 val description = "Target $targetString automatically resolved from $function but it is unsafe to assign source platform type $sourceTypeString to target type $targetTypeString"
                 Problem.warning(description, location(mapping.origin))
 
