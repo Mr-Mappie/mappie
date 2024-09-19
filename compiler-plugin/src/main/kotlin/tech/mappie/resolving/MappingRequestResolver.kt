@@ -1,22 +1,11 @@
 package tech.mappie.resolving
 
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.Name
 import tech.mappie.BaseVisitor
 import tech.mappie.api.*
 import tech.mappie.util.isSubclassOf
 import tech.mappie.util.merge
-
-class MapperGenerationRequest(val name: Name)
-
-class GeneratedMappingRequestResolver(val context: ResolverContext, val source: IrType, val target: IrType) {
-
-    fun resolve(): Map<IrClass, List<MappingRequest>> {
-        TODO()
-    }
-}
 
 class MappingRequestResolver : BaseVisitor<Map<IrClass, List<MappingRequest>>, ResolverContext>() {
 
