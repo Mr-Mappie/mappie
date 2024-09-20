@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
+import tech.mappie.MappieIrRegistrar.Companion.context
 
 fun IrType.isMappableFrom(other: IrType): Boolean = when {
     (isList() && other.isList()) || (isSet() && other.isSet()) ->
@@ -12,7 +13,7 @@ fun IrType.isMappableFrom(other: IrType): Boolean = when {
     (isList() xor other.isList()) || (isSet() xor other.isSet()) ->
         false
     else ->
-        isSubtypeOfClass(other.classOrFail)
+        isSubtypeOf(other, IrTypeSystemContextImpl(context.irBuiltIns))
 }
 
 fun IrType.isList() =

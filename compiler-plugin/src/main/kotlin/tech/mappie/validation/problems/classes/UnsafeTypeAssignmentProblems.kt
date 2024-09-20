@@ -62,7 +62,8 @@ class UnsafeTypeAssignmentProblems(
                 .filter { (_, sources) -> sources.size == 1 }
                 .filter { (target, sources) ->
                     val source = sources.single()
-                    !target.type.isMappableFrom(source.type) || ((source.type.isNullable() && !source.type.hasFlexibleNullabilityAnnotation()) && !target.type.isNullable())
+                    !source.type.isSubtypeOf(target.type, IrTypeSystemContextImpl(context.pluginContext.irBuiltIns)) ||
+                        ((source.type.isNullable() && !source.type.hasFlexibleNullabilityAnnotation()) && !target.type.isNullable())
                 }
                 .map { (target, sources) -> target to sources.single() }
 
