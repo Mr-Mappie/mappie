@@ -50,5 +50,10 @@ interface MappingValidation {
                 is EnumMappingRequest -> EnumMappingRequestValidation(context, mapping)
                 is ClassMappingRequest -> ClassMappingRequestValidation(context, mapping)
             }
+
+        fun valid(): MappingValidation =
+            object : MappingValidation {
+                override val problems: List<Problem> = emptyList()
+            }
     }
 }

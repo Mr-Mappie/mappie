@@ -7,24 +7,25 @@ import tech.mappie.generation.classes.ObjectMappieCodeGenerator
 import tech.mappie.generation.enums.EnumMappieCodeGenerator
 import tech.mappie.resolving.MappingResolver
 import tech.mappie.resolving.ResolverContext
+import tech.mappie.selection.MappingSelector
 import tech.mappie.util.isMappieMapFunction
 import tech.mappie.util.mappieType
 
 class MappieCodeGenerator(private val context: CodeGenerationContext) : IrElementTransformerVoidWithContext() {
 
     override fun visitClassNew(declaration: IrClass): IrStatement = declaration.apply {
-        // TODO: Use MappingSelector instead?
         val context = if (context.model is ClassMappieCodeGenerationModel) {
             val models = context.model.mappings.values
                 .filter { source -> source.hasGeneratedTransformationMapping() }
                 .map { source -> source.selectGeneratedTransformationMapping() }
                 .distinctBy { it.source.type to it.target.type }
                 .map { transformation ->
-                    MappingResolver.of(
+                    val options = MappingResolver.of(
                         transformation.source.type.mappieType(),
                         transformation.target.type.mappieType(),
                         ResolverContext(context, context.definitions, context.model.declaration)
-                    ).resolve(null).single()
+                    ).resolve(null)
+                    MappingSelector.of(options).select()!!.first!!
                 }
 
             models.fold(context) { context, request ->
