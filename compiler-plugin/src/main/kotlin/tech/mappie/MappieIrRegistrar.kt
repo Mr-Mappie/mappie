@@ -14,8 +14,6 @@ import tech.mappie.resolving.*
 import tech.mappie.selection.MappingSelector
 import tech.mappie.util.isMappieMapFunction
 import tech.mappie.util.location
-import tech.mappie.util.log
-import tech.mappie.util.logAll
 import tech.mappie.validation.MappingValidation
 import tech.mappie.validation.Problem
 import tech.mappie.validation.ValidationContext
@@ -42,12 +40,12 @@ class MappieIrRegistrar(
                         .filterIsInstance<IrSimpleFunction>()
                         .first { it.isMappieMapFunction() }
 
-                    context.logAll(validation.problems, location(function))
+                    context.logger.logAll(validation.problems, location(function))
                     if (solution != null) {
                         val model = CodeGenerationModelFactory.of(solution).construct(function)
                         clazz.accept(MappieCodeGenerator(CodeGenerationContext(context, model, context.definitions, emptyMap())), null)
                     }
-                } ?: context.log(Problem.error("Target class has no accessible constructor", location(clazz)))
+                } ?: context.logger.log(Problem.error("Target class has no accessible constructor", location(clazz)))
             }
         }
     }
@@ -58,7 +56,7 @@ class MappieIrRegistrar(
     private fun createMappieContext(pluginContext: IrPluginContext) = object : MappieContext {
         override val pluginContext = pluginContext
         override val configuration = this@MappieIrRegistrar.configuration
-        override val reporter = messageCollector
+        override val logger = MappieLogger(configuration.warningsAsErrors, messageCollector)
     }
 
     companion object {

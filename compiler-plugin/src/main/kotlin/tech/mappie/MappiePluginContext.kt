@@ -12,7 +12,7 @@ import tech.mappie.api.ObjectMappie
 
 interface MappieContext {
     val pluginContext: IrPluginContext
-    val reporter: MessageCollector
+    val logger: MappieLogger
     val configuration: MappieConfiguration
 }
 

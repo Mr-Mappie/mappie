@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.primaryConstructor
@@ -31,7 +30,7 @@ fun IrBuilderWithScope.constructTransformation(context: CodeGenerationContext, t
             }
         }
         is GeneratedViaMapperTransformation -> {
-            val clazz = context.generated[transformation.source.type.makeNotNull() to transformation.target.type.makeNotNull()]!!
+            val clazz = context.generated[transformation.source.type.mappieType() to transformation.target.type.mappieType()]!!
             irCall(clazz.selectTransformationFunction(value)).apply {
                 dispatchReceiver = instance(clazz)
                 putValueArgument(0, value)

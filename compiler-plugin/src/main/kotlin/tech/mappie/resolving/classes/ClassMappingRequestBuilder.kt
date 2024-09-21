@@ -86,7 +86,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
                     "Delete all except one of ${mappers.joinToString { it.clazz.name.asString() }}.",
                 )
             )
-            context.log(error)
+            context.logger.log(error)
             PropertyMappingViaMapperTransformation(mappers.first(), null)
         } else if (!source.type.isPrimitive() && !target.type.isPrimitive()) {
             GeneratedViaMapperTransformation(source, target)

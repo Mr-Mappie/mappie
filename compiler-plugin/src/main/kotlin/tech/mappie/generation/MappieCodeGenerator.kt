@@ -10,6 +10,7 @@ import tech.mappie.resolving.ResolverContext
 import tech.mappie.resolving.classes.sources.GeneratedViaMapperTransformation
 import tech.mappie.resolving.classes.sources.ImplicitPropertyMappingSource
 import tech.mappie.util.isMappieMapFunction
+import tech.mappie.util.mappieType
 
 class MappieCodeGenerator(private val context: CodeGenerationContext) : IrElementTransformerVoidWithContext() {
 
@@ -22,8 +23,8 @@ class MappieCodeGenerator(private val context: CodeGenerationContext) : IrElemen
                 .distinctBy { it.source.type to it.target.type }
                 .map { transformation ->
                     MappingResolver.of(
-                        transformation.source.type,
-                        transformation.target.type,
+                        transformation.source.type.mappieType(),
+                        transformation.target.type.mappieType(),
                         ResolverContext(context, context.definitions, context.model.declaration)
                     ).resolve(null).single()
                 }

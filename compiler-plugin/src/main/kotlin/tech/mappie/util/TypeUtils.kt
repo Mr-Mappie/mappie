@@ -16,6 +16,12 @@ fun IrType.isMappableFrom(other: IrType): Boolean = when {
         isSubtypeOf(other, IrTypeSystemContextImpl(context.irBuiltIns))
 }
 
+fun IrType.mappieType() = when {
+    isList() || isSet() -> (this as IrSimpleType).arguments.first().typeOrFail
+    isNullable() -> this.makeNotNull()
+    else -> this
+}
+
 fun IrType.isList() =
     classOrNull?.owner?.fqNameWhenAvailable?.asString() == List::class.qualifiedName
 

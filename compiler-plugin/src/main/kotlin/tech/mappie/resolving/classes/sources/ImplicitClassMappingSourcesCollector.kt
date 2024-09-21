@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import tech.mappie.util.BaseVisitor
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.name.Name
-import tech.mappie.util.getterName
 import tech.mappie.util.merge
 
 class ImplicitClassMappingSourcesCollector : BaseVisitor<Map<Name, ImplicitClassMappingSource>, Pair<Name, IrType>>() {
@@ -18,14 +17,16 @@ class ImplicitClassMappingSourcesCollector : BaseVisitor<Map<Name, ImplicitClass
 
     override fun visitFunction(declaration: IrFunction, data: Pair<Name, IrType>): Map<Name, ImplicitClassMappingSource> =
         if (declaration.isJavaLikeGetter()) {
-            val name = getterName(declaration.name.asString().removePrefix("get").replaceFirstChar { it.lowercaseChar() })
+            val name = Name.identifier(declaration.name.asString().removePrefix("get").replaceFirstChar { it.lowercaseChar() })
             mapOf(name to FunctionMappingSource(declaration, data.first, data.second))
         } else {
             emptyMap()
         }
 
     override fun visitProperty(declaration: IrProperty, data: Pair<Name, IrType>): Map<Name, ImplicitClassMappingSource> =
-        declaration.getter?.let { mapOf(declaration.name to ImplicitPropertyMappingSource(declaration, data.first, data.second, null)) } ?: emptyMap()
+        declaration.getter?.let {
+            mapOf(declaration.name to ImplicitPropertyMappingSource(declaration, data.first, data.second, null))
+        } ?: emptyMap()
 
     private fun IrFunction.isJavaLikeGetter(): Boolean =
         name.asString().startsWith("get") && symbol.owner.valueParameters.isEmpty()

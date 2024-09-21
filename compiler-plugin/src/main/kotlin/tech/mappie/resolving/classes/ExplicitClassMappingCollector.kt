@@ -127,7 +127,7 @@ private class TargetNameCollector(private val context: ResolverContext) : BaseVi
                         "Identifier must be a compile-time constant.",
                         location(context.function!!.fileEntry, expression)
                     )
-                    context.log(problem)
+                    context.logger.log(problem)
                     throw MappiePanicException("Identifier must be a compile-time constant", expression)
                 }
             }
