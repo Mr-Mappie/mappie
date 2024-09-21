@@ -28,7 +28,6 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
         val mappings = targets.associateWith { target ->
             explicit(target) ?: implicit(target) // TODO: we should add all and select later
         }
-
         val unknowns = explicit.filterKeys { name ->
             targets.none { it.name == name }
         }

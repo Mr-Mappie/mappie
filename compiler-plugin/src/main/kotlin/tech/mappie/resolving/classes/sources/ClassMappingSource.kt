@@ -13,6 +13,7 @@ import tech.mappie.resolving.MappieDefinition
 import tech.mappie.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.util.isList
 import tech.mappie.util.isSet
+import tech.mappie.util.mappieType
 
 sealed interface ClassMappingSource {
     val type: IrType
@@ -80,7 +81,7 @@ data class GeneratedViaMapperTransformation(
     val source: ClassMappingSource,
     val target: ClassMappingTarget,
 ) : PropertyMappingTransformation {
-    override val type = target.type
+    override val type = target.type.mappieType()
 }
 
 private fun type(original: IrType, transformation: PropertyMappingTransformation?): IrType {
