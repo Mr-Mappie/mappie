@@ -45,22 +45,10 @@ class MapperGenerationRequestProblems(
             val mappings = mapping.mappings
                 .filter { (_, sources) -> sources.size == 1 }
                 .mapValues { (_, sources) -> sources.single() }
-                .filter { (_, source) -> hasGeneratedTransformationMapping(source) }
-                .map { (target, source) -> target to selectGeneratedTransformationMapping(source) }
+                .filter { (_, source) -> source.hasGeneratedTransformationMapping() }
+                .map { (target, source) -> target to source.selectGeneratedTransformationMapping() }
 
             return MapperGenerationRequestProblems(context, mappings)
         }
-
-        private fun hasGeneratedTransformationMapping(source: ClassMappingSource) =
-            (source is ImplicitPropertyMappingSource && source.transformation is GeneratedViaMapperTransformation) ||
-                    (source is ExplicitPropertyMappingSource && source.transformation is GeneratedViaMapperTransformation)
-
-        private fun selectGeneratedTransformationMapping(source: ClassMappingSource) =
-            when (source) {
-                is ExplicitPropertyMappingSource -> source.transformation as GeneratedViaMapperTransformation
-                is ImplicitPropertyMappingSource ->  source.transformation as GeneratedViaMapperTransformation
-                else -> throw MappiePanicException("source $source should not occur in selectGeneratedTransformationMapping.")
-            }
-
     }
 }

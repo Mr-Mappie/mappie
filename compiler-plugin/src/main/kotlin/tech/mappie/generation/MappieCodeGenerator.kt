@@ -7,8 +7,6 @@ import tech.mappie.generation.classes.ObjectMappieCodeGenerator
 import tech.mappie.generation.enums.EnumMappieCodeGenerator
 import tech.mappie.resolving.MappingResolver
 import tech.mappie.resolving.ResolverContext
-import tech.mappie.resolving.classes.sources.GeneratedViaMapperTransformation
-import tech.mappie.resolving.classes.sources.ImplicitPropertyMappingSource
 import tech.mappie.util.isMappieMapFunction
 import tech.mappie.util.mappieType
 
@@ -18,8 +16,8 @@ class MappieCodeGenerator(private val context: CodeGenerationContext) : IrElemen
         // TODO: Use MappingSelector instead?
         val context = if (context.model is ClassMappieCodeGenerationModel) {
             val models = context.model.mappings.values
-                .filter { source -> source is ImplicitPropertyMappingSource && source.transformation is GeneratedViaMapperTransformation }
-                .map { source -> (source as ImplicitPropertyMappingSource).transformation as GeneratedViaMapperTransformation }
+                .filter { source -> source.hasGeneratedTransformationMapping() }
+                .map { source -> source.selectGeneratedTransformationMapping() }
                 .distinctBy { it.source.type to it.target.type }
                 .map { transformation ->
                     MappingResolver.of(

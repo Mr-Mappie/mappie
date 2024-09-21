@@ -50,4 +50,39 @@ class GeneratedClassListObjectTest {
                 .isEqualTo(Output(InnerOutput(listOf(InnerInnerOutput("first"), InnerInnerOutput("second")))))
         }
     }
+
+    @Test
+    fun `map data classes with nested list mapping should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.objects.GeneratedClassListObjectTest.*
+    
+                        class Mapper : ObjectMappie<Input, Output>() {
+                            override fun map(from: Input) = mapping {
+                                to::a fromProperty from::a
+                            }
+                        }
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input(InnerInput(listOf(InnerInnerInput("first"), InnerInnerInput("second"))))))
+                .isEqualTo(Output(InnerOutput(listOf(InnerInnerOutput("first"), InnerInnerOutput("second")))))
+        }
+    }
 }

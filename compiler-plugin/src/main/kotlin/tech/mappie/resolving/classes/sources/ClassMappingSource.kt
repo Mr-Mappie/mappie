@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.MappieIrRegistrar.Companion.context
+import tech.mappie.exceptions.MappiePanicException
 import tech.mappie.resolving.MappieDefinition
 import tech.mappie.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.util.isList
@@ -17,6 +18,17 @@ import tech.mappie.util.mappieType
 
 sealed interface ClassMappingSource {
     val type: IrType
+
+    fun hasGeneratedTransformationMapping() =
+        (this is ImplicitPropertyMappingSource && transformation is GeneratedViaMapperTransformation) ||
+                (this is ExplicitPropertyMappingSource && transformation is GeneratedViaMapperTransformation)
+
+    fun selectGeneratedTransformationMapping() =
+        when (this) {
+            is ExplicitPropertyMappingSource -> transformation as GeneratedViaMapperTransformation
+            is ImplicitPropertyMappingSource ->  transformation as GeneratedViaMapperTransformation
+            else -> throw MappiePanicException("source $this should not occur in selectGeneratedTransformationMapping.")
+        }
 }
 
 sealed interface ImplicitClassMappingSource : ClassMappingSource
