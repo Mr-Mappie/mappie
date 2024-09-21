@@ -2,7 +2,7 @@ package tech.mappie.resolving.classes.sources
 
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.IrType
-import tech.mappie.BaseVisitor
+import tech.mappie.util.BaseVisitor
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.util.getterName

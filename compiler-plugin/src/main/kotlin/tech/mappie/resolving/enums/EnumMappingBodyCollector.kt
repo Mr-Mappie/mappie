@@ -3,7 +3,7 @@ package tech.mappie.resolving.enums
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
-import tech.mappie.BaseVisitor
+import tech.mappie.util.BaseVisitor
 import tech.mappie.util.IDENTIFIER_FROM_ENUM_ENTRY
 import tech.mappie.util.IDENTIFIER_MAPPING
 import tech.mappie.util.IDENTIFIER_THROWN_BY_ENUM_ENTRY

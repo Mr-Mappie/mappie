@@ -1,4 +1,4 @@
-package tech.mappie
+package tech.mappie.util
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.util.dump

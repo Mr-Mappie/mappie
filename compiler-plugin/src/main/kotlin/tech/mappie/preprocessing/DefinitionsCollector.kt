@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import tech.mappie.BaseVisitor
+import tech.mappie.util.BaseVisitor
 import tech.mappie.MappieContext
 import tech.mappie.resolving.ResolverContext
 import tech.mappie.api.Mappie

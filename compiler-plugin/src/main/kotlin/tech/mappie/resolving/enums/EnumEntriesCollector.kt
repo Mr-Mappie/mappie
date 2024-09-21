@@ -1,6 +1,6 @@
 package tech.mappie.resolving.enums
 
-import tech.mappie.BaseVisitor
+import tech.mappie.util.BaseVisitor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 

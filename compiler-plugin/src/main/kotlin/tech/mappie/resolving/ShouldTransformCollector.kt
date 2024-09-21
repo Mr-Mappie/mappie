@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrReturn
-import tech.mappie.BaseVisitor
+import tech.mappie.util.BaseVisitor
 import tech.mappie.util.isMappieMapFunction
 import tech.mappie.util.isSubclassOf
 

@@ -2,7 +2,7 @@ package tech.mappie.resolving
 
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
-import tech.mappie.BaseVisitor
+import tech.mappie.util.BaseVisitor
 import tech.mappie.api.*
 import tech.mappie.util.isSubclassOf
 import tech.mappie.util.merge

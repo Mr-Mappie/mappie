@@ -16,7 +16,6 @@ interface MappieContext {
     val configuration: MappieConfiguration
 }
 
-
 fun MappieContext.referenceObjectMappieClass(): IrClassSymbol =
     pluginContext.referenceClass(ClassId(FqName("tech.mappie.api"), Name.identifier(ObjectMappie::class.simpleName!!)))!!
 

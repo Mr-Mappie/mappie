@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
-import tech.mappie.BaseVisitor
+import tech.mappie.util.BaseVisitor
 import tech.mappie.api.ObjectMappie
 import tech.mappie.exceptions.MappiePanicException
 import tech.mappie.resolving.MappieDefinition
