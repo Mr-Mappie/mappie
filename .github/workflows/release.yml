@@ -35,7 +35,7 @@ jobs:
       - name: Publish to Maven Central
         run: | 
           ./gradlew jreleaserFullRelease \
-            -Dsigning.passphrase=${{ MAVEN_CENTRAL_GPG_SECRET_PASSWORD }} \ 
+            -Dsigning.passphrase=${{ secrets.MAVEN_CENTRAL_GPG_SECRET_PASSWORD }} \ 
             -Djreleaser.mavencentral.username=${{ secrets.MAVEN_CENTRAL_USERNAME }} \
             -Djreleaser.mavencentral.password=${{ secrets.MAVEN_CENTRAL_PASSWORD }}
         env:
