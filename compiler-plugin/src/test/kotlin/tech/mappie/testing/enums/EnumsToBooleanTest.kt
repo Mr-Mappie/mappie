@@ -17,7 +17,7 @@ class EnumsToBooleanTest {
     lateinit var directory: File
 
     @Test
-    fun `map identical enums should succeed`() {
+    fun `map enum to expression should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {
                 add(

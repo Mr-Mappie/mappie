@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+    - date: "TBD"
+      title: "v0.8.0"
+      items:
+        - "[#96](https://github.com/Mr-Mappie/mappie/issues/96) object mappers can now be generated automatically."
     - date: "2024-08-25"
       title: "v0.7.0"
       items:

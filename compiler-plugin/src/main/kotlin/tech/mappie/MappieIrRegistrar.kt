@@ -4,11 +4,19 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.fileEntry
-import tech.mappie.generation.*
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import tech.mappie.exceptions.MappiePanicException
+import tech.mappie.generation.CodeGenerationContext
+import tech.mappie.generation.CodeGenerationModelFactory
+import tech.mappie.generation.MappieCodeGenerator
+import tech.mappie.preprocessing.DefinitionsCollector
 import tech.mappie.resolving.*
-import tech.mappie.util.*
+import tech.mappie.selection.MappingSelector
+import tech.mappie.util.isMappieMapFunction
+import tech.mappie.util.location
 import tech.mappie.validation.MappingValidation
+import tech.mappie.validation.Problem
+import tech.mappie.validation.ValidationContext
 
 class MappieIrRegistrar(
     private val messageCollector: MessageCollector,
@@ -16,47 +24,42 @@ class MappieIrRegistrar(
 ) : IrGenerationExtension {
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
-        context = MappiePluginContext(messageCollector, configuration, pluginContext)
+        context = pluginContext
 
-        val symbols = MappieDefinitionsCollector().collect(moduleFragment)
-        val mappings = moduleFragment.accept(MappingResolver(), symbols)
+        handleMappiePanic {
+            val context = DefinitionsCollector(createMappieContext(pluginContext)).collect(moduleFragment)
+            val requests = moduleFragment.accept(MappingRequestResolver(), context)
 
-        val validated = mappings.mapValues {
-            it.value.map { mapping -> mapping to MappingValidation.of(it.key.fileEntry, mapping) }
-        }
+            requests.forEach { (clazz, options) ->
+                val selected = MappingSelector.of(options.associateWith {
+                    MappingValidation.of(ValidationContext(context, context.definitions, emptyList(), it.origin), it)
+                }).select()
 
-        val valids = validated.mapValues {
-            it.value.filter { it.second.isValid() }
-        }
-        if (valids.all { it.value.isNotEmpty() }) {
-            val selected = valids.mapValues {
-                MappingSelector.of(it.value).select()!!
-            }
+                selected?.let { (solution, validation) ->
+                    val function = clazz.declarations
+                        .filterIsInstance<IrSimpleFunction>()
+                        .first { it.isMappieMapFunction() }
 
-            selected.forEach { function, (_, validation) ->
-                validation.warnings().forEach { warning ->
-                    log(warning, warning.location ?: location(function))
-                }
-            }
-
-            val generation = MappieGeneration(
-                mappings = selected.mapValues { it.value.first },
-                generated = selected.flatMap { (it.value.first as? ConstructorCallMapping)?.generated ?: emptySet() }.toSet()
-            )
-            moduleFragment.accept(MappieIrGenerator(generation), null)
-        } else {
-            val invalids = validated.filter { it.value.none { it.second.isValid() } }
-            invalids.forEach { (function, mappings) ->
-                if (mappings.isEmpty()) {
-                    logError("No constructor visible to use", location(function))
-                } else {
-                    logAll(mappings.first().second.problems, location(function))
-                }
+                    context.logger.logAll(validation.problems, location(function))
+                    if (solution != null) {
+                        val model = CodeGenerationModelFactory.of(solution).construct(function)
+                        clazz.accept(MappieCodeGenerator(CodeGenerationContext(context, model, context.definitions, emptyMap())), null)
+                    }
+                } ?: context.logger.log(Problem.error("Target class has no accessible constructor", location(clazz)))
             }
         }
     }
 
+    private fun handleMappiePanic(function: () -> Unit): Unit =
+        runCatching { function() }.getOrElse { if (it is MappiePanicException) Unit else throw it }
+
+    private fun createMappieContext(pluginContext: IrPluginContext) = object : MappieContext {
+        override val pluginContext = pluginContext
+        override val configuration = this@MappieIrRegistrar.configuration
+        override val logger = MappieLogger(configuration.warningsAsErrors, messageCollector)
+    }
+
     companion object {
-        lateinit var context: MappiePluginContext
+        lateinit var context: IrPluginContext
     }
 }

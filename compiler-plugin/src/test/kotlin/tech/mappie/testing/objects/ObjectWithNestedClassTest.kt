@@ -19,6 +19,36 @@ class ObjectWithNestedClassTest {
     lateinit var directory: File
 
     @Test
+    fun `map data classes with nested class without declaring mapping should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.objects.ObjectWithNestedClassTest.*
+    
+                        class Mapper : ObjectMappie<Input, Output>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input(InnerInput("inner"), 20)))
+                .isEqualTo(Output(InnerOutput("inner"), 20))
+        }
+    }
+
+    @Test
     fun `map data classes with nested class using object InnerMapper without declaring mapping should succeed`() {
         KotlinCompilation(directory).apply {
             sources = buildList {

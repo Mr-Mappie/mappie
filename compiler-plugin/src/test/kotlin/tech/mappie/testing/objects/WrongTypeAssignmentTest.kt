@@ -44,6 +44,28 @@ class WrongTypeAssignmentTest {
     }
 
     @Test
+    fun `implicit mapping using fromProperty with wrong type should fail`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.objects.WrongTypeAssignmentTest.*
+    
+                        class Mapper : ObjectMappie<Input, Output>()
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
+            assertThat(messages)
+                .containsError("Target Output::value automatically resolved from Input::value but cannot assign source type String to target type Int")
+        }
+    }
+
+    @Test
     fun `explicit mapping using fromValue with wrong type should fail`() {
         KotlinCompilation(directory).apply {
             sources = buildList {

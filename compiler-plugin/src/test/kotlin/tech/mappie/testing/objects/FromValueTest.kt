@@ -11,7 +11,7 @@ import java.io.File
 
 class FromValueTest {
 
-    data class Output(val value: String)
+    data class Output(val value: String?)
 
     @TempDir
     lateinit var directory: File
@@ -46,6 +46,39 @@ class FromValueTest {
                 .call()
 
             assertThat(mapper.map(Unit)).isEqualTo(Output(Unit::class.simpleName!!))
+        }
+    }
+
+    @Test
+    fun `map value fromValue null should succeed`() {
+        KotlinCompilation(directory).apply {
+            sources = buildList {
+                add(
+                    kotlin("Test.kt",
+                        """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.testing.objects.FromValueTest.*
+    
+                        class Mapper : ObjectMappie<Unit, Output>() {
+                            override fun map(from: Unit) = mapping {
+                                Output::value fromValue null
+                            }
+                        }
+                        """
+                    )
+                )
+            }
+        }.compile {
+            assertThat(exitCode).isEqualTo(ExitCode.OK)
+            assertThat(messages).isEmpty()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Unit, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Unit)).isEqualTo(Output(null))
         }
     }
 }
