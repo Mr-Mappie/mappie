@@ -71,7 +71,7 @@ jreleaser {
                     stagingRepository(project(":mappie-api").layout.buildDirectory.dir("staging-deploy").get().toString())
                     username = properties["mavenCentralUsername"] as? String
                     password = properties["mavenCentralPassword"] as? String
-                    applyMavenCentralRules = true
+                    applyMavenCentralRules = false
                     verifyPom = false
                     retryDelay = 20
                 }
