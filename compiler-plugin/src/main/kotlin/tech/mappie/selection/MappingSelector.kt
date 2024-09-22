@@ -4,6 +4,7 @@ import tech.mappie.exceptions.MappiePanicException
 import tech.mappie.resolving.ClassMappingRequest
 import tech.mappie.resolving.EnumMappingRequest
 import tech.mappie.resolving.MappingRequest
+import tech.mappie.resolving.classes.sources.ExplicitClassMappingSource
 import tech.mappie.validation.MappingValidation
 
 interface MappingSelector {
@@ -21,11 +22,15 @@ interface MappingSelector {
             }?.toPair()
 
         private fun secondary(): Pair<ClassMappingRequest?, MappingValidation>? =
-            options.entries.run {
-                firstOrNull { it.value.isValid() }?.toPair() // TODO: select one with most explicit mappings
-                    ?: minByOrNull { it.value.problems.size }?.let { (_, validation) ->
-                        null to validation
+            options.entries.toList().run {
+                val valids = filter { it.value.isValid() }
+                if (valids.isNotEmpty()) {
+                    valids.maxBy { it.key.mappings.values.count { it.single() is ExplicitClassMappingSource } }.toPair()
+                } else {
+                    minByOrNull { it.value.problems.size }
+                        ?.let { (_, validation) -> null to validation
                     }
+                }
             }
     }
 
