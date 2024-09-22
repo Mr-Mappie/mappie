@@ -72,7 +72,7 @@ jreleaser {
                     username = properties["mavenCentralUsername"] as? String
                     password = properties["mavenCentralPassword"] as? String
                     applyMavenCentralRules = true
-                    retryDelay = 15
+                    retryDelay = 20
                 }
                 create("compiler-plugin") {
                     active = org.jreleaser.model.Active.ALWAYS
@@ -81,7 +81,7 @@ jreleaser {
                     username = properties["mavenCentralUsername"] as? String
                     password = properties["mavenCentralPassword"] as? String
                     applyMavenCentralRules = true
-                    retryDelay = 15
+                    retryDelay = 20
                 }
             }
         }
