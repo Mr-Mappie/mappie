@@ -33,8 +33,9 @@ jobs:
         run: ./gradlew publish
 
       - name: Publish to Maven Central
-        run: ./gradlew jreleaserFullRelease -Dsigning.passphrase=${{ secrets.MAVEN_CENTRAL_GPG_SECRET_PASSWORD }} -Djreleaser.mavencentral.username=${{ secrets.MAVEN_CENTRAL_USERNAME }} -Djreleaser.mavencentral.password=${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+        run: ./gradlew jreleaserFullReleaser -Djreleaser.mavencentral.username=${{ secrets.MAVEN_CENTRAL_USERNAME }} -Djreleaser.mavencentral.password=${{ secrets.MAVEN_CENTRAL_PASSWORD }}
         env:
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.MAVEN_CENTRAL_GPG_SECRET_PASSWORD }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to Gradle Plugin Portal
