@@ -72,17 +72,19 @@ jreleaser {
                     username = properties["mavenCentralUsername"] as? String
                     password = properties["mavenCentralPassword"] as? String
                     applyMavenCentralRules = true
+                    verifyPom = false
                     retryDelay = 20
                 }
-                create("compiler-plugin") {
-                    active = org.jreleaser.model.Active.ALWAYS
-                    url = "https://central.sonatype.com/api/v1/publisher"
-                    stagingRepository(project(":compiler-plugin").layout.buildDirectory.dir("staging-deploy").get().toString())
-                    username = properties["mavenCentralUsername"] as? String
-                    password = properties["mavenCentralPassword"] as? String
-                    applyMavenCentralRules = true
-                    retryDelay = 20
-                }
+//                create("compiler-plugin") {
+//                    active = org.jreleaser.model.Active.ALWAYS
+//                    url = "https://central.sonatype.com/api/v1/publisher"
+//                    stagingRepository(project(":compiler-plugin").layout.buildDirectory.dir("staging-deploy").get().toString())
+//                    username = properties["mavenCentralUsername"] as? String
+//                    password = properties["mavenCentralPassword"] as? String
+//                    applyMavenCentralRules = true
+//                    verifyPom = false
+//                    retryDelay = 20
+//                }
             }
         }
     }
