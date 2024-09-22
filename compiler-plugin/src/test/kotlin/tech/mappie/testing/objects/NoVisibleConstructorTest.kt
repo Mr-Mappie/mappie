@@ -35,7 +35,7 @@ class NoVisibleConstructorTest {
         }.compile {
             assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
             assertThat(messages)
-                .containsError("No constructor visible to use")
+                .containsError("Target class has no accessible constructor")
         }
     }
 }

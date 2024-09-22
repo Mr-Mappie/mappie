@@ -3,7 +3,6 @@ package tech.mappie.testing.builtin
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.builtin.ByteMappersTest.*
 import tech.mappie.testing.compilation.KotlinCompilation
 import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin

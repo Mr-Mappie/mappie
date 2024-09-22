@@ -1,34 +1,16 @@
 package tech.mappie.resolving.enums
 
-import org.jetbrains.kotlin.ir.IrFileEntry
-import tech.mappie.resolving.IDENTIFIER_FROM_ENUM_ENTRY
-import tech.mappie.resolving.IDENTIFIER_MAPPING
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
-import tech.mappie.BaseVisitor
-import tech.mappie.resolving.IDENTIFIER_THROWN_BY_ENUM_ENTRY
+import tech.mappie.util.BaseVisitor
+import tech.mappie.util.IDENTIFIER_FROM_ENUM_ENTRY
+import tech.mappie.util.IDENTIFIER_MAPPING
+import tech.mappie.util.IDENTIFIER_THROWN_BY_ENUM_ENTRY
 
-sealed interface EnumMappingTarget
+class EnumMappingBodyCollector : BaseVisitor<EnumMappingRequestBuilder, EnumMappingRequestBuilder>() {
 
-data class ResolvedEnumMappingTarget(
-    val target: IrEnumEntry,
-) : EnumMappingTarget
-
-data class ExplicitEnumMappingTarget(
-    val target: IrExpression,
-    val origin: IrExpression,
-) : EnumMappingTarget
-
-data class ThrowingEnumMappingTarget(
-    val exception: IrExpression,
-    val origin: IrExpression,
-) : EnumMappingTarget
-
-class EnumMappingBodyCollector(file: IrFileEntry) : BaseVisitor<EnumMappingsConstructor, EnumMappingsConstructor>(file) {
-
-    override fun visitCall(expression: IrCall, data: EnumMappingsConstructor): EnumMappingsConstructor {
+    override fun visitCall(expression: IrCall, data: EnumMappingRequestBuilder): EnumMappingRequestBuilder {
         return when (expression.symbol.owner.name) {
             IDENTIFIER_MAPPING -> {
                 expression.valueArguments.first()?.accept(data) ?: data
@@ -36,12 +18,12 @@ class EnumMappingBodyCollector(file: IrFileEntry) : BaseVisitor<EnumMappingsCons
             IDENTIFIER_FROM_ENUM_ENTRY -> {
                 val target = expression.extensionReceiver!!
                 val source = (expression.valueArguments.first()!! as IrGetEnumValue).symbol.owner
-                data.explicit(source to ExplicitEnumMappingTarget(target, expression))
+                data.explicit(source to ExplicitEnumMappingTarget(target))
             }
             IDENTIFIER_THROWN_BY_ENUM_ENTRY -> {
                 val target = expression.extensionReceiver!!
                 val source = (expression.valueArguments.first()!! as IrGetEnumValue).symbol.owner
-                data.explicit(source to ThrowingEnumMappingTarget(target, expression))
+                data.explicit(source to ThrowingEnumMappingTarget(target))
             }
             else -> {
                 super.visitCall(expression, data)
@@ -49,23 +31,23 @@ class EnumMappingBodyCollector(file: IrFileEntry) : BaseVisitor<EnumMappingsCons
         }
     }
 
-    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: EnumMappingsConstructor): EnumMappingsConstructor {
+    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: EnumMappingRequestBuilder): EnumMappingRequestBuilder {
         return expression.argument.accept(data)
     }
 
-    override fun visitFunction(declaration: IrFunction, data: EnumMappingsConstructor): EnumMappingsConstructor {
+    override fun visitFunction(declaration: IrFunction, data: EnumMappingRequestBuilder): EnumMappingRequestBuilder {
         return declaration.body!!.accept(data)
     }
 
-    override fun visitReturn(expression: IrReturn, data: EnumMappingsConstructor): EnumMappingsConstructor {
+    override fun visitReturn(expression: IrReturn, data: EnumMappingRequestBuilder): EnumMappingRequestBuilder {
         return expression.value.accept(data)
     }
 
-    override fun visitFunctionExpression(expression: IrFunctionExpression, data: EnumMappingsConstructor): EnumMappingsConstructor {
+    override fun visitFunctionExpression(expression: IrFunctionExpression, data: EnumMappingRequestBuilder): EnumMappingRequestBuilder {
         return expression.function.accept(data)
     }
 
-    override fun visitBlockBody(body: IrBlockBody, data: EnumMappingsConstructor): EnumMappingsConstructor {
+    override fun visitBlockBody(body: IrBlockBody, data: EnumMappingRequestBuilder): EnumMappingRequestBuilder {
         return body.statements.fold(data) { acc, current ->
             acc.let { current.accept(it) }
         }

@@ -38,7 +38,7 @@ class NestedNullToNonNullPropertyTest {
         }.compile {
             assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
             assertThat(messages)
-                .containsError("Target Output::text automatically resolved from Input::text but cannot assign source type InnerInput? to target type InnerOutput")
+                .containsError("Target Output::text automatically resolved from Input::text via InnerMapper but cannot assign source type InnerOutput? to target type InnerOutput")
         }
     }
 
@@ -66,7 +66,7 @@ class NestedNullToNonNullPropertyTest {
         }.compile {
             assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
             assertThat(messages)
-                .containsError("Target Output::text of type InnerOutput cannot be assigned from from::text of type InnerInput?")
+                .containsError("Target Output::text of type InnerOutput cannot be assigned from from::text via InnerMapper of type InnerOutput?")
         }
     }
 
@@ -94,7 +94,7 @@ class NestedNullToNonNullPropertyTest {
         }.compile {
             assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
             assertThat(messages)
-                .containsError("Target Output::text of type InnerOutput cannot be assigned from from::text of type InnerOutput?")
+                .containsError("Target Output::text of type InnerOutput cannot be assigned from from::text via InnerMapper of type InnerOutput?")
         }
     }
 }
