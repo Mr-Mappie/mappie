@@ -11,7 +11,7 @@ plugins {
 
 kotlin {
     explicitApi()
-    withSourcesJar(publish = false)
+    withSourcesJar(publish = true)
     applyDefaultHierarchyTemplate()
 
     jvm {
