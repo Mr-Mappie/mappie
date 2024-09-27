@@ -1,4 +1,4 @@
-package tech.mappie.testing.objects
+package tech.mappie.testing.sets
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -7,22 +7,23 @@ import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class GeneratedRecursiveClassTest {
-    data class Input(val value: LinkedListInput)
-    data class LinkedListInput(val value: String, val next: LinkedListInput?)
-    data class Output(val value: LinkedListOutput)
-    data class LinkedListOutput(val value: String, val next: LinkedListOutput?)
+class ObjectWithSetPrimitiveToObjectSetPrimitiveTest {
+    data class Input(val a: InnerInput)
+    data class InnerInput(val value: Set<String>)
+
+    data class Output(val a: InnerOutput)
+    data class InnerOutput(val value: Set<String>)
 
     @TempDir
     lateinit var directory: File
 
     @Test
-    fun `map object with nested recursive class without declaring mapping should succeed`() {
+    fun `map object with nested set with generated mapper should succeed`() {
         compile(directory) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.objects.GeneratedRecursiveClassTest.*
+                import tech.mappie.testing.sets.ObjectWithSetPrimitiveToObjectSetPrimitiveTest.*
 
                 class Mapper : ObjectMappie<Input, Output>()
                 """
@@ -37,8 +38,8 @@ class GeneratedRecursiveClassTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(LinkedListInput("a", LinkedListInput("b", null)))))
-                .isEqualTo(Output(LinkedListOutput("a", LinkedListOutput("b", null))))
+            assertThat(mapper.map(Input(InnerInput(setOf("first", "second")))))
+                .isEqualTo(Output(InnerOutput(setOf("first", "second"))))
         }
     }
 }

@@ -1,28 +1,30 @@
-package tech.mappie.testing.objects
+package tech.mappie.testing.enums
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class ObjectWithSameValuesTest {
+class ObjectWithEnumToObjectWithEnumWithSameEntriesTest {
+    data class Input(val text: InnerEnum)
+    @Suppress("unused") enum class InnerEnum { A, B, C; }
 
-    data class Input(val value: String)
-    data class Output(val value: String)
+    data class Output(val text: OuterEnum)
+    @Suppress("unused") enum class OuterEnum(val value: String) { A("A"), B("B"), C("C"); }
 
     @TempDir
     lateinit var directory: File
 
     @Test
-    fun `map identical objects should succeed`() {
+    fun `map object with nested enum with generated mapper should succeed`() {
         compile(directory) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.objects.ObjectWithSameValuesTest.*
+                import tech.mappie.api.EnumMappie
+                import tech.mappie.testing.enums.ObjectWithEnumToObjectWithEnumWithSameEntriesTest.*
 
                 class Mapper : ObjectMappie<Input, Output>()
                 """
@@ -37,29 +39,28 @@ class ObjectWithSameValuesTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input("value"))).isEqualTo(Output("value"))
+            assertThat(mapper.map(Input(InnerEnum.A)))
+                .isEqualTo(Output(OuterEnum.A))
         }
     }
 
     @Test
-    @Disabled("Not implemented yet")
-    fun `map identical objects with an explicit mapping should warn`() {
+    fun `map object with nested enum with explicit mapper and implicit mappings should succeed`() {
         compile(directory) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.objects.ObjectWithSameValuesTest.*
+                import tech.mappie.api.EnumMappie
+                import tech.mappie.testing.enums.ObjectWithEnumToObjectWithEnumWithSameEntriesTest.*
 
-                class Mapper : ObjectMappie<Input, Output>() {
-                    override fun map(from: Input) = mapping {
-                        Output::value fromProperty Input::value
-                    }
-                }
+                class Mapper : ObjectMappie<Input, Output>()
+
+                object InnerMapper : EnumMappie<InnerEnum, OuterEnum>()
                 """
             )
         } satisfies {
             isOk()
-            hasWarningMessage("Unnecessary explicit mapping of target Output::value")
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -67,7 +68,8 @@ class ObjectWithSameValuesTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input("value"))).isEqualTo(Output("value"))
+            assertThat(mapper.map(Input(InnerEnum.A)))
+                .isEqualTo(Output(OuterEnum.A))
         }
     }
 }

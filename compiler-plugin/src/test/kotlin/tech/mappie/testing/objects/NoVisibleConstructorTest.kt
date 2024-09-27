@@ -1,12 +1,8 @@
 package tech.mappie.testing.objects
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.KotlinCompilation
-import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
-import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
-import tech.mappie.testing.containsError
+import tech.mappie.testing.compilation.compile
 import java.io.File
 
 class NoVisibleConstructorTest {
@@ -18,24 +14,19 @@ class NoVisibleConstructorTest {
     lateinit var directory: File
 
     @Test
-    fun `map data class without a visible constructor should fail`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.NoVisibleConstructorTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
-            assertThat(messages)
-                .containsError("Target class has no accessible constructor")
+    fun `map object without a visible constructor should fail`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.NoVisibleConstructorTest.*
+
+                class Mapper : ObjectMappie<Input, Output>()
+                """
+            )
+        } satisfies {
+            isCompilationError()
+            hasErrorMessage("Target class has no accessible constructor")
         }
     }
 }

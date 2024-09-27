@@ -3,9 +3,8 @@ package tech.mappie.testing
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.KotlinCompilation
-import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
-import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.compilation.compile
+
 import java.io.File
 
 class MapperClassInsideOtherDeclarationTest {
@@ -17,25 +16,21 @@ class MapperClassInsideOtherDeclarationTest {
     lateinit var directory: File
 
     @Test
-    fun `mapper can be declared nested`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.MapperClassInsideOtherDeclarationTest.*
+    fun `mapper can be declared inside an arbitrary class`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.MapperClassInsideOtherDeclarationTest.*
 
-                        class Thing {
-                            class Mapper : ObjectMappie<Input, Output>()                            
-                        }
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Thing {
+                    class Mapper : ObjectMappie<Input, Output>()                            
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Thing\$Mapper")

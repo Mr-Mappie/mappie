@@ -1,4 +1,4 @@
-package tech.mappie.testing.objects
+package tech.mappie.testing.lists
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -7,24 +7,29 @@ import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class NestedNonNullToNullPropertyTest {
-    data class Input(val text: InnerInput, val int: Int)
+class ObjectWithNonNullableListToObjectWithNullableListTest {
+    data class Input(val text: List<InnerInput>, val int: Int)
     data class InnerInput(val value: String)
-    data class Output(val text: InnerOutput?, val int: Int)
+
+    data class Output(val text: List<InnerOutput>?, val int: Int)
     data class InnerOutput(val value: String)
 
     @TempDir
     lateinit var directory: File
 
     @Test
-    fun `map object with nested non-null to null implicit should succeed`() {
+    fun `map nested non-nullable list to nullable list explicit should succeed`() {
         compile(directory) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.objects.NestedNonNullToNullPropertyTest.*
+                import tech.mappie.testing.lists.ObjectWithNonNullableListToObjectWithNullableListTest.*
 
-                class Mapper : ObjectMappie<Input, Output>()
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input) = mapping {
+                        to::text fromProperty from::text via InnerMapper.forList
+                    }
+                }
 
                 object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
                 """
@@ -39,18 +44,18 @@ class NestedNonNullToNullPropertyTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(InnerInput("value"), 30)))
-                .isEqualTo(Output(InnerOutput("value"), 30))
+            assertThat(mapper.map(Input(listOf(InnerInput("first"), InnerInput("second")), 20)))
+                .isEqualTo(Output(listOf(InnerOutput("first"), InnerOutput("second")), 20))
         }
     }
 
     @Test
-    fun `map object with nested non-null to null explicit without via should succeed`() {
+    fun `map nested non-nullable list to nullable list explicit without via should succeed`() {
         compile(directory) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.objects.NestedNonNullToNullPropertyTest.*
+                import tech.mappie.testing.lists.ObjectWithNonNullableListToObjectWithNullableListTest.*
 
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input) = mapping {
@@ -71,26 +76,24 @@ class NestedNonNullToNullPropertyTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(InnerInput("value"), 30)))
-                .isEqualTo(Output(InnerOutput("value"), 30))
+            assertThat(mapper.map(Input(listOf(InnerInput("first"), InnerInput("second")), 20)))
+                .isEqualTo(Output(listOf(InnerOutput("first"), InnerOutput("second")), 20))
         }
     }
 
     @Test
-    fun `map object with nested non-null to null explicit should succeed`() {
+    fun `map nested non-nullable list to nullable list implicit should succeed`() {
         compile(directory) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.objects.NestedNonNullToNullPropertyTest.*
+                import tech.mappie.testing.lists.ObjectWithNonNullableListToObjectWithNullableListTest.*
 
-                class Mapper : ObjectMappie<Input, Output>() {
-                    override fun map(from: Input) = mapping {
-                        to::text fromProperty from::text via InnerMapper
-                    }
-                }
+                class Mapper : ObjectMappie<Input, Output>()
 
                 object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+
+                object SecondInnerMapper : ObjectMappie<InnerOutput, InnerInput>()
                 """
             )
         } satisfies {
@@ -103,8 +106,8 @@ class NestedNonNullToNullPropertyTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(InnerInput("value"), 30)))
-                .isEqualTo(Output(InnerOutput("value"), 30))
+            assertThat(mapper.map(Input(listOf(InnerInput("first"), InnerInput("second")), 20)))
+                .isEqualTo(Output(listOf(InnerOutput("first"), InnerOutput("second")), 20))
         }
     }
 }

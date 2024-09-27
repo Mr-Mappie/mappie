@@ -16,13 +16,18 @@
 
 package tech.mappie.testing.compilation
 
+import org.assertj.core.api.Assertions.assertThat
+import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.JVMAssertionsMode
 import org.jetbrains.kotlin.config.JvmTarget
+import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import java.io.*
 import java.net.URLClassLoader
 import java.nio.file.Path
+import java.util.regex.Pattern
+import kotlin.text.Regex.Companion.escape
 
 data class PluginOption(val pluginId: PluginId, val optionName: OptionName, val optionValue: OptionValue)
 
@@ -30,7 +35,56 @@ typealias PluginId = String
 typealias OptionName = String
 typealias OptionValue = String
 
-@Suppress("MemberVisibilityCanBePrivate")
+fun compile(directory: File, dsl: CompilationDsl.() -> Unit): CompilationAssertionDsl =
+	KotlinCompilation(directory).let {
+		dsl.invoke(CompilationDsl(it))
+		CompilationAssertionDsl(it.compile())
+	}
+
+class CompilationDsl(private val compilation: KotlinCompilation) {
+	fun file(name: String, @Language("kotlin") contents: String, trimIndent: Boolean = true, isMultiplatformCommonSource: Boolean = false) {
+		compilation.sources.add(kotlin(name, contents, trimIndent, isMultiplatformCommonSource))
+	}
+}
+
+class CompilationAssertionDsl(private val result: KotlinCompilation.Result) {
+
+	val classLoader = result.classLoader
+
+	infix fun satisfies(dsl: CompilationAssertionDsl.() -> Unit) =
+		dsl(this)
+
+	fun isOk() {
+		assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+	}
+
+	fun isCompilationError() {
+		assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.COMPILATION_ERROR)
+	}
+
+	fun hasNoMessages() {
+		assertThat(result.messages).isEmpty()
+	}
+
+	fun hasErrorMessage(message: String, suggestions: List<String> = emptyList()) {
+		assertThat(result.messages).containsPattern(
+			Pattern.compile("e: file://.+ ${escape(messageOf(message, suggestions))}")
+		)
+	}
+
+	fun hasWarningMessage(message: String) {
+		assertThat(result.messages).containsPattern(
+			Pattern.compile("w: file://.+ ${escape(message)}")
+		)
+	}
+
+	private fun messageOf(message: String, suggestions: List<String>) =
+		message + System.lineSeparator() + suggestions
+			.mapIndexed { i, it -> i + 1 to it }
+			.joinToString(separator = "") { "    ${it.first}. ${it.second}" + System.lineSeparator() }
+}
+
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class KotlinCompilation(workingDir: File) : AbstractKotlinCompilation<K2JVMCompilerArguments>(workingDir) {
 
 	/** Include Kotlin runtime in to resulting .jar */

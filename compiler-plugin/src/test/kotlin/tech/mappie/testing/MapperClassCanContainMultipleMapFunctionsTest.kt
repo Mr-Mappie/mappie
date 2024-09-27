@@ -3,9 +3,8 @@ package tech.mappie.testing
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.KotlinCompilation
-import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
-import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.compilation.compile
+
 import java.io.File
 
 class MapperClassCanContainMultipleMapFunctionsTest {
@@ -18,30 +17,26 @@ class MapperClassCanContainMultipleMapFunctionsTest {
 
     @Test
     fun `mapper with multiple map functions should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.MapperClassCanContainMultipleMapFunctionsTest.*
-    
-                        class Mapper(private val int: Int) : ObjectMappie<Input, Output>() {
-                            fun map(value: String) = value
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.MapperClassCanContainMultipleMapFunctionsTest.*
 
-                            override fun map(from: Input) = mapping {
-                                Output::int fromValue int
-                            }
+                class Mapper(private val int: Int) : ObjectMappie<Input, Output>() {
+                    fun map(value: String) = value
 
-                            fun map(value: Int) = value
-                        }
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                    override fun map(from: Input) = mapping {
+                        Output::int fromValue int
+                    }
+
+                    fun map(value: Int) = value
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -53,5 +48,4 @@ class MapperClassCanContainMultipleMapFunctionsTest {
                 .isEqualTo(Output("test", 10))
         }
     }
-
 }

@@ -3,10 +3,7 @@ package tech.mappie.testing.objects2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.KotlinCompilation
-import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
-import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
-import tech.mappie.testing.containsError
+import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappie2Class
 import java.io.File
 
@@ -21,48 +18,39 @@ class Object2WithOverlappingValuesTest {
 
     @Test
     fun `map identical data classes should fail`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie2
-                        import tech.mappie.testing.objects2.Object2WithOverlappingValuesTest.*
-    
-                        class Mapper : ObjectMappie2<Input1, Input2, Output>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
-            assertThat(messages)
-                .containsError("Target Output::age has multiple sources defined")
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie2
+                import tech.mappie.testing.objects2.Object2WithOverlappingValuesTest.*
+
+                class Mapper : ObjectMappie2<Input1, Input2, Output>()
+                """
+            )
+        } satisfies {
+            isCompilationError()
+            hasErrorMessage("Target Output::age has multiple sources defined")
         }
     }
 
     @Test
     fun `map identical data classes should with one specified succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie2
-                        import tech.mappie.testing.objects2.Object2WithOverlappingValuesTest.*
-    
-                        class Mapper : ObjectMappie2<Input1, Input2, Output>() {
-                            override fun map(first: Input1, second: Input2) = mapping {
-                                to::age fromProperty second::age
-                            }
-                        }
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie2
+                import tech.mappie.testing.objects2.Object2WithOverlappingValuesTest.*
+
+                class Mapper : ObjectMappie2<Input1, Input2, Output>() {
+                    override fun map(first: Input1, second: Input2) = mapping {
+                        to::age fromProperty second::age
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappie2Class<Input1, Input2, Output>("Mapper")

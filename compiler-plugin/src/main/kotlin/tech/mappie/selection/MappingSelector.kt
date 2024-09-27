@@ -28,8 +28,7 @@ interface MappingSelector {
                     valids.maxBy { it.key.mappings.values.count { it.single() is ExplicitClassMappingSource } }.toPair()
                 } else {
                     minByOrNull { it.value.problems.size }
-                        ?.let { (_, validation) -> null to validation
-                    }
+                        ?.let { (_, validation) -> null to validation }
                 }
             }
     }

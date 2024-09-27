@@ -7,22 +7,20 @@ import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class GeneratedRecursiveClassTest {
-    data class Input(val value: LinkedListInput)
-    data class LinkedListInput(val value: String, val next: LinkedListInput?)
-    data class Output(val value: LinkedListOutput)
-    data class LinkedListOutput(val value: String, val next: LinkedListOutput?)
+class NonNullablePropertyToNullablePropertyTest {
+    data class Input(val value: String)
+    data class Output(val value: String?)
 
     @TempDir
     lateinit var directory: File
 
     @Test
-    fun `map object with nested recursive class without declaring mapping should succeed`() {
+    fun `map object with non-nullable property to nullable property should succeed`() {
         compile(directory) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.objects.GeneratedRecursiveClassTest.*
+                import tech.mappie.testing.objects.NonNullablePropertyToNullablePropertyTest.*
 
                 class Mapper : ObjectMappie<Input, Output>()
                 """
@@ -37,8 +35,7 @@ class GeneratedRecursiveClassTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(LinkedListInput("a", LinkedListInput("b", null)))))
-                .isEqualTo(Output(LinkedListOutput("a", LinkedListOutput("b", null))))
+            assertThat(mapper.map(Input("value"))).isEqualTo(Output("value"))
         }
     }
 }

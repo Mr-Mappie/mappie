@@ -3,9 +3,8 @@ package tech.mappie.testing
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.KotlinCompilation
-import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
-import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.compilation.compile
+
 import java.io.File
 
 class MapperClassCanContainPropertiesTest {
@@ -18,26 +17,22 @@ class MapperClassCanContainPropertiesTest {
 
     @Test
     fun `map with a property in constructor of mapper should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.MapperClassCanContainPropertiesTest.*
-    
-                        class Mapper(private val int: Int) : ObjectMappie<Input, Output>() {
-                            override fun map(from: Input) = mapping {
-                                Output::int fromValue int
-                            }
-                        }
- """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.MapperClassCanContainPropertiesTest.*
+
+                class Mapper(private val int: Int) : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input) = mapping {
+                        Output::int fromValue int
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -49,5 +44,4 @@ class MapperClassCanContainPropertiesTest {
                 .isEqualTo(Output("test", 10))
         }
     }
-
 }

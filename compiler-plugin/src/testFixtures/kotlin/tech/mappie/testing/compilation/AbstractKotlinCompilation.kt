@@ -56,7 +56,7 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
     var commandLineProcessors: List<CommandLineProcessor> = listOf(MappieCommandLineProcessor())
 
     /** Source files to be compiled */
-    var sources: List<SourceFile> = emptyList()
+    var sources: MutableList<SourceFile> = mutableListOf()
 
     /** Print verbose logging info */
     var verbose: Boolean = false

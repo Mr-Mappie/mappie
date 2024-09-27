@@ -1,7 +1,6 @@
 package tech.mappie.validation.problems.classes
 
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import tech.mappie.exceptions.MappiePanicException
 import tech.mappie.resolving.ClassMappingRequest
 import tech.mappie.resolving.MappingResolver
 import tech.mappie.resolving.ResolverContext

@@ -3,9 +3,7 @@ package tech.mappie.testing.builtin
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.KotlinCompilation
-import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
-import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 import java.time.LocalDate
@@ -25,22 +23,18 @@ class LocalDateTimeMappersTest {
 
     @Test
     fun `map LocalDateTime to LocalTime implicit should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.builtin.LocalDateTimeMappersTest.*
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.builtin.LocalDateTimeMappersTest.*
 
-                        class Mapper : ObjectMappie<LocalDateTimeInput, LocalTimeOutput>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<LocalDateTimeInput, LocalTimeOutput>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val input = LocalDateTime.now()
 
@@ -57,27 +51,23 @@ class LocalDateTimeMappersTest {
 
     @Test
     fun `map LocalDateTime to LocalTime explicit should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.api.builtin.*
-                        import tech.mappie.testing.builtin.LocalDateTimeMappersTest.*
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.api.builtin.*
+                import tech.mappie.testing.builtin.LocalDateTimeMappersTest.*
 
-                        class Mapper : ObjectMappie<LocalDateTimeInput, LocalTimeOutput>() {
-                            override fun map(from: LocalDateTimeInput) = mapping {
-                                to::value fromProperty from::value via LocalDateTimeToLocalTimeMapper()
-                            }
-                        }
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<LocalDateTimeInput, LocalTimeOutput>() {
+                    override fun map(from: LocalDateTimeInput) = mapping {
+                        to::value fromProperty from::value via LocalDateTimeToLocalTimeMapper()
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val input = LocalDateTime.now()
 
@@ -94,22 +84,18 @@ class LocalDateTimeMappersTest {
 
     @Test
     fun `map LocalDateTime to LocalDate implicit should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.builtin.LocalDateTimeMappersTest.*
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.builtin.LocalDateTimeMappersTest.*
 
-                        class Mapper : ObjectMappie<LocalDateTimeInput, LocalDateOutput>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<LocalDateTimeInput, LocalDateOutput>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val input = LocalDateTime.now()
 
@@ -126,27 +112,23 @@ class LocalDateTimeMappersTest {
 
     @Test
     fun `map LocalDateTime to LocalDate explicit should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.api.builtin.*
-                        import tech.mappie.testing.builtin.LocalDateTimeMappersTest.*
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.api.builtin.*
+                import tech.mappie.testing.builtin.LocalDateTimeMappersTest.*
 
-                        class Mapper : ObjectMappie<LocalDateTimeInput, LocalDateOutput>() {
-                            override fun map(from: LocalDateTimeInput) = mapping {
-                                to::value fromProperty from::value via LocalDateTimeToLocalDateMapper()
-                            }
-                        }
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<LocalDateTimeInput, LocalDateOutput>() {
+                    override fun map(from: LocalDateTimeInput) = mapping {
+                        to::value fromProperty from::value via LocalDateTimeToLocalDateMapper()
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val input = LocalDateTime.now()
 

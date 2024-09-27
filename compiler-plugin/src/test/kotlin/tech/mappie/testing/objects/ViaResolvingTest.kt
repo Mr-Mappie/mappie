@@ -3,10 +3,7 @@ package tech.mappie.testing.objects
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.KotlinCompilation
-import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
-import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
-import tech.mappie.testing.containsError
+import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
@@ -21,24 +18,20 @@ class ViaResolvingTest {
 
     @Test
     fun `map without implicit without via should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.ViaResolvingTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>()
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ViaResolvingTest.*
 
-                        class InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<Input, Output>()
+
+                class InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -53,29 +46,25 @@ class ViaResolvingTest {
 
     @Test
     fun `map without explicit without via and two inner mappers should fail`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.ViaResolvingTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>() {
-                            override fun map(from: Input) = mapping {
-                                to::text fromProperty from::text
-                            }
-                        }
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ViaResolvingTest.*
 
-                        class InnerMapperA : ObjectMappie<InnerInput, InnerOutput>()
-                        class InnerMapperB : ObjectMappie<InnerInput, InnerOutput>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
-            assertThat(messages).containsError(
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input) = mapping {
+                        to::text fromProperty from::text
+                    }
+                }
+
+                class InnerMapperA : ObjectMappie<InnerInput, InnerOutput>()
+                class InnerMapperB : ObjectMappie<InnerInput, InnerOutput>()
+                """
+            )
+        } satisfies {
+            isCompilationError()
+            hasErrorMessage(
                 "Multiple mappers resolved to be used in an implicit via",
                 listOf(
                     "Call one of InnerMapperA, InnerMapperB explicitly.",
@@ -87,25 +76,21 @@ class ViaResolvingTest {
 
     @Test
     fun `map without implicit without via and two inner mappers should fail`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.ViaResolvingTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>()
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ViaResolvingTest.*
 
-                        class InnerMapperA : ObjectMappie<InnerInput, InnerOutput>()
-                        class InnerMapperB : ObjectMappie<InnerInput, InnerOutput>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
-            assertThat(messages).containsError(
+                class Mapper : ObjectMappie<Input, Output>()
+
+                class InnerMapperA : ObjectMappie<InnerInput, InnerOutput>()
+                class InnerMapperB : ObjectMappie<InnerInput, InnerOutput>()
+                """
+            )
+        } satisfies {
+            isCompilationError()
+            hasErrorMessage(
                 "Multiple mappers resolved to be used in an implicit via",
                    listOf(
                        "Call one of InnerMapperA, InnerMapperB explicitly.",

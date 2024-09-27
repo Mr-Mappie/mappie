@@ -1,4 +1,4 @@
-package tech.mappie.testing.objects
+package tech.mappie.testing.enums
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -7,21 +7,26 @@ import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class DefaultValueTest {
+class DoubleNestedObjectWithEnumToDoubleNestedObjectWithEnumWithSameEntriesTest {
 
-    data class Input(val name: String)
-    data class Output(val name: String, val age: Int = 10)
+    data class Input(val nested: NestedInput)
+    data class NestedInput(val nested: NestedNestedEnumInput)
+    @Suppress("unused") enum class NestedNestedEnumInput { A, B, C }
+
+    data class Output(val nested: NestedOutput)
+    data class NestedOutput(val nested: NestedNestedEnumOutput)
+    @Suppress("unused") enum class NestedNestedEnumOutput { A, B, C }
 
     @TempDir
     lateinit var directory: File
 
     @Test
-    fun `map two data classes with a default argument not set should succeed`() {
+    fun `map object with both mappers generated should succeed`() {
         compile(directory) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.objects.DefaultValueTest.*
+                import tech.mappie.testing.enums.DoubleNestedObjectWithEnumToDoubleNestedObjectWithEnumWithSameEntriesTest.*
 
                 class Mapper : ObjectMappie<Input, Output>()
                 """
@@ -36,22 +41,21 @@ class DefaultValueTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input("name"))).isEqualTo(Output("name", 10))
+            assertThat(mapper.map(Input(NestedInput(NestedNestedEnumInput.A))))
+                .isEqualTo(Output(NestedOutput(NestedNestedEnumOutput.A)))
         }
     }
 
     @Test
-    fun `map two data classes with a default argument set should succeed`() {
+    fun `map object with explicit inner mapper and generated inner-most mapper should succeed`() {
         compile(directory) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.objects.DefaultValueTest.*
+                import tech.mappie.testing.enums.DoubleNestedObjectWithEnumToDoubleNestedObjectWithEnumWithSameEntriesTest.*
 
                 class Mapper : ObjectMappie<Input, Output>() {
-                    override fun map(from: Input) = mapping {
-                        to::age fromValue 20
-                    }
+                    object NestedMapper : ObjectMappie<NestedInput, NestedOutput>()
                 }
                 """
             )
@@ -65,7 +69,8 @@ class DefaultValueTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input("name"))).isEqualTo(Output("name", 20))
+            assertThat(mapper.map(Input(NestedInput(NestedNestedEnumInput.A))))
+                .isEqualTo(Output(NestedOutput(NestedNestedEnumOutput.A)))
         }
     }
 }
