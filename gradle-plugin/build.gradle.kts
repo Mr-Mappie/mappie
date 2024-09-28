@@ -5,7 +5,12 @@ plugins {
 
 dependencies {
     compileOnly(libs.kotlin.gradle.plugin.api)
-    compileOnly(libs.kotlin.gradle.plugin)
+
+    implementation(libs.kotlin.gradle.plugin)
+
+    testImplementation(kotlin("test"))
+    testImplementation(gradleTestKit())
+    testImplementation(libs.assertj.core)
 }
 
 gradlePlugin {
@@ -33,4 +38,8 @@ tasks.register("updateCompilerPluginVersion") {
 
 tasks.compileKotlin {
     dependsOn("updateCompilerPluginVersion")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
