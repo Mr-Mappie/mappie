@@ -26,7 +26,7 @@ class NoVisibleConstructorTest {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage("Target class has no accessible constructor")
+            hasErrorMessage(4, "Target class has no accessible constructor")
         }
     }
 }

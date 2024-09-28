@@ -29,7 +29,7 @@ class Object2WithOverlappingValuesTest {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage("Target Output::age has multiple sources defined")
+            hasErrorMessage(4, "Target Output::age has multiple sources defined")
         }
     }
 

@@ -60,7 +60,7 @@ class EnumToEnumWithSameEntriesTest {
             )
         } satisfies {
             isOk()
-            hasWarningMessage("Unnecessary explicit mapping of source Input.SOME")
+            hasWarningMessage(5, "Unnecessary explicit mapping of source Input.SOME")
 
             val mapper = classLoader
                 .loadEnumMappieClass<Input, Output>("Mapper")

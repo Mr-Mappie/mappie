@@ -65,6 +65,7 @@ class ViaResolvingTest {
         } satisfies {
             isCompilationError()
             hasErrorMessage(
+                6,
                 "Multiple mappers resolved to be used in an implicit via",
                 listOf(
                     "Call one of InnerMapperA, InnerMapperB explicitly.",
@@ -91,11 +92,12 @@ class ViaResolvingTest {
         } satisfies {
             isCompilationError()
             hasErrorMessage(
+                4,
                 "Multiple mappers resolved to be used in an implicit via",
-                   listOf(
-                       "Call one of InnerMapperA, InnerMapperB explicitly.",
-                       "Delete all except one of InnerMapperA, InnerMapperB.",
-                )
+                listOf(
+                    "Call one of InnerMapperA, InnerMapperB explicitly.",
+                    "Delete all except one of InnerMapperA, InnerMapperB.",
+             )
             )
         }
     }

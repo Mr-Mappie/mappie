@@ -27,7 +27,7 @@ class NullablePropertyToNonNullablePropertyTest {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage("Target Output::value automatically resolved from Input::value but cannot assign source type String? to target type String")
+            hasErrorMessage(4, "Target Output::value automatically resolved from Input::value but cannot assign source type String? to target type String")
         }
     }
 

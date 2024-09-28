@@ -29,7 +29,7 @@ class NestedNullToNonNullPropertyTest {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage("Target Output::text automatically resolved from Input::text via InnerMapper but cannot assign source type InnerOutput? to target type InnerOutput")
+            hasErrorMessage( 4, "Target Output::text automatically resolved from Input::text via InnerMapper but cannot assign source type InnerOutput? to target type InnerOutput")
         }
     }
 
@@ -52,7 +52,10 @@ class NestedNullToNonNullPropertyTest {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage("Target Output::text of type InnerOutput cannot be assigned from from::text via InnerMapper of type InnerOutput?")
+            hasErrorMessage(
+                6,
+                "Target Output::text of type InnerOutput cannot be assigned from from::text via InnerMapper of type InnerOutput?"
+            )
         }
     }
 
@@ -75,7 +78,10 @@ class NestedNullToNonNullPropertyTest {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage("Target Output::text of type InnerOutput cannot be assigned from from::text via InnerMapper of type InnerOutput?")
+            hasErrorMessage(
+                6,
+                "Target Output::text of type InnerOutput cannot be assigned from from::text via InnerMapper of type InnerOutput?"
+            )
         }
     }
 }

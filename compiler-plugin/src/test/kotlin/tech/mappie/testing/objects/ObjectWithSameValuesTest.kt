@@ -59,7 +59,7 @@ class ObjectWithSameValuesTest {
             )
         } satisfies {
             isOk()
-            hasWarningMessage("Unnecessary explicit mapping of target Output::value")
+            hasWarningMessage(6, "Unnecessary explicit mapping of target Output::value")
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")

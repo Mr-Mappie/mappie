@@ -38,7 +38,7 @@ class ConstructorParameterNotAFieldTest {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage("Identifier fake does not occur as as setter or as a parameter in constructor")
+            hasErrorMessage(6, "Identifier fake does not occur as as setter or as a parameter in constructor")
         }
     }
 
@@ -59,7 +59,7 @@ class ConstructorParameterNotAFieldTest {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage("Identifier must be a compile-time constant.")
+            hasErrorMessage(6, "Identifier must be a compile-time constant")
         }
     }
 

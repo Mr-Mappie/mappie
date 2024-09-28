@@ -30,7 +30,7 @@ class ObjectWithStringPropertyToObjectWithIntPropertyTest {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage("Target Output::value of type Int cannot be assigned from from::value of type String")
+            hasErrorMessage(6, "Target Output::value of type Int cannot be assigned from from::value of type String")
         }
     }
 
@@ -47,7 +47,10 @@ class ObjectWithStringPropertyToObjectWithIntPropertyTest {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage("Target Output::value automatically resolved from Input::value but cannot assign source type String to target type Int")
+            hasErrorMessage(
+                4,
+                "Target Output::value automatically resolved from Input::value but cannot assign source type String to target type Int"
+            )
         }
     }
 
@@ -68,7 +71,7 @@ class ObjectWithStringPropertyToObjectWithIntPropertyTest {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage("Target Output::value of type Int cannot be assigned from value of type String")
+            hasErrorMessage(6, "Target Output::value of type Int cannot be assigned from value of type String")
         }
     }
 
@@ -89,7 +92,7 @@ class ObjectWithStringPropertyToObjectWithIntPropertyTest {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage("Target Output::value of type Int cannot be assigned from expression of type String")
+            hasErrorMessage(6, "Target Output::value of type Int cannot be assigned from expression of type String")
         }
     }
 }

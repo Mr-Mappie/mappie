@@ -92,7 +92,7 @@ class EnumToEnumWithFewerEntriesTest {
             )
         } satisfies  {
             isCompilationError()
-            hasErrorMessage("Source Input.THIRD has no target defined")
+            hasErrorMessage(4, "Source Input.THIRD has no target defined")
         }
     }
 }

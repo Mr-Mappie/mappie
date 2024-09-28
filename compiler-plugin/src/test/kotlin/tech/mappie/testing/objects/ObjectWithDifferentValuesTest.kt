@@ -28,7 +28,7 @@ class ObjectWithDifferentValuesTest {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage("Target Output::name has no source defined")
+            hasErrorMessage(4, "Target Output::name has no source defined")
         }
     }
 
