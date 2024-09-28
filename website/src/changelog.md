@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+    - date: "tbd"
+      title: "v0.9.0"
+      items:
+        - "fixed a bug where the `strictness.enums` option set to `true` possibly resulted in a compilation error."
     - date: "2024-09-22"
       title: "v0.8.0"
       items:
