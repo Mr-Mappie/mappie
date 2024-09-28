@@ -42,4 +42,8 @@ tasks.compileKotlin {
 
 tasks.test {
     useJUnitPlatform()
+
+    dependsOn(project(":compiler-plugin").tasks.publishToMavenLocal)
+    dependsOn(project(":mappie-api").tasks.named("publishKotlinMultiplatformPublicationToMavenLocal"))
+    dependsOn(project(":mappie-api").tasks.named("publishJvmPublicationToMavenLocal"))
 }

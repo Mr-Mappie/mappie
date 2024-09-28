@@ -2,6 +2,7 @@ package tech.mappie.testing
 
 import org.gradle.testkit.runner.GradleRunner
 import org.intellij.lang.annotations.Language
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -13,10 +14,6 @@ abstract class TestBase {
     protected lateinit var directory: File
 
     protected lateinit var runner: GradleRunner
-
-    private val version = javaClass.classLoader.getResourceAsStream("version.properties").use {
-        Properties().apply { load(it) }.getProperty("version")
-    }
 
     @BeforeEach
     fun setup() {
@@ -57,6 +54,18 @@ abstract class TestBase {
     protected fun kotlin(file: String, @Language("kotlin") code: String) {
         directory.resolve(file).apply {
             appendText(code)
+        }
+    }
+
+    companion object {
+        private val version = javaClass.classLoader.getResourceAsStream("version.properties").use {
+            Properties().apply { load(it) }.getProperty("version")
+        }
+
+        @BeforeAll
+        @JvmStatic
+        fun start() {
+            println("Using mappie version $version")
         }
     }
 }
