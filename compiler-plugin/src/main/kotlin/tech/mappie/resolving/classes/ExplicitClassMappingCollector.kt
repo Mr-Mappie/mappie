@@ -118,7 +118,7 @@ private class TargetNameCollector(private val context: ResolverContext) : BaseVi
 
     override fun visitCall(expression: IrCall, data: Unit): Name {
         return when (expression.symbol.owner.name) {
-            IDENTIFIER_PARAMETER, IDENTIFIER_TO -> {
+            IDENTIFIER_TO -> {
                 val value = expression.valueArguments.first()!!
                 return if (value.isConstantLike && value is IrConst<*>) {
                     Name.identifier(value.value as String)

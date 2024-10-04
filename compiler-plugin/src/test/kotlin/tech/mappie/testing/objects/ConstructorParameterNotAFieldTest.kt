@@ -31,7 +31,7 @@ class ConstructorParameterNotAFieldTest {
 
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input) = mapping {
-                        parameter("fake") fromProperty Input::input
+                        to("fake") fromProperty Input::input
                     }
                 }
                 """
@@ -52,7 +52,7 @@ class ConstructorParameterNotAFieldTest {
 
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input) = mapping {
-                        parameter(0.toString()) fromProperty Input::input
+                        to(0.toString()) fromProperty Input::input
                     }
                 }
                 """
