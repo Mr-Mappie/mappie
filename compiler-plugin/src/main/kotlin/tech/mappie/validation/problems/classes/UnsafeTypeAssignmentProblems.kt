@@ -7,7 +7,6 @@ import tech.mappie.resolving.ClassMappingRequest
 import tech.mappie.resolving.classes.sources.*
 import tech.mappie.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.util.hasFlexibleNullabilityAnnotation
-import tech.mappie.util.isMappableFrom
 import tech.mappie.util.location
 import tech.mappie.validation.Problem
 import tech.mappie.validation.ValidationContext

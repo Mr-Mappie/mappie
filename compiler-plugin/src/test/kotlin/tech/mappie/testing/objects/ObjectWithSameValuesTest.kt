@@ -4,10 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.KotlinCompilation
-import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
-import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
-import tech.mappie.testing.containsWarning
+import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
@@ -20,23 +17,19 @@ class ObjectWithSameValuesTest {
     lateinit var directory: File
 
     @Test
-    fun `map identical data classes should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.ObjectWithSameValuesTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+    fun `map identical objects should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ObjectWithSameValuesTest.*
+
+                class Mapper : ObjectMappie<Input, Output>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -50,27 +43,23 @@ class ObjectWithSameValuesTest {
 
     @Test
     @Disabled("Not implemented yet")
-    fun `map identical data classes with an explicit mapping should warn`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.ObjectWithSameValuesTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>() {
-                            override fun map(from: Input) = mapping {
-                                Output::value fromProperty Input::value
-                            }
-                        }
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).containsWarning("Unnecessary explicit mapping of target Output::value")
+    fun `map identical objects with an explicit mapping should warn`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ObjectWithSameValuesTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input) = mapping {
+                        Output::value fromProperty Input::value
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasWarningMessage(6, "Unnecessary explicit mapping of target Output::value")
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")

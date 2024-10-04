@@ -3,9 +3,7 @@ package tech.mappie.testing.objects
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.KotlinCompilation
-import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
-import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
@@ -19,23 +17,19 @@ class ObjectWithNestedClassTest {
     lateinit var directory: File
 
     @Test
-    fun `map data classes with nested class without declaring mapping should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.ObjectWithNestedClassTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+    fun `map object with nested class with generated mapper should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ObjectWithNestedClassTest.*
+
+                class Mapper : ObjectMappie<Input, Output>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -49,25 +43,21 @@ class ObjectWithNestedClassTest {
     }
 
     @Test
-    fun `map data classes with nested class using object InnerMapper without declaring mapping should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.ObjectWithNestedClassTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>()
+    fun `map object with nested class using object InnerMapper without declaring mapping should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ObjectWithNestedClassTest.*
 
-                        object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<Input, Output>()
+
+                object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -81,25 +71,21 @@ class ObjectWithNestedClassTest {
     }
 
     @Test
-    fun `map data classes with nested class using class InnerMapper without declaring mapping should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.ObjectWithNestedClassTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>()
+    fun `map object with nested class using class InnerMapper without declaring mapping should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ObjectWithNestedClassTest.*
 
-                        class InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<Input, Output>()
+
+                class InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -113,29 +99,25 @@ class ObjectWithNestedClassTest {
     }
 
     @Test
-    fun `map data classes with nested class should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.ObjectWithNestedClassTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>() {
-                            override fun map(from: Input) = mapping {
-                                Output::text fromProperty from::text via InnerMapper
-                            }
-                        }
+    fun `map object with nested class should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ObjectWithNestedClassTest.*
 
-                        object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input) = mapping {
+                        Output::text fromProperty from::text via InnerMapper
+                    }
+                }
+
+                object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -149,29 +131,25 @@ class ObjectWithNestedClassTest {
     }
 
     @Test
-    fun `map data classes with nested class and mapper as inner object declaration should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.ObjectWithNestedClassTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>() {
-                            override fun map(from: Input) = mapping {
-                                Output::text fromProperty from::text via InnerMapper
-                            }
+    fun `map object with nested class and mapper as inner object declaration should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ObjectWithNestedClassTest.*
 
-                            object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
-                        }
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input) = mapping {
+                        Output::text fromProperty from::text via InnerMapper
+                    }
+
+                    object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -185,29 +163,25 @@ class ObjectWithNestedClassTest {
     }
 
     @Test
-    fun `map data classes with nested class and mapper as inner class declaration should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.ObjectWithNestedClassTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>() {
-                            override fun map(from: Input) = mapping {
-                                Output::text fromProperty from::text via InnerMapper()
-                            }
+    fun `map object with nested class and mapper as inner class declaration should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ObjectWithNestedClassTest.*
 
-                            class InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
-                        }
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input) = mapping {
+                        Output::text fromProperty from::text via InnerMapper()
+                    }
+
+                    class InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")

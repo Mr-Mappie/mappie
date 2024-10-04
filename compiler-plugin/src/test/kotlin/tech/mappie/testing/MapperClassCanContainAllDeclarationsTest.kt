@@ -3,9 +3,8 @@ package tech.mappie.testing
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.KotlinCompilation
-import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
-import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.compilation.compile
+
 import java.io.File
 import kotlin.reflect.full.valueParameters
 
@@ -19,43 +18,39 @@ class MapperClassCanContainAllDeclarationsTest {
 
     @Test
     fun `mapper containing all kind of declarations should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.MapperClassCanContainAllDeclarationsTest.*
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.MapperClassCanContainAllDeclarationsTest.*
 
-                        object IrrelevantObject
+                object IrrelevantObject
 
-                        typealias IrrelevantTypeAlias = String
+                typealias IrrelevantTypeAlias = String
 
-                        val irrelevantProperty: String = ""
+                val irrelevantProperty: String = ""
 
-                        class Mapper(private val int: Int) : ObjectMappie<Input, Output>() {
-                            
-                            constructor(string: String, int: Int) : this(int)
-                            
-                            init {
-                                val x = 10
-                            }
-                            
-                            private val irrelevantInnerProperty: Int = 0
+                class Mapper(private val int: Int) : ObjectMappie<Input, Output>() {
+                    
+                    constructor(string: String, int: Int) : this(int)
+                    
+                    init {
+                        val x = 10
+                    }
+                    
+                    private val irrelevantInnerProperty: Int = 0
 
-                            object IrrelevantInnerObject
+                    object IrrelevantInnerObject
 
-                            fun map(value: String) = value
+                    fun map(value: String) = value
 
-                            fun map(value: Int) = value
-                        }
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                    fun map(value: Int) = value
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")

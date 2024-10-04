@@ -3,9 +3,7 @@ package tech.mappie.testing.objects
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.KotlinCompilation
-import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
-import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
@@ -17,6 +15,7 @@ class ComplexNestedMapperTest {
         val nested: NestedInput,
     )
 
+    @Suppress("unused")
     data class NestedInput(val boolean: BooleanEnum) {
         enum class BooleanEnum { TRUE, FALSE }
     }
@@ -32,34 +31,30 @@ class ComplexNestedMapperTest {
 
     @Test
     fun `map complex nested object`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.ComplexNestedMapperTest.*
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ComplexNestedMapperTest.*
 
-                        class Mapper : ObjectMappie<InputObject, OutputObject>() {
-                    
-                            override fun map(from: InputObject) = mapping {
-                                to::boolean fromProperty from.nested::boolean
-                            }
-                        }
-                    
-                        private object BooleanEnumToBooleanMapper : ObjectMappie<NestedInput.BooleanEnum, Boolean>() {
-                            override fun map(from: NestedInput.BooleanEnum): Boolean = when (from) {
-                                NestedInput.BooleanEnum.TRUE -> true
-                                NestedInput.BooleanEnum.FALSE -> false
-                            }
-                        }
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<InputObject, OutputObject>() {
+            
+                    override fun map(from: InputObject) = mapping {
+                        to::boolean fromProperty from.nested::boolean
+                    }
+                }
+            
+                private object BooleanEnumToBooleanMapper : ObjectMappie<NestedInput.BooleanEnum, Boolean>() {
+                    override fun map(from: NestedInput.BooleanEnum): Boolean = when (from) {
+                        NestedInput.BooleanEnum.TRUE -> true
+                        NestedInput.BooleanEnum.FALSE -> false
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappieClass<InputObject, OutputObject>("Mapper")
@@ -74,34 +69,30 @@ class ComplexNestedMapperTest {
 
     @Test
     fun `map complex nested with explicit via object`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.ComplexNestedMapperTest.*
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ComplexNestedMapperTest.*
 
-                        class Mapper : ObjectMappie<InputObject, OutputObject>() {
-                    
-                            override fun map(from: InputObject) = mapping {
-                                to::boolean fromProperty from.nested::boolean via BooleanEnumToBooleanMapper
-                            }
-                        }
-                    
-                        private object BooleanEnumToBooleanMapper : ObjectMappie<NestedInput.BooleanEnum, Boolean>() {
-                            override fun map(from: NestedInput.BooleanEnum): Boolean = when (from) {
-                                NestedInput.BooleanEnum.TRUE -> true
-                                NestedInput.BooleanEnum.FALSE -> false
-                            }
-                        }
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<InputObject, OutputObject>() {
+            
+                    override fun map(from: InputObject) = mapping {
+                        to::boolean fromProperty from.nested::boolean via BooleanEnumToBooleanMapper
+                    }
+                }
+            
+                private object BooleanEnumToBooleanMapper : ObjectMappie<NestedInput.BooleanEnum, Boolean>() {
+                    override fun map(from: NestedInput.BooleanEnum): Boolean = when (from) {
+                        NestedInput.BooleanEnum.TRUE -> true
+                        NestedInput.BooleanEnum.FALSE -> false
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappieClass<InputObject, OutputObject>("Mapper")

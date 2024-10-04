@@ -3,9 +3,8 @@ package tech.mappie.testing.objects3
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.KotlinCompilation
-import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
-import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.compilation.compile
+
 import tech.mappie.testing.loadObjectMappie3Class
 import java.io.File
 
@@ -21,22 +20,18 @@ class Object3WithSameValuesTest {
 
     @Test
     fun `map identical data classes should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie3
-                        import tech.mappie.testing.objects3.Object3WithSameValuesTest.*
-    
-                        class Mapper : ObjectMappie3<Input1, Input2, Input3, Output>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie3
+                import tech.mappie.testing.objects3.Object3WithSameValuesTest.*
+
+                class Mapper : ObjectMappie3<Input1, Input2, Input3, Output>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappie3Class<Input1, Input2, Input3, Output>("Mapper")

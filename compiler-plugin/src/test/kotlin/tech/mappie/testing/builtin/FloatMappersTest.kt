@@ -3,9 +3,7 @@ package tech.mappie.testing.builtin
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.KotlinCompilation
-import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
-import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 import java.math.BigDecimal
@@ -25,22 +23,18 @@ class FloatMappersTest {
 
     @Test
     fun `map Float to Double implicit should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.builtin.FloatMappersTest.*
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.builtin.FloatMappersTest.*
 
-                        class Mapper : ObjectMappie<FloatInput, DoubleOutput>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<FloatInput, DoubleOutput>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val input = 2.0f
 
@@ -57,27 +51,23 @@ class FloatMappersTest {
 
     @Test
     fun `map Float to Double explicit should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.api.builtin.*
-                        import tech.mappie.testing.builtin.FloatMappersTest.*
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.api.builtin.*
+                import tech.mappie.testing.builtin.FloatMappersTest.*
 
-                        class Mapper : ObjectMappie<FloatInput, DoubleOutput>() {
-                            override fun map(from: FloatInput) = mapping {
-                                to::value fromProperty from::value via FloatToDoubleMapper()
-                            }
-                        }
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<FloatInput, DoubleOutput>() {
+                    override fun map(from: FloatInput) = mapping {
+                        to::value fromProperty from::value via FloatToDoubleMapper()
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val input = 5.0f
 
@@ -94,22 +84,18 @@ class FloatMappersTest {
 
     @Test
     fun `map Float to BigDecimal implicit should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.builtin.FloatMappersTest.*
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.builtin.FloatMappersTest.*
 
-                        class Mapper : ObjectMappie<FloatInput, BigDecimalOutput>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<FloatInput, BigDecimalOutput>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val input = 2.0f
 
@@ -126,27 +112,23 @@ class FloatMappersTest {
 
     @Test
     fun `map Float to BigDecimal explicit should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.api.builtin.*
-                        import tech.mappie.testing.builtin.FloatMappersTest.*
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.api.builtin.*
+                import tech.mappie.testing.builtin.FloatMappersTest.*
 
-                        class Mapper : ObjectMappie<FloatInput, BigDecimalOutput>() {
-                            override fun map(from: FloatInput) = mapping {
-                                to::value fromProperty from::value via FloatToBigDecimalMapper()
-                            }
-                        }
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<FloatInput, BigDecimalOutput>() {
+                    override fun map(from: FloatInput) = mapping {
+                        to::value fromProperty from::value via FloatToBigDecimalMapper()
+                    }
+                }
+                """
+            )
+        } satisfies  {
+            isOk()
+            hasNoMessages()
 
             val input = 5.0f
 
@@ -163,22 +145,18 @@ class FloatMappersTest {
 
     @Test
     fun `map Float to String implicit should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.builtin.FloatMappersTest.*
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.builtin.FloatMappersTest.*
 
-                        class Mapper : ObjectMappie<FloatInput, StringOutput>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<FloatInput, StringOutput>()
+                """
+            )
+        } satisfies  {
+            isOk()
+            hasNoMessages()
 
             val input = 2.0f
 
@@ -195,27 +173,23 @@ class FloatMappersTest {
 
     @Test
     fun `map Float to String explicit should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.api.builtin.*
-                        import tech.mappie.testing.builtin.FloatMappersTest.*
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.api.builtin.*
+                import tech.mappie.testing.builtin.FloatMappersTest.*
 
-                        class Mapper : ObjectMappie<FloatInput, StringOutput>() {
-                            override fun map(from: FloatInput) = mapping {
-                                to::value fromProperty from::value via FloatToStringMapper()
-                            }
-                        }
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<FloatInput, StringOutput>() {
+                    override fun map(from: FloatInput) = mapping {
+                        to::value fromProperty from::value via FloatToStringMapper()
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val input = 5.0f
 

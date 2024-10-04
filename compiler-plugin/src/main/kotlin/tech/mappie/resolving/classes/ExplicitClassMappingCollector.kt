@@ -124,7 +124,7 @@ private class TargetNameCollector(private val context: ResolverContext) : BaseVi
                     Name.identifier(value.value as String)
                 } else {
                     val problem = Problem.error(
-                        "Identifier must be a compile-time constant.",
+                        "Identifier must be a compile-time constant",
                         location(context.function!!.fileEntry, expression)
                     )
                     context.logger.log(problem)

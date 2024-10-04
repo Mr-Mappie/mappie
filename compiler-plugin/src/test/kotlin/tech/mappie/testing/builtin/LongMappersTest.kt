@@ -3,9 +3,7 @@ package tech.mappie.testing.builtin
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.KotlinCompilation
-import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
-import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 import java.math.BigDecimal
@@ -26,22 +24,18 @@ class LongMappersTest {
 
     @Test
     fun `map Long to BigInteger implicit should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.builtin.LongMappersTest.*
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.builtin.LongMappersTest.*
 
-                        class Mapper : ObjectMappie<LongInput, BigIntegerOutput>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<LongInput, BigIntegerOutput>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val input: Long = 2
 
@@ -58,10 +52,8 @@ class LongMappersTest {
 
     @Test
     fun `map Long to BigInteger explicit should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
+        compile(directory) {
+                    file("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
                         import tech.mappie.api.builtin.*
@@ -73,12 +65,10 @@ class LongMappersTest {
                             }
                         }
                         """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                    )        
+           } satisfies {
+           isOk()
+            hasNoMessages()
 
             val input: Long = 5
 
@@ -95,22 +85,18 @@ class LongMappersTest {
 
     @Test
     fun `map Long to BigDecimal implicit should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
+        compile(directory) {
+                    file("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
                         import tech.mappie.testing.builtin.LongMappersTest.*
 
                         class Mapper : ObjectMappie<LongInput, BigDecimalOutput>()
                         """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                    )        
+           } satisfies {
+           isOk()
+            hasNoMessages()
 
             val input: Long = 2
 
@@ -127,10 +113,8 @@ class LongMappersTest {
 
     @Test
     fun `map Long to BigDecimal explicit should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
+        compile(directory) {
+                    file("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie
                         import tech.mappie.api.builtin.*
@@ -142,12 +126,10 @@ class LongMappersTest {
                             }
                         }
                         """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                    )        
+           } satisfies {
+           isOk()
+            hasNoMessages()
 
             val input: Long = 5
 

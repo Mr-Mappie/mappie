@@ -1,6 +1,7 @@
 package tech.mappie.validation.problems.classes
 
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import tech.mappie.resolving.ClassMappingRequest
 import tech.mappie.util.location
@@ -11,10 +12,10 @@ class VisibilityProblems(private val context: ValidationContext, private val own
 
     fun all(): List<Problem> =
         if (!owner.visibility.isPublicAPI && context.configuration.strictness.visibility) {
-            val constructor = owner.valueParameters.joinToString(prefix = owner.name.asString() + "(", postfix = ")") {
-                it.type.dumpKotlinLike()
+            val constructor = owner.valueParameters.joinToString(prefix = "${owner.constructedClass.name.asString()}(", postfix = ")") {
+                it.name.asString() + ": " + it.type.dumpKotlinLike()
             }
-            listOf(Problem.error("Constructor $constructor is not visible from the current scope", location(owner)))
+            listOf(Problem.error("Constructor $constructor is not visible from the current scope", location(context.function)))
         } else {
             emptyList()
         }

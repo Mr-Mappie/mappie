@@ -3,10 +3,8 @@ package tech.mappie.testing.objects3
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.KotlinCompilation
-import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
-import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
-import tech.mappie.testing.containsError
+import tech.mappie.testing.compilation.compile
+
 import tech.mappie.testing.loadObjectMappie3Class
 import java.io.File
 
@@ -22,32 +20,25 @@ class Object3WithOverlappingValuesTest {
 
     @Test
     fun `map identical data classes should fail`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie3
-                        import tech.mappie.testing.objects3.Object3WithOverlappingValuesTest.*
-    
-                        class Mapper : ObjectMappie3<Input1, Input2, Input3, Output>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
-            assertThat(messages)
-                .containsError("Target Output::age has multiple sources defined")
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie3
+                import tech.mappie.testing.objects3.Object3WithOverlappingValuesTest.*
+
+                class Mapper : ObjectMappie3<Input1, Input2, Input3, Output>()
+                """
+            )
+        } satisfies  {
+            isCompilationError()
+            hasErrorMessage(4, "Target Output::age has multiple sources defined")
         }
     }
 
     @Test
     fun `map identical data classes should with one specified succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
+        compile(directory) {
+                    file("Test.kt",
                         """
                         import tech.mappie.api.ObjectMappie3
                         import tech.mappie.testing.objects3.Object3WithOverlappingValuesTest.*
@@ -59,12 +50,10 @@ class Object3WithOverlappingValuesTest {
                             }
                         }
                         """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                    )        
+           } satisfies {
+           isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappie3Class<Input1, Input2, Input3, Output>("Mapper")
