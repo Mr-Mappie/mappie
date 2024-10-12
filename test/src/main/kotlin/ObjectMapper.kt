@@ -25,6 +25,7 @@ object ObjectMapperWithoutVia : ObjectMappie<InputObject, OutputObject>() {
 object ObjectMapper : ObjectMappie<InputObject, OutputObject>() {
     override fun map(from: InputObject) = mapping {
         to::boolean fromProperty from.nested::boolean via BooleanEnumToBooleanMapper
+        to(1.toString()) fromProperty from.nested::boolean via BooleanEnumToBooleanMapper
     }
 }
 

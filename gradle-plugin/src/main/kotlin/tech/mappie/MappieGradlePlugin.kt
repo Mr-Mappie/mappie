@@ -50,10 +50,10 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
             },
         )
 
-    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) =
-        kotlinCompilation.target.project.run {
-            hasMappiePlugin() && hasMappieDependency(kotlinCompilation)
-        }
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) = true
+//        kotlinCompilation.target.project.run {
+//            hasMappiePlugin() && hasMappieDependency(kotlinCompilation)
+//        }
 
     private fun Project.hasMappiePlugin() =
         plugins.hasPlugin(MappieGradlePlugin::class.java)
