@@ -57,6 +57,13 @@ abstract class TestBase {
         }
     }
 
+
+    protected fun java(file: String, @Language("java") code: String) {
+        directory.resolve(file).apply {
+            appendText(code)
+        }
+    }
+
     companion object {
         private val version = javaClass.classLoader.getResourceAsStream("version.properties").use {
             Properties().apply { load(it) }.getProperty("version")

@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package tech.mappie
 
 import org.gradle.api.Project
@@ -50,10 +48,10 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
             },
         )
 
-    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) = true
-//        kotlinCompilation.target.project.run {
-//            hasMappiePlugin() && hasMappieDependency(kotlinCompilation)
-//        }
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) =
+        kotlinCompilation.target.project.run {
+            hasMappiePlugin() && hasMappieDependency(kotlinCompilation)
+        }
 
     private fun Project.hasMappiePlugin() =
         plugins.hasPlugin(MappieGradlePlugin::class.java)
@@ -73,7 +71,6 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
     }
 
     private companion object {
-        private const val KOTLIN_GRADLE_PLUGIN_NAME = "kotlin-gradle-plugin"
         private val SUPPORTED_KOTLIN_VERSIONS = listOf(
             Regex("1\\.9\\.[0-9]+(-.+)?"), // Versions 1.9.y
             Regex("2\\.[0-9]+\\.[0-9]+(-.+)?"), // Versions 2.x.y

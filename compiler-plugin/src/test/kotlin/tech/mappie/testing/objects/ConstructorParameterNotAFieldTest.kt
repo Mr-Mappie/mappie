@@ -59,12 +59,12 @@ class ConstructorParameterNotAFieldTest {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(6, "Identifier must be a compile-time constant")
+            hasErrorMessage(6, "Argument must be a compile-time constant.")
         }
     }
 
     @Test
-    fun `map two classes with parameter set should succeed`() {
+    fun `map two classes with parameter set as literal should succeed`() {
         compile(directory) {
             file("Test.kt",
                 """
@@ -74,6 +74,39 @@ class ConstructorParameterNotAFieldTest {
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input) = mapping {
                         to("output") fromProperty Input::input
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input("Sjon", 58))).isEqualTo(Output("Sjon", 58))
+        }
+    }
+
+    @Test
+    fun `map two classes with parameter set as constant property should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ConstructorParameterNotAFieldTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input) = mapping {
+                        to(NAME) fromProperty Input::input
+                    }
+
+                    companion object {
+                        private const val NAME = "output"
                     }
                 }
                 """
