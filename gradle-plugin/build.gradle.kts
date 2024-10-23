@@ -4,12 +4,9 @@ plugins {
 }
 
 dependencies {
-    compileOnly(libs.kotlin.gradle.plugin.api)
-
     implementation(libs.kotlin.gradle.plugin)
 
     testImplementation(kotlin("test"))
-    testImplementation(gradleTestKit())
     testImplementation(libs.assertj.core)
 }
 
@@ -43,6 +40,7 @@ tasks.compileKotlin {
 tasks.test {
     useJUnitPlatform()
 
+    dependsOn(project.tasks.publishToMavenLocal)
     dependsOn(project(":compiler-plugin").tasks.publishToMavenLocal)
     dependsOn(project(":mappie-api").tasks.named("publishKotlinMultiplatformPublicationToMavenLocal"))
     dependsOn(project(":mappie-api").tasks.named("publishJvmPublicationToMavenLocal"))

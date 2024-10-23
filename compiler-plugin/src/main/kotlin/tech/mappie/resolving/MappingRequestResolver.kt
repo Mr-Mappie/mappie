@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.util.BaseVisitor
 import tech.mappie.api.*
+import tech.mappie.util.isMappieMapFunction
 import tech.mappie.util.isSubclassOf
 import tech.mappie.util.merge
 
@@ -19,15 +20,15 @@ class MappingRequestResolver : BaseVisitor<Map<IrClass, List<MappingRequest>>, R
             .merge()
 
     override fun visitClass(declaration: IrClass, data: ResolverContext) =
-        buildList {
+        buildList<Map<IrClass, List<MappingRequest>>> {
             addAll(declaration.declarations.filterIsInstance<IrClass>().map { it.accept(data) })
             if (declaration.isSubclassOf(Mappie::class)) {
-                addAll(declaration.functions.map { it.accept(data) })
+                declaration.functions.firstOrNull { it.isMappieMapFunction() }?.accept(data)
             }
         }.merge()
 
-    override fun visitFunction(declaration: IrFunction, data: ResolverContext) =
-        if (declaration.accept(ShouldTransformCollector(), Unit)) {
+    override fun visitSimpleFunction(declaration: IrSimpleFunction, data: ResolverContext) =
+        if (declaration.isMappieMapFunction()) {
             mapOf(declaration.parentAsClass to MappingResolver.of(declaration, ResolverContext(data, declaration)).resolve(declaration.body))
         } else {
             emptyMap()
