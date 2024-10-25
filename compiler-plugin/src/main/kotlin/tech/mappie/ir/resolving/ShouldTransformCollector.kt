@@ -1,13 +1,13 @@
 package tech.mappie.ir.resolving
 
-import tech.mappie.api.Mappie
-import tech.mappie.util.IDENTIFIER_MAPPING
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrReturn
+import tech.mappie.api.Mappie
+import tech.mappie.util.IDENTIFIER_MAPPING
 import tech.mappie.ir.util.IrBaseVisitor
 import tech.mappie.ir.util.isMappieMapFunction
 import tech.mappie.ir.util.isSubclassOf
