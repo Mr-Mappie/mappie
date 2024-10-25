@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package tech.mappie
 
 import org.gradle.api.Project
@@ -73,7 +71,6 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
     }
 
     private companion object {
-        private const val KOTLIN_GRADLE_PLUGIN_NAME = "kotlin-gradle-plugin"
         private val SUPPORTED_KOTLIN_VERSIONS = listOf(
             Regex("1\\.9\\.[0-9]+(-.+)?"), // Versions 1.9.y
             Regex("2\\.[0-9]+\\.[0-9]+(-.+)?"), // Versions 2.x.y

@@ -23,7 +23,7 @@ class MappingRequestResolver : BaseVisitor<Map<IrClass, List<MappingRequest>>, R
         buildList<Map<IrClass, List<MappingRequest>>> {
             addAll(declaration.declarations.filterIsInstance<IrClass>().map { it.accept(data) })
             if (declaration.isSubclassOf(Mappie::class)) {
-                declaration.functions.firstOrNull { it.isMappieMapFunction() }?.accept(data)
+                add(declaration.functions.firstOrNull { it.isMappieMapFunction() }!!.accept(data))
             }
         }.merge()
 
