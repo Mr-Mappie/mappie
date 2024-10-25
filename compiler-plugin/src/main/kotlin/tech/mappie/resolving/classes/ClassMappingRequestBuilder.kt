@@ -60,7 +60,8 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
                 } else {
                     when (source) {
                         is ImplicitPropertyMappingSource -> source.copy(transformation = transformation(source, target))
-                        else -> throw MappiePanicException("Only ImplicitPropertyMappingSource should occur when resolving a transformation.")
+                        is FunctionMappingSource -> source.copy(transformation = transformation(source, target))
+                        else -> throw MappiePanicException("Only ImplicitPropertyMappingSource should occur when resolving a transformation. Got ${source::class}")
                     }
                 }
             }.ifEmpty {
@@ -77,9 +78,13 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
         return if (mappers.size == 1) {
             PropertyMappingViaMapperTransformation(mappers.single(), null)
         } else if (mappers.size > 1) {
+            val location = when (source) {
+                is ExplicitClassMappingSource -> location(context.function!!.fileEntry, source.origin)
+                else -> location(context.function!!)
+            }
             val error = Problem.error(
                 "Multiple mappers resolved to be used in an implicit via",
-                location(context.function!!),
+                location,
                 listOf(
                     "Call one of ${mappers.joinToString { it.clazz.name.asString() }} explicitly.",
                     "Delete all except one of ${mappers.joinToString { it.clazz.name.asString() }}.",

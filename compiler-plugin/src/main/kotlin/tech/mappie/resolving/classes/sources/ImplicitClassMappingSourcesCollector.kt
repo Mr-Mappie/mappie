@@ -18,7 +18,7 @@ class ImplicitClassMappingSourcesCollector : BaseVisitor<Map<Name, ImplicitClass
     override fun visitFunction(declaration: IrFunction, data: Pair<Name, IrType>): Map<Name, ImplicitClassMappingSource> =
         if (declaration.isJavaLikeGetter()) {
             val name = Name.identifier(declaration.name.asString().removePrefix("get").replaceFirstChar { it.lowercaseChar() })
-            mapOf(name to FunctionMappingSource(declaration, data.first, data.second))
+            mapOf(name to FunctionMappingSource(declaration, data.first, data.second, null))
         } else {
             emptyMap()
         }

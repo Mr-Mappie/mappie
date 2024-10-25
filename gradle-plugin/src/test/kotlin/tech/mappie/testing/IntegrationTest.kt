@@ -1,6 +1,5 @@
-package tech.mappie.testing.configuration
+package tech.mappie.testing
 
-import tech.mappie.testing.TestBase
 import org.junit.jupiter.api.Test
 
 class IntegrationTest : TestBase() {

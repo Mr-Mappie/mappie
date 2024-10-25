@@ -1,5 +1,6 @@
 package tech.mappie.resolving.classes.sources
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -32,7 +33,9 @@ sealed interface ClassMappingSource {
 }
 
 sealed interface ImplicitClassMappingSource : ClassMappingSource
-sealed interface ExplicitClassMappingSource : ClassMappingSource
+sealed interface ExplicitClassMappingSource : ClassMappingSource {
+    val origin: IrElement
+}
 
 data class ParameterDefaultValueMappingSource(
     val parameter: IrValueParameter,
@@ -53,8 +56,9 @@ data class FunctionMappingSource(
     val function: IrFunction,
     val parameter: Name,
     val parameterType: IrType,
+    val transformation: PropertyMappingTransformation?,
 ) : ImplicitClassMappingSource {
-    override val type = function.returnType
+    override val type = type(function.returnType, transformation)
 }
 
 data class ExplicitPropertyMappingSource(
@@ -62,14 +66,17 @@ data class ExplicitPropertyMappingSource(
     val transformation : PropertyMappingTransformation?,
 ) : ExplicitClassMappingSource {
     override val type = type(reference.getter!!.owner.returnType, transformation)
+    override val origin = reference
 }
 
 data class ValueMappingSource(val expression: IrExpression) : ExplicitClassMappingSource {
     override val type = expression.type
+    override val origin = expression
 }
 
 data class ExpressionMappingSource(val expression: IrExpression) : ExplicitClassMappingSource {
     override val type = (expression.type as IrSimpleType).arguments[1].typeOrFail
+    override val origin = expression
 }
 
 sealed interface PropertyMappingTransformation {
