@@ -60,7 +60,8 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
                 } else {
                     when (source) {
                         is ImplicitPropertyMappingSource -> source.copy(transformation = transformation(source, target))
-                        else -> throw MappiePanicException("Only ImplicitPropertyMappingSource should occur when resolving a transformation.")
+                        is FunctionMappingSource -> source.copy(transformation = transformation(source, target))
+                        else -> throw MappiePanicException("Only ImplicitPropertyMappingSource should occur when resolving a transformation. Got ${source::class}")
                     }
                 }
             }.ifEmpty {

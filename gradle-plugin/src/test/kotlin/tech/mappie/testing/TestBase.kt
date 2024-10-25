@@ -15,22 +15,37 @@ abstract class TestBase {
 
     protected lateinit var runner: GradleRunner
 
+    protected open val kotlinVersion = "2.0.21"
+
     @BeforeEach
     fun setup() {
         runner = GradleRunner.create().apply {
             forwardOutput()
-            withPluginClasspath()
             withProjectDir(directory)
         }
 
         directory.resolve("src/main/kotlin").mkdirs()
+        directory.resolve("src/main/java").mkdirs()
         directory.resolve("src/test/kotlin").mkdirs()
+
+        println("Using kotlin version $kotlinVersion")
+
+        kotlin("settings.gradle.kts",
+            """
+            pluginManagement {
+                repositories {
+                    mavenLocal()
+                    gradlePluginPortal()
+                }
+             }
+            """.trimIndent()
+        )
 
         kotlin("build.gradle.kts",
             """
             plugins {
-                id("org.jetbrains.kotlin.jvm") version "2.0.20"
-                id("tech.mappie.plugin")
+                id("org.jetbrains.kotlin.jvm") version "$kotlinVersion"
+                id("tech.mappie.plugin") version "$version"
             }
 
             dependencies {
@@ -45,6 +60,9 @@ abstract class TestBase {
             
             tasks.test {
                 useJUnitPlatform()
+                testLogging {
+                    exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL       
+                }
             }
 
             """.trimIndent()
@@ -52,6 +70,12 @@ abstract class TestBase {
     }
 
     protected fun kotlin(file: String, @Language("kotlin") code: String) {
+        directory.resolve(file).apply {
+            appendText(code)
+        }
+    }
+
+    protected fun java(file: String, @Language("java") code: String) {
         directory.resolve(file).apply {
             appendText(code)
         }
