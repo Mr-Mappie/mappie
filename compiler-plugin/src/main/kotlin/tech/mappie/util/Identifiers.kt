@@ -1,5 +1,6 @@
 package tech.mappie.util
 
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 val IDENTIFIER_MAPPING = Name.identifier("mapping")
@@ -27,3 +28,5 @@ val IDENTIFIER_TO = Name.identifier("to")
 val IDENTIFIER_TRANSFORM = Name.identifier("transform")
 
 val IDENTIFIER_VIA = Name.identifier("via")
+
+val PACKAGE_TECH_MAPPIE_API_CONFIG = FqName("tech.mappie.api.config")

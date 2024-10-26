@@ -50,4 +50,32 @@ class EnumStrictnessTest : TestBase() {
 
         runner.withArguments("build").build()
     }
+
+    @Test
+    fun `not all enum sources must be mapped to a target when disabled globally but enabled locally`() {
+        kotlin("build.gradle.kts",
+            """
+            mappie {
+                strictness {
+                    enums = true        
+                }
+            }                
+            """.trimIndent()
+        )
+
+        kotlin("src/main/kotlin/Mapper.kt",
+            """
+            import tech.mappie.api.EnumMappie
+            import tech.mappie.api.config.UseStrictEnums
+            
+            enum class Input { A, B, C }
+            enum class Output { A, B }
+            
+            @UseStrictEnums(false)
+            object Mapper : EnumMappie<Input, Output>()
+            """.trimIndent()
+        )
+
+        runner.withArguments("build").build()
+    }
 }
