@@ -8,6 +8,7 @@ import java.io.File
 class NoVisibleConstructorTest {
 
     data class Input(val name: String)
+    @ConsistentCopyVisibility
     data class Output private constructor(val name: String)
 
     @TempDir
