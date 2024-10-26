@@ -1,4 +1,4 @@
-package tech.mappie
+package tech.mappie.config
 
 data class MappieConfiguration(
     val warningsAsErrors: Boolean,

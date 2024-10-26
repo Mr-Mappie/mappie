@@ -2,6 +2,7 @@ package tech.mappie.testing.enums
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadEnumMappieClass
@@ -93,6 +94,54 @@ class EnumToEnumWithFewerEntriesTest {
         } satisfies  {
             isCompilationError()
             hasErrorMessage(4, "Source Input.THIRD has no target defined")
+        }
+    }
+
+    @Test
+    fun `map enums with the different entries with strict enums enabled should fail`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.EnumMappie
+                import tech.mappie.testing.enums.EnumToEnumWithFewerEntriesTest.*
+                import tech.mappie.api.config.UseStrictEnums
+
+                @UseStrictEnums
+                class Mapper : EnumMappie<Input, Output>()
+                """
+            )
+        } satisfies  {
+            isCompilationError()
+            hasErrorMessage(5, "Source Input.THIRD has no target defined")
+        }
+    }
+
+    @Test
+    fun `map enums with the different entries with strict enums disabled should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.EnumMappie
+                import tech.mappie.testing.enums.EnumToEnumWithFewerEntriesTest.*
+                import tech.mappie.api.config.UseStrictEnums
+
+                @UseStrictEnums(false)
+                class Mapper : EnumMappie<Input, Output>()
+                """
+            )
+        } satisfies  {
+            isOk()
+            hasNoMessages()
+
+            val mapper = classLoader
+                .loadEnumMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input.FIRST)).isEqualTo(Output.FIRST)
+            assertThat(mapper.map(Input.SECOND)).isEqualTo(Output.SECOND)
+            assertThrows<NoWhenBranchMatchedException> { mapper.map(Input.THIRD) }
         }
     }
 }
