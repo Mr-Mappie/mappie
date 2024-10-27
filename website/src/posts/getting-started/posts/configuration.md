@@ -14,7 +14,7 @@ mappie {
     useDefaultArguments = false // Disable using default arguments in implicit mappings.
     strictness {
         visibility = true // Allow calling constructors not visible from the calling scope
-        enums = true // Do not report an error if not all enum sources are mapped 
+        enums = false // Do not report an error if not all enum sources are mapped 
     }
 }
 ```
@@ -28,4 +28,4 @@ The following options exist with their corrosponding default values
 | `warningsAsErrors`      |                        | `false`       |
 | `useDefaultArguments`   | `@UseDefaultArguments` | `true`        |
 | `strictness.visibility` | `@UseStrictVisibility` | `false`       |
-| `strictness.enums`      | `@UseStrictEnums`      | `false`       |
+| `strictness.enums`      | `@UseStrictEnums`      | `true`        |

@@ -1,6 +1,7 @@
 package tech.mappie.config.options
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.util.getValueArgument
 import org.jetbrains.kotlin.ir.util.isTrueConst
@@ -14,8 +15,10 @@ import tech.mappie.util.PACKAGE_TECH_MAPPIE_API_CONFIG
 fun MappieContext.useStrictEnumsClassSymbol() =
     pluginContext.referenceClass(ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier(UseStrictEnums::class.simpleName!!)))
 
-fun MappieContext.useStrictEnums(origin: IrFunction): Boolean =
-    origin.parentAsClass.annotations
-        .firstOrNull { it.type.classOrFail == useStrictEnumsClassSymbol() }
+fun MappieContext.getUseStrictEnumsAnnotation(function: IrFunction): IrConstructorCall? =
+    function.parentAsClass.annotations.firstOrNull { it.type.classOrFail == useStrictEnumsClassSymbol() }
+
+fun MappieContext.useStrictEnums(function: IrFunction): Boolean =
+    getUseStrictEnumsAnnotation(function)
         ?.let { it.getValueArgument(Name.identifier("value"))?.isTrueConst() ?: true }
-        ?: configuration.useDefaultArguments
+        ?: configuration.strictness.enums
