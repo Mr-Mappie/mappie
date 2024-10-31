@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import tech.mappie.MappieConfiguration
+import tech.mappie.config.MappieConfiguration
 import tech.mappie.ir.util.isMappieMapFunction
 import tech.mappie.ir.util.location
 import tech.mappie.ir.analysis.MappingValidation

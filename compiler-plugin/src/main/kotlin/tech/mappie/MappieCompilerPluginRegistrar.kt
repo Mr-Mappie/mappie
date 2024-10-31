@@ -13,6 +13,8 @@ import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_USE_DEFAULT_ARG
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_WARNINGS_AS_ERRORS
 import tech.mappie.fir.MappieFirRegistrar
 import tech.mappie.ir.MappieIrGenerationExtension
+import tech.mappie.config.MappieConfiguration
+import tech.mappie.config.StrictnessConfiguration
 
 @OptIn(ExperimentalCompilerApi::class)
 class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {

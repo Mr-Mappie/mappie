@@ -50,9 +50,9 @@ The following char mappers are built-in
 ## LocalDate Mappers
 The following numeric mappers are built-in
 
-|                 | *LocalTime* | *LocalTime* | *LocalDate* |
-|-----------------|-------------|-------------|-------------|
-| *LocalDateTime* | -           |  X          | X           |
+|                 | *LocalDateTime* | *LocalTime* | *LocalDate* |
+|-----------------|-----------------|-------------|-------------|
+| *LocalDateTime* | -               |  X          | X           |
 
 {.table-matrix}
 

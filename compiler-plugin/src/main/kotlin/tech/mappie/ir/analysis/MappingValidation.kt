@@ -29,6 +29,7 @@ interface MappingValidation {
                 addAll(UnknownParameterNameProblems.of(context, mapping).all())
                 addAll(VisibilityProblems.of(context, mapping).all())
                 addAll(MapperGenerationRequestProblems.of(context, mapping).all())
+                addAll(ClassConfigProblems.of(context, mapping).all())
             }
     }
 
@@ -39,6 +40,7 @@ interface MappingValidation {
         override val problems: List<Problem> = buildList {
             addAll(UnnecessaryExplicitMappingProblems.of(context, mapping).all())
             addAll(AllSourcesMappedProblems.of(context, mapping).all())
+            addAll(EnumConfigProblems.of(context, mapping).all())
         }
     }
 

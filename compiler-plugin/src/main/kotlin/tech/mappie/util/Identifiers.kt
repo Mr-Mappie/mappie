@@ -7,6 +7,8 @@ val MAPPIE_PACKAGE = FqName("tech.mappie.api")
 
 val KOTLIN_PACKAGE = FqName("kotlin")
 
+val PACKAGE_TECH_MAPPIE_API_CONFIG = FqName("tech.mappie.api.config")
+
 val IDENTIFIER_MAPPING = Name.identifier("mapping")
 
 val IDENTIFIER_MAP = Name.identifier("map")

@@ -11,6 +11,7 @@ import tech.mappie.api.ObjectMappie
 import tech.mappie.util.IDENTIFIER_LET
 import tech.mappie.util.KOTLIN_PACKAGE
 import tech.mappie.util.MAPPIE_PACKAGE
+import tech.mappie.config.MappieConfiguration
 
 interface MappieContext {
     val pluginContext: IrPluginContext

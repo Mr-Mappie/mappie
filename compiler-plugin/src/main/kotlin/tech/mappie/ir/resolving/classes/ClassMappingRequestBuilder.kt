@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.ifEmpty
+import tech.mappie.config.options.useDefaultArguments
 import tech.mappie.ir.exceptions.MappiePanicException
 import tech.mappie.ir.resolving.*
 import tech.mappie.ir.resolving.classes.sources.*
@@ -27,8 +28,10 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
     private val explicit = mutableMapOf<Name, List<ExplicitClassMappingSource>>()
 
     fun construct(origin: IrFunction): ClassMappingRequest {
+        val useDefaultArguments = context.useDefaultArguments(origin)
+
         val mappings = targets.associateWith { target ->
-            explicit(target) ?: implicit(target) // TODO: we should add all and select later
+            explicit(target) ?: implicit(target, useDefaultArguments) // TODO: we should add all and select later
         }
         val unknowns = explicit.filterKeys { name ->
             targets.none { it.name == name }
@@ -54,7 +57,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
             }
         }
 
-    private fun implicit(target: ClassMappingTarget): List<ImplicitClassMappingSource> =
+    private fun implicit(target: ClassMappingTarget, useDefaultArguments: Boolean): List<ImplicitClassMappingSource> =
         implicit.getOrDefault(target.name, emptyList()).let { sources ->
             sources.map { source ->
                 if (source.type.isMappableFrom(target.type)) {
@@ -67,7 +70,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
                     }
                 }
             }.ifEmpty {
-                if (target is ValueParameterTarget && target.value.hasDefaultValue() && context.configuration.useDefaultArguments) {
+                if (target is ValueParameterTarget && target.value.hasDefaultValue() && useDefaultArguments) {
                     listOf(ParameterDefaultValueMappingSource(target.value))
                 } else {
                     emptyList()
