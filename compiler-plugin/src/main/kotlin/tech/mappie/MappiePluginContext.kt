@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.api.EnumMappie
 import tech.mappie.api.ObjectMappie
+import tech.mappie.config.MappieConfiguration
 
 interface MappieContext {
     val pluginContext: IrPluginContext

@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import tech.mappie.config.MappieConfiguration
 import tech.mappie.exceptions.MappiePanicException
 import tech.mappie.generation.CodeGenerationContext
 import tech.mappie.generation.CodeGenerationModelFactory

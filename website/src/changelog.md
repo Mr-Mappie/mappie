@@ -6,6 +6,7 @@ changelog:
       title: "v0.9.0"
       items:
         - "[#101](https://github.com/Mr-Mappie/mappie/issues/101) removed deprecated method 'parameter(String)'"
+        - "[#62](https://github.com/Mr-Mappie/mappie/issues/62) added support for local mapper configuration via annotations."
         - "Fixed a bug where the `strictness.enums` option set to `true` possibly resulted in a compilation error."
     - date: "2024-09-22"
       title: "v0.8.0"

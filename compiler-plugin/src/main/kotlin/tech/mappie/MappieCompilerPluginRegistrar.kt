@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_USE_DEFAULT_ARGUMENTS
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_WARNINGS_AS_ERRORS
+import tech.mappie.config.MappieConfiguration
+import tech.mappie.config.StrictnessConfiguration
 
 @OptIn(ExperimentalCompilerApi::class)
 class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {

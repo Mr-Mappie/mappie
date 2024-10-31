@@ -3,6 +3,7 @@ package tech.mappie.validation.problems.classes
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
+import tech.mappie.config.options.useStrictVisibility
 import tech.mappie.resolving.ClassMappingRequest
 import tech.mappie.util.location
 import tech.mappie.validation.Problem
@@ -11,7 +12,7 @@ import tech.mappie.validation.ValidationContext
 class VisibilityProblems(private val context: ValidationContext, private val owner: IrConstructor) {
 
     fun all(): List<Problem> =
-        if (!owner.visibility.isPublicAPI && context.configuration.strictness.visibility) {
+        if (!owner.visibility.isPublicAPI && context.useStrictVisibility(context.function)) {
             val constructor = owner.valueParameters.joinToString(prefix = "${owner.constructedClass.name.asString()}(", postfix = ")") {
                 it.name.asString() + ": " + it.type.dumpKotlinLike()
             }

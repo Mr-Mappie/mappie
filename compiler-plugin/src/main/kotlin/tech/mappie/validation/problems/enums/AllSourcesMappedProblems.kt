@@ -2,6 +2,7 @@ package tech.mappie.validation.problems.enums
 
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.util.kotlinFqName
+import tech.mappie.config.options.useStrictEnums
 import tech.mappie.resolving.EnumMappingRequest
 import tech.mappie.resolving.enums.EnumMappingTarget
 import tech.mappie.resolving.enums.ExplicitEnumMappingTarget
@@ -23,7 +24,7 @@ class AllSourcesMappedProblems(
 
     companion object {
         fun of(context: ValidationContext, mapping: EnumMappingRequest): AllSourcesMappedProblems {
-            return if (context.configuration.strictness.enums) {
+            return if (context.useStrictEnums(context.function)) {
                 AllSourcesMappedProblems(
                     mapping.mappings.filter { (_, targets) ->
                         targets.isEmpty() || targets.count { it is ExplicitEnumMappingTarget || it is ThrowingEnumMappingTarget } > 1
