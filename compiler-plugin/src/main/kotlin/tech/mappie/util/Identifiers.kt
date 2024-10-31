@@ -3,11 +3,11 @@ package tech.mappie.util
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-val MAPPIE_PACKAGE = FqName("tech.mappie.api")
+val PACKAGE_MAPPIE_API = FqName("tech.mappie.api")
 
-val KOTLIN_PACKAGE = FqName("kotlin")
+val PACKAGE_KOTLIN = FqName("kotlin")
 
-val PACKAGE_TECH_MAPPIE_API_CONFIG = FqName("tech.mappie.api.config")
+val PACKAGE_MAPPIE_API_CONFIG = FqName("tech.mappie.api.config")
 
 val IDENTIFIER_MAPPING = Name.identifier("mapping")
 

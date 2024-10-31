@@ -1,10 +1,10 @@
-package tech.mappie.validation.problems.classes
+package tech.mappie.ir.analysis.problems.classes
 
 import tech.mappie.config.options.getUseStrictEnumsAnnotation
-import tech.mappie.resolving.ClassMappingRequest
-import tech.mappie.util.location
-import tech.mappie.validation.Problem
-import tech.mappie.validation.ValidationContext
+import tech.mappie.ir.analysis.Problem
+import tech.mappie.ir.analysis.ValidationContext
+import tech.mappie.ir.resolving.ClassMappingRequest
+import tech.mappie.ir.util.location
 
 class ClassConfigProblems(private val context: ValidationContext) {
 

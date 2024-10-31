@@ -11,6 +11,8 @@ import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.EnumMappingRequest
 import tech.mappie.ir.resolving.MappingRequest
 import tech.mappie.ir.analysis.problems.classes.UnknownParameterNameProblems
+import tech.mappie.ir.analysis.problems.classes.ClassConfigProblems
+import tech.mappie.ir.analysis.problems.enums.EnumConfigProblems
 
 interface MappingValidation {
     val problems: List<Problem>

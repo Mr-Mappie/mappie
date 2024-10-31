@@ -8,12 +8,12 @@ import org.jetbrains.kotlin.ir.util.isTrueConst
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import tech.mappie.MappieContext
 import tech.mappie.api.config.UseDefaultArguments
-import tech.mappie.util.PACKAGE_TECH_MAPPIE_API_CONFIG
+import tech.mappie.ir.MappieContext
+import tech.mappie.util.PACKAGE_MAPPIE_API_CONFIG
 
 fun MappieContext.useDefaultArgumentsClassSymbol() =
-    pluginContext.referenceClass(ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier(UseDefaultArguments::class.simpleName!!)))
+    pluginContext.referenceClass(ClassId(PACKAGE_MAPPIE_API_CONFIG, Name.identifier(UseDefaultArguments::class.simpleName!!)))
 
 fun MappieContext.getUseDefaultArgumentsAnnotation(origin: IrFunction): IrConstructorCall? =
     origin.parentAsClass.annotations.firstOrNull { it.type.classOrFail == useDefaultArgumentsClassSymbol() }

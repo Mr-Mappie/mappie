@@ -1,11 +1,11 @@
-package tech.mappie.validation.problems.enums
+package tech.mappie.ir.analysis.problems.enums
 
 import tech.mappie.config.options.getUseDefaultArgumentsAnnotation
 import tech.mappie.config.options.getUseStrictVisibilityAnnotation
-import tech.mappie.resolving.EnumMappingRequest
-import tech.mappie.util.location
-import tech.mappie.validation.Problem
-import tech.mappie.validation.ValidationContext
+import tech.mappie.ir.analysis.Problem
+import tech.mappie.ir.analysis.ValidationContext
+import tech.mappie.ir.resolving.EnumMappingRequest
+import tech.mappie.ir.util.location
 
 class EnumConfigProblems(private val context: ValidationContext) {
 
