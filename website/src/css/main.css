@@ -2220,3 +2220,45 @@ textarea.pagefind-ui__search-input {
   --spruce-box-shadow: 0 0.75rem 1.25rem hsla(0, 0%, 0%, 0.05);
 }
 
+.nav-container {
+  max-width: 800px;
+  margin: 0 auto;
+
+  ul {
+    list-style: none;
+    padding: 0;
+
+    li {
+      display: inline-flex;
+
+      a {
+        text-decoration: none;
+        color: darkgray;
+        padding: 10px;
+        transition: all .3s ease-in-out;
+        border-bottom: 1px solid transparent;
+        &:hover {
+          color: gray;
+        }
+      }
+    }
+  }
+
+  .nav .active a {
+    color: slateblue;
+    border-bottom: 1px solid slateblue;
+    &:hover {
+      border-color: transparent;
+      background: slateblue;
+      color: white;
+    }
+  }
+
+  .tab-pane {
+    display: none;
+  }
+
+  .tab-pane.active {
+    display: block;
+  }
+}

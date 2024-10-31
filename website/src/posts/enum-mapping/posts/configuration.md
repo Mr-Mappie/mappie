@@ -8,8 +8,7 @@ eleventyNavigation:
 ---
 
 By default, all enum sources must have a defined target. This can be disabled locally by adding `@UseStrictEnums(false)` 
-to the mapper, or globally adding the following configuration to the `build.gradle.kts` file
-
+to the mapper, or globally adding the following configuration to the Gradle build file
 ```kotlin
 mappie {
     strictness {

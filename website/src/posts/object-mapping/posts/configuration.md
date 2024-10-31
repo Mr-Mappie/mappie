@@ -10,7 +10,7 @@ eleventyNavigation:
 ## Ignoring Visibility
 By default, only constructors visible from the current scope can be used to called in a mapping.
 This can be disabled locally by adding `@UseStrictVisibility(true)` to the mapper, or globally
-by adding the following configuration to the `build.gradle.kts` file
+by adding the following configuration to the Gradle build file
 ```kotlin
 mappie {
     strictness {
@@ -22,7 +22,7 @@ mappie {
 ## Using Default Arguments
 By default, default arguments are used in implicit mappings. If this is unwanted, this can be disabled 
 locally adding `@UseDefaultArguments(false)` to the mapper, or globally by adding
-the following configuration tot the `build.gradle.kts` file
+the following configuration tot the Gradle build file
 ```kotlin
 mappie {
     useDefaultArguments = false // Disable using default arguments in implicit mappings
