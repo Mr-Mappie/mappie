@@ -10,13 +10,14 @@ import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 
 @OptIn(SymbolInternals::class)
-fun FirExpression.isConstantLike(context: CheckerContext) = when (this) {
-    is FirLiteralExpression -> true
-    is FirPropertyAccessExpression -> calleeReference.toResolvedPropertySymbol()?.fir?.let { property ->
-        when (val result = FirExpressionEvaluator.evaluatePropertyInitializer(property, context.session)) {
-            is FirEvaluatorResult.Evaluated -> result.result is FirLiteralExpression
-            else -> false
+fun FirExpression.toConstant(context: CheckerContext): FirLiteralExpression? =
+    when (this) {
+        is FirLiteralExpression -> this
+        is FirPropertyAccessExpression -> calleeReference.toResolvedPropertySymbol()?.fir?.let { property ->
+            when (val result = FirExpressionEvaluator.evaluatePropertyInitializer(property, context.session)) {
+                is FirEvaluatorResult.Evaluated -> result.result as FirLiteralExpression // TODO: does this work?
+                else -> null
+            }
         }
-    } ?: false
-    else -> false
-}
+        else -> null
+    }

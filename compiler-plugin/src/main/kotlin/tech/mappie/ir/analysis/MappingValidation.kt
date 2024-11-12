@@ -10,7 +10,6 @@ import tech.mappie.ir.analysis.problems.enums.UnnecessaryExplicitMappingProblems
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.EnumMappingRequest
 import tech.mappie.ir.resolving.MappingRequest
-import tech.mappie.ir.analysis.problems.classes.UnknownParameterNameProblems
 import tech.mappie.ir.analysis.problems.classes.ClassConfigProblems
 import tech.mappie.ir.analysis.problems.enums.EnumConfigProblems
 
@@ -23,23 +22,21 @@ interface MappingValidation {
         private val context: ValidationContext,
         private val mapping: ClassMappingRequest,
     ) : MappingValidation {
-        override val problems: List<Problem> =
-            buildList {
-                addAll(MultipleSourcesProblems.of(mapping).all())
-                addAll(UnsafeTypeAssignmentProblems.of(context, mapping).all())
-                addAll(UnsafePlatformTypeAssignmentProblems.of(context, mapping).all())
-                addAll(UnknownParameterNameProblems.of(context, mapping).all())
-                addAll(VisibilityProblems.of(context, mapping).all())
-                addAll(MapperGenerationRequestProblems.of(context, mapping).all())
-                addAll(ClassConfigProblems.of(context, mapping).all())
-            }
+        override val problems = buildList {
+            addAll(MultipleSourcesProblems.of(mapping).all())
+            addAll(UnsafeTypeAssignmentProblems.of(context, mapping).all())
+            addAll(UnsafePlatformTypeAssignmentProblems.of(context, mapping).all())
+            addAll(VisibilityProblems.of(context, mapping).all())
+            addAll(MapperGenerationRequestProblems.of(context, mapping).all())
+            addAll(ClassConfigProblems.of(context, mapping).all())
+        }
     }
 
     private class EnumMappingRequestValidation(
         private val context: ValidationContext,
         private val mapping: EnumMappingRequest,
     ) : MappingValidation {
-        override val problems: List<Problem> = buildList {
+        override val problems = buildList {
             addAll(UnnecessaryExplicitMappingProblems.of(context, mapping).all())
             addAll(AllSourcesMappedProblems.of(context, mapping).all())
             addAll(EnumConfigProblems.of(context, mapping).all())

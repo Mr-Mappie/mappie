@@ -33,16 +33,12 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
         val mappings = targets.associateWith { target ->
             explicit(target) ?: implicit(target, useDefaultArguments) // TODO: we should add all and select later
         }
-        val unknowns = explicit.filterKeys { name ->
-            targets.none { it.name == name }
-        }
 
         return ClassMappingRequest(
             origin,
             sources.map { it.value },
             constructor,
             mappings,
-            unknowns,
         )
     }
 

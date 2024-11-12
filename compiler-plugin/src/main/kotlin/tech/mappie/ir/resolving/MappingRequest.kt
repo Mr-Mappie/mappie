@@ -20,7 +20,6 @@ class ClassMappingRequest(
     val sources: List<IrType>,
     val constructor: IrConstructor,
     val mappings : Map<ClassMappingTarget, List<ClassMappingSource>>,
-    val unknowns: Map<Name, List<ClassMappingSource>>,
 ) : MappingRequest {
     override val source get() = sources.single()
     override val target = constructor.returnType
