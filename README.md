@@ -9,14 +9,14 @@ mapping code is often a mind-numbing and error-prone task. Reducing this develop
 pleasant programming experience, and less risk of bugs.
 
 Mappie offers the following advantages:
-* All code is generated at compile-time, without the need for any reflection at runtime. Making the generated code
+* All code is *generated at compile-time*, without the need for any reflection at runtime. Making the generated code
 have the same runtime performance as if one would write the object mapping code manually.
-* You write Kotlin code instead of Strings, allowing your IDE to support you with automatic refactorings and 
+* You write *Kotlin code instead of Strings*, allowing your IDE to support you with automatic refactorings and 
 auto-complete.
-* Fully designed with Kotlin in mind, making the code idiomatic and completely type-safe.
-* Mappie is easy to use and infers as much implicit mappings as possible.
-* Flawless compatibility with other platforms, such as Java types.
-* Error messages are informative and suggest concrete actions.
+* Fully designed with Kotlin in mind, making the code *idiomatic and completely type-safe*.
+* Mappie is easy to use and *infers as much as possible*.
+* *Flawless compatibility* with other platforms, such as Java types.
+* *Error messages are informative* and suggest concrete actions.
 
 Visit the [project documentation](https://mappie.tech) for more in-depth information.
 
