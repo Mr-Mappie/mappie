@@ -49,7 +49,9 @@ class MapperGenerationRequestProblems(
         }
 
     private fun isDuplicate(transformation: GeneratedViaMapperTransformation): Boolean =
-        context.generated.none { it.first == transformation.source.type && it.second == transformation.target.type }
+        context.generated.none {
+            it.first == transformation.source.type.mappieType() && it.second == transformation.target.type.mappieType()
+        }
 
     companion object {
         fun of(context: ValidationContext, mapping: ClassMappingRequest): MapperGenerationRequestProblems {
