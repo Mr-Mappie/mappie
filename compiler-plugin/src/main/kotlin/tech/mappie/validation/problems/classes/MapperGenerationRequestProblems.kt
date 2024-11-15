@@ -5,47 +5,60 @@ import tech.mappie.resolving.ClassMappingRequest
 import tech.mappie.resolving.MappingResolver
 import tech.mappie.resolving.ResolverContext
 import tech.mappie.resolving.classes.sources.*
-import tech.mappie.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.util.location
+import tech.mappie.util.mappieType
 import tech.mappie.validation.MappingValidation
 import tech.mappie.validation.Problem
 import tech.mappie.validation.ValidationContext
 
 class MapperGenerationRequestProblems(
     private val context: ValidationContext,
-    private val generated: List<Pair<ClassMappingTarget, GeneratedViaMapperTransformation>>,
+    private val requests: List<GeneratedViaMapperTransformation>,
 ) {
 
-    fun all(): List<Problem> = generated
-        .filter { (_, transformation) ->
-            context.generated.none { it.first == transformation.source.type && it.second == transformation.target.type }
-        }.map { (_, transformation) ->
-        val requests = MappingResolver.of(transformation.source.type, transformation.target.type, ResolverContext(context, context.definitions, context.function))
-            .resolve(null)
+    fun all(): List<Problem> = requests
+        .filter { transformation -> isDuplicate(transformation) }
+        .map { transformation ->
+            val source = transformation.source.type.mappieType()
+            val target = transformation.target.type.mappieType()
+            val requests = MappingResolver.of(source, target, ResolverContext(context, context.definitions, context.function))
+                .resolve(null)
 
-        val context = context.copy(generated = generated.map { it.second.source.type to it.second.target.type })
-        return requests
-            .associateBy { request -> MappingValidation.of(context, request) }
-            .mapNotNull { (validation, request) ->
-                if (validation.isValid()) {
-                    null
-                } else {
-                    Problem.error(
-                        "No implicit mapping can be generated from ${request.source.type.dumpKotlinLike()} to ${request.target.type.dumpKotlinLike()}",
-                        location(context.function),
-                        validation.errors().map { it.description }
-                    )
-                }
+            return if (requests.isEmpty()) {
+                listOf(Problem.error(
+                    "No implicit mapping can be generated from ${source.dumpKotlinLike()} to ${target.dumpKotlinLike()}",
+                    location(context.function),
+                    listOf("Target class has no accessible constructor"),
+                ))
+            } else {
+                val context = context.copy(generated = requests.map { it.source.type to it.target.type })
+                requests
+                    .associateBy { request -> MappingValidation.of(context, request) }
+                    .mapNotNull { (validation, request) ->
+                        if (validation.isValid()) {
+                            null
+                        } else {
+                            Problem.error(
+                                "No implicit mapping can be generated from ${request.source.type.dumpKotlinLike()} to ${request.target.type.dumpKotlinLike()}",
+                                location(context.function),
+                                validation.errors().map { it.description }
+                            )
+                        }
+                    }
             }
-    }
+        }
+
+    private fun isDuplicate(transformation: GeneratedViaMapperTransformation): Boolean =
+        context.generated.none { it.first == transformation.source.type && it.second == transformation.target.type }
 
     companion object {
         fun of(context: ValidationContext, mapping: ClassMappingRequest): MapperGenerationRequestProblems {
             val mappings = mapping.mappings
-                .filter { (_, sources) -> sources.size == 1 }
-                .mapValues { (_, sources) -> sources.single() }
-                .filter { (_, source) -> source.hasGeneratedTransformationMapping() }
-                .map { (target, source) -> target to source.selectGeneratedTransformationMapping() }
+                .map { it.value }
+                .filter { it.size == 1 }
+                .map { it.single() }
+                .filter { it.hasGeneratedTransformationMapping() }
+                .map { it.selectGeneratedTransformationMapping() }
 
             return MapperGenerationRequestProblems(context, mappings)
         }
