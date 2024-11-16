@@ -7,6 +7,7 @@ changelog:
       items:
         - "[#101](https://github.com/Mr-Mappie/mappie/issues/101) removed deprecated method 'parameter(String)'"
         - "[#62](https://github.com/Mr-Mappie/mappie/issues/62) added support for local mapper configuration via annotations."
+        - "[#125](https://github.com/Mr-Mappie/mappie/issues/125) added fromPropertyNotNull which automatically applies requireNotNull."
         - "Fixed a bug where the `strictness.enums` option set to `true` possibly resulted in a compilation error."
         - "Fixed a bug where generating a mapper which has no accessible constructor resulted in an internal error instead of a nice error message."
     - date: "2024-09-22"

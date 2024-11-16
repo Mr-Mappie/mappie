@@ -40,9 +40,13 @@ class ExplicitClassMappingCollector(private val context: ResolverContext)
 private class ClassMappingStatementCollector(private val context: ResolverContext)
     : BaseVisitor<Pair<Name, ExplicitClassMappingSource>, Unit>() {
     override fun visitCall(expression: IrCall, data: Unit) = when (expression.symbol.owner.name) {
-        IDENTIFIER_FROM_PROPERTY -> {
+        IDENTIFIER_FROM_PROPERTY, IDENTIFIER_FROM_PROPERTY_NOT_NULL -> {
             val target = expression.extensionReceiver!!.accept(TargetNameCollector(context), Unit)
-            target to ExplicitPropertyMappingSource(expression.valueArguments.first()!! as IrPropertyReference, null)
+            target to ExplicitPropertyMappingSource(
+                expression.valueArguments.first()!! as IrPropertyReference,
+                null,
+                expression.symbol.owner.name == IDENTIFIER_FROM_PROPERTY_NOT_NULL
+            )
         }
         IDENTIFIER_FROM_VALUE -> {
             val target = expression.extensionReceiver!!.accept(TargetNameCollector(context), Unit)
