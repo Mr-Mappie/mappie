@@ -2,7 +2,7 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-    - date: "tbd"
+    - date: "2024-11-16"
       title: "v0.9.0"
       items:
         - "[#101](https://github.com/Mr-Mappie/mappie/issues/101) removed deprecated method 'parameter(String)'"
