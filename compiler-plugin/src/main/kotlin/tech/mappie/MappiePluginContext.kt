@@ -24,3 +24,6 @@ fun MappieContext.referenceEnumMappieClass(): IrClassSymbol =
 
 fun MappieContext.referenceFunctionLet() =
     pluginContext.referenceFunctions(CallableId(FqName("kotlin"), Name.identifier("let"))).first()
+
+fun MappieContext.referenceFunctionRequireNotNull() =
+    pluginContext.referenceFunctions(CallableId(FqName("kotlin"), Name.identifier("requireNotNull"))).first()

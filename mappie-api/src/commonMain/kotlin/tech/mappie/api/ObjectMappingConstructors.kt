@@ -29,6 +29,15 @@ public class ObjectMappingConstructor<FROM, out TO> {
         generated()
 
     /**
+     * Explicitly construct a mapping to [TO] from nullable property source [source] and changing the nullable type of
+     * [source] to its non-nullable type.
+     *
+     * This is equivalent to `to::x fromProperty from::y transform { it!! }`.
+     */
+    public infix fun <TO_TYPE, FROM_TYPE> KProperty<TO_TYPE>.fromPropertyNotNull(source: KProperty<FROM_TYPE?>): TransformableValue<FROM_TYPE, TO_TYPE> =
+        generated()
+
+    /**
      * Explicitly construct a mapping to [TO] from a value source [value].
      *
      * For example
@@ -79,6 +88,15 @@ public class MultipleObjectMappingConstructor<out TO> {
      */
     public val to: TO
         get() = error("The to property should only be used in the context of `to::property fromX y`.")
+
+    /**
+     * Explicitly construct a mapping to [TO] from nullable property source [source] and changing the nullable type of
+     * [source] to its non-nullable type.
+     *
+     * This is equivalent to `to::x fromProperty from::y transform { it!! }`.
+     */
+    public infix fun <TO_TYPE, FROM_TYPE> KProperty<TO_TYPE>.fromPropertyNotNull(source: KProperty<FROM_TYPE?>): TransformableValue<FROM_TYPE, TO_TYPE> =
+        generated()
 
     /**
      * Explicitly construct a mapping to [TO] from property source [source].

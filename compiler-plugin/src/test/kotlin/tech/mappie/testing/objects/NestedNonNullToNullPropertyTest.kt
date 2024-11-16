@@ -77,6 +77,40 @@ class NestedNonNullToNullPropertyTest {
     }
 
     @Test
+    fun `map object with nested non-null to null explicit fromPropertyNotNull without via should warn`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.NestedNonNullToNullPropertyTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input) = mapping {
+                        to::text fromPropertyNotNull from::text
+                    }
+                }
+
+                object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasWarningMessage(6, "Unnecessary fromPropertyNotNull for non-nullable type InnerInput",
+                listOf("Use fromProperty instead of fromPropertyNotNull")
+            )
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input(InnerInput("value"), 30)))
+                .isEqualTo(Output(InnerOutput("value"), 30))
+        }
+    }
+
+    @Test
     fun `map object with nested non-null to null explicit should succeed`() {
         compile(directory) {
             file("Test.kt",

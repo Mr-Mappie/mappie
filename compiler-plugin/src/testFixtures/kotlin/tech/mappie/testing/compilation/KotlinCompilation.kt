@@ -72,9 +72,9 @@ class CompilationAssertionDsl(private val result: KotlinCompilation.Result) {
 		)
 	}
 
-	fun hasWarningMessage(line: Int, message: String) {
+	fun hasWarningMessage(line: Int, message: String, suggestions: List<String> = emptyList()) {
 		assertThat(result.messages).containsPattern(
-			Pattern.compile("w: file://.+\\.kt:${line}:.+${escape(message)}")
+			Pattern.compile("w: file://.+\\.kt:${line}:.+${escape(messageOf(message, suggestions))}")
 		)
 	}
 
