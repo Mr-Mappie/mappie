@@ -39,7 +39,7 @@ We can achieve generating such a mapper using the following object mapper.
 ```kotlin
 object PersonToPersonDtoMapper : ObjectMappie<Person, PersonDto>() {
     override fun map(from: Person) = mapping {
-        to::name fromValue "${from.name} ${from.name}"
+        to::name fromValue "${from.name} ${from.surname}"
     }
 }
 ```
