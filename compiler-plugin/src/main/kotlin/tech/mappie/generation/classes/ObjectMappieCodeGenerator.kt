@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.types.typeOrFail
 import tech.mappie.exceptions.MappiePanicException
 import tech.mappie.generation.ClassMappieCodeGenerationModel
@@ -62,7 +63,7 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
             is ExplicitPropertyMappingSource -> {
                 val getter = // TODO: refactor
                     if (source.forceNonNull) {
-                        irCall(this@ObjectMappieCodeGenerator.context.referenceFunctionRequireNotNull()).apply {
+                        irCall(this@ObjectMappieCodeGenerator.context.referenceFunctionRequireNotNull(), source.reference.getter!!.owner.returnType.makeNotNull()).apply {
                             putValueArgument(0, irCall(source.reference.getter!!).apply {
                                 dispatchReceiver = source.reference.dispatchReceiver
                                     ?: irGet(parameters.singleOrNull { it.type == (source.reference.type as IrSimpleType).arguments[0].typeOrFail }

@@ -48,10 +48,6 @@ private class ClassMappingStatementCollector(private val context: ResolverContex
                 expression.symbol.owner.name == IDENTIFIER_FROM_PROPERTY_NOT_NULL
             )
         }
-//         -> {
-//            val target = expression.extensionReceiver!!.accept(TargetNameCollector(context), Unit)
-//            target to ExplicitPropertyNotNullMappingSource(expression.valueArguments.first()!! as IrPropertyReference, null)
-//        }
         IDENTIFIER_FROM_VALUE -> {
             val target = expression.extensionReceiver!!.accept(TargetNameCollector(context), Unit)
             target to ValueMappingSource(expression.valueArguments.first()!!)
