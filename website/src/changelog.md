@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+    - date: "2024-11-18"
+      title: "v0.9.2"
+      items:
+        - "Fixed null pointer in some cases."
     - date: "2024-11-16"
       title: "v0.9.1"
       items:
