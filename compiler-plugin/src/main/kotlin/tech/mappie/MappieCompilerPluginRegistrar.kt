@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_USE_DEFAULT_ARGUMENTS
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_WARNINGS_AS_ERRORS
-import tech.mappie.api.ObjectMappie
 import tech.mappie.config.MappieConfiguration
 import tech.mappie.config.StrictnessConfiguration
 
@@ -20,9 +19,6 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
     override val supportsK2: Boolean = true
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        if (!isApplicable()) {
-            return
-        }
 
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
         IrGenerationExtension.registerExtension(
@@ -39,7 +35,4 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
             )
         )
     }
-
-    private fun isApplicable() =
-        runCatching { ObjectMappie::class.java }.map { true }.getOrElse { false }
 }
