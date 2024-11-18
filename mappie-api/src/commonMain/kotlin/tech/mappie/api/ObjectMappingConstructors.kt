@@ -123,6 +123,22 @@ public class MultipleObjectMappingConstructor<out TO> {
         generated()
 
     /**
+     * Explicitly construct a mapping to [TO] from expression source [function].
+     *
+     * For example
+     * ```kotlin
+     * override fun map(personDto: PersonDto, carDto: CarDto) = mapping {
+     *     PersonDto::name fromExpression { personDto.fullName + " (full) driving a " + carDto.name }
+     * ...
+     * }
+     * ```
+     * will generate an explicit mapping, setting constructor parameter `Person.name` to `"John Doe (full) driving a Smart"`,
+     * assuming `personDto.fullName == "John Doe"` and `carDto.name == "Smart"`.
+     */
+    public infix fun <FROM_TYPE, TO_TYPE> KProperty<TO_TYPE>.fromExpression(function: () -> FROM_TYPE): Unit =
+        generated()
+
+    /**
      * Reference a constructor parameter or target property in lieu of a property reference, if it not exists as a property.
      *
      * For example

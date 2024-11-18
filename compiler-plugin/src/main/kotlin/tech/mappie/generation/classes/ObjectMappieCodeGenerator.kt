@@ -13,6 +13,7 @@ import tech.mappie.generation.CodeGenerationContext
 import tech.mappie.generation.constructTransformation
 import tech.mappie.referenceFunctionLet
 import tech.mappie.referenceFunctionRequireNotNull
+import tech.mappie.referenceFunctionRun
 import tech.mappie.resolving.classes.sources.*
 import tech.mappie.resolving.classes.targets.FunctionCallTarget
 import tech.mappie.resolving.classes.targets.SetterTarget
@@ -42,7 +43,7 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
                     is SetterTarget -> {
                         +irCall(target.value.setter!!).apply {
                             dispatchReceiver = irGet(variable)
-                            putValueArgument(0, constructArgument(source ,model.declaration.valueParameters))
+                            putValueArgument(0, constructArgument(source, model.declaration.valueParameters))
                         }
                     }
                     is FunctionCallTarget -> {
@@ -80,9 +81,15 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
                 source.transformation?.let { constructTransformation(this@ObjectMappieCodeGenerator.context, it, getter) } ?: getter
             }
             is ExpressionMappingSource -> {
-                irCall(this@ObjectMappieCodeGenerator.context.referenceFunctionLet()).apply {
-                    extensionReceiver = irGet(parameters.single())
-                    putValueArgument(0, source.expression)
+                if (parameters.size == 1) {
+                    irCall(this@ObjectMappieCodeGenerator.context.referenceFunctionLet()).apply {
+                        extensionReceiver = irGet(parameters.single())
+                        putValueArgument(0, source.expression)
+                    }
+                } else {
+                    irCall(this@ObjectMappieCodeGenerator.context.referenceFunctionRun()).apply {
+                        putValueArgument(0, source.expression)
+                    }
                 }
             }
             is ValueMappingSource -> {

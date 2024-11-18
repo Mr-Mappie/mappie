@@ -77,7 +77,7 @@ data class ValueMappingSource(val expression: IrExpression) : ExplicitClassMappi
 }
 
 data class ExpressionMappingSource(val expression: IrExpression) : ExplicitClassMappingSource {
-    override val type = (expression.type as IrSimpleType).arguments[1].typeOrFail
+    override val type = (expression.type as IrSimpleType).arguments.last().typeOrFail
     override val origin = expression
 }
 
