@@ -1,5 +1,6 @@
 package tech.mappie.util
 
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -31,4 +32,8 @@ val IDENTIFIER_TRANSFORM = Name.identifier("transform")
 
 val IDENTIFIER_VIA = Name.identifier("via")
 
+val PACKAGE_TECH_MAPPIE_API = FqName("tech.mappie.api")
+
 val PACKAGE_TECH_MAPPIE_API_CONFIG = FqName("tech.mappie.api.config")
+
+val CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("ObjectMappingConstructor"))
