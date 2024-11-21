@@ -7,6 +7,7 @@ import tech.mappie.resolving.ClassMappingRequest
 import tech.mappie.resolving.classes.sources.ValueMappingSource
 import tech.mappie.util.CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR
 import tech.mappie.util.location
+import org.jetbrains.kotlin.name.Name
 import tech.mappie.validation.Problem
 import tech.mappie.validation.ValidationContext
 
@@ -24,6 +25,11 @@ class CompileTimeReceiverDslProblems private constructor(
                 ProblemSource.DISPATCH -> "The function $name was called on the mapping dsl which does not exist after compilation"
             },
             location(context.function.fileEntry, call),
+            buildList {
+                if (call.symbol.owner.name == Name.identifier("run")) {
+                    add("Did you mean to use kotlin.run?")
+                }
+            }
         )
     }
 
