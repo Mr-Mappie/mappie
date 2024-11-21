@@ -6,6 +6,7 @@ import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
+import kotlin.random.Random
 
 class ObjectWithDifferentValuesTest {
 
@@ -146,6 +147,29 @@ class ObjectWithDifferentValuesTest {
                 .call()
 
             assertThat(mapper.map(Input("101", 9))).isEqualTo(Output("9", 101))
+        }
+    }
+
+    @Test
+    fun `map property fromProperty should fail with method reference with wrong signature`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ObjectWithDifferentValuesTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input) = mapping {
+                        Output::age fromProperty from::firstname transform String::toString
+                        Output::name fromProperty from::age transform Int::toInt
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isCompilationError()
+            hasErrorMessage(6, "Inapplicable candidate(s): fun toString(): String")
+            hasErrorMessage(7, "Inapplicable candidate(s): fun toInt(): Int")
         }
     }
 }
