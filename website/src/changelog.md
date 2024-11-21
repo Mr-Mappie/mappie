@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+    - date: "tbd"
+      title: "v0.10.0"
+      items:
+        - "Added support for method references in fromExpression and transform"
     - date: "2024-11-18"
       title: "v0.9.2"
       items:
