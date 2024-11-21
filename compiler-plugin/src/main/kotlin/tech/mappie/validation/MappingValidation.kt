@@ -33,6 +33,7 @@ interface MappingValidation {
                 addAll(MapperGenerationRequestProblems.of(context, mapping).all())
                 addAll(ClassConfigProblems.of(context, mapping).all())
                 addAll(UnnecessaryFromPropertyNotNullProblems.of(context, mapping).all())
+                addAll(CompileTimeReceiverDslProblems.of(context, mapping).all())
             }
     }
 
