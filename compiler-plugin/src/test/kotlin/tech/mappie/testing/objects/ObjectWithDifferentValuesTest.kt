@@ -118,4 +118,34 @@ class ObjectWithDifferentValuesTest {
             assertThat(mapper.map(Input("Sjon", 58))).isEqualTo(Output("Sjon", 58))
         }
     }
+
+    @Test
+    fun `map property fromProperty should succeed with method reference transform`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ObjectWithDifferentValuesTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input) = mapping {
+                        Output::age fromProperty from::firstname transform String::toInt
+                        Output::name fromProperty from::age transform Int::toString
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input("101", 9))).isEqualTo(Output("9", 101))
+        }
+    }
 }

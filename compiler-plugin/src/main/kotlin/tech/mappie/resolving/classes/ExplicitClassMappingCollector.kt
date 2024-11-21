@@ -54,7 +54,7 @@ private class ClassMappingStatementCollector(private val context: ResolverContex
         }
         IDENTIFIER_FROM_EXPRESSION -> {
             val target = expression.extensionReceiver!!.accept(TargetNameCollector(context), data)
-            target to ExpressionMappingSource(expression.valueArguments.first() as IrExpression)
+            target to ExpressionMappingSource(expression.valueArguments.first()!!)
         }
         IDENTIFIER_VIA -> {
             expression.dispatchReceiver!!.accept(data).let { (name, source) ->
@@ -70,7 +70,7 @@ private class ClassMappingStatementCollector(private val context: ResolverContex
                         when (it) {
                             is IrFunctionExpression -> PropertyMappingTransformTranformation(it)
                             is IrFunctionReference -> PropertyMappingTransformTranformation(it)
-                            else -> throw MappiePanicException("Unexpected expression type: ${expression.type}")
+                            else -> throw MappiePanicException("Unexpected expression type: ${expression.dumpKotlinLike()}")
                         }
                     }
                 )
