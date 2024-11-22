@@ -26,7 +26,8 @@ class DefinitionsCollector(val context: MappieContext) {
 
 class BuiltinMappieDefinitionsCollector(val context: MappieContext) {
     fun collect() = MAPPERS
-        .map { name -> context.pluginContext.referenceClass(ClassId(FqName(PACKAGE), Name.identifier(name)))!!.owner }
+        .map { name -> context.pluginContext.referenceClass(ClassId(FqName(PACKAGE), Name.identifier(name)))?.owner }
+        .filterNotNull()
         .map { MappieDefinition(it) }
 
     companion object {

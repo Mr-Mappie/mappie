@@ -20,12 +20,19 @@ class MappieCodeGenerator(private val context: CodeGenerationContext) : IrElemen
                 .map { source -> source.selectGeneratedTransformationMapping() }
                 .distinctBy { it.source.type to it.target.type }
                 .map { transformation ->
+                    val source = transformation.source.type.mappieType()
+                    val target = transformation.target.type.mappieType()
                     val options = MappingResolver.of(
-                        transformation.source.type.mappieType(),
-                        transformation.target.type.mappieType(),
+                        source,
+                        target,
                         ResolverContext(context, context.definitions, context.model.declaration)
                     ).resolve(null)
-                    MappingSelector.of(options).select()!!.first!!
+
+                    MappingSelector.of(options).select()?.first ?: run {
+                        val message = "Failed to generate mapper from ${source.dumpKotlinLike()} to ${target.dumpKotlinLike()} which was incorrectly assumed to be valid."
+                        context.logger.error(message, location(declaration))
+                        throw MappiePanicException(message, declaration)
+                    }
                 }
 
             models.fold(context) { context, request ->

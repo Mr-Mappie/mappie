@@ -40,9 +40,13 @@ class ExplicitClassMappingCollector(private val context: ResolverContext)
 private class ClassMappingStatementCollector(private val context: ResolverContext)
     : IrBaseVisitor<Pair<Name, ExplicitClassMappingSource>, Unit>() {
     override fun visitCall(expression: IrCall, data: Unit) = when (expression.symbol.owner.name) {
-        IDENTIFIER_FROM_PROPERTY -> {
+        IDENTIFIER_FROM_PROPERTY, IDENTIFIER_FROM_PROPERTY_NOT_NULL -> {
             val target = expression.extensionReceiver!!.accept(TargetNameCollector(), Unit)
-            target to ExplicitPropertyMappingSource(expression.valueArguments.first()!! as IrPropertyReference, null)
+            target to ExplicitPropertyMappingSource(
+                expression.valueArguments.first()!! as IrPropertyReference,
+                null,
+                expression.symbol.owner.name == IDENTIFIER_FROM_PROPERTY_NOT_NULL
+            )
         }
         IDENTIFIER_FROM_VALUE -> {
             val target = expression.extensionReceiver!!.accept(TargetNameCollector(), Unit)
@@ -50,7 +54,7 @@ private class ClassMappingStatementCollector(private val context: ResolverContex
         }
         IDENTIFIER_FROM_EXPRESSION -> {
             val target = expression.extensionReceiver!!.accept(TargetNameCollector(), data)
-            target to ExpressionMappingSource(expression.valueArguments.first() as IrFunctionExpression)
+            target to ExpressionMappingSource(expression.valueArguments.first()!!)
         }
         IDENTIFIER_VIA -> {
             expression.dispatchReceiver!!.accept(data).let { (name, source) ->
@@ -62,7 +66,13 @@ private class ClassMappingStatementCollector(private val context: ResolverContex
         IDENTIFIER_TRANSFORM -> {
             expression.dispatchReceiver!!.accept(data).let { (name, source) ->
                 name to (source as ExplicitPropertyMappingSource).copy(
-                    transformation = PropertyMappingTransformTranformation(expression.valueArguments.first()!! as IrFunctionExpression)
+                    transformation = expression.valueArguments.first().let {
+                        when (it) {
+                            is IrFunctionExpression -> PropertyMappingTransformTranformation(it)
+                            is IrFunctionReference -> PropertyMappingTransformTranformation(it)
+                            else -> throw MappiePanicException("Unexpected expression type: ${expression.dumpKotlinLike()}")
+                        }
+                    }
                 )
             }
         }

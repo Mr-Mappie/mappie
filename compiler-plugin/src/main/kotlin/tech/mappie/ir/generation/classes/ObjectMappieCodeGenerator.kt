@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.types.typeOrFail
 import tech.mappie.ir.exceptions.MappiePanicException
 import tech.mappie.ir.generation.ClassMappieCodeGenerationModel
@@ -12,6 +13,7 @@ import tech.mappie.ir.generation.CodeGenerationContext
 import tech.mappie.ir.generation.constructTransformation
 import tech.mappie.ir.util.blockBody
 import tech.mappie.ir.referenceFunctionLet
+import tech.mappie.ir.referenceFunctionRequireNotNull
 import tech.mappie.ir.resolving.classes.sources.*
 import tech.mappie.ir.resolving.classes.targets.FunctionCallTarget
 import tech.mappie.ir.resolving.classes.targets.SetterTarget
@@ -60,11 +62,22 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
     private fun IrBuilderWithScope.constructArgument(source: ClassMappingSource, parameters: List<IrValueParameter>): IrExpression? =
         when (source) {
             is ExplicitPropertyMappingSource -> {
-                val getter = irCall(source.reference.getter!!).apply {
-                    dispatchReceiver = source.reference.dispatchReceiver
-                        ?: irGet(parameters.singleOrNull { it.type == (source.reference.type as IrSimpleType).arguments[0].typeOrFail }
-                            ?: throw MappiePanicException("Could not determine value parameter for property reference.", source.reference))
-                }
+                val getter = // TODO: refactor
+                    if (source.forceNonNull) {
+                        irCall(this@ObjectMappieCodeGenerator.context.referenceFunctionRequireNotNull(), source.reference.getter!!.owner.returnType.makeNotNull()).apply {
+                            putValueArgument(0, irCall(source.reference.getter!!).apply {
+                                dispatchReceiver = source.reference.dispatchReceiver
+                                    ?: irGet(parameters.singleOrNull { it.type == (source.reference.type as IrSimpleType).arguments[0].typeOrFail }
+                                        ?: throw MappiePanicException("Could not determine value parameter for property reference.", source.reference))
+                            })
+                        }
+                    } else {
+                        irCall(source.reference.getter!!).apply {
+                            dispatchReceiver = source.reference.dispatchReceiver
+                                ?: irGet(parameters.singleOrNull { it.type == (source.reference.type as IrSimpleType).arguments[0].typeOrFail }
+                                ?: throw MappiePanicException("Could not determine value parameter for property reference.", source.reference))
+                        }
+                    }
                 source.transformation?.let { constructTransformation(this@ObjectMappieCodeGenerator.context, it, getter) } ?: getter
             }
             is ExpressionMappingSource -> {

@@ -1,7 +1,6 @@
 package tech.mappie
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.*
 import java.util.*
@@ -50,18 +49,11 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) =
         kotlinCompilation.target.project.run {
-            hasMappiePlugin() && hasMappieDependency(kotlinCompilation)
+            hasMappiePlugin()
         }
 
     private fun Project.hasMappiePlugin() =
         plugins.hasPlugin(MappieGradlePlugin::class.java)
-
-    private fun Project.hasMappieDependency(kotlinCompilation: KotlinCompilation<*>): Boolean =
-        runCatching { getMappieDependency(kotlinCompilation) != null }.getOrElse { false }
-
-    private fun Project.getMappieDependency(kotlinCompilation: KotlinCompilation<*>): Dependency? =
-        configurations.getByName(kotlinCompilation.runtimeDependencyConfigurationName ?: "implementation")
-            .allDependencies.first { it.group == "tech.mappie" && it.name == "mappie-api" }
 
     private fun Project.checkCompatibility() {
         val version = getKotlinPluginVersion()

@@ -3,11 +3,26 @@ title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
     - date: "tbd"
+      title: "v0.10.0"
+      items:
+        - "Added an explicit error message when the compile-time mapping dsl is used during runtime."
+        - "Added support for method references in fromExpression and transform."
+    - date: "2024-11-18"
+      title: "v0.9.2"
+      items:
+        - "Fixed null pointer in some cases."
+    - date: "2024-11-16"
+      title: "v0.9.1"
+      items:
+        - "[#129](https://github.com/Mr-Mappie/mappie/issues/129) fixed bug where mappie will not run when the mappie-api comes in as a transitive dependency."
+    - date: "2024-11-16"
       title: "v0.9.0"
       items:
         - "[#101](https://github.com/Mr-Mappie/mappie/issues/101) removed deprecated method 'parameter(String)'"
         - "[#62](https://github.com/Mr-Mappie/mappie/issues/62) added support for local mapper configuration via annotations."
+        - "[#125](https://github.com/Mr-Mappie/mappie/issues/125) added fromPropertyNotNull which automatically applies requireNotNull."
         - "Fixed a bug where the `strictness.enums` option set to `true` possibly resulted in a compilation error."
+        - "Fixed a bug where generating a mapper which has no accessible constructor resulted in an internal error instead of a nice error message."
     - date: "2024-09-22"
       title: "v0.8.0"
       items:

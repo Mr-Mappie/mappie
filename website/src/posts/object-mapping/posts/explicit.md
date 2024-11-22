@@ -50,6 +50,17 @@ or be implicitly applied by Mappie.
 It is also possible to transform the property. For example to tweak the value, handle nullability, or transform the 
 source in some other way. See [The Transform Operator](/object-mapping/the-transform-operator/) for some guidelines.
 
+### Nullability
+
+When mapping from a nullable type to a non-nullable type, one has several options. The most flexible option is to
+use the transform operator. 
+
+When the transformation logic is applying a simple non-null assertion operator, or a 
+`requireNotNull` function call, `to::x fromPropertyNotNull from::y` steps in as an equivalent alternative to 
+```kotlin 
+to::x fromProperty from::y transform { it!! }
+```
+
 ## Mapping via a Value
 Targets can be set via the operator `fromValue`. This will set the target to the given value.
 
