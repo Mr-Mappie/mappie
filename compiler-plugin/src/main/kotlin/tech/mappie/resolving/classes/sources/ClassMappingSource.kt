@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.Name
@@ -85,10 +86,12 @@ sealed interface PropertyMappingTransformation {
     val type: IrType
 }
 
-data class PropertyMappingTransformTranformation(
-    val function: IrFunctionExpression,
+data class PropertyMappingTransformTranformation private constructor(
+    val function: IrExpression,
+    override val type: IrType,
 ) : PropertyMappingTransformation {
-    override val type = function.function.returnType
+    constructor(functionReference: IrFunctionReference) : this(functionReference, functionReference.symbol.owner.returnType)
+    constructor(functionExpression: IrFunctionExpression) : this(functionExpression, functionExpression.function.returnType)
 }
 
 data class PropertyMappingViaMapperTransformation(

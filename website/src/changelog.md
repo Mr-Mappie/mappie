@@ -3,6 +3,10 @@ title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
     - date: "tbd"
+      title: "v0.11.0"
+      items:
+        - "Added support for method references in fromExpression and transform"
+    - date: "tbd"
       title: "v0.10.0"
       items:
         - "Added an explicit error message when the compile-time mapping dsl is used during runtime."
