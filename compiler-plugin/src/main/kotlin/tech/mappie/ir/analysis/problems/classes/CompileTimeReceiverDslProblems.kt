@@ -1,16 +1,17 @@
-package tech.mappie.validation.problems.classes
+package tech.mappie.ir.analysis.problems.classes
 
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.fileEntry
-import tech.mappie.resolving.ClassMappingRequest
-import tech.mappie.resolving.classes.sources.ValueMappingSource
 import tech.mappie.util.CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR
-import tech.mappie.util.location
 import org.jetbrains.kotlin.name.Name
-import tech.mappie.validation.Problem
-import tech.mappie.validation.ValidationContext
+import tech.mappie.ir.analysis.Problem
+import tech.mappie.ir.analysis.ValidationContext
+import tech.mappie.ir.resolving.ClassMappingRequest
+import tech.mappie.ir.resolving.classes.sources.ValueMappingSource
+import tech.mappie.ir.util.location
 
+// TODO: Can probably be a fir analysis
 class CompileTimeReceiverDslProblems private constructor(
     private val context: ValidationContext,
     private val mappings: List<Pair<IrCall, ProblemSource>>,

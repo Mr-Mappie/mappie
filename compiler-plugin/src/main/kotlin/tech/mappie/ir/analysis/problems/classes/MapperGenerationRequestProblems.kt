@@ -8,12 +8,12 @@ import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.MappingResolver
 import tech.mappie.ir.resolving.ResolverContext
 import tech.mappie.ir.resolving.classes.sources.*
-import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.util.location
+import tech.mappie.ir.util.mappieType
 
 class MapperGenerationRequestProblems(
     private val context: ValidationContext,
-    private val generated: List<Pair<ClassMappingTarget, GeneratedViaMapperTransformation>>,
+    private val requests: List<GeneratedViaMapperTransformation>,
 ) {
 
     fun all(): List<Problem> = requests

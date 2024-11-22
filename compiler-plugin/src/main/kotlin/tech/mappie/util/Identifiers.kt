@@ -1,15 +1,14 @@
 package tech.mappie.util
 
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-//TODO: contains duplicates
-
-val PACKAGE_MAPPIE_API = FqName("tech.mappie.api")
-
 val PACKAGE_KOTLIN = FqName("kotlin")
 
-val PACKAGE_MAPPIE_API_CONFIG = FqName("tech.mappie.api.config")
+val PACKAGE_TECH_MAPPIE_API = FqName("tech.mappie.api")
+
+val PACKAGE_TECH_MAPPIE_API_CONFIG = FqName("tech.mappie.api.config")
 
 val IDENTIFIER_MAPPING = Name.identifier("mapping")
 
@@ -39,10 +38,8 @@ val IDENTIFIER_TRANSFORM = Name.identifier("transform")
 
 val IDENTIFIER_VIA = Name.identifier("via")
 
-val PACKAGE_TECH_MAPPIE_API = FqName("tech.mappie.api")
-
-val PACKAGE_TECH_MAPPIE_API_CONFIG = FqName("tech.mappie.api.config")
-
 val CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("ObjectMappingConstructor"))
 
 val IDENTIFIER_LET = Name.identifier("let")
+
+val IDENTIFIER_REQUIRE_NOT_NULL = Name.identifier("requireNotNull")

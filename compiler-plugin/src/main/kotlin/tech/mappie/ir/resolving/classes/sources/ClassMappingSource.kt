@@ -86,12 +86,15 @@ sealed interface PropertyMappingTransformation {
     val type: IrType
 }
 
+@ConsistentCopyVisibility
 data class PropertyMappingTransformTranformation private constructor(
     val function: IrExpression,
     override val type: IrType,
 ) : PropertyMappingTransformation {
-    constructor(functionReference: IrFunctionReference) : this(functionReference, functionReference.symbol.owner.returnType)
-    constructor(functionExpression: IrFunctionExpression) : this(functionExpression, functionExpression.function.returnType)
+    constructor(functionReference: IrFunctionReference)
+            : this(functionReference, functionReference.symbol.owner.returnType)
+    constructor(functionExpression: IrFunctionExpression)
+            : this(functionExpression, functionExpression.function.returnType)
 }
 
 data class PropertyMappingViaMapperTransformation(

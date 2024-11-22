@@ -3,12 +3,15 @@ package tech.mappie.ir.generation
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
+import tech.mappie.ir.exceptions.MappiePanicException
 import tech.mappie.ir.generation.classes.ObjectMappieCodeGenerator
 import tech.mappie.ir.generation.enums.EnumMappieCodeGenerator
 import tech.mappie.ir.resolving.MappingResolver
 import tech.mappie.ir.resolving.ResolverContext
 import tech.mappie.ir.selection.MappingSelector
 import tech.mappie.ir.util.isMappieMapFunction
+import tech.mappie.ir.util.location
 import tech.mappie.ir.util.mappieType
 
 class MappieCodeGenerator(private val context: CodeGenerationContext) : IrElementTransformerVoidWithContext() {

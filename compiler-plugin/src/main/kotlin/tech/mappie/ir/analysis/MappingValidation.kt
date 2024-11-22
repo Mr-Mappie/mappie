@@ -11,12 +11,17 @@ import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.EnumMappingRequest
 import tech.mappie.ir.resolving.MappingRequest
 import tech.mappie.ir.analysis.problems.classes.ClassConfigProblems
+import tech.mappie.ir.analysis.problems.classes.CompileTimeReceiverDslProblems
+import tech.mappie.ir.analysis.problems.classes.UnnecessaryFromPropertyNotNullProblems
 import tech.mappie.ir.analysis.problems.enums.EnumConfigProblems
 
 interface MappingValidation {
     val problems: List<Problem>
 
     fun isValid() = problems.none { it.severity == Problem.Severity.ERROR }
+
+    fun errors(): List<Problem> =
+        problems.filter { it.severity == Problem.Severity.ERROR }
 
     private class ClassMappingRequestValidation(
         private val context: ValidationContext,
@@ -29,6 +34,8 @@ interface MappingValidation {
             addAll(VisibilityProblems.of(context, mapping).all())
             addAll(MapperGenerationRequestProblems.of(context, mapping).all())
             addAll(ClassConfigProblems.of(context, mapping).all())
+            addAll(UnnecessaryFromPropertyNotNullProblems.of(context, mapping).all())
+            addAll(CompileTimeReceiverDslProblems.of(context, mapping).all())
         }
     }
 

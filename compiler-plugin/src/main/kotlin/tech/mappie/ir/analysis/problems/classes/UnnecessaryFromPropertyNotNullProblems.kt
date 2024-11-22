@@ -1,13 +1,13 @@
-package tech.mappie.validation.problems.classes
+package tech.mappie.ir.analysis.problems.classes
 
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fileEntry
-import tech.mappie.resolving.ClassMappingRequest
-import tech.mappie.resolving.classes.sources.ExplicitPropertyMappingSource
-import tech.mappie.util.location
-import tech.mappie.validation.Problem
-import tech.mappie.validation.ValidationContext
+import tech.mappie.ir.analysis.Problem
+import tech.mappie.ir.analysis.ValidationContext
+import tech.mappie.ir.resolving.ClassMappingRequest
+import tech.mappie.ir.resolving.classes.sources.ExplicitPropertyMappingSource
+import tech.mappie.ir.util.location
 
 class UnnecessaryFromPropertyNotNullProblems(
     private val context: ValidationContext,

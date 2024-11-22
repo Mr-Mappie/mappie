@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
 import tech.mappie.util.IDENTIFIER_TO
-import tech.mappie.util.PACKAGE_MAPPIE_API
+import tech.mappie.util.PACKAGE_TECH_MAPPIE_API
 import tech.mappie.fir.util.toConstant
 
 class ToCallChecker : FirExpressionChecker<FirFunctionCall>(MppCheckerKind.Common) {
@@ -52,6 +52,6 @@ class ToCallChecker : FirExpressionChecker<FirFunctionCall>(MppCheckerKind.Commo
     companion object {
         private val NON_CONSTANT_ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.WHOLE_ELEMENT)
         private val UNKNOWN_NAME_ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.WHOLE_ELEMENT)
-        private val TO_CALLABLE_ID = CallableId(PACKAGE_MAPPIE_API, FqName("ObjectMappingConstructor"), IDENTIFIER_TO)
+        private val TO_CALLABLE_ID = CallableId(PACKAGE_TECH_MAPPIE_API, FqName("ObjectMappingConstructor"), IDENTIFIER_TO)
     }
 }

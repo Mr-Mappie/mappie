@@ -9,8 +9,9 @@ import tech.mappie.api.EnumMappie
 import tech.mappie.api.ObjectMappie
 import tech.mappie.util.IDENTIFIER_LET
 import tech.mappie.util.PACKAGE_KOTLIN
-import tech.mappie.util.PACKAGE_MAPPIE_API
+import tech.mappie.util.PACKAGE_TECH_MAPPIE_API
 import tech.mappie.config.MappieConfiguration
+import tech.mappie.util.IDENTIFIER_REQUIRE_NOT_NULL
 
 interface MappieContext {
     val pluginContext: IrPluginContext
@@ -19,10 +20,10 @@ interface MappieContext {
 }
 
 fun MappieContext.referenceObjectMappieClass(): IrClassSymbol =
-    pluginContext.referenceClass(ClassId(PACKAGE_MAPPIE_API, Name.identifier(ObjectMappie::class.simpleName!!)))!!
+    pluginContext.referenceClass(ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier(ObjectMappie::class.simpleName!!)))!!
 
 fun MappieContext.referenceEnumMappieClass(): IrClassSymbol =
-    pluginContext.referenceClass(ClassId(PACKAGE_MAPPIE_API, Name.identifier(EnumMappie::class.simpleName!!)))!!
+    pluginContext.referenceClass(ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier(EnumMappie::class.simpleName!!)))!!
 
 fun MappieContext.referenceFunctionLet() =
     pluginContext.referenceFunctions(CallableId(PACKAGE_KOTLIN, IDENTIFIER_LET)).first()
