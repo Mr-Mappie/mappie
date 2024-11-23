@@ -1230,6 +1230,43 @@ strong {
   }
 }
 
+.nav-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.nav-container ul {
+  list-style: none;
+  padding: 0;
+}
+.nav-container ul li {
+  display: inline-flex;
+}
+.nav-container ul li a {
+  text-decoration: none;
+  color: darkgray;
+  padding: 10px;
+  transition: all 0.3s ease-in-out;
+  border-bottom: 1px solid transparent;
+}
+.nav-container ul li a:hover {
+  color: gray;
+}
+.nav-container .nav .active a {
+  color: slateblue;
+  border-bottom: 1px solid slateblue;
+}
+.nav-container .nav .active a:hover {
+  border-color: transparent;
+  background: slateblue;
+  color: white;
+}
+.nav-container .tab-pane {
+  display: none;
+}
+.nav-container .tab-pane.active {
+  display: block;
+}
+
 .l-list {
   --gtc: minmax(0, 1fr);
   display: grid;
