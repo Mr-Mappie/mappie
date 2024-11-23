@@ -18,18 +18,15 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.type
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
-import tech.mappie.util.IDENTIFIER_TO
-import tech.mappie.util.PACKAGE_TECH_MAPPIE_API
 import tech.mappie.fir.util.toConstant
+import tech.mappie.util.CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR
 
 class ToCallChecker : FirExpressionChecker<FirFunctionCall>(MppCheckerKind.Common) {
 
     @OptIn(SymbolInternals::class)
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (expression.calleeReference.toResolvedSymbol<FirNamedFunctionSymbol>()?.callableId == TO_CALLABLE_ID) {
+        if (expression.calleeReference.toResolvedSymbol<FirNamedFunctionSymbol>()?.callableId == CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR) {
             val name = expression.arguments.first().toConstant(context)?.value as? String
             if (name == null) {
                 reporter.reportOn(expression.source, NON_CONSTANT_ERROR, "Argument must be a compile-time constant.", context)
@@ -52,6 +49,5 @@ class ToCallChecker : FirExpressionChecker<FirFunctionCall>(MppCheckerKind.Commo
     companion object {
         private val NON_CONSTANT_ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.WHOLE_ELEMENT)
         private val UNKNOWN_NAME_ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.WHOLE_ELEMENT)
-        private val TO_CALLABLE_ID = CallableId(PACKAGE_TECH_MAPPIE_API, FqName("ObjectMappingConstructor"), IDENTIFIER_TO)
     }
 }
