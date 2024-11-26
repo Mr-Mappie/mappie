@@ -25,16 +25,12 @@ The following integer mappers are built-in
 | *BigInteger* |      |       |     |      | -            |               |
 | *BigDecimal* |      |       |     |      |              | -             |
 
-{.table-matrix}
-
 The following floating point mappers are built-in
 
 |              | Float | Double | *BigDecimal*  |
 |--------------|-------|--------|---------------|
 | Float        | -     | X      | X             |
 | Double       |       | -      | X             |
-
-{.table-matrix}
 
 There also exist a mapper for all numeric types to `String`.
 
@@ -44,8 +40,6 @@ The following char mappers are built-in
 |        | Char | String |
 |--------|------|--------|
 | Char   | -    | X      | 
-
-{.table-matrix}
 
 ## LocalDate Mappers
 The following numeric mappers are built-in
@@ -62,5 +56,3 @@ The following UUID mappers are built-in
 |        | *UUID* | String |
 |--------|--------|--------|
 | *UUID* | -      | X      |
-
-{.table-matrix}
