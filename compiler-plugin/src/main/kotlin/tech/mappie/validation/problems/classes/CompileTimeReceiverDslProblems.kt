@@ -8,6 +8,7 @@ import tech.mappie.resolving.classes.sources.ValueMappingSource
 import tech.mappie.util.CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR
 import tech.mappie.util.location
 import org.jetbrains.kotlin.name.Name
+import tech.mappie.util.filterSingle
 import tech.mappie.validation.Problem
 import tech.mappie.validation.ValidationContext
 
@@ -36,8 +37,7 @@ class CompileTimeReceiverDslProblems private constructor(
     companion object {
         fun of(context: ValidationContext, mapping: ClassMappingRequest): CompileTimeReceiverDslProblems {
             val mappings = mapping.mappings.values
-                .filter { it.size == 1 }
-                .map { it.single() }
+                .filterSingle()
                 .filterIsInstance<ValueMappingSource>()
                 .map { it.expression }
                 .filterIsInstance<IrCall>()

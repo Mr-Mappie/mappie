@@ -5,6 +5,7 @@ import tech.mappie.resolving.ClassMappingRequest
 import tech.mappie.resolving.MappingResolver
 import tech.mappie.resolving.ResolverContext
 import tech.mappie.resolving.classes.sources.*
+import tech.mappie.util.filterSingle
 import tech.mappie.util.location
 import tech.mappie.util.mappieType
 import tech.mappie.validation.MappingValidation
@@ -55,10 +56,8 @@ class MapperGenerationRequestProblems(
 
     companion object {
         fun of(context: ValidationContext, mapping: ClassMappingRequest): MapperGenerationRequestProblems {
-            val mappings = mapping.mappings
-                .map { it.value }
-                .filter { it.size == 1 }
-                .map { it.single() }
+            val mappings = mapping.mappings.values
+                .filterSingle()
                 .filter { it.hasGeneratedTransformationMapping() }
                 .map { it.selectGeneratedTransformationMapping() }
 

@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fileEntry
 import tech.mappie.resolving.ClassMappingRequest
 import tech.mappie.resolving.classes.sources.ExplicitPropertyMappingSource
+import tech.mappie.util.filterSingle
 import tech.mappie.util.location
 import tech.mappie.validation.Problem
 import tech.mappie.validation.ValidationContext
@@ -26,8 +27,7 @@ class UnnecessaryFromPropertyNotNullProblems(
             UnnecessaryFromPropertyNotNullProblems(
                 context,
                 mapping.mappings.values
-                    .filter { it.size == 1 }
-                    .map { it.single() }
+                    .filterSingle()
                     .filterIsInstance<ExplicitPropertyMappingSource>()
                     .filter { it.forceNonNull && !it.getterType.isNullable() }
             )

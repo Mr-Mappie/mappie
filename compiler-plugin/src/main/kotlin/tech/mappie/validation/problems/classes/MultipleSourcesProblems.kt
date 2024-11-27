@@ -9,7 +9,7 @@ import tech.mappie.validation.Problem
 
 class MultipleSourcesProblems(
     private val targetType: IrType,
-    private val mappings: List<Pair<ClassMappingTarget, List<ClassMappingSource>>>
+    private val mappings: Map<ClassMappingTarget, List<ClassMappingSource>>
 ) {
 
     fun all(): List<Problem> = mappings.map { (target, sources) ->
@@ -22,7 +22,7 @@ class MultipleSourcesProblems(
                 mapping.target,
                 mapping.mappings
                     .filter { (target, _) -> target.required }
-                    .filter { (_, sources) -> sources.size != 1 }.map { it.toPair() }
+                    .filter { (_, sources) -> sources.size != 1 }
             )
     }
 }
