@@ -44,4 +44,6 @@ tasks.test {
     dependsOn(project(":compiler-plugin").tasks.publishToMavenLocal)
     dependsOn(project(":mappie-api").tasks.named("publishKotlinMultiplatformPublicationToMavenLocal"))
     dependsOn(project(":mappie-api").tasks.named("publishJvmPublicationToMavenLocal"))
+
+    maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
 }
