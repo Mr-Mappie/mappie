@@ -1,5 +1,4 @@
 import org.jreleaser.model.Signing
-import java.io.ByteArrayOutputStream
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -19,20 +18,13 @@ dependencies {
     jacocoAggregation(project(":compiler-plugin"))
 }
 
-val branch = ByteArrayOutputStream()
-
-exec {
-    commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
-    standardOutput = branch
-}
-
 sonar {
     properties {
         property("sonar.projectKey", "Mr-Mappie_mappie")
         property("sonar.organization", "mappie")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.qualitygate.wait", "true")
-        property("sonar.branch.name", branch.toString(Charsets.UTF_8))
+        property("sonar.branch.name", "main")
         property("sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory
                 .file("reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
                 .get().asFile.absolutePath
