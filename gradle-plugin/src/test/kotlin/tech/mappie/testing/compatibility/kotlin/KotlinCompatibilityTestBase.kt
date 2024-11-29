@@ -33,17 +33,20 @@ abstract class KotlinCompatibilityTestBase : TestBase() {
                 val name: String,
                 val age: Int,
                 val boolean: Boolean,
+                val unknown: String,
             )
 
             object ObjectMapperWithoutVia : ObjectMappie<InputObject, OutputObject>() {
                 override fun map(from: InputObject) = mapping {
                     to::boolean fromProperty from.nested::boolean
+                    to("unknown") fromValue "unknown"
                 }
             }
 
             object ObjectMapper : ObjectMappie<InputObject, OutputObject>() {
                 override fun map(from: InputObject) = mapping {
                     to::boolean fromProperty from.nested::boolean via BooleanEnumToBooleanMapper
+                    to("unknown") fromValue "unknown"
                 }
             }
 
@@ -66,7 +69,7 @@ abstract class KotlinCompatibilityTestBase : TestBase() {
                 @Test
                 fun `map using ObjectMapper`() {
                     assertEquals(
-                        OutputObject("name", 22, true),
+                        OutputObject("name", 22, true, "unknown"),
                         ObjectMapper.map(InputObject("name", 22, NestedInput(NestedInput.BooleanEnum.TRUE)))
                     )
                 }

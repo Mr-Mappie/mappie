@@ -130,7 +130,7 @@ private class TargetNameCollector(private val context: ResolverContext) : BaseVi
         return when (expression.symbol.owner.name) {
             IDENTIFIER_TO -> {
                 val value = expression.valueArguments.first()!!
-                return if (value.isConstantLike && value is IrConst<*>) {
+                return if (value.isConstantLike && value is IrConst) {
                     Name.identifier(value.value as String)
                 } else {
                     val problem = Problem.error(

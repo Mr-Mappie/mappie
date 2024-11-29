@@ -26,7 +26,7 @@ class ClassMappieCodeGenerationModelFactory(private val request: ClassMappingReq
     private fun select(target: ClassMappingTarget, sources: List<ClassMappingSource>): ClassMappingSource? =
         if (sources.isEmpty()) {
             null
-        }  else {
+        } else {
             sources.singleOrNull() ?: when (target) {
                 is FunctionCallTarget -> sources.first()
                 is SetterTarget -> sources.first()

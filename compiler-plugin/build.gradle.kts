@@ -82,7 +82,10 @@ publishing {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+
     finalizedBy(tasks.jacocoTestReport)
+
+    maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
 }
 
 tasks.withType<KotlinCompile>().configureEach {

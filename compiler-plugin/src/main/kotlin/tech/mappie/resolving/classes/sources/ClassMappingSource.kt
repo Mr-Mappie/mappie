@@ -86,6 +86,7 @@ sealed interface PropertyMappingTransformation {
     val type: IrType
 }
 
+@ConsistentCopyVisibility
 data class PropertyMappingTransformTranformation private constructor(
     val function: IrExpression,
     override val type: IrType,

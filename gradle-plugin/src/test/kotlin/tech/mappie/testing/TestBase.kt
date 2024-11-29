@@ -15,20 +15,24 @@ abstract class TestBase {
 
     protected lateinit var runner: GradleRunner
 
-    protected open val kotlinVersion = "2.0.21"
+    protected open val gradleVersion: String? = null
+
+    protected open val kotlinVersion = "2.1.0"
 
     @BeforeEach
     fun setup() {
         runner = GradleRunner.create().apply {
             forwardOutput()
             withProjectDir(directory)
+            gradleVersion?.let { withGradleVersion(gradleVersion) }
         }
 
         directory.resolve("src/main/kotlin").mkdirs()
         directory.resolve("src/main/java").mkdirs()
         directory.resolve("src/test/kotlin").mkdirs()
 
-        println("Using kotlin version $kotlinVersion")
+        gradleVersion?.let { println("Using Gradle version $it") }
+        println("Using Kotlin version $kotlinVersion")
 
         kotlin("settings.gradle.kts",
             """

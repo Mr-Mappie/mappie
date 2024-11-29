@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.ir.util.fileEntry
 import tech.mappie.resolving.ClassMappingRequest
 import tech.mappie.resolving.classes.sources.*
 import tech.mappie.resolving.classes.targets.ClassMappingTarget
+import tech.mappie.util.filterSingle
 import tech.mappie.util.hasFlexibleNullabilityAnnotation
 import tech.mappie.util.location
 import tech.mappie.validation.Problem
@@ -15,10 +16,10 @@ import tech.mappie.validation.ValidationContext
 class UnsafePlatformTypeAssignmentProblems(
     private val context: ValidationContext,
     private val mapping: ClassMappingRequest,
-    private val mappings: List<Pair<ClassMappingTarget, ClassMappingSource>>,
+    private val mappings: Map<ClassMappingTarget, ClassMappingSource>,
 ) {
 
-    fun all(): List<Problem> = mappings.mapNotNull { validate(it.first, it.second) }
+    fun all(): List<Problem> = mappings.mapNotNull { validate(it.key, it.value) }
 
     private fun validate(target: ClassMappingTarget, source: ClassMappingSource): Problem? {
         val sourceTypeString = source.type.removeAnnotations().dumpKotlinLike()
@@ -57,12 +58,10 @@ class UnsafePlatformTypeAssignmentProblems(
     companion object {
         fun of(context: ValidationContext, mapping: ClassMappingRequest): UnsafePlatformTypeAssignmentProblems {
             val mappings = mapping.mappings
-                .filter { (_, sources) -> sources.size == 1 }
-                .filter { (target, sources) ->
-                    val source = sources.single()
+                .filterSingle()
+                .filter { (target, source) ->
                     source.type.hasFlexibleNullabilityAnnotation() && !target.type.isNullable()
                 }
-                .map { (target, sources) -> target to sources.single() }
 
             return UnsafePlatformTypeAssignmentProblems(
                 context,
