@@ -11,7 +11,7 @@ import tech.mappie.resolving.classes.ClassResolver
 import tech.mappie.resolving.enums.EnumResolver
 import tech.mappie.util.isSubclassOf
 
-interface MappingResolver {
+fun interface MappingResolver {
 
     fun resolve(body: IrBody?): List<MappingRequest>
 
