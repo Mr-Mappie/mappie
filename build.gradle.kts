@@ -49,8 +49,14 @@ jreleaser {
     }
     release {
         github {
+            repoOwner = "Mr-Mappie"
+            name  = "mappie"
+            username = "stefankoppier"
             token = properties["release.github.token"] as? String
-            draft = true
+            releaseNotes {
+                enabled = true
+                configurationFile = ".github/release.yml"
+            }
         }
     }
     deploy {
