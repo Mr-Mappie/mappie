@@ -1,0 +1,8 @@
+changelog:
+  categories:
+    - title: New Features and Changes
+      labels:
+        - enhancement
+    - title: Bug Fixes
+      labels:
+        - bug
