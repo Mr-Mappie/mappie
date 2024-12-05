@@ -57,25 +57,17 @@ jreleaser {
         maven {
             mavenCentral {
                 active = org.jreleaser.model.Active.ALWAYS
-                create("mappie-api") {
-                    active = org.jreleaser.model.Active.ALWAYS
-                    url = "https://central.sonatype.com/api/v1/publisher"
-                    stagingRepository(project(":mappie-api").layout.buildDirectory.dir("staging-deploy").get().toString())
-                    username = properties["mavenCentralUsername"] as? String
-                    password = properties["mavenCentralPassword"] as? String
-                    applyMavenCentralRules = true
-                    verifyPom = false
-                    retryDelay = 20
-                }
-                create("compiler-plugin") {
-                    active = org.jreleaser.model.Active.ALWAYS
-                    url = "https://central.sonatype.com/api/v1/publisher"
-                    stagingRepository(project(":compiler-plugin").layout.buildDirectory.dir("staging-deploy").get().toString())
-                    username = properties["mavenCentralUsername"] as? String
-                    password = properties["mavenCentralPassword"] as? String
-                    applyMavenCentralRules = true
-                    verifyPom = false
-                    retryDelay = 20
+                listOf("mappie-api", "compiler-plugin").forEach {
+                    create(it) {
+                        active = org.jreleaser.model.Active.ALWAYS
+                        url = "https://central.sonatype.com/api/v1/publisher"
+                        stagingRepository(project(":$it").layout.buildDirectory.dir("staging-deploy").get().toString())
+                        username = properties["mavenCentralUsername"] as? String
+                        password = properties["mavenCentralPassword"] as? String
+                        applyMavenCentralRules = true
+                        verifyPom = false
+                        retryDelay = 20
+                    }
                 }
             }
         }

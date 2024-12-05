@@ -1,7 +1,3 @@
-@file:OptIn(ExperimentalWasmDsl::class)
-
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.dokka)
@@ -34,6 +30,7 @@ kotlin {
         nodejs()
     }
 
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
     wasmJs {
         browser()
         nodejs()
@@ -57,11 +54,6 @@ tasks.register<Jar>("javadocJar") {
     dependsOn(dokkaHtml)
 }
 
-tasks.register<Jar>("emptyJar") {
-    group = "build"
-    description = "Assemble an empty jar."
-}
-
 publishing {
     repositories {
         maven {
@@ -72,40 +64,8 @@ publishing {
     publications.configureEach {
         if (this is MavenPublication) {
             artifact(tasks["javadocJar"])
-            // jreleaser workaround
-            if (name != "jvm" && name != "kotlinMultiplatform") {
-                artifact(tasks["emptyJar"])
-            }
-            pom {
-                name = "tech.mappie:compiler-plugin"
-                description = "Kotlin Compiler Plugin for generating object mappers"
-                url = "https://github.com/Mr-Mappie/mappie"
 
-                developers {
-                    developer {
-                        id = "stefankoppier"
-                        name = "Stefan Koppier"
-                    }
-                }
-
-                scm {
-                    connection = "scm:git:git://github.com/Mr-Mappie/mappie.git"
-                    developerConnection = "scm:git:git://github.com/Mr-Mappie/mappie.git"
-                    url = "https://github.com/Mr-Mappie/mappie/tree/main"
-                }
-
-                licenses {
-                    license {
-                        name = "The Apache License, Version 2.0"
-                        url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
-                    }
-                }
-
-                issueManagement {
-                    system = "GitHub"
-                    url = "https://github.com/Mr-Mappie/mappie/issues"
-                }
-            }
+            mappiePom(name = "tech.mappie:compiler-plugin")
         }
     }
 }
