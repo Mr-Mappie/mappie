@@ -7,7 +7,7 @@ import tech.mappie.resolving.ClassMappingRequest
 import tech.mappie.resolving.EnumMappingRequest
 import tech.mappie.resolving.MappingRequest
 
-interface CodeGenerationModelFactory {
+fun interface CodeGenerationModelFactory {
 
     fun construct(function: IrFunction): CodeGenerationModel
 

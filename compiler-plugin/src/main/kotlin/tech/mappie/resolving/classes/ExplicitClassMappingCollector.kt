@@ -105,11 +105,7 @@ private class MapperReferenceCollector(private val context: ResolverContext)
         require(expression.origin == IrStatementOrigin.GET_PROPERTY)
 
         return when (val name = expression.symbol.owner.name) {
-            getterName(ObjectMappie<*, *>::forList.name) -> {
-                val mapper = expression.symbol.owner.parent as IrClass
-                PropertyMappingViaMapperTransformation(MappieDefinition(mapper), expression.dispatchReceiver!!)
-            }
-            getterName(ObjectMappie<*, *>::forSet.name) -> {
+            getterName(ObjectMappie<*, *>::forList.name), getterName(ObjectMappie<*, *>::forSet.name) -> {
                 val mapper = expression.symbol.owner.parent as IrClass
                 PropertyMappingViaMapperTransformation(MappieDefinition(mapper), expression.dispatchReceiver!!)
             }

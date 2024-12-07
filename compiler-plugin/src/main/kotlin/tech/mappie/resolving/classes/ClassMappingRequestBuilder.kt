@@ -77,27 +77,32 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
 
     private fun transformation(source: ClassMappingSource, target: ClassMappingTarget): PropertyMappingTransformation? {
         val mappers = context.definitions.matching(source.type, target.type)
-        return if (mappers.size == 1) {
-            PropertyMappingViaMapperTransformation(mappers.single(), null)
-        } else if (mappers.size > 1) {
-            val location = when (source) {
-                is ExplicitClassMappingSource -> location(context.function!!.fileEntry, source.origin)
-                else -> location(context.function!!)
+        return when {
+            mappers.size == 1 -> {
+                PropertyMappingViaMapperTransformation(mappers.single(), null)
             }
-            val error = Problem.error(
-                "Multiple mappers resolved to be used in an implicit via",
-                location,
-                listOf(
-                    "Call one of ${mappers.joinToString { it.clazz.name.asString() }} explicitly.",
-                    "Delete all except one of ${mappers.joinToString { it.clazz.name.asString() }}.",
+            mappers.size > 1 -> {
+                val location = when (source) {
+                    is ExplicitClassMappingSource -> location(context.function!!.fileEntry, source.origin)
+                    else -> location(context.function!!)
+                }
+                val error = Problem.error(
+                    "Multiple mappers resolved to be used in an implicit via",
+                    location,
+                    listOf(
+                        "Call one of ${mappers.joinToString { it.clazz.name.asString() }} explicitly.",
+                        "Delete all except one of ${mappers.joinToString { it.clazz.name.asString() }}.",
+                    )
                 )
-            )
-            context.logger.log(error)
-            PropertyMappingViaMapperTransformation(mappers.first(), null)
-        } else if (!source.type.isPrimitive() && !target.type.isPrimitive()) {
-            GeneratedViaMapperTransformation(source, target)
-        } else {
-            null
+                context.logger.log(error)
+                PropertyMappingViaMapperTransformation(mappers.first(), null)
+            }
+            !source.type.isPrimitive() && !target.type.isPrimitive() -> {
+                GeneratedViaMapperTransformation(source, target)
+            }
+            else -> {
+                null
+            }
         }
     }
 
