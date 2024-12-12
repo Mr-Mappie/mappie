@@ -9,6 +9,7 @@ import tech.mappie.generation.classes.ObjectMappieCodeGenerator
 import tech.mappie.generation.enums.EnumMappieCodeGenerator
 import tech.mappie.resolving.MappingResolver
 import tech.mappie.resolving.ResolverContext
+import tech.mappie.resolving.classes.sources.TransformableClassMappingSource
 import tech.mappie.selection.MappingSelector
 import tech.mappie.util.isMappieMapFunction
 import tech.mappie.util.location
@@ -19,6 +20,7 @@ class MappieCodeGenerator(private val context: CodeGenerationContext) : IrElemen
     override fun visitClassNew(declaration: IrClass): IrStatement = declaration.apply {
         val context = if (context.model is ClassMappieCodeGenerationModel) {
             val models = context.model.mappings.values
+                .filterIsInstance<TransformableClassMappingSource>()
                 .map { source -> source.selectGeneratedTransformationMapping() }
                 .filterNotNull()
                 .distinctBy { it.source.type to it.target.type }

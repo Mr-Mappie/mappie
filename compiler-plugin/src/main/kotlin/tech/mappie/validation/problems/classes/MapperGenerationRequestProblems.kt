@@ -58,6 +58,7 @@ class MapperGenerationRequestProblems(
         fun of(context: ValidationContext, mapping: ClassMappingRequest): MapperGenerationRequestProblems {
             val mappings = mapping.mappings.values
                 .filterSingle()
+                .filterIsInstance<TransformableClassMappingSource>()
                 .map { it.selectGeneratedTransformationMapping() }
                 .filterNotNull()
 

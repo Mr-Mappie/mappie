@@ -11,12 +11,9 @@ sealed interface ImplicitClassMappingSource : ClassMappingSource
 data class ParameterValueMappingSource(
     val parameter: Name,
     val parameterType: IrType,
-    val transformation: PropertyMappingTransformation?,
-) : ImplicitClassMappingSource {
+    override val transformation: PropertyMappingTransformation?,
+) : ImplicitClassMappingSource, TransformableClassMappingSource {
     override val type = type(parameterType, transformation)
-
-    override fun selectGeneratedTransformationMapping() =
-        transformation as GeneratedViaMapperTransformation?
 }
 
 data class ParameterDefaultValueMappingSource(
@@ -29,22 +26,16 @@ data class ImplicitPropertyMappingSource(
     val property: IrProperty,
     val parameter: Name,
     val parameterType: IrType,
-    val transformation: PropertyMappingTransformation?,
-) : ImplicitClassMappingSource {
+    override val transformation: PropertyMappingTransformation?,
+) : ImplicitClassMappingSource, TransformableClassMappingSource {
     override val type = type(property.getter!!.returnType, transformation)
-
-    override fun selectGeneratedTransformationMapping() =
-        transformation as? GeneratedViaMapperTransformation?
 }
 
 data class FunctionMappingSource(
     val function: IrFunction,
     val parameter: Name,
     val parameterType: IrType,
-    val transformation: PropertyMappingTransformation?,
-) : ImplicitClassMappingSource {
+    override val transformation: PropertyMappingTransformation?,
+) : ImplicitClassMappingSource, TransformableClassMappingSource {
     override val type = type(function.returnType, transformation)
-
-    override fun selectGeneratedTransformationMapping() =
-        transformation as? GeneratedViaMapperTransformation?
 }

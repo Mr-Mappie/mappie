@@ -13,15 +13,12 @@ sealed interface ExplicitClassMappingSource : ClassMappingSource {
 
 data class ExplicitPropertyMappingSource(
     val reference: IrPropertyReference,
-    val transformation : PropertyMappingTransformation?,
+    override val transformation : PropertyMappingTransformation?,
     val forceNonNull: Boolean,
-) : ExplicitClassMappingSource {
+) : ExplicitClassMappingSource, TransformableClassMappingSource {
     val getterType =  reference.getter!!.owner.returnType
     override val type = type(getterType.let { if (forceNonNull) it.makeNotNull() else it }, transformation)
     override val origin = reference
-
-    override fun selectGeneratedTransformationMapping() =
-        transformation as? GeneratedViaMapperTransformation?
 }
 
 data class ValueMappingSource(val expression: IrExpression) : ExplicitClassMappingSource {
