@@ -8,12 +8,12 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.util.BaseVisitor
 import tech.mappie.api.ObjectMappie
-import tech.mappie.exceptions.MappiePanicException
+import tech.mappie.exceptions.MappiePanicException.Companion.panic
+import tech.mappie.exceptions.MappieProblemException.Companion.fail
 import tech.mappie.resolving.MappieDefinition
 import tech.mappie.resolving.ResolverContext
 import tech.mappie.resolving.classes.sources.*
 import tech.mappie.util.*
-import tech.mappie.validation.Problem
 
 class ExplicitClassMappingCollector(private val context: ResolverContext)
     : BaseVisitor<ClassMappingRequestBuilder, ClassMappingRequestBuilder>() {
@@ -32,13 +32,14 @@ class ExplicitClassMappingCollector(private val context: ResolverContext)
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: ClassMappingRequestBuilder) =
         data.apply {
             expression.function.body?.statements?.forEach { statement ->
-                explicit(statement.accept(ClassMappingStatementCollector(context), Unit))
+                statement.accept(ClassMappingStatementCollector(context), Unit)
+                    ?.let { explicit(it) }
             }
         }
 }
 
 private class ClassMappingStatementCollector(private val context: ResolverContext)
-    : BaseVisitor<Pair<Name, ExplicitClassMappingSource>, Unit>() {
+    : BaseVisitor<Pair<Name, ExplicitClassMappingSource>?, Unit>() {
     override fun visitCall(expression: IrCall, data: Unit) = when (expression.symbol.owner.name) {
         IDENTIFIER_FROM_PROPERTY, IDENTIFIER_FROM_PROPERTY_NOT_NULL -> {
             val target = expression.extensionReceiver!!.accept(TargetNameCollector(context), Unit)
@@ -57,27 +58,27 @@ private class ClassMappingStatementCollector(private val context: ResolverContex
             target to ExpressionMappingSource(expression.valueArguments.first()!!)
         }
         IDENTIFIER_VIA -> {
-            expression.dispatchReceiver!!.accept(data).let { (name, source) ->
+            expression.dispatchReceiver!!.accept(data)?.let { (name, source) ->
                 name to (source as ExplicitPropertyMappingSource).copy(
                     transformation = expression.valueArguments.first()!!.accept(MapperReferenceCollector(context), Unit)
                 )
             }
         }
         IDENTIFIER_TRANSFORM -> {
-            expression.dispatchReceiver!!.accept(data).let { (name, source) ->
+            expression.dispatchReceiver!!.accept(data)?.let { (name, source) ->
                 name to (source as ExplicitPropertyMappingSource).copy(
                     transformation = expression.valueArguments.first().let {
                         when (it) {
                             is IrFunctionExpression -> PropertyMappingTransformTranformation(it)
                             is IrFunctionReference -> PropertyMappingTransformTranformation(it)
-                            else -> throw MappiePanicException("Unexpected expression type: ${expression.dumpKotlinLike()}")
+                            else -> panic("Unexpected expression type: ${expression.dumpKotlinLike()}", expression)
                         }
                     }
                 )
             }
         }
         else -> {
-            throw MappiePanicException("Unexpected method call", expression)
+            null
         }
     }
 
@@ -86,6 +87,9 @@ private class ClassMappingStatementCollector(private val context: ResolverContex
             "IMPLICIT_COERCION_TO_UNIT" -> expression.argument.accept(data)
             else -> super.visitTypeOperator(expression, data)
         }
+
+    override fun visitReturn(expression: IrReturn, data: Unit): Pair<Name, ExplicitClassMappingSource>? =
+        null
 }
 
 private class MapperReferenceCollector(private val context: ResolverContext)
@@ -110,7 +114,11 @@ private class MapperReferenceCollector(private val context: ResolverContext)
                 PropertyMappingViaMapperTransformation(MappieDefinition(mapper), expression.dispatchReceiver!!)
             }
             else -> {
-                throw MappiePanicException("Unexpected call of ${name.asString()}, expected forList or forSet", expression)
+                context.fail(
+                    "Unexpected call of ${name.asString()}, expected forList or forSet",
+                    expression,
+                    location(context.function!!.fileEntry, expression)
+                )
             }
         }
     }
@@ -129,12 +137,11 @@ private class TargetNameCollector(private val context: ResolverContext) : BaseVi
                 return if (value.isConstantLike && value is IrConst) {
                     Name.identifier(value.value as String)
                 } else {
-                    val problem = Problem.error(
+                    context.fail(
                         "Identifier must be a compile-time constant",
+                        expression,
                         location(context.function!!.fileEntry, expression)
                     )
-                    context.logger.log(problem)
-                    throw MappiePanicException("Identifier must be a compile-time constant", expression)
                 }
             }
             else -> {

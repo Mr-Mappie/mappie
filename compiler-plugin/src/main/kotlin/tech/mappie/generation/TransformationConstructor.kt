@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.primaryConstructor
-import tech.mappie.exceptions.MappiePanicException
+import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.referenceFunctionLet
 import tech.mappie.resolving.classes.sources.GeneratedViaMapperTransformation
 import tech.mappie.resolving.classes.sources.PropertyMappingTransformTranformation
@@ -60,5 +60,5 @@ private fun IrBuilderWithScope.instance(clazz: IrClass) =
     } else if (clazz.primaryConstructor != null && clazz.primaryConstructor!!.valueParameters.isEmpty()) {
         irCallConstructor(clazz.primaryConstructor!!.symbol, emptyList())
     } else {
-        throw MappiePanicException("Class ${clazz.name.asString()} should either be an object or has an primary constructor without parameters.")
+        panic("Class ${clazz.name.asString()} should either be an object or has an primary constructor without parameters.", clazz)
     }
