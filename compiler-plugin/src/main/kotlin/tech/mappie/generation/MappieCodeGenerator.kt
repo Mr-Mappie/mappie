@@ -4,11 +4,12 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import tech.mappie.exceptions.MappiePanicException
+import tech.mappie.exceptions.MappieProblemException.Companion.fail
 import tech.mappie.generation.classes.ObjectMappieCodeGenerator
 import tech.mappie.generation.enums.EnumMappieCodeGenerator
 import tech.mappie.resolving.MappingResolver
 import tech.mappie.resolving.ResolverContext
+import tech.mappie.resolving.classes.sources.TransformableClassMappingSource
 import tech.mappie.selection.MappingSelector
 import tech.mappie.util.isMappieMapFunction
 import tech.mappie.util.location
@@ -19,8 +20,9 @@ class MappieCodeGenerator(private val context: CodeGenerationContext) : IrElemen
     override fun visitClassNew(declaration: IrClass): IrStatement = declaration.apply {
         val context = if (context.model is ClassMappieCodeGenerationModel) {
             val models = context.model.mappings.values
-                .filter { source -> source.hasGeneratedTransformationMapping() }
+                .filterIsInstance<TransformableClassMappingSource>()
                 .map { source -> source.selectGeneratedTransformationMapping() }
+                .filterNotNull()
                 .distinctBy { it.source.type to it.target.type }
                 .map { transformation ->
                     val source = transformation.source.type.mappieType()
@@ -32,9 +34,11 @@ class MappieCodeGenerator(private val context: CodeGenerationContext) : IrElemen
                     ).resolve(null)
 
                     MappingSelector.of(options).select()?.first ?: run {
-                        val message = "Failed to generate mapper from ${source.dumpKotlinLike()} to ${target.dumpKotlinLike()} which was incorrectly assumed to be valid."
-                        context.logger.error(message, location(declaration))
-                        throw MappiePanicException(message, declaration)
+                        context.fail(
+                            "Failed to generate mapper from ${source.dumpKotlinLike()} to ${target.dumpKotlinLike()} which was incorrectly assumed to be valid.",
+                            declaration,
+                            location(declaration)
+                        )
                     }
                 }
 

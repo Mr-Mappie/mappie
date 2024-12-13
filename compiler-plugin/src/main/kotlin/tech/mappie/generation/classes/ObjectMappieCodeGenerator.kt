@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.types.typeOrFail
-import tech.mappie.exceptions.MappiePanicException
+import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.generation.ClassMappieCodeGenerationModel
 import tech.mappie.generation.CodeGenerationContext
 import tech.mappie.generation.constructTransformation
@@ -63,7 +63,7 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
             is ExplicitPropertyMappingSource -> {
                 val receiver = source.reference.dispatchReceiver
                         ?: irGet(parameters.singleOrNull { it.type == (source.reference.type as IrSimpleType).arguments[0].typeOrFail }
-                            ?: throw MappiePanicException("Could not determine value parameter for property reference.", source.reference))
+                            ?: panic("Could not determine value parameter for property reference.", source.reference))
 
                 val getter = if (source.forceNonNull) {
                     irCall(this@ObjectMappieCodeGenerator.context.referenceFunctionRequireNotNull(), source.reference.getter!!.owner.returnType.makeNotNull()).apply {
@@ -97,6 +97,11 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
                 irCall(source.function.symbol).apply {
                     dispatchReceiver = irGet(parameters.first { it.name == source.parameter })
                 }
+            }
+            is ParameterValueMappingSource -> {
+                val getter = irGet(parameters.first { it.name == source.parameter })
+                source.transformation?.let { constructTransformation(this@ObjectMappieCodeGenerator.context, it, getter) }
+                    ?: getter
             }
             is ParameterDefaultValueMappingSource -> {
                 null

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
-import kotlin.random.Random
 
 class ObjectWithDifferentValuesTest {
 

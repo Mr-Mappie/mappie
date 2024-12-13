@@ -1,6 +1,6 @@
 package tech.mappie.selection
 
-import tech.mappie.exceptions.MappiePanicException
+import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.resolving.ClassMappingRequest
 import tech.mappie.resolving.EnumMappingRequest
 import tech.mappie.resolving.MappingRequest
@@ -46,7 +46,7 @@ interface MappingSelector {
             when {
                 options.keys.all { it is ClassMappingRequest } -> ConstructorMappingSelector(options as Map<ClassMappingRequest, MappingValidation>)
                 options.keys.all { it is EnumMappingRequest } -> EnumMappingSelector(options as Map<EnumMappingRequest, MappingValidation>)
-                else -> throw MappiePanicException("Not all mappings are of the same type")
+                else -> panic("Not all mappings are of the same type")
             }
 
         @Suppress("UNCHECKED_CAST")
@@ -58,7 +58,7 @@ interface MappingSelector {
                 options.all { it is EnumMappingRequest } -> EnumMappingSelector(
                     options.associateWith { MappingValidation.valid() } as Map<EnumMappingRequest, MappingValidation>
                 )
-                else -> throw MappiePanicException("Not all mappings are of the same type")
+                else -> panic("Not all mappings are of the same type")
             }
 
     }

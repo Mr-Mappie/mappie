@@ -49,6 +49,10 @@ class UnsafePlatformTypeAssignmentProblems(
                 val description = "Target $targetString automatically resolved from ${source.property.dumpKotlinLike()} but it is unsafe to assign source platform type $sourceTypeString to target type ${target.type.dumpKotlinLike()}"
                 Problem.warning(description, location(context.function.fileEntry, mapping.origin))
             }
+            is ParameterValueMappingSource -> {
+                val description = "Target $targetString automatically resolved parameter ${source.parameter.asString()} but it is unsafe to assign source platform type $sourceTypeString to target type ${target.type.dumpKotlinLike()}"
+                Problem.warning(description, location(context.function.fileEntry, mapping.origin))
+            }
             is ParameterDefaultValueMappingSource -> {
                 null
             }

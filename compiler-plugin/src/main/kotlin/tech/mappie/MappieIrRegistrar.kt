@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import tech.mappie.config.MappieConfiguration
-import tech.mappie.exceptions.MappiePanicException
+import tech.mappie.exceptions.MappieProblemException
 import tech.mappie.generation.CodeGenerationContext
 import tech.mappie.generation.CodeGenerationModelFactory
 import tech.mappie.generation.MappieCodeGenerator
@@ -27,7 +27,7 @@ class MappieIrRegistrar(
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         context = pluginContext
 
-        handleMappiePanic {
+        handleMappieProblems {
             val context = DefinitionsCollector(createMappieContext(pluginContext)).collect(moduleFragment)
             val requests = moduleFragment.accept(MappingRequestResolver(), context)
 
@@ -51,8 +51,8 @@ class MappieIrRegistrar(
         }
     }
 
-    private fun handleMappiePanic(function: () -> Unit): Unit =
-        runCatching { function() }.getOrElse { if (it is MappiePanicException) Unit else throw it }
+    private fun handleMappieProblems(function: () -> Unit): Unit =
+        runCatching { function() }.getOrElse { if (it is MappieProblemException) Unit else throw it }
 
     private fun createMappieContext(pluginContext: IrPluginContext) = object : MappieContext {
         override val pluginContext = pluginContext

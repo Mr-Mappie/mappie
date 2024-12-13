@@ -6,9 +6,14 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.ifEmpty
 import tech.mappie.config.options.useDefaultArguments
-import tech.mappie.exceptions.MappiePanicException
+import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.resolving.*
 import tech.mappie.resolving.classes.sources.*
+import tech.mappie.resolving.classes.sources.FunctionMappingSource
+import tech.mappie.resolving.classes.sources.ImplicitClassMappingSource
+import tech.mappie.resolving.classes.sources.ImplicitPropertyMappingSource
+import tech.mappie.resolving.classes.sources.ParameterDefaultValueMappingSource
+import tech.mappie.resolving.classes.sources.ParameterValueMappingSource
 import tech.mappie.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.resolving.classes.targets.ValueParameterTarget
 import tech.mappie.util.*
@@ -63,7 +68,8 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
                     when (source) {
                         is ImplicitPropertyMappingSource -> source.copy(transformation = transformation(source, target))
                         is FunctionMappingSource -> source.copy(transformation = transformation(source, target))
-                        else -> throw MappiePanicException("Only ImplicitPropertyMappingSource should occur when resolving a transformation. Got ${source::class}")
+                        is ParameterValueMappingSource -> source.copy(transformation = transformation(source, target))
+                        is ParameterDefaultValueMappingSource -> panic("ParameterDefaultValueMappingSource should not occur when resolving a transformation.")
                     }
                 }
             }.ifEmpty {
@@ -112,6 +118,8 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
     fun sources(entries: List<Pair<Name, IrType>>) = apply {
         sources.putAll(entries)
         entries.map { (name, type) ->
+            implicit.merge(name, listOf(ParameterValueMappingSource(name, type, null)), List<ImplicitClassMappingSource>::plus)
+
             type.getClass()!!.accept(ImplicitClassMappingSourcesCollector(), name to type).forEach { (name, source) ->
                 implicit.merge(name, listOf(source), List<ImplicitClassMappingSource>::plus)
             }
