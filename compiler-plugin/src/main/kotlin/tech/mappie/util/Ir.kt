@@ -23,10 +23,20 @@ fun getterName(name: String) =
 fun IrSimpleFunction.isMappieMapFunction() =
     name == IDENTIFIER_MAP && overriddenSymbols.isNotEmpty()
 
+fun IrSimpleFunction.isMappieMapNullableListFunction() =
+    name == IDENTIFIER_MAP_NULLABLE_LIST
+            && valueParameters.singleOrNull()?.type?.isList() == true
+            && returnType.isList()
+
 fun IrSimpleFunction.isMappieMapListFunction() =
     name == IDENTIFIER_MAP_LIST
         && valueParameters.singleOrNull()?.type?.isList() == true
         && returnType.isList()
+
+fun IrSimpleFunction.isMappieMapNullableSetFunction() =
+    name == IDENTIFIER_MAP_NULLABLE_SET
+            && valueParameters.singleOrNull()?.type?.isSet() == true
+            && returnType.isSet()
 
 fun IrSimpleFunction.isMappieMapSetFunction() =
     name == IDENTIFIER_MAP_SET

@@ -10,7 +10,9 @@ data class MappieDefinition(
     val source: IrType = (clazz.superTypes.first() as IrSimpleType).arguments[0].typeOrFail,
     val target: IrType = (clazz.superTypes.first() as IrSimpleType).arguments[1].typeOrFail,
 ) {
+    fun referenceMapNullableListFunction() = clazz.functions.first { it.isMappieMapNullableListFunction() }
     fun referenceMapListFunction() = clazz.functions.first { it.isMappieMapListFunction() }
+    fun referenceMapNullableSetFunction() = clazz.functions.first { it.isMappieMapNullableSetFunction() }
     fun referenceMapSetFunction() = clazz.functions.first { it.isMappieMapSetFunction() }
     fun referenceMapNullableFunction() = clazz.functions.first { it.isMappieMapNullableFunction() }
     fun referenceMapFunction() = clazz.functions.first { it.isMappieMapFunction() }

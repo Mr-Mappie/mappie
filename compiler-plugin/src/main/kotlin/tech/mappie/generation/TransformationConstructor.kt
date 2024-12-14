@@ -39,16 +39,20 @@ fun IrBuilderWithScope.constructTransformation(context: CodeGenerationContext, t
     }
 
 private fun PropertyMappingViaMapperTransformation.selectTransformationFunction(value: IrExpression) =
-    when { // TODO: nullable list, nullable set doesn't work with this approach
+    when {
+        value.type.isList() && value.type.isNullable() -> mapper.referenceMapNullableListFunction()
         value.type.isList() -> mapper.referenceMapListFunction()
+        value.type.isSet() && value.type.isNullable() -> mapper.referenceMapNullableSetFunction()
         value.type.isSet() -> mapper.referenceMapSetFunction()
         value.type.isNullable() -> mapper.referenceMapNullableFunction()
         else -> mapper.referenceMapFunction()
     }
 
 private fun IrClass.selectTransformationFunction(value: IrExpression) =
-    when { // TODO: nullable list, nullable set doesn't work with this approach
+    when {
+        value.type.isList() && value.type.isNullable() -> functions.first { it.isMappieMapNullableListFunction() }
         value.type.isList() -> functions.first { it.isMappieMapListFunction() }
+        value.type.isSet() && value.type.isNullable() -> functions.first { it.isMappieMapNullableSetFunction() }
         value.type.isSet() -> functions.first { it.isMappieMapSetFunction() }
         value.type.isNullable() -> functions.first { it.isMappieMapNullableFunction() }
         else -> functions.first { it.isMappieMapFunction() }

@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_PARAMETER", "SameParameterValue")
+@file:Suppress("unused", "SameParameterValue")
 
 package tech.mappie.api
 
@@ -46,7 +46,7 @@ public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
      * @return [from] mapped to an instance of [TO].
      */
     public fun mapNullable(from: FROM?): TO? =
-        if (from == null) null else map(from)
+        from?.let { map(it) }
 
     /**
      * Map each element in [from] to an instance of [TO].
@@ -58,6 +58,15 @@ public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
         ArrayList<TO>(from.size).apply { from.forEach { add(map(it)) } }
 
     /**
+     * Map each element in [from] to an instance of [TO] if [from] is not null.
+     *
+     * @param from the source values.
+     * @return [from] mapped to a list of instances of [TO].
+     */
+    public fun mapNullableList(from: List<FROM>?): List<TO>? =
+        from?.let { ArrayList<TO>(it.size).apply { it.forEach { add(map(it)) } } }
+
+    /**
      * Map each element in [from] to an instance of [TO].
      *
      * @param from the source values.
@@ -65,6 +74,15 @@ public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
      */
     public fun mapSet(from: Set<FROM>): Set<TO> =
         HashSet<TO>(from.size).apply { from.forEach { add(map(it)) } }
+
+    /**
+     * Map each element in [from] to an instance of [TO] if [from] is not null.
+     *
+     * @param from the source values.
+     * @return [from] mapped to a set of instances of [TO].
+     */
+    public fun mapNullableSet(from: Set<FROM>?): Set<TO>? =
+        from?.let { HashSet<TO>(it.size).apply { from.forEach { add(map(it)) } } }
 
     /**
      * Mapping function which instructs Mappie to generate code for this implementation.
