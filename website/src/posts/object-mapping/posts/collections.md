@@ -8,10 +8,15 @@ eleventyNavigation:
 ---
 
 All mappers of Mappie define mapper variants for collections. Specifically, for `List` and `Set`. When we want to map a 
-property of such a type, we do not want to copy the collection itself, but the elements contained in such a type. We can 
-reference a mapper using the getters `forList` and `forSet` defined in each mapper.
+property of such a type, we do not want to copy the collection itself, but the elements contained in such a type. 
 
-Suppose we have the data class `Book` containing a list of `Page`
+Mappie automatically detects if the property is a (nullable) collection, and will automatically select the correct mapping 
+function to be used. 
+
+We can also explicitly reference a mapper using the getters `forList` and `forSet` defined 
+in each mapper. 
+
+For example, suppose we have the data class `Book` containing a list of `Page`
 ```kotlin
 data class Book(val pages: List<Page>)
 
@@ -34,4 +39,8 @@ object BookMapper : ObjectMappie<Book, BookDto>() {
         BookDto::pages fromProperty Book::pages via PageMapper.forList
     }
 }
+```
+Note that `BookMapper` is superfluous and is equivalent to 
+```kotlin
+object BookMapper : ObjectMappie<Book, BookDto>()
 ```

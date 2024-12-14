@@ -34,7 +34,6 @@ class DoubleNestedObjectWithListObjectToObjectListObjectTest {
             isOk()
             hasNoMessages()
 
-
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
                 .constructors

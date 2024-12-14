@@ -1,4 +1,4 @@
-package tech.mappie.testing.objects
+package tech.mappie.testing.sets
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -6,23 +6,24 @@ import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
+import java.time.LocalDate
+import java.time.LocalDateTime
 
-class GeneratedClassNonNullToNullTest {
-    data class Input(val a: InnerInput)
-    data class InnerInput(val value: String)
-    data class Output(val a: InnerOutput)
-    data class InnerOutput(val value: String?)
+class ObjectWithNullableSetToObjectNullableSetTest {
+    data class Input(val text: Set<LocalDateTime>?)
+
+    data class Output(val text: Set<LocalDate>?)
 
     @TempDir
     lateinit var directory: File
 
     @Test
-    fun `map object with nested non-nullable to nullable without declaring mapping should succeed`() {
+    fun `map nested nullable set to nullable set explicit with transform should succeed`() {
         compile(directory) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.objects.GeneratedClassNonNullToNullTest.*
+                import tech.mappie.testing.sets.ObjectWithNullableSetToObjectNullableSetTest.*
 
                 class Mapper : ObjectMappie<Input, Output>()
                 """
@@ -37,8 +38,11 @@ class GeneratedClassNonNullToNullTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(InnerInput("value"))))
-                .isEqualTo(Output(InnerOutput("value")))
+            assertThat(mapper.map(Input(setOf(LocalDateTime.MIN, LocalDateTime.MAX))))
+                .isEqualTo(Output(setOf(LocalDate.MIN, LocalDate.MAX)))
+
+            assertThat(mapper.map(Input(null)))
+                .isEqualTo(Output(null))
         }
     }
 }

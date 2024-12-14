@@ -8,6 +8,7 @@ changelog:
         - "Added an explicit error message when the compile-time mapping dsl is used during runtime."
         - "[#133](https://github.com/Mr-Mappie/mappie/issues/133) Added support for method references in fromExpression and transform."
         - "[#55](https://github.com/Mr-Mappie/mappie/issues/55) the input parameters themselves are now included in automatic resolving."
+        - "Added api functions to map nullable Lists and Sets."
     - date: "2024-11-18"
       title: "v0.9.2"
       items:
