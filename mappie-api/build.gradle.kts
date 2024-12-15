@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.dokka)
     alias(libs.plugins.android.library) apply false
-//    id("maven-publish")
+    id("maven-publish")
 }
 
 kotlin {
@@ -54,18 +54,18 @@ tasks.register<Jar>("javadocJar") {
     dependsOn(dokkaHtml)
 }
 
-//publishing {
-//    repositories {
-//        maven {
-//            url = uri(layout.buildDirectory.dir("staging-deploy"))
-//        }
-//    }
-//
-//    publications.configureEach {
-//        if (this is MavenPublication) {
-//            artifact(tasks["javadocJar"])
-//
-//            mappiePom(name = "tech.mappie:compiler-plugin")
-//        }
-//    }
-//}
+publishing {
+    repositories {
+        maven {
+            url = uri(layout.buildDirectory.dir("staging-deploy"))
+        }
+    }
+
+    publications.configureEach {
+        if (this is MavenPublication) {
+            artifact(tasks["javadocJar"])
+
+            mappiePom(name = "tech.mappie:compiler-plugin")
+        }
+    }
+}
