@@ -2,7 +2,7 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-    - date: "tbd"
+    - date: "2024-12-15"
       title: "v0.10.0"
       items:
         - "Added an explicit error message when the compile-time mapping dsl is used during runtime."
