@@ -54,6 +54,11 @@ tasks.register<Jar>("javadocJar") {
     dependsOn(dokkaHtml)
 }
 
+tasks.register<Jar>("emptyJar") {
+    group = "build"
+    description = "Assemble an empty jar."
+}
+
 publishing {
     repositories {
         maven {
@@ -64,7 +69,10 @@ publishing {
     publications.configureEach {
         if (this is MavenPublication) {
             artifact(tasks["javadocJar"])
-
+            // jreleaser workaround
+            if (name != "jvm" && name != "kotlinMultiplatform") {
+                artifact(tasks["emptyJar"])
+            }
             mappiePom(name = "tech.mappie:compiler-plugin")
         }
     }
