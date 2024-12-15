@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     alias(libs.plugins.kotlin.jvm)
     id("java-test-fixtures")
-//    id("maven-publish")
+    id("maven-publish")
     id("jacoco")
 }
 
@@ -30,26 +30,26 @@ java {
     withJavadocJar()
 }
 
-//publishing {
-//    publications {
-//        create<MavenPublication>("kotlin") {
-//            artifactId = "mappie-compiler-plugin"
-//
-//            from((components["java"] as AdhocComponentWithVariants).apply {
-//                withVariantsFromConfiguration(configurations["testFixturesApiElements"]) { skip() }
-//                withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }
-//            })
-//
-//            mappiePom(name = "tech.mappie:compiler-plugin")
-//        }
-//    }
-//
-//    repositories {
-//        maven {
-//            url = uri(layout.buildDirectory.dir("staging-deploy"))
-//        }
-//    }
-//}
+publishing {
+    publications {
+        create<MavenPublication>("kotlin") {
+            artifactId = "mappie-compiler-plugin"
+
+            from((components["java"] as AdhocComponentWithVariants).apply {
+                withVariantsFromConfiguration(configurations["testFixturesApiElements"]) { skip() }
+                withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }
+            })
+
+            mappiePom(name = "tech.mappie:compiler-plugin")
+        }
+    }
+
+    repositories {
+        maven {
+            url = uri(layout.buildDirectory.dir("staging-deploy"))
+        }
+    }
+}
 
 tasks.withType<Test> {
     useJUnitPlatform()

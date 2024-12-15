@@ -59,7 +59,14 @@ jreleaser {
         maven {
             mavenCentral {
                 active = org.jreleaser.model.Active.ALWAYS
-                listOf("mappie-api").forEach {
+                buildList {
+                    if (System.getenv("RELEASE_API") == "true") {
+                        add("mappie-api")
+                    }
+                    if (System.getenv("RELEASE_COMPILER_PLUGIN") == "true") {
+                        add("compiler-plugin")
+                    }
+                }.forEach {
                     create(it) {
                         active = org.jreleaser.model.Active.ALWAYS
                         url = "https://central.sonatype.com/api/v1/publisher"
