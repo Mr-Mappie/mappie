@@ -53,10 +53,6 @@ jreleaser {
             name  = "mappie"
             username = "stefankoppier"
             token = properties["release.github.token"] as? String
-            releaseNotes {
-                enabled = true
-                configurationFile = ".github/release.yml"
-            }
         }
     }
     deploy {
