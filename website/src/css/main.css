@@ -1242,6 +1242,7 @@ strong {
   display: inline-flex;
 }
 .nav-container ul li a {
+  cursor: pointer;
   text-decoration: none;
   color: darkgray;
   padding: 10px;
