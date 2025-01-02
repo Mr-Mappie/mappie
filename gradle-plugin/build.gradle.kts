@@ -24,17 +24,17 @@ gradlePlugin {
     }
 }
 
-tasks.register("updateCompilerPluginVersion") {
+tasks.register("updateMappieProperties") {
     group = "build"
-    description = "Update version.properties file for Gradle plugin."
+    description = "Update mappie.properties file for Gradle plugin."
     doLast {
         val directory = project.mkdir("src/main/resources")
-        File(directory, "version.properties").writeText("version=${project.version}")
+        File(directory, "mappie.properties").writeText("VERSION=${project.version}")
     }
 }
 
 tasks.compileKotlin {
-    dependsOn("updateCompilerPluginVersion")
+    dependsOn("updateMappieProperties")
 }
 
 tasks.test {
