@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+    - date: "tbd"
+      title: "v1.0.0"
+      items:
+        - "[#148](https://github.com/Mr-Mappie/mappie/issues/148) the `mappie-api` dependency is now applied automatically."
     - date: "2024-12-15"
       title: "v0.10.0"
       items:

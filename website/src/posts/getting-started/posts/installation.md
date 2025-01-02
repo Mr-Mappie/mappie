@@ -30,7 +30,8 @@ plugin. We can apply Mappie by adding the following plugin to the Gradle build f
     </div>
 {% endraw %}
 
-The `mappie-api` dependency must be added to the Gradle build file file for the programming interface
+When using mappie version below `1.0.0` or when you want to add the `mappie-api` dependency manually, 
+the `mappie-api` dependency can be added as follows
 {% raw %}
 <div class="nav-container">
     <ul class="nav">

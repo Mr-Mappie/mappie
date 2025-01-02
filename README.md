@@ -51,7 +51,7 @@ plugins {
     id("tech.mappie.plugin") version "x.y.z"
 }
 ```
-The `mappie-api` dependency must be added to the `build.gradle.kts` file for the programming interface
+When using the plugin before version `1.0.0`, the `mappie-api` dependency must be added to the `build.gradle.kts` file for the programming interface
 ```kotlin
 dependencies {
     implementation("tech.mappie:mappie-api:x.y.z")

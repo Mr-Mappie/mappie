@@ -3,8 +3,8 @@ package tech.mappie
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.*
-import java.util.*
 
+@Suppress("unused")
 class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun apply(target: Project) {
@@ -15,6 +15,10 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
         with (kotlinCompilation.project) {
             logger.info("Mappie plugin ${getPluginArtifact().version} applied")
+
+            kotlinCompilation.dependencies {
+                implementation(dependencies.create("tech.mappie:mappie-api:${getPluginArtifact().version}"))
+            }
 
             val extension = extensions.getByType(MappieExtension::class.java)
             return provider {
@@ -42,18 +46,10 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
         SubpluginArtifact(
             groupId = "tech.mappie",
             artifactId = "mappie-compiler-plugin",
-            version = javaClass.classLoader.getResourceAsStream("version.properties").use {
-                Properties().apply { load(it) }.getProperty("version")
-            },
+            version = MappieProperties.version,
         )
 
-    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) =
-        kotlinCompilation.target.project.run {
-            hasMappiePlugin()
-        }
-
-    private fun Project.hasMappiePlugin() =
-        plugins.hasPlugin(MappieGradlePlugin::class.java)
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) = true
 
     private fun Project.checkCompatibility() {
         val version = getKotlinPluginVersion()
