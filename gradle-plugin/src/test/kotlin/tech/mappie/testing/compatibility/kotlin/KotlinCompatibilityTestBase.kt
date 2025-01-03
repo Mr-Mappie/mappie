@@ -42,7 +42,8 @@ abstract class KotlinCompatibilityTestBase : TestBase() {
                     to("unknown") fromValue "unknown"
                 }
             }
-
+        
+            @tech.mappie.api.config.UseStrictEnums
             object ObjectMapper : ObjectMappie<InputObject, OutputObject>() {
                 override fun map(from: InputObject) = mapping {
                     to::boolean fromProperty from.nested::boolean via BooleanEnumToBooleanMapper
@@ -50,6 +51,7 @@ abstract class KotlinCompatibilityTestBase : TestBase() {
                 }
             }
 
+            @tech.mappie.api.config.UseDefaultArguments
             object BooleanEnumToBooleanMapper : ObjectMappie<NestedInput.BooleanEnum, Boolean>() {
                 override fun map(from: NestedInput.BooleanEnum) = when (from) {
                     NestedInput.BooleanEnum.TRUE -> !false
