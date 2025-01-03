@@ -3,7 +3,6 @@ package tech.mappie.validation
 import tech.mappie.resolving.*
 import tech.mappie.validation.problems.classes.*
 import tech.mappie.validation.problems.enums.AllSourcesMappedProblems
-import tech.mappie.validation.problems.enums.EnumConfigProblems
 import tech.mappie.validation.problems.enums.UnnecessaryExplicitMappingProblems
 
 interface MappingValidation {
@@ -31,7 +30,6 @@ interface MappingValidation {
                 addAll(UnknownParameterNameProblems.of(context, mapping).all())
                 addAll(VisibilityProblems.of(context, mapping).all())
                 addAll(MapperGenerationRequestProblems.of(context, mapping).all())
-                addAll(ClassConfigProblems.of(context, mapping).all())
                 addAll(UnnecessaryFromPropertyNotNullProblems.of(context, mapping).all())
                 addAll(CompileTimeReceiverDslProblems.of(context, mapping).all())
             }
@@ -45,7 +43,6 @@ interface MappingValidation {
         override val problems: List<Problem> = buildList {
             addAll(UnnecessaryExplicitMappingProblems.of(context, mapping).all())
             addAll(AllSourcesMappedProblems.of(context, mapping).all())
-            addAll(EnumConfigProblems.of(context, mapping).all())
         }
     }
 

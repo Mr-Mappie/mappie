@@ -3,6 +3,9 @@ package tech.mappie.util
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import tech.mappie.api.config.UseDefaultArguments
+import tech.mappie.api.config.UseStrictEnums
+import tech.mappie.api.config.UseStrictVisibility
 
 val IDENTIFIER_MAPPING = Name.identifier("mapping")
 
@@ -41,3 +44,13 @@ val PACKAGE_TECH_MAPPIE_API = FqName("tech.mappie.api")
 val PACKAGE_TECH_MAPPIE_API_CONFIG = FqName("tech.mappie.api.config")
 
 val CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("ObjectMappingConstructor"))
+
+val CLASS_ID_ENUM_MAPPIE = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("EnumMappie"))
+
+val CLASS_ID_OBJECT_MAPPIE = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("ObjectMappie"))
+
+val CLASS_ID_USE_STRICT_VISIBILITY = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier(UseStrictVisibility::class.simpleName!!))
+
+val CLASS_ID_USE_DEFAULT_ARGUMENTS = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier(UseDefaultArguments::class.simpleName!!))
+
+val CLASS_ID_USE_STRICT_ENUMS = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier(UseStrictEnums::class.simpleName!!))

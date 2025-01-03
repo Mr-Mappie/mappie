@@ -6,14 +6,12 @@ import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.util.getValueArgument
 import org.jetbrains.kotlin.ir.util.isTrueConst
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.MappieContext
-import tech.mappie.api.config.UseStrictEnums
-import tech.mappie.util.PACKAGE_TECH_MAPPIE_API_CONFIG
+import tech.mappie.util.CLASS_ID_USE_STRICT_ENUMS
 
 fun MappieContext.useStrictEnumsClassSymbol() =
-    pluginContext.referenceClass(ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier(UseStrictEnums::class.simpleName!!)))
+    pluginContext.referenceClass(CLASS_ID_USE_STRICT_ENUMS)
 
 fun MappieContext.getUseStrictEnumsAnnotation(function: IrFunction): IrConstructorCall? =
     function.parentAsClass.annotations.firstOrNull { it.type.classOrFail == useStrictEnumsClassSymbol() }
