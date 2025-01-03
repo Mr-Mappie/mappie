@@ -45,7 +45,7 @@ kotlin {
     linuxArm64()
 }
 
-val dokkaHtml by tasks.dokkaHtml
+val dokkaHtml by tasks.dokkaGeneratePublicationHtml
 tasks.register<Jar>("javadocJar") {
     group = "build"
     description = "Assemble a javadoc jar containing the Dokka pages of the 'main' feature."
@@ -68,7 +68,7 @@ publishing {
 
     publications.configureEach {
         if (this is MavenPublication) {
-            artifact(tasks["javadocJar"])
+//            artifact(tasks["javadocJar"])
             // jreleaser workaround
             if (name != "jvm" && name != "kotlinMultiplatform") {
                 artifact(tasks["emptyJar"])
