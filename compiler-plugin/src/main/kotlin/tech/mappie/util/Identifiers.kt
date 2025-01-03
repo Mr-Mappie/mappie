@@ -39,7 +39,11 @@ val IDENTIFIER_TRANSFORM = Name.identifier("transform")
 
 val IDENTIFIER_VIA = Name.identifier("via")
 
+val PACKAGE_KOTLIN = FqName("kotlin")
+
 val PACKAGE_TECH_MAPPIE_API = FqName("tech.mappie.api")
+
+val PACKAGE_TECH_MAPPIE_API_BUILTIN = FqName("tech.mappie.api.builtin")
 
 val PACKAGE_TECH_MAPPIE_API_CONFIG = FqName("tech.mappie.api.config")
 

@@ -4,11 +4,13 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.api.EnumMappie
 import tech.mappie.api.ObjectMappie
 import tech.mappie.config.MappieConfiguration
+import tech.mappie.ir.MappieLogger
+import tech.mappie.util.PACKAGE_KOTLIN
+import tech.mappie.util.PACKAGE_TECH_MAPPIE_API
 
 interface MappieContext {
     val pluginContext: IrPluginContext
@@ -17,13 +19,13 @@ interface MappieContext {
 }
 
 fun MappieContext.referenceObjectMappieClass(): IrClassSymbol =
-    pluginContext.referenceClass(ClassId(FqName("tech.mappie.api"), Name.identifier(ObjectMappie::class.simpleName!!)))!!
+    pluginContext.referenceClass(ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier(ObjectMappie::class.simpleName!!)))!!
 
 fun MappieContext.referenceEnumMappieClass(): IrClassSymbol =
-    pluginContext.referenceClass(ClassId(FqName("tech.mappie.api"), Name.identifier(EnumMappie::class.simpleName!!)))!!
+    pluginContext.referenceClass(ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier(EnumMappie::class.simpleName!!)))!!
 
 fun MappieContext.referenceFunctionLet() =
-    pluginContext.referenceFunctions(CallableId(FqName("kotlin"), Name.identifier("let"))).first()
+    pluginContext.referenceFunctions(CallableId(PACKAGE_KOTLIN, Name.identifier("let"))).first()
 
 fun MappieContext.referenceFunctionRequireNotNull() =
-    pluginContext.referenceFunctions(CallableId(FqName("kotlin"), Name.identifier("requireNotNull"))).first()
+    pluginContext.referenceFunctions(CallableId(PACKAGE_KOTLIN, Name.identifier("requireNotNull"))).first()

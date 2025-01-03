@@ -5,6 +5,7 @@ import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.compile
 import java.io.File
 
+@Suppress("unused")
 class EnumMapperWrongConfigTest {
 
     enum class Input { A, B }

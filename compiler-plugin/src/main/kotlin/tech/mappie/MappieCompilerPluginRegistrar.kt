@@ -14,6 +14,7 @@ import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_WARNINGS_AS_ERR
 import tech.mappie.config.MappieConfiguration
 import tech.mappie.config.StrictnessConfiguration
 import tech.mappie.fir.MappieFirRegistrar
+import tech.mappie.ir.MappieIrRegistrar
 
 @OptIn(ExperimentalCompilerApi::class)
 class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
