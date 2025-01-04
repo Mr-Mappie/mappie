@@ -16,6 +16,7 @@ allprojects {
 
 dependencies {
     jacocoAggregation(project(":compiler-plugin"))
+    jacocoAggregation(project(":gradle-plugin"))
 }
 
 sonar {
