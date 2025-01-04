@@ -27,15 +27,19 @@ gradlePlugin {
 tasks.register("updateMappieProperties") {
     group = "build"
     description = "Update mappie.properties file for Gradle plugin."
+
+    val projectVersion = project.version.toString()
+    val propertiesFile = layout.buildDirectory.file("resources/main/mappie.properties")
+    outputs.file(propertiesFile)
+
+    tasks.findByName("sourcesJar")?.dependsOn(this)
+
     doLast {
-        val directory = project.mkdir("src/main/resources")
-        File(directory, "mappie.properties").writeText("VERSION=${project.version}")
+        propertiesFile.get().asFile.writeText("VERSION=$projectVersion")
     }
 }
 
-tasks.compileKotlin {
-    dependsOn("updateMappieProperties")
-}
+tasks.named("processResources") { dependsOn("updateMappieProperties") }
 
 tasks.test {
     useJUnitPlatform()
