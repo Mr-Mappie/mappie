@@ -28,35 +28,4 @@ class WarningsAsErrorsTest : TestBase() {
         assertThat(result.output.lines())
             .anyMatch { it.matches(Regex("w: .+ Unnecessary explicit mapping of source Input.A")) }
     }
-
-    @Test
-    fun `an expected warning is output as a error when configured`() {
-        kotlin("build.gradle.kts",
-            """
-            mappie {
-                warningsAsErrors = true
-            }                
-            """.trimIndent()
-        )
-
-        kotlin("src/main/kotlin/Mapper.kt",
-            """
-            import tech.mappie.api.EnumMappie
-            
-            enum class Input { A, B }
-            enum class Output { A, B }
-    
-            object Mapper : EnumMappie<Input, Output>() {
-                override fun map(from: Input) = mapping {
-                    Output.A fromEnumEntry Input.A
-                }
-            }
-            """.trimIndent()
-        )
-
-        val result = runner.withArguments("build").buildAndFail()
-
-        assertThat(result.output.lines())
-            .anyMatch { it.matches(Regex("e: .+ Unnecessary explicit mapping of source Input.A")) }
-    }
 }

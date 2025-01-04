@@ -20,13 +20,13 @@ class UseDefaultArgumentsAnnotationChecker : FirAnnotationCallChecker(MppChecker
         if (expression.resolvedType.classId == CLASS_ID_USE_DEFAULT_ARGUMENTS) {
             val symbol = expression.containingDeclarationSymbol
             if (symbol is FirClassSymbol && symbol.isSubclassOfEnumMappie(context.session)) {
-                reporter.reportOn(expression.source, NOT_APPLICABLE_WARNING, NOT_APPLICABLE_MESSAGE, context)
+                reporter.reportOn(expression.source, ANNOTATION_NOT_APPLICABLE, NOT_APPLICABLE_MESSAGE, context)
             }
         }
     }
 
     companion object {
-        private val NOT_APPLICABLE_WARNING by warning1<KtElement, String>(WHOLE_ELEMENT)
+        private val ANNOTATION_NOT_APPLICABLE by warning1<KtElement, String>(WHOLE_ELEMENT)
         private const val NOT_APPLICABLE_MESSAGE = "Annotation @UseDefaultArguments has no effect on children of EnumMappie"
     }
 }

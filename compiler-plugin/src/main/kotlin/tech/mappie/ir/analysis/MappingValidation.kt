@@ -3,7 +3,6 @@ package tech.mappie.ir.analysis
 import tech.mappie.ir.resolving.*
 import tech.mappie.ir.analysis.problems.classes.*
 import tech.mappie.ir.analysis.problems.enums.AllSourcesMappedProblems
-import tech.mappie.ir.analysis.problems.enums.UnnecessaryExplicitMappingProblems
 
 interface MappingValidation {
     val problems: List<Problem>
@@ -41,7 +40,6 @@ interface MappingValidation {
     ) : MappingValidation {
 
         override val problems: List<Problem> = buildList {
-            addAll(UnnecessaryExplicitMappingProblems.of(context, mapping).all())
             addAll(AllSourcesMappedProblems.of(context, mapping).all())
         }
     }
