@@ -30,7 +30,6 @@ interface MappingValidation {
                 addAll(VisibilityProblems.of(context, mapping).all())
                 addAll(MapperGenerationRequestProblems.of(context, mapping).all())
                 addAll(UnnecessaryFromPropertyNotNullProblems.of(context, mapping).all())
-                addAll(CompileTimeReceiverDslProblems.of(context, mapping).all())
             }
     }
 
