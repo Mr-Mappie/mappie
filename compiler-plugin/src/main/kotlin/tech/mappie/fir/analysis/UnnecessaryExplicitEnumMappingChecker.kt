@@ -11,13 +11,16 @@ import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtElement
+import tech.mappie.fir.util.hasCallableId
+import tech.mappie.util.CLASS_ID_ENUM_MAPPING_CONSTRUCTOR
 import tech.mappie.util.IDENTIFIER_FROM_ENUM_ENTRY
 
 class UnnecessaryExplicitEnumMappingChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (expression.calleeReference.name == IDENTIFIER_FROM_ENUM_ENTRY) {
+        if (expression.hasCallableId(CallableId(CLASS_ID_ENUM_MAPPING_CONSTRUCTOR, IDENTIFIER_FROM_ENUM_ENTRY))) {
             val lhs = expression.extensionReceiver
             val rhs = expression.arguments.first()
 

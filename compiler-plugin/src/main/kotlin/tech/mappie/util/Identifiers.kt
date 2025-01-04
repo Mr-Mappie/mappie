@@ -61,6 +61,8 @@ val PACKAGE_TECH_MAPPIE_API_CONFIG = FqName("tech.mappie.api.config")
 
 val CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("ObjectMappingConstructor"))
 
+val CLASS_ID_ENUM_MAPPING_CONSTRUCTOR = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("EnumMappingConstructor"))
+
 val CLASS_ID_ENUM_MAPPIE = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("EnumMappie"))
 
 val CLASS_ID_OBJECT_MAPPIE = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("ObjectMappie"))

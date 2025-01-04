@@ -18,6 +18,7 @@ class MappieAdditionalCheckersExtension(session: FirSession) : FirAdditionalChec
         override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(
             UnnecessaryExplicitEnumMappingChecker(),
             CompileTimeDslReceiverChecker(),
+            ToCallChecker(),
         )
     }
 }
