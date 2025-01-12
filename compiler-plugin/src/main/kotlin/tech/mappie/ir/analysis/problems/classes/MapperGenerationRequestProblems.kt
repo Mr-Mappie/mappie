@@ -34,19 +34,17 @@ class MapperGenerationRequestProblems(
                 ))
             } else {
                 val context = context.copy(generated = requests.map { it.source.type to it.target.type })
-                requests
-                    .associateBy { request -> MappingValidation.of(context, request) }
-                    .mapNotNull { (validation, request) ->
-                        if (validation.isValid()) {
-                            null
-                        } else {
-                            Problem.error(
-                                "No implicit mapping can be generated from ${request.source.type.dumpKotlinLike()} to ${request.target.type.dumpKotlinLike()}",
-                                location(context.function),
-                                validation.errors().map { it.description }
-                            )
-                        }
+
+                buildList {
+                    val validations = requests
+                        .associateBy { request -> MappingValidation.of(context, request) }
+
+                    if (validations.none { it.key.isValid() }) {
+                        val (validation, request) = validations.entries.first { !it.key.isValid() }
+                        val message = "No implicit mapping can be generated from ${request.source.type.dumpKotlinLike()} to ${request.target.type.dumpKotlinLike()}"
+                        add(Problem.error(message, location(context.function), validation.errors().map { it.description }))
                     }
+                }
             }
         }
 

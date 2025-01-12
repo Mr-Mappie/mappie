@@ -18,6 +18,7 @@ import tech.mappie.ir.util.location
 import tech.mappie.ir.analysis.MappingValidation
 import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.analysis.ValidationContext
+import tech.mappie.ir.resolving.MappingRequestResolver
 
 class MappieIrRegistrar(
     private val messageCollector: MessageCollector,
@@ -29,7 +30,7 @@ class MappieIrRegistrar(
 
         handleMappieProblems {
             val context = DefinitionsCollector(createMappieContext(pluginContext)).collect(moduleFragment)
-            val requests = moduleFragment.accept(tech.mappie.ir.resolving.MappingRequestResolver(), context)
+            val requests = moduleFragment.accept(MappingRequestResolver(), context)
 
             requests.forEach { (clazz, options) ->
                 val selected = MappingSelector.of(options.associateWith {

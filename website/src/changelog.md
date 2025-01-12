@@ -5,7 +5,9 @@ changelog:
     - date: "tbd"
       title: "v1.0.0"
       items:
+        - "Migrated multiple checks from the compiler back-end to the FIR compiler front-end."
         - "[#148](https://github.com/Mr-Mappie/mappie/issues/148) the `mappie-api` dependency is now applied automatically."
+        - "Fixed a bug where the constructor of a generated target class is not selected property."
     - date: "2024-12-15"
       title: "v0.10.0"
       items:
