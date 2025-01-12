@@ -3,7 +3,6 @@ package tech.mappie.ir.analysis
 import tech.mappie.ir.resolving.*
 import tech.mappie.ir.analysis.problems.classes.*
 import tech.mappie.ir.analysis.problems.enums.AllSourcesMappedProblems
-import tech.mappie.ir.analysis.problems.enums.UnnecessaryExplicitMappingProblems
 
 interface MappingValidation {
     val problems: List<Problem>
@@ -27,11 +26,9 @@ interface MappingValidation {
                 addAll(MultipleSourcesProblems.of(mapping).all())
                 addAll(UnsafeTypeAssignmentProblems.of(context, mapping).all())
                 addAll(UnsafePlatformTypeAssignmentProblems.of(context, mapping).all())
-                addAll(UnknownParameterNameProblems.of(context, mapping).all())
                 addAll(VisibilityProblems.of(context, mapping).all())
                 addAll(MapperGenerationRequestProblems.of(context, mapping).all())
                 addAll(UnnecessaryFromPropertyNotNullProblems.of(context, mapping).all())
-                addAll(CompileTimeReceiverDslProblems.of(context, mapping).all())
             }
     }
 
@@ -41,7 +38,6 @@ interface MappingValidation {
     ) : MappingValidation {
 
         override val problems: List<Problem> = buildList {
-            addAll(UnnecessaryExplicitMappingProblems.of(context, mapping).all())
             addAll(AllSourcesMappedProblems.of(context, mapping).all())
         }
     }

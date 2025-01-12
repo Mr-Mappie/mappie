@@ -31,4 +31,24 @@ class ObjectMapperWrongConfigTest {
             hasWarningMessage(5, "Annotation @UseStrictEnums has no effect on children of ObjectMappie")
         }
     }
+
+    @Test
+    fun `declaring an ObjectMappie with @UseStrictEnums should not warn when suppressed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ObjectMapperWrongConfigTest.*
+                import tech.mappie.api.config.UseStrictEnums
+
+                @Suppress("ANNOTATION_NOT_APPLICABLE")
+                @UseStrictEnums
+                class Mapper : ObjectMappie<Input, Output>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
+        }
+    }
 }

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.gradle.plugin.publish)
+    id("jacoco")
 }
 
 dependencies {
@@ -44,10 +45,15 @@ tasks.named("processResources") { dependsOn("updateMappieProperties") }
 tasks.test {
     useJUnitPlatform()
 
-    dependsOn(project.tasks.publishToMavenLocal)
-    dependsOn(project(":compiler-plugin").tasks.publishToMavenLocal)
-    dependsOn(project(":mappie-api").tasks.named("publishKotlinMultiplatformPublicationToMavenLocal"))
-    dependsOn(project(":mappie-api").tasks.named("publishJvmPublicationToMavenLocal"))
+    inputs.files(fileTree(project(":compiler-plugin").projectDir) { include("src/main/**") })
+    inputs.files(fileTree(project(":mappie-api").projectDir) { include("src/main/**") })
+
+    dependsOn("publishToMavenLocal")
+    dependsOn(":compiler-plugin:publishToMavenLocal")
+    dependsOn(":mappie-api:publishKotlinMultiplatformPublicationToMavenLocal")
+    dependsOn(":mappie-api:publishJvmPublicationToMavenLocal")
+
+    finalizedBy(tasks.jacocoTestReport)
 
     maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
 }

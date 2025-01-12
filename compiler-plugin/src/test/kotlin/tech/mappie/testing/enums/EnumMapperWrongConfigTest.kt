@@ -34,6 +34,26 @@ class EnumMapperWrongConfigTest {
     }
 
     @Test
+    fun `declaring an EnumMappie with @UseDefaultArguments should not warn when suppressed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.EnumMappie
+                import tech.mappie.testing.enums.EnumMapperWrongConfigTest.*
+                import tech.mappie.api.config.UseDefaultArguments
+
+                @Suppress("ANNOTATION_NOT_APPLICABLE")
+                @UseDefaultArguments
+                class Mapper : EnumMappie<Input, Output>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
+        }
+    }
+
+    @Test
     fun `declaring an EnumMappie with @UseStrictVisibility should warn`() {
         compile(directory) {
             file("Test.kt",
@@ -49,6 +69,26 @@ class EnumMapperWrongConfigTest {
         } satisfies {
             isOk()
             hasWarningMessage(5, "Annotation @UseStrictVisibility has no effect on children of EnumMappie")
+        }
+    }
+
+    @Test
+    fun `declaring an EnumMappie with @UseStrictVisibility should not warn when suppressed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.EnumMappie
+                import tech.mappie.testing.enums.EnumMapperWrongConfigTest.*
+                import tech.mappie.api.config.UseStrictVisibility
+
+                @Suppress("ANNOTATION_NOT_APPLICABLE")
+                @UseStrictVisibility
+                class Mapper : EnumMappie<Input, Output>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
         }
     }
 }

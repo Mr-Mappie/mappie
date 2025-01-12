@@ -59,7 +59,7 @@ class ConstructorParameterNotAFieldTest {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(6, "Identifier must be a compile-time constant")
+            hasErrorMessage(6, "Argument must be a compile-time constant")
         }
     }
 

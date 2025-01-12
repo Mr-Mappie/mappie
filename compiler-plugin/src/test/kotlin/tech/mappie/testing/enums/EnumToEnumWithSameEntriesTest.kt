@@ -60,7 +60,7 @@ class EnumToEnumWithSameEntriesTest {
             )
         } satisfies {
             isOk()
-            hasWarningMessage(5, "Unnecessary explicit mapping of source Input.SOME")
+            hasWarningMessage(6, "Unnecessary explicit mapping of source Input.SOME")
 
             val mapper = classLoader
                 .loadEnumMappieClass<Input, Output>("Mapper")
@@ -71,6 +71,28 @@ class EnumToEnumWithSameEntriesTest {
             Input.entries.forEach { entry ->
                 assertThat(mapper.map(entry)).isEqualTo(Output.valueOf(entry.name))
             }
+        }
+    }
+
+    @Test
+    fun `map identical enums with an explicit mapping should not warn when suppressed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.EnumMappie
+                import tech.mappie.testing.enums.EnumToEnumWithSameEntriesTest.*
+
+                @Suppress("UNNECESSARY_EXPLICIT_MAPPING")
+                class Mapper : EnumMappie<Input, Output>() {
+                    override fun map(from: Input) = mapping {
+                        Output.SOME fromEnumEntry Input.SOME
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
         }
     }
 }

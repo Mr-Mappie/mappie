@@ -22,18 +22,19 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
     override val supportsK2: Boolean = true
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
+        val config = MappieConfiguration(
+            warningsAsErrors = configuration.get(ARGUMENT_WARNINGS_AS_ERRORS, false),
+            useDefaultArguments = configuration.get(ARGUMENT_USE_DEFAULT_ARGUMENTS, true),
+            strictness = StrictnessConfiguration(
+                enums = configuration.get(ARGUMENT_STRICTNESS_ENUMS, true),
+                visibility = configuration.get(ARGUMENT_STRICTNESS_VISIBILITY, false)
+            )
+        )
         FirExtensionRegistrarAdapter.registerExtension(MappieFirRegistrar())
         IrGenerationExtension.registerExtension(
             MappieIrRegistrar(
                 configuration.get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE),
-                MappieConfiguration(
-                    warningsAsErrors = configuration.get(ARGUMENT_WARNINGS_AS_ERRORS, false),
-                    useDefaultArguments = configuration.get(ARGUMENT_USE_DEFAULT_ARGUMENTS, true),
-                    strictness = StrictnessConfiguration(
-                        enums = configuration.get(ARGUMENT_STRICTNESS_ENUMS, true),
-                        visibility = configuration.get(ARGUMENT_STRICTNESS_VISIBILITY, false)
-                    )
-                )
+                config
             )
         )
     }
