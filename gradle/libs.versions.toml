@@ -18,3 +18,4 @@ sonarqube = { id = "org.sonarqube", version = "6.0.1.5171" }
 jreleaser = { id = "org.jreleaser", version = "1.16.0" }
 dokka = { id = "org.jetbrains.dokka", version = "2.0.0" }
 android-library = { id = "com.android.library", version = "8.5.2" }
+intellij-platform = { id = "org.jetbrains.intellij.platform", version = "2.1.0" }

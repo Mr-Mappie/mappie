@@ -1,0 +1,15 @@
+<idea-plugin>
+    <id>tech.mappie</id>
+    <name>Mappie Plugin</name>
+    <vendor>Mappie</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.plugins.gradle</depends>
+    <depends>org.jetbrains.kotlin</depends>
+
+    <module value="compiler-plugin-support"/>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <gradleProjectImportHandler implementation="tech.mappie.MappieGradleProjectImportHandler"/>
+    </extensions>
+</idea-plugin>

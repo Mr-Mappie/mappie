@@ -19,4 +19,5 @@ include(
     ":mappie-api",
     ":compiler-plugin",
     ":gradle-plugin",
+    ":intellij-plugin",
 )
