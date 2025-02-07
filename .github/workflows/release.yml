@@ -46,6 +46,9 @@ jobs:
       - name: Staging
         run: ./gradlew publish
 
+      - name: JReleaser workaround
+        run: mkdir -p build/jreleaser
+
       - name: Publish to Maven Central
         run: ./gradlew jreleaserFullRelease
         env:

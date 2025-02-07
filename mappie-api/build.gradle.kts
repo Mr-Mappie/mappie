@@ -68,7 +68,7 @@ publishing {
 
     publications.configureEach {
         if (this is MavenPublication) {
-//            artifact(tasks["javadocJar"])
+            artifact(tasks["javadocJar"])
             // jreleaser workaround
             if (name != "jvm" && name != "kotlinMultiplatform") {
                 artifact(tasks["emptyJar"])
