@@ -2,7 +2,7 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-    - date: "tbd"
+    - date: "2025-02-07"
       title: "v1.0.0"
       items:
         - "Migrated multiple checks from the compiler back-end to the FIR compiler front-end."
