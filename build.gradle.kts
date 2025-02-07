@@ -33,6 +33,10 @@ sonar {
     }
 }
 
+tasks.jreleaserFullRelease.configure {
+    doNotTrackState("Disable configuration-cache for jreleaser")
+}
+
 jreleaser {
     project {
         authors.add("Stefan Koppier")
