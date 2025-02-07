@@ -34,7 +34,7 @@ sonar {
 }
 
 tasks.jreleaserFullRelease.configure {
-    doNotTrackState("Disable configuration-cache for jreleaser")
+    notCompatibleWithConfigurationCache("Disable configuration-cache for jreleaser")
 }
 
 jreleaser {
