@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.name.Name
 import tech.mappie.ir.util.BaseVisitor
 import tech.mappie.MappieContext
 import tech.mappie.api.Mappie
+import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.resolving.MappieDefinition
 import tech.mappie.ir.resolving.ResolverContext
 import tech.mappie.ir.util.isSubclassOf
@@ -25,10 +26,12 @@ class DefinitionsCollector(val context: MappieContext) {
 }
 
 class BuiltinMappieDefinitionsCollector(val context: MappieContext) {
-    fun collect() = MAPPERS.mapNotNull { name ->
+    fun collect() = MAPPERS.map { name ->
         context.pluginContext
             .referenceClass(ClassId(PACKAGE_TECH_MAPPIE_API_BUILTIN, Name.identifier(name)))
-            ?.owner?.let { MappieDefinition(it) }
+            ?.owner
+            ?.let { MappieDefinition(it) }
+            ?: panic("Could not find mappie-api on classpath.")
     }
 
     companion object {
