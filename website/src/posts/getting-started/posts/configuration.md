@@ -10,7 +10,6 @@ eleventyNavigation:
 Mappie can be configured via Gradle or per Mapper. The following configuration options are available
 ```kotlin
 mappie {
-    warningsAsErrors = true // Enable reporting warnings as errors
     useDefaultArguments = false // Disable using default arguments in implicit mappings.
     strictness {
         visibility = true // Allow calling constructors not visible from the calling scope
@@ -25,7 +24,6 @@ configuration option on a per-mapper basis.
 The following options exist with their corrosponding default values
 | Gradle Option           | Annotation             | Default Value |
 |-------------------------|------------------------|---------------|
-| `warningsAsErrors`      |                        | `false`       |
 | `useDefaultArguments`   | `@UseDefaultArguments` | `true`        |
 | `strictness.visibility` | `@UseStrictVisibility` | `false`       |
 | `strictness.enums`      | `@UseStrictEnums`      | `true`        |
