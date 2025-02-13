@@ -83,7 +83,6 @@ abstract class TestBase {
                 testImplementation(kotlin("test"))
             }
 
-            
             tasks.test {
                 useJUnitPlatform()
                 testLogging {
@@ -99,6 +98,9 @@ abstract class TestBase {
         directory.resolve("src/commonMain/kotlin").mkdirs()
         directory.resolve("src/commonTest/kotlin").mkdirs()
         directory.resolve("src/jvmMain/kotlin").mkdirs()
+        directory.resolve("src/jvmTest/kotlin").mkdirs()
+        directory.resolve("src/mingwX64Main/kotlin").mkdirs()
+        directory.resolve("src/mingwX64Test/kotlin").mkdirs()
 
         kotlin("build.gradle.kts",
             """
@@ -119,11 +121,16 @@ abstract class TestBase {
                     val commonTest by getting {
                         dependencies {
                             implementation(kotlin("test"))
+                            implementation("tech.mappie:mappie-api:1.0.0")
                         }
+                    }
+                    mingwX64Main.dependencies {
+                        implementation("tech.mappie:mappie-api:1.0.0")
                     }
                 }
             
                 jvm()
+                mingwX64()
             }
             """.trimIndent()
         )
