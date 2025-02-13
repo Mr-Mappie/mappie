@@ -1,26 +1,31 @@
 package tech.mappie
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
-import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
-import org.jetbrains.kotlin.ir.builders.Scope
-import tech.mappie.util.logError
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
+import tech.mappie.api.EnumMappie
+import tech.mappie.api.ObjectMappie
+import tech.mappie.config.MappieConfiguration
+import tech.mappie.ir.MappieLogger
+import tech.mappie.util.PACKAGE_KOTLIN
+import tech.mappie.util.PACKAGE_TECH_MAPPIE_API
 
-class MappiePluginContext(
-    val messageCollector: MessageCollector,
-    val configuration: MappieConfiguration,
-    irPluginContext: IrPluginContext,
-): IrPluginContext by irPluginContext {
-
-    fun blockBody(scope: Scope, body: IrBlockBodyBuilder.() -> Unit) =
-        IrBlockBodyBuilder(IrGeneratorContextBase(irBuiltIns), scope, scope.scopeOwnerSymbol.owner.startOffset, scope.scopeOwnerSymbol.owner.endOffset)
-            .blockBody(body)
-
+interface MappieContext {
+    val pluginContext: IrPluginContext
+    val logger: MappieLogger
+    val configuration: MappieConfiguration
 }
 
-internal fun mappieTerminate(description: String, location: CompilerMessageLocation?): Nothing {
-    logError(description, location)
-    error("Mappie failed due to $description")
-}
+fun MappieContext.referenceObjectMappieClass(): IrClassSymbol =
+    pluginContext.referenceClass(ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier(ObjectMappie::class.simpleName!!)))!!
+
+fun MappieContext.referenceEnumMappieClass(): IrClassSymbol =
+    pluginContext.referenceClass(ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier(EnumMappie::class.simpleName!!)))!!
+
+fun MappieContext.referenceFunctionLet() =
+    pluginContext.referenceFunctions(CallableId(PACKAGE_KOTLIN, Name.identifier("let"))).first()
+
+fun MappieContext.referenceFunctionRequireNotNull() =
+    pluginContext.referenceFunctions(CallableId(PACKAGE_KOTLIN, Name.identifier("requireNotNull"))).first()

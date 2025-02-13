@@ -2,7 +2,53 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-    - date: "tbd"
+    - date: "2025-02-07"
+      title: "v1.0.0"
+      items:
+        - "Migrated multiple checks from the compiler back-end to the FIR compiler front-end."
+        - "[#148](https://github.com/Mr-Mappie/mappie/issues/148) the `mappie-api` dependency is now applied automatically."
+        - "Fixed a bug where the constructor of a generated target class is not selected property."
+    - date: "2024-12-15"
+      title: "v0.10.0"
+      items:
+        - "Added an explicit error message when the compile-time mapping dsl is used during runtime."
+        - "[#133](https://github.com/Mr-Mappie/mappie/issues/133) Added support for method references in fromExpression and transform."
+        - "[#55](https://github.com/Mr-Mappie/mappie/issues/55) the input parameters themselves are now included in automatic resolving."
+        - "Added api functions to map nullable Lists and Sets."
+    - date: "2024-11-18"
+      title: "v0.9.2"
+      items:
+        - "Fixed null pointer in some cases."
+    - date: "2024-11-16"
+      title: "v0.9.1"
+      items:
+        - "[#129](https://github.com/Mr-Mappie/mappie/issues/129) fixed bug where mappie will not run when the mappie-api comes in as a transitive dependency."
+    - date: "2024-11-16"
+      title: "v0.9.0"
+      items:
+        - "[#101](https://github.com/Mr-Mappie/mappie/issues/101) removed deprecated method 'parameter(String)'"
+        - "[#62](https://github.com/Mr-Mappie/mappie/issues/62) added support for local mapper configuration via annotations."
+        - "[#125](https://github.com/Mr-Mappie/mappie/issues/125) added fromPropertyNotNull which automatically applies requireNotNull."
+        - "Fixed a bug where the `strictness.enums` option set to `true` possibly resulted in a compilation error."
+        - "Fixed a bug where generating a mapper which has no accessible constructor resulted in an internal error instead of a nice error message."
+    - date: "2024-09-22"
+      title: "v0.8.0"
+      items:
+        - "[#96](https://github.com/Mr-Mappie/mappie/issues/96) object mappers can now be generated automatically."
+        - "[#88](https://github.com/Mr-Mappie/mappie/issues/88) added more multiplatform targets."
+    - date: "2024-08-25"
+      title: "v0.7.0"
+      items:
+        - "Added more built-in mappers."
+        - "Fixed a bug where mappers nested inside classes which are not a mapper are not generated."
+        - "Fixed warnings for newest Kotlin versions."
+    - date: "2024-08-31"
+      title: "v0.6.0"
+      items:
+        - "[#69](https://github.com/Mr-Mappie/mappie/issues/69) enum mappers can now be generated automatically if source and target contain the same entries."
+        - "[#68](https://github.com/Mr-Mappie/mappie/issues/68) other mappers are automatically resolved in mappings and applied using the via operator."
+        - "[#73](https://github.com/Mr-Mappie/mappie/issues/73) added multiple built-in mappers."
+    - date: "2024-07-17"
       title: "v0.5.0"
       items:
         - "[#57](https://github.com/Mr-Mappie/mappie/issues/57) object mappers can now use property setters."

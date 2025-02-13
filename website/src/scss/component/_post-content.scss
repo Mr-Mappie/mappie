@@ -24,6 +24,7 @@
     margin-top: spacer('s');
   }
 
+  h3[id],
   h2[id] {
     align-items: flex-start;
     display: flex;
@@ -60,5 +61,32 @@
 
   picture {
     display: flex;
+  }
+}
+
+table {
+  overflow-x: auto;
+  max-width: 95%;
+  display: block;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  --spruce-line-height: 1.5;
+  --spruce-padding: 1rem;
+  --spruce-responsive-inline-size: 40rem;
+  border-collapse: collapse;
+  color: var(--spruce-table-color-text);
+
+  td {
+    border-block-end: 1px solid var(--spruce-table-color-border);
+    line-height: var(--spruce-line-height);
+    padding: var(--spruce-padding);
+  }
+
+  th {
+    text-align: left;
+    color: var(--spruce-table-color-heading);
+    text-align: -webkit-match-parent;
+    padding: var(--spruce-padding);
   }
 }

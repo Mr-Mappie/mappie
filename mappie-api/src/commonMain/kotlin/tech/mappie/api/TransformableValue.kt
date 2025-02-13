@@ -9,7 +9,7 @@ public class TransformableValue<FROM, TO> {
 
     /**
      * Transforms the result value of a mapping.
-     * See the [documentation](https://mappie.tech/object-mapping/transforming/)
+     * See the [documentation](https://mappie.tech/object-mapping/the-transform-operator/)
      *
      * For example
      * ```kotlin
@@ -23,9 +23,9 @@ public class TransformableValue<FROM, TO> {
 
     /**
      * Transforms the result value of a mapping using a different mapper.
-     * See the [documentation](https://mappie.tech/object-mapping/reusing-mappers/)
+     * See the [documentation](https://mappie.tech/object-mapping/the-via-operator/)
      *
      * @param mapper the mapper to transform the value with.
      */
-    public infix fun <M : Mappie<TO>> via(mapper: M): M = generated()
+    public infix fun <M : Mappie<TO>> via(mapper: M): Unit = generated()
 }

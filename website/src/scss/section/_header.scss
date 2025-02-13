@@ -27,14 +27,9 @@
   }
 
   &__logo {
-    display: inline-flex;
-
-    img,
-    svg {
       block-size: 2rem;
       display: inline-flex;
       inline-size: auto;
-    }
   }
 
   &__toggle {

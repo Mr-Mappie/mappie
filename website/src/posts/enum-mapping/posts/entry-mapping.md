@@ -4,7 +4,7 @@ summary: "Mapping enum entry values."
 eleventyNavigation:
   key: Entry Mapping
   parent: Enum Mapping
-  order: 14
+  order: 15
 ---
 
 Not all enums classes that one wants to map have identical entries, or are not even both an enum class. If this is the case,

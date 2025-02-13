@@ -3,9 +3,7 @@ package tech.mappie.testing.objects
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.KotlinCompilation
-import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
-import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
+import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
@@ -19,22 +17,18 @@ class DefaultValueTest {
 
     @Test
     fun `map two data classes with a default argument not set should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.DefaultValueTest.*
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.DefaultValueTest.*
 
-                        class Mapper : ObjectMappie<Input, Output>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                class Mapper : ObjectMappie<Input, Output>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -47,27 +41,69 @@ class DefaultValueTest {
     }
 
     @Test
-    fun `map two data classes with a default argument set should succeed`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.DefaultValueTest.*
+    fun `map two data classes with a default argument not set and option enabled should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.DefaultValueTest.*
+                import tech.mappie.api.config.UseDefaultArguments
 
-                        class Mapper : ObjectMappie<Input, Output>() {
-                            override fun map(from: Input) = mapping {
-                                to::age fromValue 20
-                            }
-                        }
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.OK)
-            assertThat(messages).isEmpty()
+                @UseDefaultArguments
+                class Mapper : ObjectMappie<Input, Output>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input("name"))).isEqualTo(Output("name", 10))
+        }
+    }
+
+    @Test
+    fun `map two data classes with a default argument not set and option disabled should fail`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.DefaultValueTest.*
+                import tech.mappie.api.config.UseDefaultArguments
+
+                @UseDefaultArguments(false)
+                class Mapper : ObjectMappie<Input, Output>()
+                """
+            )
+        } satisfies {
+            isCompilationError()
+            hasErrorMessage(5, "Target Output::age has no source defined")
+        }
+    }
+
+    @Test
+    fun `map two data classes with a default argument set should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.DefaultValueTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input) = mapping {
+                        to::age fromValue 20
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")

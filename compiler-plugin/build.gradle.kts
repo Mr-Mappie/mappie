@@ -40,36 +40,7 @@ publishing {
                 withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }
             })
 
-            pom {
-                name = "tech.mappie:compiler-plugin"
-                description = "Kotlin Compiler Plugin for generating object mappers"
-                url = "https://github.com/Mr-Mappie/mappie"
-
-                developers {
-                    developer {
-                        id = "stefankoppier"
-                        name = "Stefan Koppier"
-                    }
-                }
-
-                scm {
-                    connection = "scm:git:git://github.com/Mr-Mappie/mappie.git"
-                    developerConnection = "scm:git:git://github.com/Mr-Mappie/mappie.git"
-                    url = "https://github.com/Mr-Mappie/mappie/tree/main"
-                }
-
-                licenses {
-                    license {
-                        name = "The Apache License, Version 2.0"
-                        url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
-                    }
-                }
-
-                issueManagement {
-                    system = "GitHub"
-                    url = "https://github.com/Mr-Mappie/mappie/issues"
-                }
-            }
+            mappiePom(name = "tech.mappie:compiler-plugin")
         }
     }
 
@@ -82,7 +53,10 @@ publishing {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+
     finalizedBy(tasks.jacocoTestReport)
+
+    maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
 }
 
 tasks.withType<KotlinCompile>().configureEach {

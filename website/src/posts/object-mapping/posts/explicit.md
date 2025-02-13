@@ -32,7 +32,7 @@ stating that the target `description` has no source defined. The target property
 3. mapping via an expression.
 
 ## Mapping via a Source Property
-Targets can be set via the operator `fromProperty`. This will set the target to the given source property. 
+Targets can be set via the operator `fromProperty`. This will set the target to the given source property.
 
 For example, the following snippet will construct a mapper where `PersonDto.description` is set to `Person.name`
 ```kotlin
@@ -43,9 +43,23 @@ object PersonMapper : ObjectMappie<Person, PersonDto>() {
 }
 ```
 
-Sometimes, one wants to map from a source property, but tweak the value, handle nullability, or transform the source in
-some other way. See [The Transform Operator](/object-mapping/the-transform-operator/) for some guidelines. It is also
-possible to explicitly reuse a different mapper, this is described in [The Via Operator](/object-mapping/the-via-operator/).
+The target type is not always assignable from the source type. There are several ways to handle this. One way is to
+define a mapper from the source type to the target type. This can be applied explicitly using [The Via Operator](/object-mapping/the-via-operator/), 
+or be implicitly applied by Mappie. 
+
+It is also possible to transform the property. For example to tweak the value, handle nullability, or transform the 
+source in some other way. See [The Transform Operator](/object-mapping/the-transform-operator/) for some guidelines.
+
+### Nullability
+
+When mapping from a nullable type to a non-nullable type, one has several options. The most flexible option is to
+use the transform operator. 
+
+When the transformation logic is applying a simple non-null assertion operator, or a 
+`requireNotNull` function call, `to::x fromPropertyNotNull from::y` steps in as an equivalent alternative to 
+```kotlin 
+to::x fromProperty from::y transform { it!! }
+```
 
 ## Mapping via a Value
 Targets can be set via the operator `fromValue`. This will set the target to the given value.

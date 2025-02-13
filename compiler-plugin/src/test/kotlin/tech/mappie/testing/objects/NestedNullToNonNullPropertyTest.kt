@@ -3,10 +3,8 @@ package tech.mappie.testing.objects
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.KotlinCompilation
-import tech.mappie.testing.compilation.KotlinCompilation.ExitCode
-import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
-import tech.mappie.testing.containsError
+import tech.mappie.testing.compilation.compile
+import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
 class NestedNullToNonNullPropertyTest {
@@ -19,26 +17,137 @@ class NestedNullToNonNullPropertyTest {
     lateinit var directory: File
 
     @Test
-    fun `map data classes with nested null to non-null should fail`() {
-        KotlinCompilation(directory).apply {
-            sources = buildList {
-                add(
-                    kotlin("Test.kt",
-                        """
-                        import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.objects.NestedNullToNonNullPropertyTest.*
-    
-                        class Mapper : ObjectMappie<Input, Output>()
+    fun `map object with nested null to non-null implicit should fail`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.NestedNullToNonNullPropertyTest.*
 
-                        object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
-                        """
-                    )
-                )
-            }
-        }.compile {
-            assertThat(exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
-            assertThat(messages)
-                .containsError("Target Output::text automatically resolved from Input::text but cannot assign source type InnerInput? to target type InnerOutput")
+                class Mapper : ObjectMappie<Input, Output>()
+
+                object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                """
+            )
+        } satisfies {
+            isCompilationError()
+            hasErrorMessage( 4, "Target Output::text automatically resolved from Input::text via InnerMapper but cannot assign source type InnerOutput? to target type InnerOutput")
+        }
+    }
+
+    @Test
+    fun `map object with nested null to non-null explicit without via should fail`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.NestedNullToNonNullPropertyTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() { 
+                    override fun map(from: Input) = mapping {
+                        to::text fromProperty from::text
+                    }
+                }
+
+                object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                """
+            )
+        } satisfies {
+            isCompilationError()
+            hasErrorMessage(
+                6,
+                "Target Output::text of type InnerOutput cannot be assigned from from::text via InnerMapper of type InnerOutput?"
+            )
+        }
+    }
+
+    @Test
+    fun `map object with nested null to non-null explicit fromPropertyNotNull without via should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.NestedNullToNonNullPropertyTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() { 
+                    override fun map(from: Input) = mapping {
+                        to::text fromPropertyNotNull from::text
+                    }
+                }
+
+                object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input(InnerInput("test"), 1)))
+                .isEqualTo(Output(InnerOutput("test"), 1))
+        }
+    }
+
+    @Test
+    fun `map object with nested null to non-null explicit should fail`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.NestedNullToNonNullPropertyTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() { 
+                    override fun map(from: Input) = mapping {
+                        to::text fromProperty from::text via InnerMapper
+                    }
+                }
+
+                object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                """
+            )
+        } satisfies {
+            isCompilationError()
+            hasErrorMessage(
+                6,
+                "Target Output::text of type InnerOutput cannot be assigned from from::text via InnerMapper of type InnerOutput?"
+            )
+        }
+    }
+
+    @Test
+    fun `map object with nested null to non-null fromPropertyNotNull explicit should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.NestedNullToNonNullPropertyTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() { 
+                    override fun map(from: Input) = mapping {
+                        to::text fromPropertyNotNull from::text via InnerMapper
+                    }
+                }
+
+                object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input(InnerInput("test"), 1)))
+                .isEqualTo(Output(InnerOutput("test"), 1))
         }
     }
 }

@@ -29,6 +29,15 @@ public class ObjectMappingConstructor<FROM, out TO> {
         generated()
 
     /**
+     * Explicitly construct a mapping to [TO] from nullable property source [source] and changing the nullable type of
+     * [source] to its non-nullable type.
+     *
+     * This is equivalent to `to::x fromProperty from::y transform { it!! }`.
+     */
+    public infix fun <TO_TYPE, FROM_TYPE> KProperty<TO_TYPE>.fromPropertyNotNull(source: KProperty<FROM_TYPE?>): TransformableValue<FROM_TYPE, TO_TYPE> =
+        generated()
+
+    /**
      * Explicitly construct a mapping to [TO] from a value source [value].
      *
      * For example
@@ -51,19 +60,6 @@ public class ObjectMappingConstructor<FROM, out TO> {
      * assuming `personDto.fullName == "John Doe"`.
      */
     public infix fun <FROM_TYPE, TO_TYPE> KProperty<TO_TYPE>.fromExpression(function: (FROM) -> FROM_TYPE): Unit =
-        generated()
-
-    /**
-     * Reference a constructor parameter in lieu of a property reference, if it not exists as a property.
-     *
-     * For example
-     * ```kotlin
-     * parameter("name") fromProperty PersonDto::fullName
-     * ```
-     * will generate an explicit mapping, setting constructor parameter `name` to `PersonDto.fullName`.
-     */
-    @Deprecated("Replace with to", ReplaceWith("to(name)"))
-    public fun parameter(name: String): KProperty<*> =
         generated()
 
     /**
@@ -94,6 +90,15 @@ public class MultipleObjectMappingConstructor<out TO> {
         get() = error("The to property should only be used in the context of `to::property fromX y`.")
 
     /**
+     * Explicitly construct a mapping to [TO] from nullable property source [source] and changing the nullable type of
+     * [source] to its non-nullable type.
+     *
+     * This is equivalent to `to::x fromProperty from::y transform { it!! }`.
+     */
+    public infix fun <TO_TYPE, FROM_TYPE> KProperty<TO_TYPE>.fromPropertyNotNull(source: KProperty<FROM_TYPE?>): TransformableValue<FROM_TYPE, TO_TYPE> =
+        generated()
+
+    /**
      * Explicitly construct a mapping to [TO] from property source [source].
      *
      * For example
@@ -115,19 +120,6 @@ public class MultipleObjectMappingConstructor<out TO> {
      * will generate an explicit mapping, setting constructor parameter `Person.name` to `"John Doe"`.
      */
     public infix fun <TO_TYPE> KProperty<TO_TYPE>.fromValue(value: TO_TYPE): Unit =
-        generated()
-
-    /**
-     * Reference a constructor parameter in lieu of a property reference, if it not exists as a property.
-     *
-     * For example
-     * ```kotlin
-     * parameter("name") fromProperty PersonDto::fullName
-     * ```
-     * will generate an explicit mapping, setting constructor parameter `name` to `PersonDto.fullName`.
-     */
-    @Deprecated("Replace with to", ReplaceWith("to(name)"))
-    public fun parameter(name: String): KProperty<*> =
         generated()
 
     /**

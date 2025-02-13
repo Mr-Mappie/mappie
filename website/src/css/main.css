@@ -357,7 +357,7 @@ template {
   --spruce-base-color-code-foreground: hsl(245, 31%, 21%);
   --spruce-base-color-heading: hsl(232, 68%, 11%);
   --spruce-base-color-link: hsl(238, 100%, 50%);
-  --spruce-base-color-link-hover: #0007cc;
+  --spruce-base-color-link-hover: hsl(238, 100%, 40%);
   --spruce-base-color-mark-background: hsl(50, 100%, 80%);
   --spruce-base-color-mark-foreground: hsl(245, 31%, 21%);
   --spruce-base-color-marker: hsl(238, 100%, 50%);
@@ -369,13 +369,13 @@ template {
 
 :root {
   --spruce-btn-color-primary-background: hsl(238, 100%, 50%);
-  --spruce-btn-color-primary-background-hover: #0007cc;
+  --spruce-btn-color-primary-background-hover: hsl(238, 100%, 40%);
   --spruce-btn-color-primary-foreground: hsl(0, 0%, 100%);
-  --spruce-btn-color-primary-shadow: #b3b5ff;
+  --spruce-btn-color-primary-shadow: hsl(238, 100%, 85%);
   --spruce-btn-color-secondary-background: hsl(186, 100%, 60%);
-  --spruce-btn-color-secondary-background-hover: #00e6ff;
-  --spruce-btn-color-secondary-foreground: #002e33;
-  --spruce-btn-color-secondary-shadow: #99f5ff;
+  --spruce-btn-color-secondary-background-hover: hsl(186, 100%, 50%);
+  --spruce-btn-color-secondary-foreground: hsl(186, 100%, 10%);
+  --spruce-btn-color-secondary-shadow: hsl(186, 100%, 80%);
 }
 
 :root {
@@ -390,18 +390,21 @@ template {
   --spruce-form-color-group-label-background: hsl(210, 60%, 98%);
   --spruce-form-color-group-label-foreground: hsl(208, 9%, 42%);
   --spruce-form-color-invalid: hsl(0, 71%, 51%);
-  --spruce-form-color-invalid-focus-ring: rgba(219, 41, 41, 0.25);
+  --spruce-form-color-invalid-focus-ring: hsla(0, 71%, 51%, 0.25);
   --spruce-form-color-label: hsl(245, 31%, 21%);
   --spruce-form-color-legend: hsl(245, 31%, 21%);
   --spruce-form-color-placeholder: hsl(208, 7%, 40%);
   --spruce-form-color-range-thumb-background: hsl(238, 100%, 50%);
   --spruce-form-color-range-thumb-focus-ring: hsl(238, 100%, 50%);
   --spruce-form-color-range-track-background: hsl(215, 63%, 93%);
-  --spruce-form-color-ring-focus: rgba(0, 9, 255, 0.25);
+  --spruce-form-color-ring-focus: hsla(238, 100%, 50%, 0.25);
   --spruce-form-color-select-foreground: hsl(245, 31%, 21%);
+  --spruce-form-color-switch-background: hsl(238, 100%, 50%);
+  --spruce-form-color-switch-focus-ring: hsl(238, 100%, 50%);
+  --spruce-form-color-switch-foreground: hsl(0, 0%, 100%);
   --spruce-form-color-text: hsl(208, 9%, 42%);
   --spruce-form-color-valid: hsl(150, 100%, 33%);
-  --spruce-form-color-valid-focus-ring: rgba(0, 168, 84, 0.25);
+  --spruce-form-color-valid-focus-ring: hsla(150, 100%, 33%, 0.25);
 }
 
 :root {
@@ -484,6 +487,11 @@ template {
   --spruce-container-inline-size: 84rem;
   --spruce-page-margin: 2cm;
   --spruce-hidden-elements: header, footer, aside, nav, form, iframe, [class^="aspect-ratio"];
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --spruce-duration: 0;
+  }
 }
 @media (prefers-reduced-motion: no-preference) {
   :root {
@@ -589,32 +597,28 @@ figure figcaption {
   min-inline-size: var(--inline-size);
 }
 
-table {
+.table {
   --spruce-line-height: 1.5;
   --spruce-padding: 1rem;
   --spruce-responsive-inline-size: 40rem;
   border-collapse: collapse;
   color: var(--spruce-table-color-text);
-  inline-size: 80%;
-  margin-left: auto;
-  margin-right: auto;
+  inline-size: 100%;
 }
 .table caption {
   color: var(--spruce-table-color-caption);
   margin-block-end: 1rem;
 }
-table th {
-  text-align: left;
-}
-table td {
+.table th,
+.table td {
   border-block-end: 1px solid var(--spruce-table-color-border);
   line-height: var(--spruce-line-height);
   padding: var(--spruce-padding);
 }
-table th {
+.table th {
   color: var(--spruce-table-color-heading);
+  text-align: inherit;
   text-align: -webkit-match-parent;
-  padding: var(--spruce-padding);
 }
 .table--striped > tbody > tr:nth-child(odd) {
   background-color: var(--spruce-table-color-stripe);
@@ -1010,7 +1014,7 @@ strong {
   --spruce-base-color-code-foreground: hsl(0, 0%, 95%);
   --spruce-base-color-footer-background: hsla(0, 0%, 0%, 0.15);
   --spruce-base-color-heading: hsl(0, 0%, 95%);
-  --spruce-base-color-link-hover: #47edff;
+  --spruce-base-color-link-hover: hsl(186, 100%, 64%);
   --spruce-base-color-link: hsl(186, 100%, 60%);
   --spruce-base-color-mark-background: hsl(50, 100%, 80%);
   --spruce-base-color-mark-foreground: hsl(245, 38%, 11%);
@@ -1030,9 +1034,9 @@ strong {
   --spruce-btn-color-primary-foreground: hsl(186, 100%, 5%);
   --spruce-btn-color-primary-shadow: hsl(186, 100%, 25%);
   --spruce-btn-color-secondary-background: hsl(227, 92%, 55%);
-  --spruce-btn-color-secondary-background-hover: #3b64f7;
+  --spruce-btn-color-secondary-background-hover: hsl(227, 92%, 60%);
   --spruce-btn-color-secondary-foreground: hsl(0, 0%, 95%);
-  --spruce-btn-color-secondary-shadow: #072bab;
+  --spruce-btn-color-secondary-shadow: hsl(227, 92%, 35%);
 }
 
 :root[data-theme-mode=dark] {
@@ -1044,7 +1048,7 @@ strong {
 }
 
 :root[data-theme-mode=dark] {
-  --spruce-form-color-background: #1b1836;
+  --spruce-form-color-background: hsl(245, 38%, 15.45%);
   --spruce-form-color-background-disabled: hsl(245, 38%, 11%);
   --spruce-form-color-border-disabled: hsla(0, 0%, 100%, 0.08);
   --spruce-form-color-border-focus: hsl(186, 100%, 60%);
@@ -1052,15 +1056,15 @@ strong {
   --spruce-form-color-check-background: hsl(186, 100%, 60%);
   --spruce-form-color-check-foreground: hsl(245, 38%, 11%);
   --spruce-form-color-invalid: hsl(0, 71%, 51%);
-  --spruce-form-color-invalid-shadow: rgba(219, 41, 41, 0.25);
+  --spruce-form-color-invalid-shadow: hsla(0, 71%, 51%, 0.25);
   --spruce-form-color-label: hsl(0, 0%, 95%);
   --spruce-form-color-legend: hsl(0, 0%, 95%);
   --spruce-form-color-placeholder: hsl(0, 0%, 60%);
   --spruce-form-color-select-foreground: hsl(0, 0%, 100%);
-  --spruce-form-color-shadow-focus: rgba(51, 235, 255, 0.25);
+  --spruce-form-color-shadow-focus: hsla(186, 100%, 60%, 0.25);
   --spruce-form-color-text: hsl(0, 0%, 97%);
   --spruce-form-color-valid: hsl(150, 100%, 33%);
-  --spruce-form-color-valid-shadow: rgba(0, 168, 84, 0.25);
+  --spruce-form-color-valid-shadow: hsla(150, 100%, 33%, 0.25);
 }
 
 :root[data-theme-mode=dark] {
@@ -1224,6 +1228,44 @@ strong {
   .l-post .post-heading {
     grid-column: 1/3;
   }
+}
+
+.nav-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.nav-container ul {
+  list-style: none;
+  padding: 0;
+}
+.nav-container ul li {
+  display: inline-flex;
+}
+.nav-container ul li a {
+  cursor: pointer;
+  text-decoration: none;
+  color: darkgray;
+  padding: 10px;
+  transition: all 0.3s ease-in-out;
+  border-bottom: 1px solid transparent;
+}
+.nav-container ul li a:hover {
+  color: gray;
+}
+.nav-container .nav .active a {
+  color: slateblue;
+  border-bottom: 1px solid slateblue;
+}
+.nav-container .nav .active a:hover {
+  border-color: transparent;
+  background: slateblue;
+  color: white;
+}
+.nav-container .tab-pane {
+  display: none;
+}
+.nav-container .tab-pane.active {
+  display: block;
 }
 
 .l-list {
@@ -1568,14 +1610,18 @@ strong {
 .post-content h6 + * {
   margin-top: 1rem;
 }
+.post-content h3[id],
 .post-content h2[id] {
   align-items: flex-start;
   display: flex;
   justify-content: space-between;
 }
-.post-content h2[id]:hover .anchor, .post-content h2[id]:focus-within .anchor {
+.post-content h3[id]:hover .anchor, .post-content h3[id]:focus-within .anchor,
+.post-content h2[id]:hover .anchor,
+.post-content h2[id]:focus-within .anchor {
   opacity: 1;
 }
+.post-content h3[id] .anchor,
 .post-content h2[id] .anchor {
   font-weight: 600;
   opacity: 0;
@@ -1596,6 +1642,31 @@ strong {
 }
 .post-content picture {
   display: flex;
+}
+
+table {
+  overflow-x: auto;
+  max-width: 95%;
+  display: block;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  --spruce-line-height: 1.5;
+  --spruce-padding: 1rem;
+  --spruce-responsive-inline-size: 40rem;
+  border-collapse: collapse;
+  color: var(--spruce-table-color-text);
+}
+table td {
+  border-block-end: 1px solid var(--spruce-table-color-border);
+  line-height: var(--spruce-line-height);
+  padding: var(--spruce-padding);
+}
+table th {
+  text-align: left;
+  color: var(--spruce-table-color-heading);
+  text-align: -webkit-match-parent;
+  padding: var(--spruce-padding);
 }
 
 .toc > * {
@@ -2212,4 +2283,3 @@ textarea.pagefind-ui__search-input {
   --spruce-max-content-inline-size: 70rem;
   --spruce-box-shadow: 0 0.75rem 1.25rem hsla(0, 0%, 0%, 0.05);
 }
-

@@ -7,7 +7,8 @@ eleventyNavigation:
   order: 8
 ---
 
-Mappie has support for reusing mappers in other mappers using the `via` operator.
+Mappie has support for reusing mappers in other mappers using the `via` operator. Mappie can also apply the `via` 
+operator automatically if only one mapper for the source- and target types exist.
 
 Suppose we have a data class `Person` containing a reference to a data class `Address`
 ```kotlin

@@ -1,23 +1,62 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.dokka)
+    alias(libs.plugins.android.library) apply false
     id("maven-publish")
 }
 
 kotlin {
     explicitApi()
+    withSourcesJar(publish = true)
+    applyDefaultHierarchyTemplate()
 
-    withSourcesJar()
+    jvm {
+        withSourcesJar(publish = true)
+    }
 
-    jvm()
+    androidNativeX64()
+    androidNativeArm64()
+
+    iosArm64()
+    iosSimulatorArm64()
+    iosX64()
+
+    tvosX64()
+    tvosSimulatorArm64()
+    tvosArm64()
+
+    js {
+        browser()
+        nodejs()
+    }
+
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        nodejs()
+    }
+
+    mingwX64()
+
+    macosX64()
+    macosArm64()
+
+    linuxX64()
+    linuxArm64()
 }
 
+val dokkaHtml by tasks.dokkaGeneratePublicationHtml
 tasks.register<Jar>("javadocJar") {
     group = "build"
     description = "Assemble a javadoc jar containing the Dokka pages of the 'main' feature."
     archiveClassifier = "javadoc"
-    from(layout.buildDirectory.dir("dokka/javadoc"))
-    dependsOn("dokkaJavadoc")
+    from(dokkaHtml.outputDirectory)
+    dependsOn(dokkaHtml)
+}
+
+tasks.register<Jar>("emptyJar") {
+    group = "build"
+    description = "Assemble an empty jar."
 }
 
 publishing {
@@ -30,36 +69,11 @@ publishing {
     publications.configureEach {
         if (this is MavenPublication) {
             artifact(tasks["javadocJar"])
-            pom {
-                name = "tech.mappie:compiler-plugin"
-                description = "Kotlin Compiler Plugin for generating object mappers"
-                url = "https://github.com/Mr-Mappie/mappie"
-
-                developers {
-                    developer {
-                        id = "stefankoppier"
-                        name = "Stefan Koppier"
-                    }
-                }
-
-                scm {
-                    connection = "scm:git:git://github.com/Mr-Mappie/mappie.git"
-                    developerConnection = "scm:git:git://github.com/Mr-Mappie/mappie.git"
-                    url = "https://github.com/Mr-Mappie/mappie/tree/main"
-                }
-
-                licenses {
-                    license {
-                        name = "The Apache License, Version 2.0"
-                        url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
-                    }
-                }
-
-                issueManagement {
-                    system = "GitHub"
-                    url = "https://github.com/Mr-Mappie/mappie/issues"
-                }
+            // jreleaser workaround
+            if (name != "jvm" && name != "kotlinMultiplatform") {
+                artifact(tasks["emptyJar"])
             }
+            mappiePom(name = "tech.mappie:compiler-plugin")
         }
     }
 }

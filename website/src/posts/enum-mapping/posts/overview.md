@@ -4,7 +4,7 @@ summary: "Performing enum mapping."
 eleventyNavigation:
   key: Enum Mapping Overview
   parent: Enum Mapping
-  order: 13
+  order: 14
 ---
 
 Mappie supports mapping an enum class to another class. This can be achieved by implementing a mapper which extends 

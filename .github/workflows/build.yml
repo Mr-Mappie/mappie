@@ -39,9 +39,11 @@ jobs:
         run: ./gradlew build
 
       - name: Coverage Report
+        if: github.ref == 'refs/heads/main'
         run: ./gradlew testCodeCoverageReport
 
       - name: Sonar
+        if: github.ref == 'refs/heads/main'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

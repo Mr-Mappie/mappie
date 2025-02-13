@@ -10,7 +10,8 @@ eleventyNavigation:
 Mappie infers implicit mappings by name, type, default arguments, getter- and setter methods, and other mappers that 
 are defined. An implicit mapping for a target property is inferred automatically if it has the same name as a source
 property, and it is assignable from that source property. If it is not assignable, Mappie will check if there is a 
-single mapper defined that can map the source type to the target type, and will automatically apply it.
+single mapper defined that can map the source type to the target type, and will automatically apply it. Mappie comes
+with several mappers out of the box. See [Built-in Mappers](/object-mapping/built-in-mappers/).
 
 For example, suppose we have a data class `Person` and a data class `PersonDto`
 ```kotlin
@@ -24,6 +25,25 @@ mappings have to be defined. We can simply construct such a mapper by writing
 object PersonMapper : ObjectMappie<Person, PersonDto>()
 ```
 which will generate a mapper which calls the primary constructor of `PersonDto` assigned to the fields of `Person`.
+
+## Mapper Generation
+Mappie can also generate mappers automatically. When a source type and a target type do not have an existing mapper,
+and one can be written without any explicit mappings, it will be generated automatically. 
+
+For example, suppose we have the data classes `Person` and `PersonDto` containing `Gender` and `GenderDto` enum classes
+```kotlin
+data class Person(val name: String, val gender: Gender)
+enum class Gender { MALE, FEMALE, OTHER; }
+
+data class PersonDto(val name: String, val gender: GenderDto)
+enum class GenderDto { MALE, FEMALE, OTHER; }
+```
+We can generate a mapper from `Person` to `PersonDto` by writing
+```kotlin
+class PersonMapper : ObjectMappie<Person, PersonDto>()
+```
+and the nested mapper from `Gender` to `GenderDto` will be generated automatically as they both contain the same enum
+entries.
 
 ## Default Arguments
 Mappie also considers default arguments as a possibility.

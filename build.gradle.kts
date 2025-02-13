@@ -1,5 +1,4 @@
 import org.jreleaser.model.Signing
-import java.io.ByteArrayOutputStream
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -17,13 +16,7 @@ allprojects {
 
 dependencies {
     jacocoAggregation(project(":compiler-plugin"))
-}
-
-val branch = ByteArrayOutputStream()
-
-exec {
-    commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
-    standardOutput = branch
+    jacocoAggregation(project(":gradle-plugin"))
 }
 
 sonar {
@@ -32,12 +25,16 @@ sonar {
         property("sonar.organization", "mappie")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.qualitygate.wait", "true")
-        property("sonar.branch.name", branch.toString(Charsets.UTF_8))
+        property("sonar.branch.name", "main")
         property("sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory
                 .file("reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
                 .get().asFile.absolutePath
         )
     }
+}
+
+tasks.jreleaserFullRelease.configure {
+    notCompatibleWithConfigurationCache("Disable configuration-cache for jreleaser")
 }
 
 jreleaser {
@@ -65,23 +62,24 @@ jreleaser {
         maven {
             mavenCentral {
                 active = org.jreleaser.model.Active.ALWAYS
-                create("mappie-api") {
-                    active = org.jreleaser.model.Active.ALWAYS
-                    url = "https://central.sonatype.com/api/v1/publisher"
-                    stagingRepository(project(":mappie-api").layout.buildDirectory.dir("staging-deploy").get().toString())
-                    username = properties["mavenCentralUsername"] as? String
-                    password = properties["mavenCentralPassword"] as? String
-                    applyMavenCentralRules = true
-                    retryDelay = 15
-                }
-                create("compiler-plugin") {
-                    active = org.jreleaser.model.Active.ALWAYS
-                    url = "https://central.sonatype.com/api/v1/publisher"
-                    stagingRepository(project(":compiler-plugin").layout.buildDirectory.dir("staging-deploy").get().toString())
-                    username = properties["mavenCentralUsername"] as? String
-                    password = properties["mavenCentralPassword"] as? String
-                    applyMavenCentralRules = true
-                    retryDelay = 15
+                buildList {
+                    if (System.getenv("RELEASE_API") == "true") {
+                        add("mappie-api")
+                    }
+                    if (System.getenv("RELEASE_COMPILER_PLUGIN") == "true") {
+                        add("compiler-plugin")
+                    }
+                }.forEach {
+                    create(it) {
+                        active = org.jreleaser.model.Active.ALWAYS
+                        url = "https://central.sonatype.com/api/v1/publisher"
+                        stagingRepository(project(":$it").layout.buildDirectory.dir("staging-deploy").get().toString())
+                        username = properties["mavenCentralUsername"] as? String
+                        password = properties["mavenCentralPassword"] as? String
+                        applyMavenCentralRules = true
+                        verifyPom = false
+                        retryDelay = 20
+                    }
                 }
             }
         }
