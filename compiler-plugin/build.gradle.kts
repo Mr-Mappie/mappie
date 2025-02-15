@@ -10,8 +10,6 @@ plugins {
 dependencies {
     compileOnly(libs.kotlin.compiler.embeddable)
 
-    implementation(project(":mappie-api"))
-
     testFixturesImplementation(project(":mappie-api"))
     testFixturesImplementation(libs.kotlin.compiler.embeddable)
     testFixturesImplementation(libs.classgraph)

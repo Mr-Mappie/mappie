@@ -26,7 +26,6 @@ class JVMCompatibilityTest : TestBase() {
             import kotlin.test.*
 
             class CommonMapperTest {
-            
                 @Test
                 fun `map CommonInput to CommonOutput`() {
                     assertEquals(
@@ -53,13 +52,13 @@ class JVMCompatibilityTest : TestBase() {
             """
             import kotlin.test.*
 
-            class CommonMapperTest {
-            
+            class JvmMapperTest {
+
                 @Test
-                fun `map CommonInput to CommonOutput`() {
+                fun `map JvmInput to JvmOutput`() {
                     assertEquals(
-                        JvmInput("value"),
-                        JvmMapper.map(JvmOutput("value")),
+                        JvmOutput("value", 5),
+                        JvmMapper.map(JvmInput("value", 5)),
                     )
                 }
             }

@@ -50,8 +50,7 @@ tasks.test {
 
     dependsOn("publishToMavenLocal")
     dependsOn(":compiler-plugin:publishToMavenLocal")
-    dependsOn(":mappie-api:publishKotlinMultiplatformPublicationToMavenLocal")
-    dependsOn(":mappie-api:publishJvmPublicationToMavenLocal")
+    dependsOn(":mappie-api:publishToMavenLocal")
 
     finalizedBy(tasks.jacocoTestReport)
 

@@ -1,27 +1,30 @@
 package tech.mappie.testing.compatibility.multiplatform
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import tech.mappie.testing.KotlinPlatform
 import tech.mappie.testing.TestBase
 
-class MingwX64CompatibilityTest : TestBase() {
+@EnabledOnOs(OS.MAC)
+class IOSCompatibilityTest : TestBase() {
 
     override val platform = KotlinPlatform.MULTIPLATFORM
 
     @Test
-    fun `test compatibility with mingwX64`() {
-        kotlin("src/mingwX64Main/kotlin/NativeMapper.kt",
+    fun `test compatibility with ios`() {
+        kotlin("src/iosMain/kotlin/IOSMapper.kt",
             """
             import tech.mappie.api.ObjectMappie
 
-            data class NativeInput(val string: String)
-            data class NativeOutput(val string: String)
+            data class IOSInput(val string: String)
+            data class IOSOutput(val string: String)
 
-            object NativeMapper : ObjectMappie<NativeInput, NativeOutput>()
+            object IOSMapper : ObjectMappie<IOSInput, IOSOutput>()
             """.trimIndent()
         )
 
-        kotlin("src/mingwX64Test/kotlin/NativeMapperTest.kt",
+        kotlin("src/iosTest/kotlin/IOSMapperTest.kt",
             """
             import kotlin.test.*
 
@@ -30,8 +33,8 @@ class MingwX64CompatibilityTest : TestBase() {
                 @Test
                 fun `map CommonInput to CommonOutput`() {
                     assertEquals(
-                        NativeOutput("value"),
-                        NativeMapper.map(NativeInput("value")),
+                        IOSOutput("value"),
+                        IOSMapper.map(IOSInput("value")),
                     )
                 }
             }

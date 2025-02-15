@@ -21,7 +21,7 @@ abstract class TestBase {
 
     protected open val gradleVersion: String? = null
 
-    protected open val kotlinVersion = "2.1.0"
+    protected open val kotlinVersion = "2.1.10"
 
     @BeforeEach
     fun setup() {
@@ -74,6 +74,7 @@ abstract class TestBase {
                 id("org.jetbrains.kotlin.jvm") version "$kotlinVersion"
                 id("tech.mappie.plugin") version "$version"
             }
+
             repositories {
                 mavenLocal()
                 mavenCentral()
@@ -95,12 +96,10 @@ abstract class TestBase {
     }
 
     private fun multiplatform() {
-        directory.resolve("src/commonMain/kotlin").mkdirs()
-        directory.resolve("src/commonTest/kotlin").mkdirs()
-        directory.resolve("src/jvmMain/kotlin").mkdirs()
-        directory.resolve("src/jvmTest/kotlin").mkdirs()
-        directory.resolve("src/mingwX64Main/kotlin").mkdirs()
-        directory.resolve("src/mingwX64Test/kotlin").mkdirs()
+        listOf("common", "jvm", "mingwX64", "ios").forEach { platform ->
+            directory.resolve("src/${platform}Main/kotlin").mkdirs()
+            directory.resolve("src/${platform}Test/kotlin").mkdirs()
+        }
 
         kotlin("build.gradle.kts",
             """
@@ -116,21 +115,16 @@ abstract class TestBase {
 
             kotlin {
                 applyDefaultHierarchyTemplate()
-                
-                sourceSets {
-                    val commonTest by getting {
-                        dependencies {
-                            implementation(kotlin("test"))
-                            implementation("tech.mappie:mappie-api:1.0.0")
-                        }
-                    }
-                    mingwX64Main.dependencies {
-                        implementation("tech.mappie:mappie-api:1.0.0")
-                    }
-                }
             
                 jvm()
                 mingwX64()
+                iosX64()
+                
+                sourceSets {
+                    commonTest.dependencies {
+                        implementation(kotlin("test"))
+                    }
+                }
             }
             """.trimIndent()
         )

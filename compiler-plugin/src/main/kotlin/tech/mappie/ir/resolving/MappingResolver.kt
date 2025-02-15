@@ -6,10 +6,10 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
-import tech.mappie.api.EnumMappie
 import tech.mappie.ir.resolving.classes.ClassResolver
 import tech.mappie.ir.resolving.enums.EnumResolver
 import tech.mappie.ir.util.isSubclassOf
+import tech.mappie.referenceEnumMappieClass
 
 fun interface MappingResolver {
 
@@ -28,7 +28,7 @@ fun interface MappingResolver {
 
         fun of(declaration: IrFunction, context: ResolverContext) =
             when {
-                declaration.parentAsClass.isSubclassOf(EnumMappie::class) -> {
+                declaration.parentAsClass.isSubclassOf(context.referenceEnumMappieClass()) -> {
                     EnumResolver(context, declaration.valueParameters.first().type, declaration.returnType)
                 }
                 else -> {
