@@ -14,9 +14,6 @@ import tech.mappie.util.*
 fun IrClass.isSubclassOf(clazz: IrClassSymbol) =
     allSuperTypes().any { it.erasedUpperBound == clazz.defaultType.getClass()!! }
 
-//fun IrClass.isSubclassOf(clazz: KClass<*>) =
-//    allSuperTypes().any { it.erasedUpperBound.fqNameWhenAvailable?.asString() == clazz.java.name }
-
 fun IrClass.allSuperTypes(): List<IrType> =
     superTypes + superTypes.flatMap { it.erasedUpperBound.allSuperTypes() }
 
