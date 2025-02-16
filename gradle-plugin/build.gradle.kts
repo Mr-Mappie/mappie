@@ -45,9 +45,6 @@ tasks.named("processResources") { dependsOn("updateMappieProperties") }
 tasks.test {
     useJUnitPlatform()
 
-    inputs.files(fileTree(project(":compiler-plugin").projectDir) { include("src/main/**") })
-    inputs.files(fileTree(project(":mappie-api").projectDir) { include("src/main/**") })
-
     dependsOn("publishToMavenLocal")
     dependsOn(":compiler-plugin:publishToMavenLocal")
     dependsOn(":mappie-api:publishToMavenLocal")

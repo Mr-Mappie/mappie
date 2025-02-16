@@ -3,9 +3,7 @@ kotlin = "2.1.10"
 
 [libraries]
 kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
-kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin" }
-junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version = "5.11.4" }
 classgraph = { module = "io.github.classgraph:classgraph", version = "4.8.179" }
 okio = { module = "com.squareup.okio:okio", version = "3.10.2" }
 assertj-core = { module = "org.assertj:assertj-core", version = "3.27.3" }
