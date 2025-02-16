@@ -25,10 +25,10 @@ class MingwX64CompatibilityTest : TestBase() {
             """
             import kotlin.test.*
 
-            class CommonMapperTest {
+            class NativeMapperTest {
             
                 @Test
-                fun `map CommonInput to CommonOutput`() {
+                fun `map NativeInput to NativeOutput`() {
                     assertEquals(
                         NativeOutput("value"),
                         NativeMapper.map(NativeInput("value")),
