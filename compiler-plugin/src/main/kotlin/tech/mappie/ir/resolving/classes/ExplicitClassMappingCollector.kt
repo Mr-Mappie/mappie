@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.ir.util.BaseVisitor
-import tech.mappie.api.ObjectMappie
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.exceptions.MappieProblemException.Companion.fail
 import tech.mappie.ir.resolving.MappieDefinition
@@ -111,7 +110,7 @@ private class MapperReferenceCollector(private val context: ResolverContext)
         require(expression.origin == IrStatementOrigin.GET_PROPERTY)
 
         return when (val name = expression.symbol.owner.name) {
-            getterName(ObjectMappie<*, *>::forList.name), getterName(ObjectMappie<*, *>::forSet.name) -> {
+            getterName("forList"), getterName("forSet") -> {
                 val mapper = expression.symbol.owner.parent as IrClass
                 PropertyMappingViaMapperTransformation(MappieDefinition(mapper), expression.dispatchReceiver!!)
             }

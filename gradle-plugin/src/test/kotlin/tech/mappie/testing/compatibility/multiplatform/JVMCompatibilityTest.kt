@@ -4,12 +4,12 @@ import org.junit.jupiter.api.Test
 import tech.mappie.testing.KotlinPlatform
 import tech.mappie.testing.TestBase
 
-class MultiplatformCompatibilityTest : TestBase() {
+class JVMCompatibilityTest : TestBase() {
 
     override val platform = KotlinPlatform.MULTIPLATFORM
 
     @Test
-    fun `test compatibility with multiplatform`() {
+    fun `test compatibility with jvm`() {
         kotlin("src/commonMain/kotlin/CommonMapper.kt",
             """
             import tech.mappie.api.ObjectMappie
@@ -26,7 +26,6 @@ class MultiplatformCompatibilityTest : TestBase() {
             import kotlin.test.*
 
             class CommonMapperTest {
-            
                 @Test
                 fun `map CommonInput to CommonOutput`() {
                     assertEquals(
@@ -46,6 +45,23 @@ class MultiplatformCompatibilityTest : TestBase() {
             data class JvmOutput(val string: String, val int: Int)
 
             object JvmMapper : ObjectMappie<JvmInput, JvmOutput>()
+            """.trimIndent()
+        )
+
+        kotlin("src/jvmTest/kotlin/JvmMapperTest.kt",
+            """
+            import kotlin.test.*
+
+            class JvmMapperTest {
+
+                @Test
+                fun `map JvmInput to JvmOutput`() {
+                    assertEquals(
+                        JvmOutput("value", 5),
+                        JvmMapper.map(JvmInput("value", 5)),
+                    )
+                }
+            }
             """.trimIndent()
         )
 

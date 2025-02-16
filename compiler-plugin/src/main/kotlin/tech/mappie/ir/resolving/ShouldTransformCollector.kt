@@ -6,15 +6,16 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrReturn
-import tech.mappie.api.Mappie
+import tech.mappie.MappieContext
 import tech.mappie.ir.util.BaseVisitor
 import tech.mappie.util.IDENTIFIER_MAPPING
 import tech.mappie.ir.util.isMappieMapFunction
 import tech.mappie.ir.util.isSubclassOf
+import tech.mappie.referenceMappieClass
 
-class ShouldTransformCollector : BaseVisitor<Boolean, Unit>() {
+class ShouldTransformCollector(private val context: MappieContext) : BaseVisitor<Boolean, Unit>() {
     override fun visitClass(declaration: IrClass, data: Unit): Boolean {
-        return declaration.isSubclassOf(Mappie::class)
+        return declaration.isSubclassOf(context.referenceMappieClass())
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Unit): Boolean {
