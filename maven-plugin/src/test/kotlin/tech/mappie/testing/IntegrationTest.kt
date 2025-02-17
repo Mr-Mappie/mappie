@@ -20,7 +20,8 @@ class IntegrationTest : TestBase() {
 
         kotlin("src/test/kotlin/MapperTest.kt",
             """
-            import kotlin.test.*
+            import org.testng.Assert.assertEquals
+            import org.testng.annotations.*
 
             class MapperTest {
             
@@ -32,7 +33,6 @@ class IntegrationTest : TestBase() {
             """.trimIndent()
         )
 
-        assertThat(execute())
-            .isSuccessful()
+        assertThat(execute()).isSuccessful()
     }
 }

@@ -47,6 +47,11 @@ abstract class TestBase {
                     <sourceDirectory>src/main/kotlin</sourceDirectory>
                     <testSourceDirectory>src/test/kotlin</testSourceDirectory>
                     <plugins>
+                          <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-surefire-plugin</artifactId>
+                            <version>3.5.2</version>
+                        </plugin>
                         <plugin>
                             <groupId>org.jetbrains.kotlin</groupId>
                             <artifactId>kotlin-maven-plugin</artifactId>
@@ -93,9 +98,9 @@ abstract class TestBase {
                         <version>2.1.10</version>
                     </dependency>
                     <dependency>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>kotlin-test-junit5</artifactId>
-                        <version>2.1.10</version>
+                        <groupId>org.testng</groupId>
+                        <artifactId>testng</artifactId>
+                        <version>6.9.8</version>
                         <scope>test</scope>
                     </dependency>
                 </dependencies>
@@ -117,7 +122,6 @@ abstract class TestBase {
 
     protected fun ObjectAssert<InvocationResult>.isSuccessful(): AbstractObjectAssert<*, *> =
         extracting { it.exitCode }.isEqualTo(0)
-
 
     protected fun xml(file: String, @Language("XML") code: String): File {
         return directory.resolve(file).apply {
