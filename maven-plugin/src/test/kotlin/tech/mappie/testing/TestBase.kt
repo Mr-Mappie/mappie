@@ -80,7 +80,7 @@ abstract class TestBase {
                                 <dependency>
                                     <groupId>tech.mappie</groupId>
                                     <artifactId>mappie-maven-plugin</artifactId>
-                                    <version>1.1.0</version>
+                                    <version>$version</version>
                                 </dependency>
                             </dependencies>
                         </plugin>                    
@@ -90,7 +90,7 @@ abstract class TestBase {
                     <dependency>
                         <groupId>tech.mappie</groupId>
                         <artifactId>mappie-api-jvm</artifactId>
-                        <version>1.1.0</version>
+                        <version>$version</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
