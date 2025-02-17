@@ -25,42 +25,8 @@ publishing {
     publications {
         create<MavenPublication>("java-maven-plugin") {
             artifactId = "mappie-maven-plugin"
-
             from(components["java"])
-
-            pom {
-//                artifact(tasks["javadocJar"])
-                pom {
-                    name = "tech.mappie:maven-plugin"
-                    description = "Kotlin Compiler Plugin for generating object mappers"
-                    url = "https://github.com/Mr-Mappie/mappie"
-
-                    developers {
-                        developer {
-                            id = "stefankoppier"
-                            name = "Stefan Koppier"
-                        }
-                    }
-
-                    scm {
-                        connection = "scm:git:git://github.com/Mr-Mappie/mappie.git"
-                        developerConnection = "scm:git:git://github.com/Mr-Mappie/mappie.git"
-                        url = "https://github.com/Mr-Mappie/mappie/tree/main"
-                    }
-
-                    licenses {
-                        license {
-                            name = "The Apache License, Version 2.0"
-                            url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
-                        }
-                    }
-
-                    issueManagement {
-                        system = "GitHub"
-                        url = "https://github.com/Mr-Mappie/mappie/issues"
-                    }
-                }
-            }
+            mappiePom(name = "tech.mappie:compiler-plugin")
         }
     }
 }
@@ -82,7 +48,6 @@ tasks.register("updateMappieProperties") {
 }
 
 tasks.named("processResources") { dependsOn("updateMappieProperties") }
-
 
 tasks.test {
     useJUnitPlatform()
