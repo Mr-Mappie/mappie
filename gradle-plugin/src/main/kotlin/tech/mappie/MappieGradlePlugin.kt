@@ -10,15 +10,12 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
     override fun apply(target: Project) {
         target.extensions.create("mappie", MappieExtension::class.java)
         target.checkCompatibility()
+        target.addMappieDependency()
     }
 
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
         with (kotlinCompilation.project) {
             logger.info("Mappie plugin ${getPluginArtifact().version} applied")
-
-            kotlinCompilation.dependencies {
-                implementation(dependencies.create("tech.mappie:mappie-api:${getPluginArtifact().version}"))
-            }
 
             val extension = extensions.getByType(MappieExtension::class.java)
             return provider {
@@ -55,6 +52,24 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
         val version = getKotlinPluginVersion()
         if (SUPPORTED_KOTLIN_VERSIONS.none { regex -> regex.matches(version) }) {
             logger.warn("Mappie unsupported Kotlin version '$version'. this may lead to compilation failure.")
+        }
+    }
+
+    private fun Project.addMappieDependency() {
+        val dependency = dependencies.create("tech.mappie:mappie-api:${getPluginArtifact().version}")
+
+        plugins.withId("org.jetbrains.kotlin.jvm") {
+            dependencies.add("implementation", dependency)
+            dependencies.add("testImplementation", dependency)
+
+            plugins.withId("java-test-fixtures") {
+                dependencies.add("testFixturesImplementation", dependency)
+            }
+        }
+
+        plugins.withId("org.jetbrains.kotlin.multiplatform") {
+            dependencies.add("commonMainImplementation", dependency)
+            dependencies.add("commonTestImplementation", dependency)
         }
     }
 

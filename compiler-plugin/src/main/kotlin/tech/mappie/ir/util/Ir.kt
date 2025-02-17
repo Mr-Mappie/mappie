@@ -6,14 +6,13 @@ import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContextInterface
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.util.*
-import kotlin.reflect.KClass
 
-fun IrClass.isSubclassOf(clazz: KClass<*>) =
-    allSuperTypes().any { it.erasedUpperBound.fqNameWhenAvailable?.asString() == clazz.java.name }
+fun IrClass.isSubclassOf(clazz: IrClassSymbol) =
+    allSuperTypes().any { it.erasedUpperBound == clazz.defaultType.getClass()!! }
 
 fun IrClass.allSuperTypes(): List<IrType> =
     superTypes + superTypes.flatMap { it.erasedUpperBound.allSuperTypes() }

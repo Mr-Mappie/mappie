@@ -3,8 +3,8 @@ package tech.mappie.ir.resolving
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.ir.util.BaseVisitor
-import tech.mappie.api.*
 import tech.mappie.ir.util.isSubclassOf
+import tech.mappie.referenceMappieClass
 import tech.mappie.util.merge
 
 class MappingRequestResolver : BaseVisitor<Map<IrClass, List<MappingRequest>>, ResolverContext>() {
@@ -21,13 +21,13 @@ class MappingRequestResolver : BaseVisitor<Map<IrClass, List<MappingRequest>>, R
     override fun visitClass(declaration: IrClass, data: ResolverContext) =
         buildList {
             addAll(declaration.declarations.filterIsInstance<IrClass>().map { it.accept(data) })
-            if (declaration.isSubclassOf(Mappie::class)) {
+            if (declaration.isSubclassOf(data.referenceMappieClass())) {
                 addAll(declaration.functions.map { it.accept(data) })
             }
         }.merge()
 
     override fun visitFunction(declaration: IrFunction, data: ResolverContext) =
-        if (declaration.accept(ShouldTransformCollector(), Unit)) {
+        if (declaration.accept(ShouldTransformCollector(data), Unit)) {
             val request = MappingResolver.of(declaration, ResolverContext(data, declaration)).resolve(declaration.body)
             mapOf(declaration.parentAsClass to request)
         } else {

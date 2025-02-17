@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.dokka)
-    alias(libs.plugins.android.library) apply false
     id("maven-publish")
 }
 
