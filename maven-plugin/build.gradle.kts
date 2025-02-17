@@ -51,4 +51,10 @@ tasks.named("processResources") { dependsOn("updateMappieProperties") }
 
 tasks.test {
     useJUnitPlatform()
+
+    dependsOn("publishToMavenLocal")
+    dependsOn(":compiler-plugin:publishToMavenLocal")
+    dependsOn(":mappie-api:publishToMavenLocal")
+
+    maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
 }
