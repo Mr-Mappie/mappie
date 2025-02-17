@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<component-set>
+<components>
+    <component>
+        <role>org.jetbrains.kotlin.maven.KotlinMavenPluginExtension</role>
+        <role-hint>mappie</role-hint>
+        <implementation>tech.mappie.MappieMavenPlugin</implementation>
+        <description />
+        <isolated-realm>false</isolated-realm>
+        <requirements>
+            <requirement>
+                <role>org.codehaus.plexus.logging.Logger</role>
+                <field-name>logger</field-name>
+            </requirement>
+        </requirements>
+    </component>
+</components>
+</component-set>

@@ -25,6 +25,7 @@ gradlePlugin {
     }
 }
 
+// TODO: duplicate of the one in :maven-plugin. Move to buildSrc.
 tasks.register("updateMappieProperties") {
     group = "build"
     description = "Update mappie.properties file for Gradle plugin."
