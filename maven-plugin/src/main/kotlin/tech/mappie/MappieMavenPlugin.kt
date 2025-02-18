@@ -14,12 +14,20 @@ class MappieMavenPlugin : KotlinMavenPluginExtension {
     @Requirement
     lateinit var logger: Logger
 
-    override fun getCompilerPluginId() = "tech.mappie"
+    override fun getCompilerPluginId() = PLUGIN_ID
 
     override fun getPluginOptions(project: MavenProject, execution: MojoExecution): List<PluginOption> {
         logger.debug("Loaded Maven plugin " + javaClass.name)
-        return listOf()
+        return listOf(
+//            PluginOption("mappie", PLUGIN_ID, "useDefaultArguments", "true"),
+//            PluginOption("mappie", PLUGIN_ID, "strictness.visibility", "false"),
+//            PluginOption("mappie", PLUGIN_ID, "strictness.enums", "true"),
+        )
     }
 
     override fun isApplicable(project: MavenProject, execution: MojoExecution) = true
+
+    companion object {
+        private const val PLUGIN_ID = "tech.mappie"
+    }
 }

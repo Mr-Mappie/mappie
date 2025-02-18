@@ -20,6 +20,10 @@ abstract class TestBase {
 
     protected lateinit var request: InvocationRequest
 
+    protected val logs = StringBuilder()
+
+    protected open val mappieOptions: Map<String, String> = emptyMap()
+
     @BeforeEach
     fun setup() {
         directory.resolve("src/main/kotlin").mkdirs()
@@ -35,6 +39,10 @@ abstract class TestBase {
                 <artifactId>test</artifactId>
                 <groupId>test</groupId>
                 <version>1.0.0</version>
+    
+                <properties>
+                    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+                </properties>
     
                 <repositories>
                     <repository>
@@ -75,6 +83,15 @@ abstract class TestBase {
                                 <compilerPlugins>
                                     <compilerPlugin>mappie</compilerPlugin>
                                 </compilerPlugins>
+                                ${ 
+                                    if (mappieOptions.isNotEmpty()) {
+                                        mappieOptions.entries.joinToString(separator = System.lineSeparator(), prefix = "<pluginOptions>", postfix = "</pluginOptions>") {
+                                            "<option>tech.mappie:${it.key}=${it.value}</option>"
+                                        }
+                                    } else {
+                                        ""
+                                    }
+                                }
                             </configuration>
                             <dependencies>
                                 <dependency>
@@ -115,13 +132,18 @@ abstract class TestBase {
             // TODO
             mavenHome = File("C:\\Maven\\bin")
             mavenExecutable = File("C:\\Maven\\bin\\mvn")
+            isDebug = true
         }
     }
 
-    protected fun execute(): InvocationResult = DefaultInvoker().execute(request)
+    protected fun execute(): InvocationResult = DefaultInvoker()
+        .setOutputHandler { logs.appendLine(it) }
+        .execute(request)
 
     protected fun ObjectAssert<InvocationResult>.isSuccessful(): AbstractObjectAssert<*, *> =
-        extracting { it.exitCode }.isEqualTo(0)
+        extracting { it.exitCode }
+            .withFailMessage("Expected successful invocation result but failed." + System.lineSeparator() + logs.lines().joinToString(separator = System.lineSeparator()))
+            .isEqualTo(0)
 
     protected fun xml(file: String, @Language("XML") code: String): File {
         return directory.resolve(file).apply {
