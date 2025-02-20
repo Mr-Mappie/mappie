@@ -21,16 +21,16 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
             return provider {
                 buildList {
                     extension.warningsAsErrors.orNull?.apply {
-                        add(SubpluginOption("warningsAsErrors", this.toString()))
+                        add(SubpluginOption("warnings-as-errors", this.toString()))
                     }
                     extension.useDefaultArguments.orNull?.apply {
-                        add(SubpluginOption("useDefaultArguments", this.toString()))
+                        add(SubpluginOption("use-default-arguments", this.toString()))
                     }
                     extension.strictness.enums.orNull?.apply {
-                        add(SubpluginOption("strictness.enums", this.toString()))
+                        add(SubpluginOption("strict-enums", this.toString()))
                     }
                     extension.strictness.visibility.orNull?.apply {
-                        add(SubpluginOption("strictness.visibility", this.toString()))
+                        add(SubpluginOption("strict-visibility", this.toString()))
                     }
                 }
             }

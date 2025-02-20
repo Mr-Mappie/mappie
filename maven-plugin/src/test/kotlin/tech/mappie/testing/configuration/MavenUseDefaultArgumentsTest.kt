@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 class MavenUseDefaultArgumentsTest : MavenTestBase() {
 
     override val mappieOptions = mapOf(
-        "useDefaultArguments" to "false"
+        "use-default-arguments" to "false"
     )
 
     @Test

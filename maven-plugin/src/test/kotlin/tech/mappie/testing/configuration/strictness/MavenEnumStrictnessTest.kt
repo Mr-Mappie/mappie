@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 class MavenEnumStrictnessTest : MavenTestBase() {
 
     override val mappieOptions: Map<String, String> = mapOf(
-        "strictness.enums" to "true"
+        "strict-enums" to "true"
     )
 
     @Test

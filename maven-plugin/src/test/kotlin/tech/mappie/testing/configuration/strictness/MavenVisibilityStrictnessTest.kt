@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 class MavenVisibilityStrictnessTest : MavenTestBase() {
 
     override val mappieOptions = mapOf(
-        "strictness.visibility" to "false"
+        "strict-visibility" to "false"
     )
 
     @Test
