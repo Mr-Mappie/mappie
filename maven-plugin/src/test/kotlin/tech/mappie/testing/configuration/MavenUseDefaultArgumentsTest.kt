@@ -1,10 +1,10 @@
 package tech.mappie.testing.configuration
 
-import tech.mappie.testing.TestBase
+import tech.mappie.testing.MavenTestBase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class MavenUseDefaultArgumentsTest : TestBase() {
+class MavenUseDefaultArgumentsTest : MavenTestBase() {
 
     override val mappieOptions = mapOf(
         "useDefaultArguments" to "false"

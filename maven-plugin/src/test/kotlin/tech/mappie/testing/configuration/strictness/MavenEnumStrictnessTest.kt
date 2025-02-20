@@ -1,10 +1,10 @@
 package tech.mappie.testing.configuration.strictness
 
-import tech.mappie.testing.TestBase
+import tech.mappie.testing.MavenTestBase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class MavenEnumStrictnessTest : TestBase() {
+class MavenEnumStrictnessTest : MavenTestBase() {
 
     override val mappieOptions: Map<String, String> = mapOf(
         "strictness.enums" to "true"

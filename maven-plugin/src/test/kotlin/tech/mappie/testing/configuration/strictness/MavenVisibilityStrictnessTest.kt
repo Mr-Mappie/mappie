@@ -1,10 +1,10 @@
 package tech.mappie.testing.configuration.strictness
 
-import tech.mappie.testing.TestBase
+import tech.mappie.testing.MavenTestBase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class MavenVisibilityStrictnessTest : TestBase() {
+class MavenVisibilityStrictnessTest : MavenTestBase() {
 
     override val mappieOptions = mapOf(
         "strictness.visibility" to "false"

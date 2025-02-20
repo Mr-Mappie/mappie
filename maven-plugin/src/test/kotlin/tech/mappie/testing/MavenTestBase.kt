@@ -12,9 +12,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.lang.System.lineSeparator
+import java.nio.file.Path
 import java.util.*
 
-abstract class TestBase {
+abstract class MavenTestBase {
 
     @TempDir
     protected lateinit var directory: File
@@ -121,6 +122,8 @@ abstract class TestBase {
         )
 
         request = DefaultInvocationRequest().apply {
+            mavenHome = File("./src/test/resources/maven")
+            mavenExecutable = File("../mvnw")
             pomFile = pom
             goals = listOf("compile", "test")
         }

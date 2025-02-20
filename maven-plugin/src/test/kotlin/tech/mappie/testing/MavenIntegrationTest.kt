@@ -3,7 +3,7 @@ package tech.mappie.testing
 import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
 
-class MavenIntegrationTest : TestBase() {
+class MavenIntegrationTest : MavenTestBase() {
 
     @Test
     fun `the maven plugin applies the compiler plugin`() {
