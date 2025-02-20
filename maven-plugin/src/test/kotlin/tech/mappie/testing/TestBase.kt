@@ -123,11 +123,6 @@ abstract class TestBase {
         request = DefaultInvocationRequest().apply {
             pomFile = pom
             goals = listOf("compile", "test")
-
-            // TODO
-            mavenHome = File("C:\\Maven\\bin")
-            mavenExecutable = File("C:\\Maven\\bin\\mvn")
-            isDebug = true
         }
     }
 
