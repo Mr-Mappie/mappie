@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.gradle.plugin.publish)
     alias(libs.plugins.com.github.gmazzo.buildconfig)
-    id("jacoco")
 }
 
 dependencies {
@@ -40,8 +39,6 @@ tasks.test {
     dependsOn("publishToMavenLocal")
     dependsOn(":compiler-plugin:publishToMavenLocal")
     dependsOn(":mappie-api:publishToMavenLocal")
-
-    finalizedBy(tasks.jacocoTestReport)
 
     maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
 }
