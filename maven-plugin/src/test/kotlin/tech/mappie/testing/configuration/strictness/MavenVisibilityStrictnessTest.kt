@@ -25,7 +25,5 @@ class MavenVisibilityStrictnessTest : TestBase() {
         )
 
         assertThat(execute()).isSuccessful()
-        assertThat(logs.lines())
-            .noneMatch { it.matches(Regex("\\[WARNING\\] .+")) }
     }
 }

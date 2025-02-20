@@ -23,8 +23,8 @@ class MavenEnumStrictnessTest : TestBase() {
             """.trimIndent()
         )
 
-        assertThat(execute()).isSuccessful()
+        assertThat(execute()).isFailure()
         assertThat(logs.lines())
-            .noneMatch { it.matches(Regex("\\[WARNING\\]")) }
+            .anyMatch { it.matches(Regex("\\[ERROR\\] .+ Source Input.C has no target defined")) }
     }
 }

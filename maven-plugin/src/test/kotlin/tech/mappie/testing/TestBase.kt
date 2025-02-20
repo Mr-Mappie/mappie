@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.lang.System.lineSeparator
 import java.util.*
 
 abstract class TestBase {
@@ -18,11 +19,11 @@ abstract class TestBase {
     @TempDir
     protected lateinit var directory: File
 
-    protected lateinit var request: InvocationRequest
-
     protected val logs = StringBuilder()
 
     protected open val mappieOptions: Map<String, String> = emptyMap()
+
+    private lateinit var request: InvocationRequest
 
     @BeforeEach
     fun setup() {
@@ -83,15 +84,9 @@ abstract class TestBase {
                                 <compilerPlugins>
                                     <compilerPlugin>mappie</compilerPlugin>
                                 </compilerPlugins>
-                                ${ 
-                                    if (mappieOptions.isNotEmpty()) {
-                                        mappieOptions.entries.joinToString(separator = System.lineSeparator(), prefix = "<pluginOptions>", postfix = "</pluginOptions>") {
-                                            "<option>tech.mappie:${it.key}=${it.value}</option>"
-                                        }
-                                    } else {
-                                        ""
-                                    }
-                                }
+                                <pluginOptions>
+                                    ${mappieOptions.map { "<option>mappie:${it.key}=${it.value}</option>" }.joinToString(separator = lineSeparator())}
+                                </pluginOptions>
                             </configuration>
                             <dependencies>
                                 <dependency>
@@ -142,8 +137,13 @@ abstract class TestBase {
 
     protected fun ObjectAssert<InvocationResult>.isSuccessful(): AbstractObjectAssert<*, *> =
         extracting { it.exitCode }
-            .withFailMessage("Expected successful invocation result but failed." + System.lineSeparator() + logs.lines().joinToString(separator = System.lineSeparator()))
+            .withFailMessage("Expected successful invocation result but failed." + lineSeparator() + logs.lines().joinToString(separator = lineSeparator()))
             .isEqualTo(0)
+
+    protected fun ObjectAssert<InvocationResult>.isFailure(): AbstractObjectAssert<*, *> =
+        extracting { it.exitCode }
+            .withFailMessage("Expected failure invocation result but succeeded." + lineSeparator() + logs.lines().joinToString(separator = lineSeparator()))
+            .isNotEqualTo(0)
 
     protected fun xml(file: String, @Language("XML") code: String): File {
         return directory.resolve(file).apply {

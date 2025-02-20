@@ -2,11 +2,9 @@ package tech.mappie
 
 import org.apache.maven.plugin.MojoExecution
 import org.apache.maven.project.MavenProject
-import org.codehaus.plexus.component.annotations.Component
-import org.codehaus.plexus.component.annotations.Requirement
+import org.codehaus.plexus.component.annotations.*
 import org.codehaus.plexus.logging.Logger
-import org.jetbrains.kotlin.maven.KotlinMavenPluginExtension
-import org.jetbrains.kotlin.maven.PluginOption
+import org.jetbrains.kotlin.maven.*
 
 @Component(role = KotlinMavenPluginExtension::class, hint = "mappie")
 class MappieMavenPlugin : KotlinMavenPluginExtension {
@@ -18,16 +16,12 @@ class MappieMavenPlugin : KotlinMavenPluginExtension {
 
     override fun getPluginOptions(project: MavenProject, execution: MojoExecution): List<PluginOption> {
         logger.debug("Loaded Maven plugin " + javaClass.name)
-        return listOf(
-//            PluginOption("mappie", PLUGIN_ID, "useDefaultArguments", "true"),
-//            PluginOption("mappie", PLUGIN_ID, "strictness.visibility", "false"),
-//            PluginOption("mappie", PLUGIN_ID, "strictness.enums", "true"),
-        )
+        return listOf()
     }
 
     override fun isApplicable(project: MavenProject, execution: MojoExecution) = true
 
     companion object {
-        private const val PLUGIN_ID = "tech.mappie"
+        private const val PLUGIN_ID = BuildConfig.COMPILER_PLUGIN_ID
     }
 }

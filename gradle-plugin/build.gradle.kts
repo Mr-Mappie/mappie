@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.gradle.plugin.publish)
+    alias(libs.plugins.com.github.gmazzo.buildconfig)
     id("jacoco")
 }
 
@@ -25,23 +26,13 @@ gradlePlugin {
     }
 }
 
-// TODO: duplicate of the one in :maven-plugin. Move to buildSrc.
-tasks.register("updateMappieProperties") {
-    group = "build"
-    description = "Update mappie.properties file for Gradle plugin."
-
-    val projectVersion = project.version.toString()
-    val propertiesFile = layout.buildDirectory.file("resources/main/mappie.properties")
-    outputs.file(propertiesFile)
-
-    tasks.findByName("sourcesJar")?.dependsOn(this)
-
-    doLast {
-        propertiesFile.get().asFile.writeText("VERSION=$projectVersion")
-    }
+buildConfig {
+    packageName = group.toString()
+    buildConfigField("GROUP_ID", group.toString())
+    buildConfigField("PLUGIN_ID", "mappie-compiler-plugin")
+    buildConfigField("COMPILER_PLUGIN_ID", "mappie")
+    buildConfigField("VERSION", version.toString())
 }
-
-tasks.named("processResources") { dependsOn("updateMappieProperties") }
 
 tasks.test {
     useJUnitPlatform()

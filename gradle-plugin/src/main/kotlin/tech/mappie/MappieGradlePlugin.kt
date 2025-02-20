@@ -37,13 +37,14 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
         }
     }
 
-    override fun getCompilerPluginId(): String = "mappie"
+    override fun getCompilerPluginId(): String =
+        BuildConfig.COMPILER_PLUGIN_ID
 
     override fun getPluginArtifact(): SubpluginArtifact =
         SubpluginArtifact(
-            groupId = "tech.mappie",
-            artifactId = "mappie-compiler-plugin",
-            version = MappieProperties.version,
+            groupId = BuildConfig.GROUP_ID,
+            artifactId = BuildConfig.PLUGIN_ID,
+            version = BuildConfig.VERSION,
         )
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) = true

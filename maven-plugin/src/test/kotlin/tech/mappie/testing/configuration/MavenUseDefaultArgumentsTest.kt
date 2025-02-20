@@ -23,8 +23,8 @@ class MavenUseDefaultArgumentsTest : TestBase() {
             """.trimIndent()
         )
 
-        assertThat(execute()).isSuccessful()
+        assertThat(execute()).isFailure()
         assertThat(logs.lines())
-            .anyMatch { it.matches(Regex("\\[WARNING\\]: .+ Target Output::second has no source defined")) }
+            .anyMatch { it.matches(Regex("\\[ERROR\\] .+ Target Output::second has no source defined")) }
     }
 }
