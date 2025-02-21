@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.com.github.gmazzo.buildconfig)
@@ -42,4 +44,9 @@ tasks.test {
     dependsOn("publishToMavenLocal")
     dependsOn(":compiler-plugin:publishToMavenLocal")
     dependsOn(":mappie-api:publishToMavenLocal")
+
+    testLogging {
+        showCauses = true
+        exceptionFormat = TestExceptionFormat.FULL
+    }
 }

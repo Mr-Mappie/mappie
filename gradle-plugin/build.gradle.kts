@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.gradle.plugin.publish)
@@ -39,6 +41,11 @@ tasks.test {
     dependsOn("publishToMavenLocal")
     dependsOn(":compiler-plugin:publishToMavenLocal")
     dependsOn(":mappie-api:publishToMavenLocal")
+
+    testLogging {
+        showCauses = true
+        exceptionFormat = TestExceptionFormat.FULL
+    }
 
     maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
 }
