@@ -5,6 +5,7 @@ changelog:
     - date: "tbd"
       title: "v1.1.0"
       items:
+        - "#[18](https://github.com/Mr-Mappie/mappie/issues/18) added maven plugin."
         - "#[161](https://github.com/Mr-Mappie/mappie/issues/161) fixed compilation on non-jvm platforms."
     - date: "2025-02-07"
       title: "v1.0.0"

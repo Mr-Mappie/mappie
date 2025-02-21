@@ -3,34 +3,13 @@ import org.jreleaser.model.Signing
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.multiplatform) apply false
-    alias(libs.plugins.sonarqube)
     alias(libs.plugins.jreleaser)
-    id("jacoco-report-aggregation")
 }
 
 allprojects {
     group = "tech.mappie"
     description = "Kotlin compiler plugin for generating object mappers"
     version = properties["version"] as String
-}
-
-dependencies {
-    jacocoAggregation(project(":compiler-plugin"))
-    jacocoAggregation(project(":gradle-plugin"))
-}
-
-sonar {
-    properties {
-        property("sonar.projectKey", "Mr-Mappie_mappie")
-        property("sonar.organization", "mappie")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.qualitygate.wait", "true")
-        property("sonar.branch.name", "main")
-        property("sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory
-                .file("reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
-                .get().asFile.absolutePath
-        )
-    }
 }
 
 tasks.jreleaserFullRelease.configure {
@@ -65,6 +44,9 @@ jreleaser {
                 buildList {
                     if (System.getenv("RELEASE_API") == "true") {
                         add("mappie-api")
+                    }
+                    if (System.getenv("RELEASE_MAVEN_PLUGIN") == "true") {
+                        add("maven-plugin")
                     }
                     if (System.getenv("RELEASE_COMPILER_PLUGIN") == "true") {
                         add("compiler-plugin")

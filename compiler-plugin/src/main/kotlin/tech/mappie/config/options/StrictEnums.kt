@@ -19,4 +19,4 @@ fun MappieContext.getUseStrictEnumsAnnotation(function: IrFunction): IrConstruct
 fun MappieContext.useStrictEnums(function: IrFunction): Boolean =
     getUseStrictEnumsAnnotation(function)
         ?.let { it.getValueArgument(Name.identifier("value"))?.isTrueConst() ?: true }
-        ?: configuration.strictness.enums
+        ?: configuration.strictEnums

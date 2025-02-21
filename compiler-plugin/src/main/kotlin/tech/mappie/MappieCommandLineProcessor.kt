@@ -50,10 +50,10 @@ class MappieCommandLineProcessor : CommandLineProcessor {
     }
 
     companion object {
-        const val OPTION_WARNINGS_AS_ERRORS = "warningsAsErrors"
-        const val OPTION_USE_DEFAULT_ARGUMENTS = "useDefaultArguments"
-        const val OPTION_STRICTNESS_ENUMS = "strictness.enums"
-        const val OPTION_STRICTNESS_VISIBILITY = "strictness.visibility"
+        const val OPTION_WARNINGS_AS_ERRORS = "warnings-as-errors"
+        const val OPTION_USE_DEFAULT_ARGUMENTS = "use-default-arguments"
+        const val OPTION_STRICTNESS_ENUMS = "strict-enums"
+        const val OPTION_STRICTNESS_VISIBILITY = "strict-visibility"
 
         val ARGUMENT_WARNINGS_AS_ERRORS = CompilerConfigurationKey<Boolean>(OPTION_WARNINGS_AS_ERRORS)
         val ARGUMENT_USE_DEFAULT_ARGUMENTS = CompilerConfigurationKey<Boolean>(OPTION_USE_DEFAULT_ARGUMENTS)

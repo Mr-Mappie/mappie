@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_USE_DEFAULT_ARGUMENTS
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_WARNINGS_AS_ERRORS
 import tech.mappie.config.MappieConfiguration
-import tech.mappie.config.StrictnessConfiguration
 import tech.mappie.fir.MappieFirRegistrar
 import tech.mappie.ir.MappieIrRegistrar
 
@@ -25,10 +24,8 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
         val config = MappieConfiguration(
             warningsAsErrors = configuration.get(ARGUMENT_WARNINGS_AS_ERRORS, false),
             useDefaultArguments = configuration.get(ARGUMENT_USE_DEFAULT_ARGUMENTS, true),
-            strictness = StrictnessConfiguration(
-                enums = configuration.get(ARGUMENT_STRICTNESS_ENUMS, true),
-                visibility = configuration.get(ARGUMENT_STRICTNESS_VISIBILITY, false)
-            )
+            strictEnums = configuration.get(ARGUMENT_STRICTNESS_ENUMS, true),
+            strictVisiblity = configuration.get(ARGUMENT_STRICTNESS_VISIBILITY, false),
         )
         FirExtensionRegistrarAdapter.registerExtension(MappieFirRegistrar())
         IrGenerationExtension.registerExtension(MappieIrRegistrar(configuration.get(MESSAGE_COLLECTOR_KEY, NONE), config))

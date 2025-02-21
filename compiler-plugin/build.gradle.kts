@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     id("java-test-fixtures")
     id("maven-publish")
-    id("jacoco")
 }
 
 dependencies {
@@ -51,8 +50,6 @@ publishing {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-
-    finalizedBy(tasks.jacocoTestReport)
 
     maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
 }
