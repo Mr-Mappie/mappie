@@ -4,7 +4,7 @@
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-green.svg)](https://shields.io/)
 
 # Mappie
-Mappie is a Kotlin compiler plugin which generates code to simplify developing object mapping code. Writing object 
+Mappie is a Kotlin Multiplatform compiler plugin which generates code to simplify developing object mapping code. Writing object 
 mapping code is often a mind-numbing and error-prone task. Reducing this development effort will lead to a more 
 pleasant programming experience, and less risk of bugs.
 
@@ -45,9 +45,40 @@ object PersonToPersonDtoMapper : ObjectMappie<Person, PersonDto>() {
 ```
 
 ## Usage
-Mappie can be used by adding the following snippet to your `build.gradle.kts` file.
+Mappie can be used via Gradle and Maven.
+
+For Gradle, it can be applied by adding the following snippet to your `build.gradle.kts` file.
 ```kotlin
 plugins {
     id("tech.mappie.plugin") version "x.y.z"
 }
 ```
+for more details, visit the [gradle setup documentation](https://mappie.tech/getting-started/gradle-configuration/) for Gradle.
+
+For Maven, it can be applied by adding the following snippet to your `pom.xml` file.
+```xml
+...
+<plugin>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-maven-plugin</artifactId>
+    <version>...</version>
+
+    <configuration>
+        <compilerPlugins>
+            <compilerPlugin>mappie</compilerPlugin>
+        </compilerPlugins>
+        <pluginOptions>
+            ...
+        </pluginOptions>
+    </configuration>
+    <dependencies>
+        <dependency>
+            <groupId>tech.mappie</groupId>
+            <artifactId>mappie-maven-plugin</artifactId>
+            <version>x.y.z</version>
+        </dependency>
+    </dependencies>
+</plugin>
+...
+```
+for more details, visit the [maven setup documentation](https://mappie.tech/getting-started/maven-configuration/).
