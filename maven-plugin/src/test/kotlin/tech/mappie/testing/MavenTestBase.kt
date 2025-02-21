@@ -11,8 +11,8 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.io.InputStream
 import java.lang.System.lineSeparator
-import java.nio.file.Path
 import java.util.*
 
 abstract class MavenTestBase {
@@ -130,6 +130,7 @@ abstract class MavenTestBase {
     }
 
     protected fun execute(): InvocationResult = DefaultInvoker()
+        .setInputStream(InputStream.nullInputStream())
         .setOutputHandler { logs.appendLine(it) }
         .execute(request)
 
