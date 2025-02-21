@@ -34,6 +34,12 @@ abstract class TestBase {
         gradleVersion?.let { println("Using Gradle version $it") }
         println("Using Kotlin version $kotlinVersion")
 
+        text("gradle.properties",
+            """
+            org.gradle.jvmargs=-Xmx1024M -XX:MaxMetaspaceSize=512m
+            """.trimIndent()
+        )
+
         kotlin("settings.gradle.kts",
             """
             pluginManagement {
@@ -48,6 +54,12 @@ abstract class TestBase {
         when (platform) {
             KotlinPlatform.JVM -> jvm()
             KotlinPlatform.MULTIPLATFORM -> multiplatform()
+        }
+    }
+
+    protected fun text(file: String, code: String) {
+        directory.resolve(file).apply {
+            appendText(code)
         }
     }
 
