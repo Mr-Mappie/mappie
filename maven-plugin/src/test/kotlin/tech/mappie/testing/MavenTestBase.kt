@@ -10,6 +10,7 @@ import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
 import java.lang.System.lineSeparator
@@ -126,13 +127,12 @@ abstract class MavenTestBase {
             mavenExecutable = File("../mvnw")
             pomFile = pom
             goals = listOf("compile", "test")
+            setOutputHandler { logs.appendLine(it) }
+            setInputStream(ByteArrayInputStream(ByteArray(0)))
         }
     }
 
-    protected fun execute(): InvocationResult = DefaultInvoker()
-        .setInputStream(InputStream.nullInputStream())
-        .setOutputHandler { logs.appendLine(it) }
-        .execute(request)
+    protected fun execute(): InvocationResult = DefaultInvoker().execute(request)
 
     protected fun ObjectAssert<InvocationResult>.isSuccessful(): AbstractObjectAssert<*, *> =
         extracting { it.exitCode }
