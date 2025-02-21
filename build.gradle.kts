@@ -46,7 +46,7 @@ jreleaser {
                         add("mappie-api")
                     }
                     if (System.getenv("RELEASE_MAVEN_PLUGIN") == "true") {
-                        add("mappie-api")
+                        add("maven-plugin")
                     }
                     if (System.getenv("RELEASE_COMPILER_PLUGIN") == "true") {
                         add("compiler-plugin")
