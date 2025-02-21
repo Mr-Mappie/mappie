@@ -2,15 +2,12 @@ rootProject.name = "mappie"
 
 pluginManagement {
     repositories {
-        mavenLocal()
         gradlePluginPortal()
-        google()
     }
 }
 
 dependencyResolutionManagement {
     repositories {
-        mavenLocal()
         mavenCentral()
     }
 }
