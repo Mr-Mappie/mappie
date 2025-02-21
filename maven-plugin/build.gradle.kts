@@ -22,6 +22,9 @@ buildConfig {
     packageName = group.toString()
     buildConfigField("COMPILER_PLUGIN_ID", "mappie")
     buildConfigField("VERSION", version.toString())
+    sourceSets.named("test") {
+        buildConfigField("MAVEN_WRAPPER_PATH", layout.projectDirectory.file("src/test/resources/maven").asFile.absolutePath)
+    }
 }
 
 publishing {

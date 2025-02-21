@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
 import tech.mappie.BuildConfig
+import tech.mappie.TestBuildConfig
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.lang.System.lineSeparator
@@ -122,8 +123,8 @@ abstract class MavenTestBase {
         )
 
         request = DefaultInvocationRequest().apply {
-            mavenHome = File("./src/test/resources/maven").absoluteFile
-            mavenExecutable =File("./src/test/resources/maven/mvnw").absoluteFile
+            mavenHome = File(TestBuildConfig.MAVEN_WRAPPER_PATH)
+            mavenExecutable = File(TestBuildConfig.MAVEN_WRAPPER_PATH).resolve("mvnw")
             pomFile = pom
             goals = listOf("compile", "test")
             setOutputHandler { logs.appendLine(it) }
@@ -135,12 +136,12 @@ abstract class MavenTestBase {
 
     protected fun ObjectAssert<InvocationResult>.isSuccessful(): AbstractObjectAssert<*, *> =
         extracting { it.exitCode }
-            .withFailMessage("Expected successful invocation result but failed." + lineSeparator() + logs.lines().joinToString(separator = lineSeparator()))
+            .`as` { logs.lines().joinToString(separator = lineSeparator()) }
             .isEqualTo(0)
 
     protected fun ObjectAssert<InvocationResult>.isFailure(): AbstractObjectAssert<*, *> =
         extracting { it.exitCode }
-            .withFailMessage("Expected failure invocation result but succeeded." + lineSeparator() + logs.lines().joinToString(separator = lineSeparator()))
+            .`as` { logs.lines().joinToString(separator = lineSeparator()) }
             .isNotEqualTo(0)
 
     protected fun xml(file: String, @Language("XML") code: String): File {
