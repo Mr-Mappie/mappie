@@ -72,7 +72,7 @@ publishing {
             if (name != "jvm" && name != "kotlinMultiplatform") {
                 artifact(tasks["emptyJar"])
             }
-            mappiePom(name = "tech.mappie:compiler-plugin")
+            mappiePom(name = "tech.mappie:mappie-api")
         }
     }
 }

@@ -11,6 +11,10 @@ on:
         type: boolean
         default: true
         description: Release compiler-plugin project
+      release_maven_plugin:
+        type: boolean
+        default: true
+        description: Release maven-plugin project
       release_gradle_plugin:
         type: boolean
         default: true
@@ -58,6 +62,7 @@ jobs:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_API: ${{ inputs.release_api }}
           RELEASE_COMPILER_PLUGIN: ${{ inputs.release_compiler_plugin }}
+          RELEASE_MAVEN_PLUGIN: ${{ inputs.release_maven_plugin }}
           RELEASE_GRADLE_PLUGIN: ${{ inputs.release_gradle_plugin }}
 
       - name: Publish to Gradle Plugin Portal

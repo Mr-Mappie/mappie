@@ -5,8 +5,8 @@ import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
+import tech.mappie.BuildConfig
 import java.io.File
-import java.util.*
 
 enum class KotlinPlatform { JVM, MULTIPLATFORM }
 
@@ -34,6 +34,12 @@ abstract class TestBase {
         gradleVersion?.let { println("Using Gradle version $it") }
         println("Using Kotlin version $kotlinVersion")
 
+        text("gradle.properties",
+            """
+            org.gradle.jvmargs=-Xmx1024M -XX:MaxMetaspaceSize=512m
+            """.trimIndent()
+        )
+
         kotlin("settings.gradle.kts",
             """
             pluginManagement {
@@ -48,6 +54,12 @@ abstract class TestBase {
         when (platform) {
             KotlinPlatform.JVM -> jvm()
             KotlinPlatform.MULTIPLATFORM -> multiplatform()
+        }
+    }
+
+    protected fun text(file: String, code: String) {
+        directory.resolve(file).apply {
+            appendText(code)
         }
     }
 
@@ -72,7 +84,7 @@ abstract class TestBase {
             """
             plugins {
                 id("org.jetbrains.kotlin.jvm") version "$kotlinVersion"
-                id("tech.mappie.plugin") version "$version"
+                id("tech.mappie.plugin") version "$VERSION"
             }
 
             repositories {
@@ -105,7 +117,7 @@ abstract class TestBase {
             """
             plugins {
                 id("org.jetbrains.kotlin.multiplatform") version "$kotlinVersion"
-                id("tech.mappie.plugin") version "$version"
+                id("tech.mappie.plugin") version "$VERSION"
             }
 
             repositories {
@@ -131,14 +143,12 @@ abstract class TestBase {
     }
 
     companion object {
-        private val version = javaClass.classLoader.getResourceAsStream("mappie.properties").use {
-            Properties().apply { load(it) }.getProperty("VERSION")
-        }
+        private const val VERSION = BuildConfig.VERSION
 
         @BeforeAll
         @JvmStatic
         fun start() {
-            println("Using mappie version $version")
+            println("Using mappie version $VERSION")
         }
     }
 }
