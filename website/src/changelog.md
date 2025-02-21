@@ -5,8 +5,9 @@ changelog:
     - date: "tbd"
       title: "v1.1.0"
       items:
-        - "#[18](https://github.com/Mr-Mappie/mappie/issues/18) added maven plugin."
-        - "#[161](https://github.com/Mr-Mappie/mappie/issues/161) fixed compilation on non-jvm platforms."
+        - "[#18](https://github.com/Mr-Mappie/mappie/issues/18) added maven plugin."
+        - "[#161](https://github.com/Mr-Mappie/mappie/issues/161) fixed compilation on non-jvm platforms."
+        - "[#138](https://github.com/Mr-Mappie/mappie/issues/138) added a clear error message when using ObjectMappie for enum types."
     - date: "2025-02-07"
       title: "v1.0.0"
       items:
