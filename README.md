@@ -47,15 +47,17 @@ object PersonToPersonDtoMapper : ObjectMappie<Person, PersonDto>() {
 ## Usage
 Mappie can be used via Gradle and Maven.
 
-For Gradle, it can be applied by adding the following snippet to your `build.gradle.kts` file.
+### Gradle
+Mappie can be used via Gradle, it can be applied by adding the following snippet to your `build.gradle.kts` file.
 ```kotlin
 plugins {
     id("tech.mappie.plugin") version "x.y.z"
 }
 ```
-for more details, visit the [gradle setup documentation](https://mappie.tech/getting-started/gradle-configuration/) for Gradle.
+For more details, visit the [gradle setup documentation](https://mappie.tech/getting-started/gradle-configuration/) for Gradle.
 
-For Maven, it can be applied by adding the following snippet to your `pom.xml` file.
+### Maven
+Mappie can be used via Maven, it can be applied by adding the following snippet to your `pom.xml` file.
 ```xml
 ...
 <plugin>
@@ -81,4 +83,14 @@ For Maven, it can be applied by adding the following snippet to your `pom.xml` f
 </plugin>
 ...
 ```
-for more details, visit the [maven setup documentation](https://mappie.tech/getting-started/maven-configuration/).
+
+We must also add the `mappie-api` dependency. For example, for the JVM
+```xml
+<dependency>
+    <groupId>tech.mappie</groupId>
+    <artifactId>mappie-api-jvm</artifactId>
+    <version>x.y.z</version>
+</dependency>
+```
+
+For more details, visit the [maven setup documentation](https://mappie.tech/getting-started/maven-configuration/).
