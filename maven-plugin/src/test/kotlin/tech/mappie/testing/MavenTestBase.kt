@@ -122,8 +122,8 @@ abstract class MavenTestBase {
         )
 
         request = DefaultInvocationRequest().apply {
-            mavenHome = File("./src/test/resources/maven")
-            mavenExecutable = File("../mvnw")
+            mavenHome = File("./src/test/resources/maven").absoluteFile
+            mavenExecutable =File("./src/test/resources/maven/mvnw").absoluteFile
             pomFile = pom
             goals = listOf("compile", "test")
             setOutputHandler { logs.appendLine(it) }
