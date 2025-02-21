@@ -21,6 +21,7 @@ dependencies {
 buildConfig {
     packageName = group.toString()
     buildConfigField("COMPILER_PLUGIN_ID", "mappie")
+    buildConfigField("VERSION", version.toString())
 }
 
 publishing {
@@ -42,7 +43,6 @@ tasks.test {
     useJUnitPlatform()
 
     dependsOn("publishToMavenLocal")
-    dependsOn(":compiler-plugin:publishToMavenLocal")
     dependsOn(":mappie-api:publishToMavenLocal")
 
     testLogging {
