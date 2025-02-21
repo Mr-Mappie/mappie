@@ -10,11 +10,10 @@ import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
+import tech.mappie.BuildConfig
 import java.io.ByteArrayInputStream
 import java.io.File
-import java.io.InputStream
 import java.lang.System.lineSeparator
-import java.util.*
 
 abstract class MavenTestBase {
 
@@ -157,9 +156,7 @@ abstract class MavenTestBase {
     }
 
     companion object {
-        private val version = javaClass.classLoader.getResourceAsStream("mappie.properties").use {
-            Properties().apply { load(it) }.getProperty("VERSION")
-        }
+        private val version = BuildConfig.VERSION
 
         @BeforeAll
         @JvmStatic
