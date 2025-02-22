@@ -7,6 +7,7 @@ import kotlin.test.Test
 
 class ObjectMappieInsteadOfEnumMappieTest {
 
+    data class InputObject(val boolean: Boolean)
     enum class Input { TRUE, FALSE }
 
     enum class Output { TRUE, FALSE }
@@ -15,7 +16,7 @@ class ObjectMappieInsteadOfEnumMappieTest {
     lateinit var directory: File
 
     @Test
-    fun `map enum to expression should succeed`() {
+    fun `map enum to enum in ObjectMappie should fail`() {
         compile(directory) {
             file("Test.kt",
                 """
@@ -27,8 +28,43 @@ class ObjectMappieInsteadOfEnumMappieTest {
             )
         } satisfies  {
             isCompilationError()
-            hasErrorMessage(4, "Source type Input cannot be an enum class")
-            hasErrorMessage(4, "Target type Output cannot be an enum class")
+            hasErrorMessage(4, "Target type Output cannot be an enum class", listOf("Override EnumMappie instead of ObjectMappie"))
+        }
+    }
+
+    @Test
+    fun `map object to enum explicitly in ObjectMappie should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.enums.ObjectMappieInsteadOfEnumMappieTest.*
+
+                class Mapper : ObjectMappie<InputObject, Output>() {
+                    override fun map(from: InputObject) = 
+                    if (from.boolean) Output.TRUE else Output.FALSE
+                }
+                """
+            )
+        } satisfies  {
+            isOk()
+        }
+    }
+
+    @Test
+    fun `map object to enum implicitly in ObjectMappie should fail`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.enums.ObjectMappieInsteadOfEnumMappieTest.*
+
+                class Mapper : ObjectMappie<InputObject, Output>()
+                """
+            )
+        } satisfies  {
+            isCompilationError()
+            hasErrorMessage(4, "Target type Output cannot be an enum class", listOf("Override EnumMappie instead of ObjectMappie"))
         }
     }
 }
