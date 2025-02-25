@@ -2,7 +2,7 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-    - date: "tbd"
+    - date: "2025-02-25"
       title: "v1.1.0"
       items:
         - "[#18](https://github.com/Mr-Mappie/mappie/issues/18) added maven plugin."

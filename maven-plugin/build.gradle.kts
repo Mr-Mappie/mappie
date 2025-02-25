@@ -27,6 +27,11 @@ buildConfig {
     }
 }
 
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
 publishing {
     repositories {
         maven {
