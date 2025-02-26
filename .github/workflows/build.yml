@@ -12,31 +12,31 @@ on:
     paths:
       - '**'
       - '!website/**'
+      -
+permissions:
+  pull-requests: read
 
 jobs:
   build:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-      name: Build and Analysis
-      permissions:
-        pull-requests: read
-      runs-on: ${{ matrix.os }}
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-          with:
-            fetch-depth: 0
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-        - name: Setup Java
-          uses: actions/setup-java@v4
-          with:
-            java-version: 17
-            distribution: temurin
-            cache: 'gradle'
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: 'gradle'
 
-        - name: Setup Gradle
-          uses: gradle/actions/setup-gradle@v3
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
-        - name: Build
-          run: ./gradlew build
+      - name: Build
+        run: ./gradlew build
