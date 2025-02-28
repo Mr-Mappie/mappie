@@ -16,7 +16,6 @@ class Issue173 : TestBase() {
             import tech.mappie.api.ObjectMappie
 
             object AMapper : ObjectMappie<AIn, AOut>()
-            //object BMapper : ObjectMappie<BIn, BOut>() // works fine if commented out on Android, fails on iOS
             
             data class AIn(val b: BIn)
             data class AOut(val b: BOut)
@@ -30,13 +29,13 @@ class Issue173 : TestBase() {
             """
             import kotlin.test.*
 
-            class NativeMapperTest {
+            class MapperTest {
             
                 @Test
-                fun `map NativeInput to NativeOutput`() {
+                fun `map AIn to AOut`() {
                     assertEquals(
-                        AOut("value"),
-                        AMapper.map(AIn("value")),
+                        AOut(BOut("value")),
+                        AMapper.map(AIn(BIn("value"))),
                     )
                 }
             }
