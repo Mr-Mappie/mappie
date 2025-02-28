@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+    - date: "2025-02-28"
+      title: "v1.1.1"
+      items:
+        - "[#173](https://github.com/Mr-Mappie/mappie/issues/173) fixed multiplatform class code-generation bug."
     - date: "2025-02-25"
       title: "v1.1.0"
       items:
