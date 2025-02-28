@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     branches:
-      - main
+      - '**'
     paths:
       - '**'
       - '!website/**'
@@ -12,13 +12,16 @@ on:
     paths:
       - '**'
       - '!website/**'
+      -
+permissions:
+  pull-requests: read
 
 jobs:
   build:
-    name: Build and Analysis
-    permissions:
-      pull-requests: read
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

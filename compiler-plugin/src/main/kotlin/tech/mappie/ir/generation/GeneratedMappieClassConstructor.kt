@@ -6,10 +6,9 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.types.classOrFail
-import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.types.typeWithParameters
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.addSimpleDelegatingConstructor
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
@@ -44,19 +43,19 @@ class GeneratedMappieClassConstructor(
         context.pluginContext.irFactory.buildClass {
             name = name(request)
             kind = ClassKind.OBJECT
-        }.also {
-            it.parent = parent
-            it.thisReceiver = buildReceiverParameter(it, it.origin, it.symbol.typeWithParameters(emptyList()))
-            it.superTypes = listOf(base.owner.symbol.typeWith(request.source, request.target))
+        }.also { clazz ->
+            clazz.parent = parent
+            clazz.thisReceiver = buildReceiverParameter(clazz, clazz.origin, clazz.symbol.typeWithParameters(emptyList()))
+            clazz.superTypes = listOf(base.owner.symbol.typeWith(request.source, request.target))
 
-            it.addSimpleDelegatingConstructor(
+            clazz.addSimpleDelegatingConstructor(
                 base.constructors.single().owner,
                 context.pluginContext.irBuiltIns,
                 true
             )
 
             base.functions.forEach { function ->
-                it.addFunction {
+                clazz.addFunction {
                     name = function.owner.name
                     returnType = function.owner.returnType
                     updateFrom(function.owner)
@@ -64,9 +63,14 @@ class GeneratedMappieClassConstructor(
                     dispatchReceiverParameter = function.owner.dispatchReceiverParameter
                     overriddenSymbols = listOf(function)
                     isFakeOverride = function.owner.name != IDENTIFIER_MAP
+
                     body = function.owner.body
                     function.owner.valueParameters.forEach { parameter ->
-                        addValueParameter(parameter.name, parameter.type)
+                        if (function.owner.name == IDENTIFIER_MAP) {
+                            addValueParameter(parameter.name, (clazz.superTypes.first() as IrSimpleType).arguments.first().typeOrFail)
+                        } else {
+                            addValueParameter(parameter.name, parameter.type)
+                        }
                     }
                 }
             }

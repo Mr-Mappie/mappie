@@ -1,6 +1,6 @@
 [![Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/tech.mappie.plugin)](https://plugins.gradle.org/plugin/tech.mappie.plugin)
 [![Maven Central](https://img.shields.io/maven-metadata/v.svg?label=maven-central&metadataUrl=https%3A%2F%2Frepo1.maven.org%2Fmaven2%2Ftech%2Fmappie%2Fmappie-api%2Fmaven-metadata.xml)](https://central.sonatype.com/artifact/tech.mappie/mappie-api)
-[![Continuous Integration](https://github.com/mr-mappie/mappie/workflows/Build/badge.svg)](https://github.com/mr-mappie/mappie/actions)
+[![Continuous Integration](https://github.com/mr-mappie/mappie/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/mr-mappie/mappie/actions)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-green.svg)](https://shields.io/)
 
 # Mappie
