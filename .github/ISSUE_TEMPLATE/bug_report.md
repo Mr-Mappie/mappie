@@ -16,5 +16,14 @@ A minimal example to reproduce the bug.
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
+**Kotlin version**
+The version of kotlin used.
+
+**Mappie version**
+The version of mappie used.
+
+**Invocation method**
+The method of invocation, i.e. Gradle, Maven or CLI.
+
 **Additional context**
 Add any other context about the problem here.
