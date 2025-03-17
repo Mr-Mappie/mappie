@@ -54,7 +54,7 @@ plugins {
     id("tech.mappie.plugin") version "x.y.z"
 }
 ```
-For more details, visit the [gradle setup documentation](https://mappie.tech/getting-started/gradle-configuration/) for Gradle.
+For more details, visit the [gradle setup documentation](https://mappie.tech/getting-started/gradle-configuration/).
 
 ### Maven
 Mappie can be used via Maven, it can be applied by adding the following snippet to your `pom.xml` file.
