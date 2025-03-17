@@ -28,3 +28,8 @@ updates:
     labels:
       - "dependencies"
       - "documentation"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "friday"
