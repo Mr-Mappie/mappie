@@ -27,10 +27,14 @@ abstract class MavenTestBase {
 
     private lateinit var request: InvocationRequest
 
+    protected open val kotlinVersion = "2.1.20"
+
     @BeforeEach
     fun setup() {
         directory.resolve("src/main/kotlin").mkdirs()
         directory.resolve("src/test/kotlin").mkdirs()
+
+        println("Using Kotlin version $kotlinVersion")
 
         val pom: File = xml("pom.xml",
             """
@@ -66,7 +70,7 @@ abstract class MavenTestBase {
                         <plugin>
                             <groupId>org.jetbrains.kotlin</groupId>
                             <artifactId>kotlin-maven-plugin</artifactId>
-                            <version>2.1.20</version>
+                            <version>$kotlinVersion</version>
                             
                             <executions>
                                 <execution>
@@ -94,7 +98,7 @@ abstract class MavenTestBase {
                                 <dependency>
                                     <groupId>tech.mappie</groupId>
                                     <artifactId>mappie-maven-plugin</artifactId>
-                                    <version>$version</version>
+                                    <version>$VERSION</version>
                                 </dependency>
                             </dependencies>
                         </plugin>                    
@@ -104,12 +108,12 @@ abstract class MavenTestBase {
                     <dependency>
                         <groupId>tech.mappie</groupId>
                         <artifactId>mappie-api-jvm</artifactId>
-                        <version>$version</version>
+                        <version>$VERSION</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
                         <artifactId>kotlin-stdlib</artifactId>
-                        <version>2.1.10</version>
+                        <version>$kotlinVersion</version>
                     </dependency>
                     <dependency>
                         <groupId>org.testng</groupId>
@@ -126,6 +130,7 @@ abstract class MavenTestBase {
             mavenHome = File(TestBuildConfig.MAVEN_WRAPPER_PATH)
             mavenExecutable = File(TestBuildConfig.MAVEN_WRAPPER_PATH).resolve("mvnw")
             pomFile = pom
+            isDebug = true
             goals = listOf("compile", "test")
             setOutputHandler { logs.appendLine(it) }
             setInputStream(ByteArrayInputStream(ByteArray(0)))
@@ -157,12 +162,12 @@ abstract class MavenTestBase {
     }
 
     companion object {
-        private val version = BuildConfig.VERSION
+        private const val VERSION = BuildConfig.VERSION
 
         @BeforeAll
         @JvmStatic
         fun start() {
-            println("Using mappie version $version")
+            println("Using mappie version $VERSION")
         }
     }
 }

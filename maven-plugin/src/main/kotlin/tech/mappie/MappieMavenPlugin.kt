@@ -1,5 +1,6 @@
 package tech.mappie
 
+import org.apache.maven.model.Plugin
 import org.apache.maven.plugin.MojoExecution
 import org.apache.maven.project.MavenProject
 import org.codehaus.plexus.component.annotations.*
@@ -19,9 +20,21 @@ class MappieMavenPlugin : KotlinMavenPluginExtension {
         return listOf()
     }
 
-    override fun isApplicable(project: MavenProject, execution: MojoExecution) = true
+    override fun isApplicable(project: MavenProject, execution: MojoExecution): Boolean {
+        val version = project.buildPlugins
+            .filterIsInstance<Plugin>()
+            .firstOrNull { it.key == "org.jetbrains.kotlin:kotlin-maven-plugin" }
+            ?.version
+
+        if (version != EXPECTED_KOTLIN_VERSION) {
+            logger.warn("Mappie unsupported Kotlin version $version, $EXPECTED_KOTLIN_VERSION was expected. This is highly likely to lead to compilation failure.")
+        }
+
+        return true
+    }
 
     companion object {
         private const val PLUGIN_ID = BuildConfig.COMPILER_PLUGIN_ID
+        private val EXPECTED_KOTLIN_VERSION = BuildConfig.VERSION.split('-').first()
     }
 }
