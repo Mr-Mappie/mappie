@@ -51,7 +51,7 @@ Mappie can be used via Gradle and Maven.
 Mappie can be used via Gradle, it can be applied by adding the following snippet to your `build.gradle.kts` file.
 ```kotlin
 plugins {
-    id("tech.mappie.plugin") version "supported-kotlin-version-x.y.z"
+    id("tech.mappie.plugin") version "version"
 }
 ```
 For more details, visit the [gradle setup documentation](https://mappie.tech/getting-started/gradle-configuration/) for Gradle.
@@ -77,7 +77,7 @@ Mappie can be used via Maven, it can be applied by adding the following snippet 
         <dependency>
             <groupId>tech.mappie</groupId>
             <artifactId>mappie-maven-plugin</artifactId>
-            <version>supported-kotlin-version-x.y.z</version>
+            <version>version</version>
         </dependency>
     </dependencies>
 </plugin>
@@ -89,7 +89,7 @@ We must also add the `mappie-api` dependency. For example, for the JVM
 <dependency>
     <groupId>tech.mappie</groupId>
     <artifactId>mappie-api-jvm</artifactId>
-    <version>supported-kotlin-version-x.y.z</version>
+    <version>version</version>
 </dependency>
 ```
 
