@@ -22,6 +22,9 @@ The version of kotlin used.
 **Mappie version**
 The version of mappie used.
 
+**Mappie and Kotlin compatibility**
+Is the Mappie version compatible with the Kotlin version?
+
 **Invocation method**
 The method of invocation, i.e. Gradle, Maven or CLI.
 
