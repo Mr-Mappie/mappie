@@ -1,8 +1,8 @@
 package tech.mappie.ir.analysis.problems.classes
 
-import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fileEntry
+import org.jetbrains.kotlin.ir.util.isNullable
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.ExplicitPropertyMappingSource
 import tech.mappie.util.filterSingle

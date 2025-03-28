@@ -1,9 +1,11 @@
 package tech.mappie.ir.util
 
 import org.jetbrains.kotlin.ir.types.*
+
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
 import tech.mappie.ir.MappieIrRegistrar.Companion.context
 

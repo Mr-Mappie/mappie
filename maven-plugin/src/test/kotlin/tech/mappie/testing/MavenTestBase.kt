@@ -66,7 +66,7 @@ abstract class MavenTestBase {
                         <plugin>
                             <groupId>org.jetbrains.kotlin</groupId>
                             <artifactId>kotlin-maven-plugin</artifactId>
-                            <version>2.1.10</version>
+                            <version>2.1.20</version>
                             
                             <executions>
                                 <execution>
