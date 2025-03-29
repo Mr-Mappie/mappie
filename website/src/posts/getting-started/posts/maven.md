@@ -4,7 +4,7 @@ summary: "Use Mappie via Maven."
 eleventyNavigation:
   key: Maven Configuration
   parent: Getting Started
-  order: 3
+  order: 4
 ---
 
 Mappie is a Kotlin compiler plugin which comes with a Maven plugin to automatically apply and configure the compiler
@@ -29,7 +29,7 @@ plugin. We can apply Mappie by adding the following to the `kotlin-maven-plugin`
         <dependency>
             <groupId>tech.mappie</groupId>
             <artifactId>mappie-maven-plugin</artifactId>
-            <version>x.y.z</version>
+            <version>version</version>
         </dependency>
     </dependencies>
 </plugin>
@@ -41,7 +41,7 @@ We must also add the `mappie-api` dependency. For example, for the JVM
 <dependency>
     <groupId>tech.mappie</groupId>
     <artifactId>mappie-api-jvm</artifactId>
-    <version>x.y.z</version>
+    <version>version</version>
 </dependency>
 ```
 
@@ -67,12 +67,3 @@ The following options exist with their corresponding default values
 | `mappie:use-default-arguments` | `@UseDefaultArguments` | `true`        |
 | `mappie:strict-visibility`     | `@UseStrictVisibility` | `false`       |
 | `mappie:strict-enums`          | `@UseStrictEnums`      | `true`        |
-
-
-## Compatibility
-
-Mappie depends on some compiler internals, which might be unstable. These dependencies are kept to a minimum,
-but are unavoidable. Mappie is tested and compatible with Kotlin versions `1.9.24`, `2.0.0`, and higher.
-
-Versions below `1.9.24` might work, but are untested. If you encounter an issue, please report this as a bug.
-Note that incompatible versions might lead to a compilation failure, but never to runtime risks.

@@ -4,7 +4,7 @@ summary: "Use Mappie via Gradle."
 eleventyNavigation:
   key: Gradle Configuration
   parent: Getting Started
-  order: 2
+  order: 3
 ---
 
 Mappie is a Kotlin compiler plugin which comes with a Gradle plugin to automatically apply and configure the compiler 
@@ -18,12 +18,12 @@ plugin. We can apply Mappie by adding the following plugin to the Gradle build f
     <div class="tab-content">
         <div class="tab-pane active" data-id="kotlin">
             <pre><code class="language-kotlin">plugins {
-    id("tech.mappie.plugin") version "x.y.z"
+    id("tech.mappie.plugin") version "version"
 }</code></pre>
         </div>
         <div class="tab-pane" data-id="groovy">
             <pre><code class="language-groovy">plugins {
-    id "tech.mappie.plugin" version "x.y.z"
+    id "tech.mappie.plugin" version "version"
 }</code></pre>
         </div>
     </div>
@@ -41,12 +41,12 @@ the `mappie-api` dependency can be added as follows
     <div class="tab-content">
         <div class="tab-pane active" data-id="kotlin">
             <pre><code class="language-kotlin">dependencies {
-    implementation("tech.mappie:mappie-api:x.y.z")
+    implementation("tech.mappie:mappie-api:version")
 }</code></pre>
         </div>
         <div class="tab-pane" data-id="groovy">
             <pre><code class="language-groovy">dependencies {
-    implementation "tech.mappie:mappie-api:x.y.z"
+    implementation "tech.mappie:mappie-api:version"
 }</code></pre>
         </div>
     </div>
@@ -77,12 +77,3 @@ The following options exist with their corresponding default values
 | `useDefaultArguments`   | `@UseDefaultArguments` | `true`        |
 | `strictness.visibility` | `@UseStrictVisibility` | `false`       |
 | `strictness.enums`      | `@UseStrictEnums`      | `true`        |
-
-
-## Compatibility
-
-Mappie depends on some compiler internals, which might be unstable. These dependencies are kept to a minimum,
-but are unavoidable. Mappie is tested and compatible with Kotlin versions `1.9.24`, `2.0.0`, and higher.
-
-Versions below `1.9.24` might work, but are untested. If you encounter an issue, please report this as a bug.
-Note that incompatible versions might lead to a compilation failure, but never to runtime risks.

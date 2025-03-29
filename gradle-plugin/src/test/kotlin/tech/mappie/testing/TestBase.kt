@@ -21,14 +21,14 @@ abstract class TestBase {
 
     protected open val gradleVersion: String? = null
 
-    protected open val kotlinVersion = "2.1.10"
+    protected open val kotlinVersion = "2.1.20"
 
     @BeforeEach
     fun setup() {
         runner = GradleRunner.create().apply {
             forwardOutput()
             withProjectDir(directory)
-            gradleVersion?.let { withGradleVersion(gradleVersion) }
+            gradleVersion?.let { withGradleVersion(it) }
         }
 
         gradleVersion?.let { println("Using Gradle version $it") }
@@ -115,6 +115,8 @@ abstract class TestBase {
 
         kotlin("build.gradle.kts",
             """
+            import org.jetbrains.kotlin.org.apache.commons.lang3.SystemUtils
+
             plugins {
                 id("org.jetbrains.kotlin.multiplatform") version "$kotlinVersion"
                 id("tech.mappie.plugin") version "$VERSION"
@@ -130,7 +132,10 @@ abstract class TestBase {
             
                 jvm()
                 mingwX64()
-                iosX64()
+
+                if (SystemUtils.IS_OS_MAC) {
+                    iosX64()
+                }
                 
                 sourceSets {
                     commonTest.dependencies {

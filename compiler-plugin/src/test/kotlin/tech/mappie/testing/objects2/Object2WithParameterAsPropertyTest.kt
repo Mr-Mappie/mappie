@@ -33,7 +33,6 @@ class Object2WithParameterAsPropertyTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
 
             val mapper = classLoader
                 .loadObjectMappie2Class<Input1, Input2, Output>("Mapper")

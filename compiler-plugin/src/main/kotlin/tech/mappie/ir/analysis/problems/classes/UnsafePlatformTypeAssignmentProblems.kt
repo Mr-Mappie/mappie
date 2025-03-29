@@ -1,7 +1,7 @@
 package tech.mappie.ir.analysis.problems.classes
 
-import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.removeAnnotations
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fileEntry
 import tech.mappie.ir.resolving.ClassMappingRequest

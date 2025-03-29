@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.kotlin.gradle.plugin)
+    compileOnly(libs.kotlin.gradle.plugin)
 
     testImplementation(kotlin("test"))
     testImplementation(libs.assertj.core)

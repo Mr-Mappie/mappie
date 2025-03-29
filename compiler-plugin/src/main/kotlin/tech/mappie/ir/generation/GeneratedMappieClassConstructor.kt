@@ -1,15 +1,12 @@
 package tech.mappie.ir.generation
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
+import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.addSimpleDelegatingConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.name.Name
@@ -45,7 +42,9 @@ class GeneratedMappieClassConstructor(
             kind = ClassKind.OBJECT
         }.also { clazz ->
             clazz.parent = parent
-            clazz.thisReceiver = buildReceiverParameter(clazz, clazz.origin, clazz.symbol.typeWithParameters(emptyList()))
+            clazz.thisReceiver = clazz.buildReceiverParameter {
+                type = clazz.symbol.typeWithParameters(emptyList())
+            }
             clazz.superTypes = listOf(base.owner.symbol.typeWith(request.source, request.target))
 
             clazz.addSimpleDelegatingConstructor(
