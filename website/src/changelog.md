@@ -6,6 +6,7 @@ changelog:
     title: "v2.1.20-1.2.0"
     items:
       - "Changed versioning methodology. See [Compability](/getting-started/compatibility) for more information."
+      - "[#179](https://github.com/Mr-Mappie/mappie/issues/179) made all mapping functions open."
   - date: "2025-02-28"
     title: "v1.1.1"
     items:

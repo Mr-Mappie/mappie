@@ -45,7 +45,7 @@ public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
      * @param from the source value.
      * @return [from] mapped to an instance of [TO].
      */
-    public fun mapNullable(from: FROM?): TO? =
+    public open fun mapNullable(from: FROM?): TO? =
         from?.let { map(it) }
 
     /**
@@ -54,7 +54,7 @@ public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
      * @param from the source values.
      * @return [from] mapped to a list of instances of [TO].
      */
-    public fun mapList(from: List<FROM>): List<TO> =
+    public open fun mapList(from: List<FROM>): List<TO> =
         ArrayList<TO>(from.size).apply { from.forEach { add(map(it)) } }
 
     /**
@@ -63,7 +63,7 @@ public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
      * @param from the source values.
      * @return [from] mapped to a list of instances of [TO].
      */
-    public fun mapNullableList(from: List<FROM>?): List<TO>? =
+    public open fun mapNullableList(from: List<FROM>?): List<TO>? =
         from?.let { ArrayList<TO>(it.size).apply { it.forEach { add(map(it)) } } }
 
     /**
@@ -72,7 +72,7 @@ public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
      * @param from the source values.
      * @return [from] mapped to a set of instances of [TO].
      */
-    public fun mapSet(from: Set<FROM>): Set<TO> =
+    public open fun mapSet(from: Set<FROM>): Set<TO> =
         HashSet<TO>(from.size).apply { from.forEach { add(map(it)) } }
 
     /**
@@ -81,7 +81,7 @@ public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
      * @param from the source values.
      * @return [from] mapped to a set of instances of [TO].
      */
-    public fun mapNullableSet(from: Set<FROM>?): Set<TO>? =
+    public open fun mapNullableSet(from: Set<FROM>?): Set<TO>? =
         from?.let { HashSet<TO>(it.size).apply { from.forEach { add(map(it)) } } }
 
     /**
