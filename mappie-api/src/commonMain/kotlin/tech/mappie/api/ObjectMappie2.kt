@@ -36,7 +36,7 @@ public abstract class ObjectMappie2<in FROM1, in FROM2, out TO> : Mappie<TO> {
      * @param second the second source value.
      * @return [first] and [second] mapped an instance of [TO].
      */
-    public fun mapNullable(first: FROM1?, second: FROM2?): TO? =
+    public open fun mapNullable(first: FROM1?, second: FROM2?): TO? =
         if (first == null || second == null) null else map(first, second)
 
     /**

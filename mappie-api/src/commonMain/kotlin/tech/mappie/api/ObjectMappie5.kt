@@ -37,7 +37,7 @@ public abstract class ObjectMappie5<in FROM1, in FROM2, in FROM3, in FROM4, in F
      * @param fifth the fifth source value.
      * @return [first], [second], [third], [fourth], and [fifth] mapped an instance of [TO].
      */
-    public fun mapNullable(first: FROM1?, second: FROM2?, third: FROM3?, fourth: FROM4?, fifth: FROM5?): TO? =
+    public open fun mapNullable(first: FROM1?, second: FROM2?, third: FROM3?, fourth: FROM4?, fifth: FROM5?): TO? =
         if (first == null || second == null || third == null || fourth == null || fifth == null) null else map(first, second, third, fourth, fifth)
 
     /**

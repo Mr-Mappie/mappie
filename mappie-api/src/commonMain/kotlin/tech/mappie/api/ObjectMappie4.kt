@@ -34,7 +34,7 @@ public abstract class ObjectMappie4<in FROM1, in FROM2, in FROM3, in FROM4, out 
      * @param fourth the fourth source value.
      * @return [first], [second], [third], and [fourth] mapped an instance of [TO].
      */
-    public fun mapNullable(first: FROM1?, second: FROM2?, third: FROM3?, fourth: FROM4?): TO? =
+    public open fun mapNullable(first: FROM1?, second: FROM2?, third: FROM3?, fourth: FROM4?): TO? =
         if (first == null || second == null || third == null || fourth == null ) null else map(first, second, third, fourth)
 
     /**

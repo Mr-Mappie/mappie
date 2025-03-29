@@ -40,7 +40,7 @@ public abstract class ObjectMappie3<in FROM1, in FROM2, in FROM3, out TO> : Mapp
      * @param third the third source value.
      * @return [first], [second], and [third] mapped an instance of [TO].
      */
-    public fun mapNullable(first: FROM1?, second: FROM2?, third: FROM3?): TO? =
+    public open fun mapNullable(first: FROM1?, second: FROM2?, third: FROM3?): TO? =
         if (first == null || second == null || third == null) null else map(first, second, third)
 
     /**
