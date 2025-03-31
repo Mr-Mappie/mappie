@@ -2,7 +2,7 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-  - date: "tbd"
+  - date: "2025-03-31"
     title: "v2.1.20-1.2.0"
     items:
       - "Changed versioning methodology. See [Compability](/getting-started/compatibility) for more information."

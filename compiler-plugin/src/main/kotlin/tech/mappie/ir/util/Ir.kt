@@ -7,7 +7,10 @@ import org.jetbrains.kotlin.ir.builders.IrGeneratorContextInterface
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.util.*
 
