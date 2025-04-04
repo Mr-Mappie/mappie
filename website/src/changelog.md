@@ -2,6 +2,11 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "tbd"
+    title: "v2.1.20-1.3.0"
+    items:
+      - "[#187](https://github.com/Mr-Mappie/mappie/issues/187) fixed bug with generic typed input parameter with upper bound."
+      - "[#187](https://github.com/Mr-Mappie/mappie/issues/187) fixed bug where code is being generated for mappers which are a transitive subtype of a mappie class."
   - date: "2025-03-31"
     title: "v2.1.20-1.2.0"
     items:

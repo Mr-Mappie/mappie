@@ -8,14 +8,11 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import tech.mappie.*
 import tech.mappie.ir.util.BaseVisitor
-import tech.mappie.MappieContext
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.resolving.MappieDefinition
 import tech.mappie.ir.resolving.ResolverContext
-import tech.mappie.ir.util.isSubclassOf
-import tech.mappie.referenceMappieClass
-import tech.mappie.util.CLASS_ID_MAPPIE
 import tech.mappie.util.PACKAGE_TECH_MAPPIE_API_BUILTIN
 
 // TODO: we should collect al publicly visible, and add those during resolving that are visible from the current scope.
@@ -90,7 +87,7 @@ class ProjectMappieDefinitionsCollector(val context: MappieContext) : BaseVisito
 
     override fun visitClass(declaration: IrClass, data: Unit) =
         buildList {
-            if (declaration.isSubclassOf(context.referenceMappieClass())) {
+            if (context.shouldGenerateCode(declaration)) {
                 (declaration.superTypes.single() as? IrSimpleType)?.let {
                     add(MappieDefinition(declaration))
                 }

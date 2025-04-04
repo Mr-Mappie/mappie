@@ -10,12 +10,11 @@ import tech.mappie.MappieContext
 import tech.mappie.ir.util.BaseVisitor
 import tech.mappie.util.IDENTIFIER_MAPPING
 import tech.mappie.ir.util.isMappieMapFunction
-import tech.mappie.ir.util.isSubclassOf
-import tech.mappie.referenceMappieClass
+import tech.mappie.shouldGenerateCode
 
 class ShouldTransformCollector(private val context: MappieContext) : BaseVisitor<Boolean, Unit>() {
     override fun visitClass(declaration: IrClass, data: Unit): Boolean {
-        return declaration.isSubclassOf(context.referenceMappieClass())
+        return context.shouldGenerateCode(declaration)
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Unit): Boolean {

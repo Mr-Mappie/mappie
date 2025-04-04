@@ -66,6 +66,14 @@ val CLASS_ID_ENUM_MAPPIE = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("Enu
 
 val CLASS_ID_OBJECT_MAPPIE = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("ObjectMappie"))
 
+val CLASS_ID_OBJECT_MAPPIE2 = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("ObjectMappie2"))
+
+val CLASS_ID_OBJECT_MAPPIE3 = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("ObjectMappie3"))
+
+val CLASS_ID_OBJECT_MAPPIE4 = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("ObjectMappie4"))
+
+val CLASS_ID_OBJECT_MAPPIE5 = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("ObjectMappie5"))
+
 val CLASS_ID_USE_STRICT_VISIBILITY = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("UseStrictVisibility"))
 
 val CLASS_ID_USE_DEFAULT_ARGUMENTS = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("UseDefaultArguments"))
