@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "2025-04-09"
+    title: "v2.1.20-1.2.2"
+    items:
+      - "[#173](https://github.com/Mr-Mappie/mappie/issues/173) fixed compilation error when calling generated functions other than map on multiplatform."
   - date: "2025-04-04"
     title: "v2.1.20-1.2.1"
     items:
