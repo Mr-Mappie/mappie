@@ -6,7 +6,11 @@ import org.jetbrains.kotlin.name.Name
 
 val IDENTIFIER_MAPPING = Name.identifier("mapping")
 
+val IDENTIFIER_UPDATING = Name.identifier("updating")
+
 val IDENTIFIER_MAP = Name.identifier("map")
+
+val IDENTIFIER_UPDATE = Name.identifier("update")
 
 val IDENTIFIER_MAP_NULLABLE = Name.identifier("mapNullable")
 
@@ -52,6 +56,8 @@ val PACKAGE_KOTLIN = FqName("kotlin")
 
 val PACKAGE_TECH_MAPPIE_API = FqName("tech.mappie.api")
 
+val PACKAGE_TECH_MAPPIE_API_UPDATING = FqName("tech.mappie.api.updating")
+
 val PACKAGE_TECH_MAPPIE_API_BUILTIN = FqName("tech.mappie.api.builtin")
 
 val PACKAGE_TECH_MAPPIE_API_CONFIG = FqName("tech.mappie.api.config")
@@ -73,6 +79,8 @@ val CLASS_ID_OBJECT_MAPPIE3 = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("
 val CLASS_ID_OBJECT_MAPPIE4 = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("ObjectMappie4"))
 
 val CLASS_ID_OBJECT_MAPPIE5 = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("ObjectMappie5"))
+
+val CLASS_ID_OBJECT_UPDATE_MAPPIE = ClassId(PACKAGE_TECH_MAPPIE_API_UPDATING, Name.identifier("ObjectUpdateMappie"))
 
 val CLASS_ID_USE_STRICT_VISIBILITY = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("UseStrictVisibility"))
 

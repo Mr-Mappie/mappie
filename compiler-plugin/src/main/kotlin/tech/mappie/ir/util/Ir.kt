@@ -26,6 +26,9 @@ fun getterName(name: String) =
 fun IrSimpleFunction.isMappieMapFunction() =
     name == IDENTIFIER_MAP && overriddenSymbols.isNotEmpty()
 
+fun IrSimpleFunction.isMappieUpdateFunction() =
+    name == IDENTIFIER_UPDATE && overriddenSymbols.isNotEmpty()
+
 fun IrSimpleFunction.isMappieMapNullableListFunction() =
     name == IDENTIFIER_MAP_NULLABLE_LIST
             && valueParameters.singleOrNull()?.type?.isList() == true

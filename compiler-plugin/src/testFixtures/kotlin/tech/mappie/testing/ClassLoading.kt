@@ -3,6 +3,7 @@
 package tech.mappie.testing
 
 import tech.mappie.api.*
+import tech.mappie.api.updating.ObjectUpdateMappie
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 
@@ -23,3 +24,6 @@ fun <FROM1, FROM2, FROM3, FROM4, TO> URLClassLoader.loadObjectMappie4Class(name:
 
 fun <FROM1, FROM2, FROM3, FROM4, FROM5, TO> URLClassLoader.loadObjectMappie5Class(name: String) =
     loadClass(name).kotlin as KClass<ObjectMappie5<FROM1, FROM2, FROM3, FROM4, FROM5, TO>>
+
+fun <UPDATER, T> URLClassLoader.loadObjectUpdateMappieClass(name: String) =
+    loadClass(name).kotlin as KClass<ObjectUpdateMappie<UPDATER, T>>

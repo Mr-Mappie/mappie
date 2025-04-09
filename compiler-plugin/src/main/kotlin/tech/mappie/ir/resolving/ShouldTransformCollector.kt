@@ -10,6 +10,7 @@ import tech.mappie.MappieContext
 import tech.mappie.ir.util.BaseVisitor
 import tech.mappie.util.IDENTIFIER_MAPPING
 import tech.mappie.ir.util.isMappieMapFunction
+import tech.mappie.ir.util.isMappieUpdateFunction
 import tech.mappie.shouldGenerateCode
 
 class ShouldTransformCollector(private val context: MappieContext) : BaseVisitor<Boolean, Unit>() {
@@ -18,7 +19,8 @@ class ShouldTransformCollector(private val context: MappieContext) : BaseVisitor
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Unit): Boolean {
-        return declaration.body?.accept(data) ?: declaration.isMappieMapFunction()
+        return declaration.body?.accept(data)
+            ?: (declaration.isMappieMapFunction() || declaration.isMappieUpdateFunction())
     }
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): Boolean {
