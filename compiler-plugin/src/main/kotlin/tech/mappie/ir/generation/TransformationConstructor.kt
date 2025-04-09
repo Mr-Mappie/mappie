@@ -3,10 +3,7 @@ package tech.mappie.ir.generation
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isObject
-import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.referenceFunctionLet
 import tech.mappie.ir.resolving.classes.sources.GeneratedViaMapperTransformation
@@ -50,11 +47,16 @@ private fun PropertyMappingViaMapperTransformation.selectTransformationFunction(
 
 private fun IrClass.selectTransformationFunction(value: IrExpression) =
     when {
-        value.type.isList() && value.type.isNullable() -> functions.first { it.isMappieMapNullableListFunction() }
-        value.type.isList() -> functions.first { it.isMappieMapListFunction() }
-        value.type.isSet() && value.type.isNullable() -> functions.first { it.isMappieMapNullableSetFunction() }
-        value.type.isSet() -> functions.first { it.isMappieMapSetFunction() }
-        value.type.isNullable() -> functions.first { it.isMappieMapNullableFunction() }
+        value.type.isList() && value.type.isNullable() ->
+            listOf(this, superClass!!).firstNotNullOf { it.functions.firstOrNull { it.isMappieMapNullableListFunction() } }
+        value.type.isList() ->
+            listOf(this, superClass!!).firstNotNullOf { it.functions.firstOrNull { it.isMappieMapListFunction() } }
+        value.type.isSet() && value.type.isNullable() ->
+            listOf(this, superClass!!).firstNotNullOf { it.functions.firstOrNull { it.isMappieMapNullableSetFunction() } }
+        value.type.isSet() ->
+            listOf(this, superClass!!).firstNotNullOf { it.functions.firstOrNull { it.isMappieMapSetFunction() } }
+        value.type.isNullable() ->
+            listOf(this, superClass!!).firstNotNullOf { it.functions.firstOrNull { it.isMappieMapNullableFunction() } }
         else -> functions.first { it.isMappieMapFunction() }
     }
 
