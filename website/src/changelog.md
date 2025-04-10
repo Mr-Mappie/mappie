@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "tbd"
+    title: "v2.1.20-1.2.3"
+    items:
+      - "[#173](https://github.com/Mr-Mappie/mappie/issues/173) fixed compilation error on multiplatform where the this receiver parameter was generated incorrectly."
   - date: "2025-04-09"
     title: "v2.1.20-1.2.2"
     items:

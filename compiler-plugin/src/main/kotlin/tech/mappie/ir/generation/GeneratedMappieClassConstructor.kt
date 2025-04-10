@@ -2,10 +2,9 @@ package tech.mappie.ir.generation
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.builders.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.referenceEnumMappieClass
@@ -57,7 +56,7 @@ class GeneratedMappieClassConstructor(
                     returnType = function.owner.returnType
                     updateFrom(function.owner)
                 }.apply {
-                    dispatchReceiverParameter = function.owner.dispatchReceiverParameter
+                    dispatchReceiverParameter = context.createThisReceiver(function.owner.dispatchReceiverParameter!!.type, clazz)
                     overriddenSymbols = listOf(function)
                     isFakeOverride = function.owner.name != IDENTIFIER_MAP
 
