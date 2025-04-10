@@ -56,7 +56,7 @@ class GeneratedMappieClassConstructor(
                     returnType = function.owner.returnType
                     updateFrom(function.owner)
                 }.apply {
-                    dispatchReceiverParameter = context.createThisReceiver(function.owner.dispatchReceiverParameter!!.type, clazz)
+                    dispatchReceiverParameter = function.owner.dispatchReceiverParameter//context.createThisReceiver(function.owner.dispatchReceiverParameter!!.type, clazz)
                     overriddenSymbols = listOf(function)
                     isFakeOverride = function.owner.name != IDENTIFIER_MAP
 
