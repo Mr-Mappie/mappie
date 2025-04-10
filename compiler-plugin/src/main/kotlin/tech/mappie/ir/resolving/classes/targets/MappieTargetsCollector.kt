@@ -9,6 +9,8 @@ class MappieTargetsCollector(constructor: IrConstructor) {
 
     private val type = constructor.returnType
 
+    // Problem: type of valueParameter is indeed W. This is the type of the constructor parameter.
+    // The problem is that the property type is not W, but the instantiated Foo.
     private val parameters: List<ClassMappingTarget> =
         constructor.valueParameters.map { ValueParameterTarget(it) }
 
