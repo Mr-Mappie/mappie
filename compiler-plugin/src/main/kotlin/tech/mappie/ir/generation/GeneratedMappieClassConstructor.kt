@@ -60,7 +60,6 @@ class GeneratedMappieClassConstructor(
                     overriddenSymbols = listOf(function)
                     isFakeOverride = function.owner.name != IDENTIFIER_MAP
 
-                    body = function.owner.body
                     function.owner.valueParameters.forEach { parameter ->
                         addValueParameter(parameter.name, (clazz.superTypes.first() as IrSimpleType).arguments.first().typeOrFail)
                     }
