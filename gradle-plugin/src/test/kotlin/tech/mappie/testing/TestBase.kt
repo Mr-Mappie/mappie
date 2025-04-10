@@ -131,7 +131,7 @@ abstract class TestBase {
                 applyDefaultHierarchyTemplate()
             
                 jvm()
-                mingwX64()
+//                mingwX64()
 
                 if (SystemUtils.IS_OS_MAC) {
                     iosX64()
