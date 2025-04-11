@@ -27,8 +27,7 @@ data class FunctionCallTarget(val value: IrSimpleFunctionSymbol) : ClassMappingT
     override val required = false
 }
 
-data class ValueParameterTarget(val value: IrValueParameter) : ClassMappingTarget {
+data class ValueParameterTarget(val value: IrValueParameter, override val type: IrType) : ClassMappingTarget {
     override val name = value.name
-    override val type = value.type
     override val required = true
 }

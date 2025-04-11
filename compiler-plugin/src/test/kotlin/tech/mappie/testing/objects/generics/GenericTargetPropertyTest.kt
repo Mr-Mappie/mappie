@@ -1,4 +1,4 @@
-package tech.mappie.testing.objects
+package tech.mappie.testing.objects.generics
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -7,7 +7,7 @@ import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class GenericWrapperTestTest {
+class GenericTargetPropertyTest {
 
     data class FooDto(
         val id: String,
@@ -35,7 +35,7 @@ class GenericWrapperTestTest {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.objects.GenericWrapperTestTest.*
+                import tech.mappie.testing.objects.generics.GenericTargetPropertyTest.*
 
                 class FooMapper : ObjectMappie<FooDto, Foo>() {
                     override fun map(from: FooDto): Foo = mapping {

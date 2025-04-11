@@ -27,7 +27,7 @@ class MappingRequestResolver : BaseVisitor<Map<IrClass, List<MappingRequest>>, R
 
     override fun visitFunction(declaration: IrFunction, data: ResolverContext) =
         if (declaration.accept(ShouldTransformCollector(data), Unit)) {
-            val request = MappingResolver.of(declaration, ResolverContext(data, declaration)).resolve(declaration.body)
+            val request = MappingResolver.of(declaration, ResolverContext(data, declaration)).resolve(declaration)
             mapOf(declaration.parentAsClass to request)
         } else {
             emptyMap()

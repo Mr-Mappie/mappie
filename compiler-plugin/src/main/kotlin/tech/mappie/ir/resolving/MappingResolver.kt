@@ -1,7 +1,6 @@
 package tech.mappie.ir.resolving
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -13,7 +12,7 @@ import tech.mappie.referenceEnumMappieClass
 
 fun interface MappingResolver {
 
-    fun resolve(body: IrBody?): List<MappingRequest>
+    fun resolve(function: IrFunction?): List<MappingRequest>
 
     companion object {
         fun of(source: IrType, target:IrType, context: ResolverContext) =

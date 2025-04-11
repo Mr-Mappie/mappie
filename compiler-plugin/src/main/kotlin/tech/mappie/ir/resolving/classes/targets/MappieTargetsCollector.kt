@@ -1,26 +1,30 @@
 package tech.mappie.ir.resolving.classes.targets
 
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.types.classOrFail
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
 
-class MappieTargetsCollector(constructor: IrConstructor) {
+class MappieTargetsCollector(function: IrFunction?, constructor: IrConstructor) {
 
     private val type = constructor.returnType
 
-    // Problem: type of valueParameter is indeed W. This is the type of the constructor parameter.
-    // The problem is that the property type is not W, but the instantiated Foo.
-    private val parameters: List<ClassMappingTarget> =
-        constructor.valueParameters.map { ValueParameterTarget(it) }
+    private val parameters: List<ClassMappingTarget> = run {
+        val parameters = constructor.constructedClass.typeParameters
+        val arguments = (function?.returnType?.type as? IrSimpleType)?.arguments?.map { it.typeOrFail } ?: emptyList()
+        constructor.valueParameters.map {
+            ValueParameterTarget(it, it.type.substitute(parameters, arguments))
+        }
+    }
 
-    private val setters: Sequence<ClassMappingTarget> =
-        type.classOrFail.owner.properties
+    private val setters: Sequence<ClassMappingTarget> = run {
+        (function?.parentAsClass?.properties ?: type.classOrFail.owner.properties)
             .filter { property -> property.setter != null && property.name !in parameters.map { it.name } }
             .map { SetterTarget(it) }
+    }
 
     private val setMethods: Sequence<ClassMappingTarget> =
-        type.classOrFail.functions
+        (function?.parentAsClass?.functions?.map { it.symbol } ?: type.classOrFail.functions)
             .filter { it.owner.name.asString().startsWith("set") && it.owner.valueParameters.size == 1 }
             .map { FunctionCallTarget(it) }
 
