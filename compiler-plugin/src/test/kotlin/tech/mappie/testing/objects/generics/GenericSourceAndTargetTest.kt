@@ -78,4 +78,35 @@ class GenericSourceAndTargetTest {
                 .isEqualTo(Output(1, "constant"))
         }
     }
+
+    @Test
+    fun `map two generic target properties explicit with transform should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.generics.GenericSourceAndTargetTest.*
+
+                class Mapper : ObjectMappie<Input<Int, Int>, Output<String, String>>() {
+                    override fun map(from: Input<Int, Int>) = mapping {
+                        to::a fromProperty from::a transform { it.toString() }
+                        to::b fromValue "10"
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoMessages()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input<Int, Int>, Output<String, String>>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input(1, 2)))
+                .isEqualTo(Output("1", "10"))
+        }
+    }
 }
