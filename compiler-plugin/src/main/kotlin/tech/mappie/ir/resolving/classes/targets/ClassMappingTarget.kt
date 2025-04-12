@@ -12,12 +12,11 @@ sealed interface ClassMappingTarget {
     val required: Boolean
 }
 
-data class SetterTarget(val value: IrProperty) : ClassMappingTarget {
+data class SetterTarget(val value: IrProperty, override val type: IrType) : ClassMappingTarget {
 
     init { value.setter != null }
 
     override val name = value.name
-    override val type = value.setter!!.valueParameters.first().type
     override val required = false
 }
 

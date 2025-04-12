@@ -123,7 +123,6 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
         sources.putAll(entries)
         entries.map { (name, type) ->
             implicit.merge(name, listOf(ParameterValueMappingSource(name, type, null)), List<ImplicitClassMappingSource>::plus)
-
             type.upperBound.getClass()!!.accept(ImplicitClassMappingSourcesCollector(), name to type).forEach { (name, source) ->
                 implicit.merge(name, listOf(source), List<ImplicitClassMappingSource>::plus)
             }

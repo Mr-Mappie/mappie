@@ -1,11 +1,13 @@
 package tech.mappie.ir.resolving.classes.sources
 
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import tech.mappie.ir.util.BaseVisitor
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.util.merge
+import tech.mappie.ir.util.substituteTypeVariable
 
 class ImplicitClassMappingSourcesCollector : BaseVisitor<Map<Name, ImplicitClassMappingSource>, Pair<Name, IrType>>() {
 
@@ -25,7 +27,8 @@ class ImplicitClassMappingSourcesCollector : BaseVisitor<Map<Name, ImplicitClass
 
     override fun visitProperty(declaration: IrProperty, data: Pair<Name, IrType>): Map<Name, ImplicitClassMappingSource> =
         declaration.getter?.let {
-            mapOf(declaration.name to ImplicitPropertyMappingSource(declaration, data.first, data.second, null))
+            val propertyType = it.returnType.substituteTypeVariable(declaration.parentAsClass, (data.second as IrSimpleType).arguments)
+            mapOf(declaration.name to ImplicitPropertyMappingSource(declaration, propertyType, data.first, data.second, null))
         } ?: emptyMap()
 
     private fun IrFunction.isJavaLikeGetter(): Boolean =
