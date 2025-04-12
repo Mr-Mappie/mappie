@@ -75,7 +75,7 @@ class GenericSourceAndTargetTest {
                 .call()
 
             assertThat(mapper.map(Input(1, "b")))
-                .isEqualTo(Output("constant", 1))
+                .isEqualTo(Output(1, "constant"))
         }
     }
 }
