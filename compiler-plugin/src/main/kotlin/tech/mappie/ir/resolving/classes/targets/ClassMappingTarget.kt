@@ -20,9 +20,8 @@ data class SetterTarget(val value: IrProperty, override val type: IrType) : Clas
     override val required = false
 }
 
-data class FunctionCallTarget(val value: IrSimpleFunctionSymbol) : ClassMappingTarget {
+data class FunctionCallTarget(val value: IrSimpleFunctionSymbol, override val type: IrType) : ClassMappingTarget {
     override val name = Name.identifier(value.owner.name.asString().removePrefix("set").replaceFirstChar { it.lowercaseChar() })
-    override val type = value.owner.valueParameters.first().type
     override val required = false
 }
 

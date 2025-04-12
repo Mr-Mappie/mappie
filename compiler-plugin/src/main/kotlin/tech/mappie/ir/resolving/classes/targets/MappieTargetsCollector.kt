@@ -12,7 +12,7 @@ class MappieTargetsCollector(function: IrFunction?, constructor: IrConstructor) 
 
     private val parameters: List<ClassMappingTarget> = run {
         val parameters = constructor.constructedClass.typeParameters
-        val arguments = (function?.returnType?.type as? IrSimpleType)?.arguments?.map { it.typeOrFail } ?: emptyList()
+        val arguments = (function?.returnType as? IrSimpleType)?.arguments?.map { it.typeOrFail } ?: emptyList()
         constructor.valueParameters.map {
             ValueParameterTarget(it, it.type.substitute(parameters, arguments))
         }
@@ -22,7 +22,7 @@ class MappieTargetsCollector(function: IrFunction?, constructor: IrConstructor) 
         type.classOrFail.owner.properties.mapNotNull { property ->
             property.setter?.let { setter ->
                 if (function != null) {
-                    property to setter.valueParameters.first().type.substituteTypeVariable(constructor.constructedClass, (function.returnType.type as IrSimpleType).arguments)
+                    property to setter.valueParameters.first().type.substituteTypeVariable(constructor.constructedClass, (function.returnType as IrSimpleType).arguments)
                 } else {
                     property to type
                 }
@@ -32,12 +32,15 @@ class MappieTargetsCollector(function: IrFunction?, constructor: IrConstructor) 
             .map { SetterTarget(it.first, it.second) }
     }
 
-    // TODO: set methods
     private val setMethods: Sequence<ClassMappingTarget> =
         type.classOrFail.functions
-//        (function?.parentAsClass?.functions?.map { it.symbol } ?: type.classOrFail.functions)
             .filter { it.owner.name.asString().startsWith("set") && it.owner.valueParameters.size == 1 }
-            .map { FunctionCallTarget(it) }
+            .map {
+                FunctionCallTarget(
+                    it,
+                    it.owner.valueParameters.first().type.substituteTypeVariable(constructor.constructedClass, (function?.returnType as? IrSimpleType)?.arguments!!)
+                )
+            }
 
 
     fun collect(): List<ClassMappingTarget> = parameters + setters + setMethods
