@@ -34,9 +34,10 @@ data class ImplicitPropertyMappingSource(
 
 data class FunctionMappingSource(
     val function: IrFunction,
+    val functionType: IrType,
     val parameter: Name,
     val parameterType: IrType,
     override val transformation: PropertyMappingTransformation?,
 ) : ImplicitClassMappingSource, TransformableClassMappingSource {
-    override val type = type(function.returnType, transformation)
+    override val type = type(functionType, transformation)
 }
