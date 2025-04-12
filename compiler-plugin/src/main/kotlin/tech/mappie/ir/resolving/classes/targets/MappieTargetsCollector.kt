@@ -1,26 +1,46 @@
 package tech.mappie.ir.resolving.classes.targets
 
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.types.classOrFail
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
+import tech.mappie.ir.util.substituteTypeVariable
 
-class MappieTargetsCollector(constructor: IrConstructor) {
+class MappieTargetsCollector(function: IrFunction?, constructor: IrConstructor) {
 
     private val type = constructor.returnType
 
-    private val parameters: List<ClassMappingTarget> =
-        constructor.valueParameters.map { ValueParameterTarget(it) }
+    private val parameters: List<ClassMappingTarget> = run {
+        val parameters = constructor.constructedClass.typeParameters
+        val arguments = (function?.returnType as? IrSimpleType)?.arguments?.map { it.typeOrFail } ?: emptyList()
+        constructor.valueParameters.map {
+            ValueParameterTarget(it, it.type.substitute(parameters, arguments))
+        }
+    }
 
-    private val setters: Sequence<ClassMappingTarget> =
-        type.classOrFail.owner.properties
-            .filter { property -> property.setter != null && property.name !in parameters.map { it.name } }
-            .map { SetterTarget(it) }
+    private val setters: Sequence<ClassMappingTarget> = run {
+        type.classOrFail.owner.properties.mapNotNull { property ->
+            property.setter?.let { setter ->
+                if (function != null) {
+                    property to setter.valueParameters.first().type.substituteTypeVariable(constructor.constructedClass, (function.returnType as IrSimpleType).arguments)
+                } else {
+                    property to type
+                }
+            }
+        }
+            .filter { property -> property.first.name !in parameters.map { it.name } }
+            .map { SetterTarget(it.first, it.second) }
+    }
 
     private val setMethods: Sequence<ClassMappingTarget> =
         type.classOrFail.functions
             .filter { it.owner.name.asString().startsWith("set") && it.owner.valueParameters.size == 1 }
-            .map { FunctionCallTarget(it) }
+            .map {
+                FunctionCallTarget(
+                    it,
+                    it.owner.valueParameters.first().type.substituteTypeVariable(constructor.constructedClass, (function?.returnType as? IrSimpleType)?.arguments!!)
+                )
+            }
 
 
     fun collect(): List<ClassMappingTarget> = parameters + setters + setMethods

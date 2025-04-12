@@ -1,6 +1,6 @@
 package tech.mappie.ir.resolving.enums
 
-import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import tech.mappie.ir.resolving.MappingResolver
@@ -12,11 +12,11 @@ class EnumResolver(
     private val target: IrType,
 ) : MappingResolver {
 
-    override fun resolve(body: IrBody?) =
+    override fun resolve(function: IrFunction?) =
         EnumMappingRequestBuilder(source, target)
             .sources(source.getClass()!!.accept(EnumEntriesCollector(), Unit))
             .targets(target.getClass()!!.accept(EnumEntriesCollector(), Unit))
-            .also { body?.accept(EnumMappingBodyCollector(), it) }
+            .also { function?.body?.accept(EnumMappingBodyCollector(), it) }
             .construct(context.function!!)
             .let { listOf(it) }
 }

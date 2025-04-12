@@ -1,10 +1,7 @@
 package tech.mappie.ir.analysis.problems.classes
 
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import org.jetbrains.kotlin.ir.util.fileEntry
-import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.util.isSubtypeOf
+import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.*
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
@@ -66,10 +63,7 @@ class UnsafeTypeAssignmentProblems(
         fun of(context: ValidationContext, mapping: ClassMappingRequest): UnsafeTypeAssignmentProblems {
             val mappings = mapping.mappings
                 .filterSingle()
-                .filter { (target, source) ->
-                    !source.type.isSubtypeOf(target.type, IrTypeSystemContextImpl(context.pluginContext.irBuiltIns)) ||
-                        ((source.type.isNullable() && !source.type.hasFlexibleNullabilityAnnotation()) && !target.type.isNullable())
-                }
+                .filter { (target, source) -> isNotAssignable(source, target, context) }
 
             return UnsafeTypeAssignmentProblems(
                 context,
@@ -77,5 +71,9 @@ class UnsafeTypeAssignmentProblems(
                 mappings
             )
         }
+
+        private fun isNotAssignable(source: ClassMappingSource, target: ClassMappingTarget, context: ValidationContext) =
+            !source.type.isSubtypeOf(target.type, IrTypeSystemContextImpl(context.pluginContext.irBuiltIns)) ||
+                ((source.type.isNullable() && !source.type.hasFlexibleNullabilityAnnotation()) && !target.type.isNullable())
     }
 }

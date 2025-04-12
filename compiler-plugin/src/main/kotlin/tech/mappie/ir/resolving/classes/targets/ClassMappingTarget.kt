@@ -12,23 +12,20 @@ sealed interface ClassMappingTarget {
     val required: Boolean
 }
 
-data class SetterTarget(val value: IrProperty) : ClassMappingTarget {
+data class SetterTarget(val value: IrProperty, override val type: IrType) : ClassMappingTarget {
 
     init { value.setter != null }
 
     override val name = value.name
-    override val type = value.setter!!.valueParameters.first().type
     override val required = false
 }
 
-data class FunctionCallTarget(val value: IrSimpleFunctionSymbol) : ClassMappingTarget {
+data class FunctionCallTarget(val value: IrSimpleFunctionSymbol, override val type: IrType) : ClassMappingTarget {
     override val name = Name.identifier(value.owner.name.asString().removePrefix("set").replaceFirstChar { it.lowercaseChar() })
-    override val type = value.owner.valueParameters.first().type
     override val required = false
 }
 
-data class ValueParameterTarget(val value: IrValueParameter) : ClassMappingTarget {
+data class ValueParameterTarget(val value: IrValueParameter, override val type: IrType) : ClassMappingTarget {
     override val name = value.name
-    override val type = value.type
     override val required = true
 }

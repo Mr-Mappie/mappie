@@ -1,7 +1,7 @@
 package tech.mappie.ir.resolving.classes
 
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import tech.mappie.ir.resolving.*
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.constructors
@@ -14,12 +14,12 @@ class ClassResolver(
     private val target: IrType,
 ) : MappingResolver {
 
-    override fun resolve(body: IrBody?): List<ClassMappingRequest> =
+    override fun resolve(function: IrFunction?): List<ClassMappingRequest> =
         target.getClass()!!.constructors.map { constructor ->
             ClassMappingRequestBuilder(constructor, context)
-                .targets(MappieTargetsCollector(constructor).collect())
+                .targets(MappieTargetsCollector(function, constructor).collect())
                 .sources(sources)
-                .also { body?.accept(ExplicitClassMappingCollector(context), it) }
+                .also { function?.body?.accept(ExplicitClassMappingCollector(context), it) }
                 .construct(context.function!!)
         }.toList()
 }
