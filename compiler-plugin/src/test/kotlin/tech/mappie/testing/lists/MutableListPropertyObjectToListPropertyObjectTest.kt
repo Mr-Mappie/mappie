@@ -7,8 +7,8 @@ import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class ObjectWithListObjectToObjectListObjectTest {
-    data class Input(val text: List<InnerInput>, val int: Int)
+class MutableListPropertyObjectToListPropertyObjectTest {
+    data class Input(val text: MutableList<InnerInput>, val int: Int)
     data class InnerInput(val value: String)
 
     data class Output(val text: List<InnerOutput>, val int: Int)
@@ -18,12 +18,12 @@ class ObjectWithListObjectToObjectListObjectTest {
     lateinit var directory: File
 
     @Test
-    fun `map nested list implicit should succeed`() {
+    fun `map nested mutable list implicit should succeed`() {
         compile(directory) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.lists.ObjectWithListObjectToObjectListObjectTest.*
+                import tech.mappie.testing.lists.MutableListPropertyObjectToListPropertyObjectTest.*
 
                 class Mapper : ObjectMappie<Input, Output>()
 
@@ -40,7 +40,7 @@ class ObjectWithListObjectToObjectListObjectTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(listOf(InnerInput("first"), InnerInput("second")), 20)))
+            assertThat(mapper.map(Input(mutableListOf(InnerInput("first"), InnerInput("second")), 20)))
                 .isEqualTo(Output(listOf(InnerOutput("first"), InnerOutput("second")), 20))
         }
     }
