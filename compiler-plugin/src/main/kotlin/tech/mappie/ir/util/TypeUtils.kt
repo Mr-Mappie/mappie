@@ -26,10 +26,16 @@ fun IrType.mappieType() = when {
 }
 
 fun IrType.isList() =
-    classOrNull?.owner?.fqNameWhenAvailable?.asString() == List::class.qualifiedName
+    classOrNull?.owner?.fqNameWhenAvailable?.asString() in listOf(
+        "kotlin.collections.List",
+        "kotlin.collections.MutableList",
+    )
 
 fun IrType.isSet() =
-    classOrNull?.owner?.fqNameWhenAvailable?.asString() == Set::class.qualifiedName
+    classOrNull?.owner?.fqNameWhenAvailable?.asString() in listOf(
+        "kotlin.collections.Set",
+        "kotlin.collections.MutableSet",
+    )
 
 fun IrType.hasFlexibleNullabilityAnnotation(): Boolean =
     annotations.any { it.symbol.owner.parentAsClass.classId == FlexibleNullability }
