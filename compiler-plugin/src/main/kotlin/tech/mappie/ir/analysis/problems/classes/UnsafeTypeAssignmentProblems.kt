@@ -10,6 +10,8 @@ import tech.mappie.ir.util.hasFlexibleNullabilityAnnotation
 import tech.mappie.ir.util.location
 import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.analysis.ValidationContext
+import tech.mappie.ir.util.isList
+import tech.mappie.ir.util.isSet
 
 class UnsafeTypeAssignmentProblems(
     private val context: ValidationContext,
@@ -63,7 +65,7 @@ class UnsafeTypeAssignmentProblems(
         fun of(context: ValidationContext, mapping: ClassMappingRequest): UnsafeTypeAssignmentProblems {
             val mappings = mapping.mappings
                 .filterSingle()
-                .filter { (target, source) -> isNotAssignable(source, target, context) }
+                .filter { (target, source) -> context.isNotCompatible(source, target) }
 
             return UnsafeTypeAssignmentProblems(
                 context,
@@ -72,8 +74,11 @@ class UnsafeTypeAssignmentProblems(
             )
         }
 
-        private fun isNotAssignable(source: ClassMappingSource, target: ClassMappingTarget, context: ValidationContext) =
-            !source.type.isSubtypeOf(target.type, IrTypeSystemContextImpl(context.pluginContext.irBuiltIns)) ||
-                ((source.type.isNullable() && !source.type.hasFlexibleNullabilityAnnotation()) && !target.type.isNullable())
+        private fun ValidationContext.isNotCompatible(source: ClassMappingSource, target: ClassMappingTarget) =
+            (!source.type.isSubtypeOf(target.type, IrTypeSystemContextImpl(pluginContext.irBuiltIns)) && !isCompatibleCollection(source, target))
+                || ((source.type.isNullable() && !source.type.hasFlexibleNullabilityAnnotation()) && !target.type.isNullable())
+
+        private fun isCompatibleCollection(source: ClassMappingSource, target: ClassMappingTarget): Boolean =
+            source.type.isList() && target.type.isList() || source.type.isSet() && target.type.isSet()
     }
 }

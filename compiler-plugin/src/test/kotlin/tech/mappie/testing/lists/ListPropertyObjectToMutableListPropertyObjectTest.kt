@@ -2,28 +2,29 @@ package tech.mappie.testing.lists
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class ObjectWithListObjectToObjectListWithObjectTest {
-    data class Input(val a: InnerInput)
-    data class InnerInput(val value: List<String>)
+class ListPropertyObjectToMutableListPropertyObjectTest {
+    data class Input(val text: List<InnerInput>)
+    data class InnerInput(val value: String)
 
-    data class Output(val a: InnerOutput)
-    data class InnerOutput(val value: List<String>)
+    data class Output(val text: MutableList<InnerOutput>)
+    data class InnerOutput(val value: String)
 
     @TempDir
     lateinit var directory: File
 
     @Test
-    fun `map object with nested list implicit should succeed`() {
+    fun `map mutable list implicit should succeed`() {
         compile(directory) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.lists.ObjectWithListObjectToObjectListWithObjectTest.*
+                import tech.mappie.testing.lists.ListPropertyObjectToMutableListPropertyObjectTest.*
 
                 class Mapper : ObjectMappie<Input, Output>()
                 """
@@ -38,8 +39,11 @@ class ObjectWithListObjectToObjectListWithObjectTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(InnerInput(listOf("first", "second")))))
-                .isEqualTo(Output(InnerOutput(listOf("first", "second"))))
+            val result = mapper.map(Input(listOf(InnerInput("first"), InnerInput("second"))))
+            assertThat(result)
+                .isEqualTo(Output(mutableListOf(InnerOutput("first"), InnerOutput("second"))))
+
+            assertDoesNotThrow { result.text.add(InnerOutput("third")) }
         }
     }
 }

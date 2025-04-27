@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "tbd"
+    title: "v2.1.20-1.3.0"
+    items:
+      - "Added support for mapping for MutableList, and mapping between MutableList and List."
   - date: "2025-04-13"
     title: "v2.1.20-1.2.3"
     items:
