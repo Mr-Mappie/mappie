@@ -46,7 +46,7 @@ abstract class TestBase {
                 repositories {
                     mavenLocal {
                         content {
-                            includeGroupByRegex("tech\\.mappie*")
+                            includeGroupByRegex("tech\\.mappie.*")
                         }
                     }
                     gradlePluginPortal()
