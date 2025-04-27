@@ -6,26 +6,28 @@ import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
-import java.time.LocalDate
-import java.time.LocalDateTime
 
-class ObjectWithNullableListToObjectNullableListTest {
-    data class Input(val text: List<LocalDateTime>?)
+class ListPropertyObjectToListPropertyObjectTest {
+    data class Input(val text: List<InnerInput>, val int: Int)
+    data class InnerInput(val value: String)
 
-    data class Output(val text: List<LocalDate>?)
+    data class Output(val text: List<InnerOutput>, val int: Int)
+    data class InnerOutput(val value: String)
 
     @TempDir
     lateinit var directory: File
 
     @Test
-    fun `map nested nullable list to nullable list explicit with transform should succeed`() {
+    fun `map nested list implicit should succeed`() {
         compile(directory) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.lists.ObjectWithNullableListToObjectNullableListTest.*
+                import tech.mappie.testing.lists.ListPropertyObjectToListPropertyObjectTest.*
 
                 class Mapper : ObjectMappie<Input, Output>()
+
+                object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
                 """
             )
         } satisfies {
@@ -38,11 +40,8 @@ class ObjectWithNullableListToObjectNullableListTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(listOf(LocalDateTime.MIN, LocalDateTime.MAX))))
-                .isEqualTo(Output(listOf(LocalDate.MIN, LocalDate.MAX)))
-
-            assertThat(mapper.map(Input(null)))
-                .isEqualTo(Output(null))
+            assertThat(mapper.map(Input(listOf(InnerInput("first"), InnerInput("second")), 20)))
+                .isEqualTo(Output(listOf(InnerOutput("first"), InnerOutput("second")), 20))
         }
     }
 }
