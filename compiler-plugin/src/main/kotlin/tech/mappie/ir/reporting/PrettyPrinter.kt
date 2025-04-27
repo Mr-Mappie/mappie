@@ -427,6 +427,7 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
             string {
                 when (expression.value) {
                     is String -> "\"${expression.value}\""
+                    is Char -> "'${expression.value}'"
                     null -> "null"
                     else -> expression.value.toString()
                 }
@@ -449,7 +450,11 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     }
 
     override fun visitConstantArray(expression: IrConstantArray, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitConstantArray(expression, data)
+        return data.apply {
+            commas(expression.elements, prefix = "[", postfix = "]") {
+                it.pretty(data)
+            }
+        }
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: KotlinStringBuilder): KotlinStringBuilder {
