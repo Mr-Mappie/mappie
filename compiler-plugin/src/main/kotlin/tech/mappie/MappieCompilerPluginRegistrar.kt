@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_REPORT_DIR
+import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_REPORT_ENABLED
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_USE_DEFAULT_ARGUMENTS
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_WARNINGS_AS_ERRORS
 import tech.mappie.config.MappieConfiguration
@@ -26,6 +28,8 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
             useDefaultArguments = configuration.get(ARGUMENT_USE_DEFAULT_ARGUMENTS, true),
             strictEnums = configuration.get(ARGUMENT_STRICTNESS_ENUMS, true),
             strictVisiblity = configuration.get(ARGUMENT_STRICTNESS_VISIBILITY, false),
+            reportEnabled = configuration.get(ARGUMENT_REPORT_ENABLED, false),
+            reportDir = configuration.get(ARGUMENT_REPORT_DIR, ""),
         )
         FirExtensionRegistrarAdapter.registerExtension(MappieFirRegistrar())
         IrGenerationExtension.registerExtension(MappieIrRegistrar(configuration.get(MESSAGE_COLLECTOR_KEY, NONE), config))

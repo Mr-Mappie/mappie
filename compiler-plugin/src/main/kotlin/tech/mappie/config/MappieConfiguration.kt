@@ -5,4 +5,6 @@ data class MappieConfiguration(
     val useDefaultArguments: Boolean,
     val strictEnums: Boolean,
     val strictVisiblity: Boolean,
+    val reportEnabled: Boolean,
+    val reportDir: String,
 )
