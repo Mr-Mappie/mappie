@@ -147,9 +147,9 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
             if (!declaration.isFakeOverride) {
                 newline()
                 indent()
-                string { "fun" }
+                string { "fun " }
                 if (declaration.typeParameters.isNotEmpty()) {
-                    commas(declaration.typeParameters, prefix = " <", postfix = "> ") {
+                    commas(declaration.typeParameters, prefix = "<", postfix = "> ") {
                         it.pretty(data)
                     }
                 }

@@ -21,7 +21,7 @@ class ReportTest : TestBase() {
 
         runner.withArguments("build").build()
 
-        assertThat(runner.projectDir.resolve("mappie/Mapper.kt"))
+        assertThat(runner.projectDir.resolve("build/mappie/Mapper.kt"))
             .doesNotExist()
     }
 
@@ -50,7 +50,36 @@ class ReportTest : TestBase() {
 
         runner.withArguments("build").build()
 
-        assertThat(runner.projectDir.resolve("mappie/Mapper.kt"))
+        assertThat(runner.projectDir.resolve("build/mappie/Mapper.kt"))
+            .exists()
+    }
+    @Test
+    fun `report custom directory`() {
+        kotlin("build.gradle.kts",
+            """
+            mappie {
+                reporting {
+                    enabled = true
+                    directory = layout.buildDirectory.dir("temp")
+                }
+            }
+            """.trimIndent()
+        )
+
+        kotlin("src/main/kotlin/Mapper.kt",
+            """
+            import tech.mappie.api.ObjectMappie
+            
+            data class Input(val first: String)
+            data class Output(val first: String)
+    
+            object Mapper : ObjectMappie<Input, Output>()
+            """.trimIndent()
+        )
+
+        runner.withArguments("build").build()
+
+        assertThat(runner.projectDir.resolve("build/temp/Mapper.kt"))
             .exists()
     }
 }
