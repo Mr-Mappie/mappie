@@ -41,7 +41,7 @@ class ByteMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Byte = 2
 
@@ -74,7 +74,7 @@ class ByteMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Byte = 5
 
@@ -102,7 +102,7 @@ class ByteMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Byte = 2
 
@@ -135,7 +135,7 @@ class ByteMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Byte = 5
 
@@ -163,7 +163,7 @@ class ByteMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Byte = 2
 
@@ -196,7 +196,7 @@ class ByteMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Byte = 5
 
@@ -224,7 +224,7 @@ class ByteMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Byte = 2
 
@@ -257,7 +257,7 @@ class ByteMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Byte = 5
 
@@ -285,7 +285,7 @@ class ByteMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Byte = 2
 
@@ -318,7 +318,7 @@ class ByteMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Byte = 5
 
@@ -346,7 +346,7 @@ class ByteMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Byte = 2
 
@@ -379,7 +379,7 @@ class ByteMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Byte = 5
 

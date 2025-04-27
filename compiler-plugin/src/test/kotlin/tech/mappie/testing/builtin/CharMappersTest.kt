@@ -29,7 +29,7 @@ class CharMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 'b'
 
@@ -62,7 +62,7 @@ class CharMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 'b'
 

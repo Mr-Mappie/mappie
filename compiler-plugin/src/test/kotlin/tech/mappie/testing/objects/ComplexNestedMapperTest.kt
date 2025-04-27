@@ -54,7 +54,7 @@ class ComplexNestedMapperTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<InputObject, OutputObject>("Mapper")
@@ -92,7 +92,7 @@ class ComplexNestedMapperTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<InputObject, OutputObject>("Mapper")

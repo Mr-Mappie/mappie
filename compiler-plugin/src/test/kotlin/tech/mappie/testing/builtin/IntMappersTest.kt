@@ -37,7 +37,7 @@ class IntMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 2
 
@@ -70,7 +70,7 @@ class IntMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 5
 
@@ -98,7 +98,7 @@ class IntMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 2
 
@@ -131,7 +131,7 @@ class IntMappersTest {
             )
        } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 5
 
@@ -159,7 +159,7 @@ class IntMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 2
 
@@ -192,7 +192,7 @@ class IntMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 5
 
@@ -220,7 +220,7 @@ class IntMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 2
 
@@ -253,7 +253,7 @@ class IntMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 5
 

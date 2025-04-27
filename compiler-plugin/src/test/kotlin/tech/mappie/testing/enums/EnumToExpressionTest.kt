@@ -32,7 +32,7 @@ class EnumToExpressionTest {
             )
         } satisfies  {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadEnumMappieClass<Input, Boolean>("Mapper")

@@ -37,7 +37,7 @@ class ListPropertyObjectToListPropertyPrimitiveTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -71,7 +71,7 @@ class ListPropertyObjectToListPropertyPrimitiveTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")

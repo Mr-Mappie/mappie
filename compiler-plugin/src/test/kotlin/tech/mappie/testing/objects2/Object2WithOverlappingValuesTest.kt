@@ -50,7 +50,7 @@ class Object2WithOverlappingValuesTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappie2Class<Input1, Input2, Output>("Mapper")

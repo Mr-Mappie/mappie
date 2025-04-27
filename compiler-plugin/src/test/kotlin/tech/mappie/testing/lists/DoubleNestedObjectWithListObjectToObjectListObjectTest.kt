@@ -32,7 +32,7 @@ class DoubleNestedObjectWithListObjectToObjectListObjectTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -62,7 +62,7 @@ class DoubleNestedObjectWithListObjectToObjectListObjectTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")

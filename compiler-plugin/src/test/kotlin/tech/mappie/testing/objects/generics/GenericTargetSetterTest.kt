@@ -34,7 +34,7 @@ class GenericTargetSetterTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output<String, Int>>("Mapper")

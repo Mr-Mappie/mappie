@@ -30,7 +30,7 @@ class BigDecimalMappersTest {
             )
         } satisfies  {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = BigDecimal.valueOf(10)
 
@@ -63,7 +63,7 @@ class BigDecimalMappersTest {
             )
         } satisfies  {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = BigDecimal.valueOf(100)
 

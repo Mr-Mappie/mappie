@@ -34,7 +34,7 @@ class LocalDateTimeMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = LocalDateTime.now()
 
@@ -67,7 +67,7 @@ class LocalDateTimeMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = LocalDateTime.now()
 
@@ -95,7 +95,7 @@ class LocalDateTimeMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = LocalDateTime.now()
 
@@ -128,7 +128,7 @@ class LocalDateTimeMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = LocalDateTime.now()
 

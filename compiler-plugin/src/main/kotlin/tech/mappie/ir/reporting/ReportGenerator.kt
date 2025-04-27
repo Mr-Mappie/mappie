@@ -24,10 +24,14 @@ class ReportGenerator(private val context: MappieContext) {
                     context.logger.warn("Mappie failed to generate report for $name: $it")
                 }
             }
+        } else if (context.configuration.isMappieDebugMode) {
+            elements.filterIsInstance<IrClass>().forEach { clazz ->
+                val name = "${clazz.name.asString()}.kt"
+                context.logger.logging(name + System.lineSeparator() + generate(clazz))
+            }
         }
     }
 
-    private fun generate(clazz: IrClass): String {
-        return clazz.accept(PrettyPrinter(), KotlinStringBuilder()).print()
-    }
+    private fun generate(clazz: IrClass): String =
+        clazz.accept(PrettyPrinter(), KotlinStringBuilder()).print()
 }

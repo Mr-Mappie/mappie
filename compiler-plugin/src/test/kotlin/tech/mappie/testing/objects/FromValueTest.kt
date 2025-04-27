@@ -31,7 +31,7 @@ class FromValueTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Unit, Output>("Mapper")
@@ -60,7 +60,7 @@ class FromValueTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Unit, Output>("Mapper")

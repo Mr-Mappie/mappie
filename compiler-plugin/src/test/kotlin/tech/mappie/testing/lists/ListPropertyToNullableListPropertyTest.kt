@@ -36,7 +36,7 @@ class ListPropertyToNullableListPropertyTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -68,7 +68,7 @@ class ListPropertyToNullableListPropertyTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -98,7 +98,7 @@ class ListPropertyToNullableListPropertyTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
