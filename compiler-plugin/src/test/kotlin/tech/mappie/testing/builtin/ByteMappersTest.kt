@@ -351,7 +351,7 @@ class ByteMappersTest {
             val input: Byte = 2
 
             val mapper = classLoader
-                .loadObjectMappieClass<ByteInput, BigDecimalOutput>("Mapper")
+                .loadObjectMappieClass<ByteInput, StringOutput>("Mapper")
                 .constructors
                 .first()
                 .call()

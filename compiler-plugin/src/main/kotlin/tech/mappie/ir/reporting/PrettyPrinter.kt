@@ -1,6 +1,8 @@
 package tech.mappie.ir.reporting
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.*
@@ -72,18 +74,8 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     override fun visitClass(declaration: IrClass, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
             indent()
-            string { declaration.visibility.delegate.externalDisplayName + " " }
-            string {
-                when (declaration.kind) {
-                    ClassKind.CLASS -> "class"
-                    ClassKind.INTERFACE -> "interface"
-                    ClassKind.ENUM_CLASS -> "enum class"
-                    ClassKind.ENUM_ENTRY -> ""
-                    ClassKind.ANNOTATION_CLASS -> "annotation class"
-                    ClassKind.OBJECT -> "object"
-                }
-            }
-
+            string { "${declaration.visibility.pretty()} " }
+            string { declaration.kind.pretty() }
             string { " " + declaration.name.asString() }
 
             if (declaration.typeParameters.isNotEmpty()) {
@@ -94,15 +86,18 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
 
             if (declaration.kind in listOf(ClassKind.CLASS, ClassKind.ENUM_CLASS, ClassKind.ANNOTATION_CLASS)) {
                 declaration.primaryConstructor?.let { constructor ->
+
+                    string { " ${declaration.visibility.pretty()}" }
                     commas(constructor.parameters, prefix = "(", postfix = ")") { parameter ->
-                            val kind = if (!parameter.isPropertyField) {
-                                "val " // TODO: might be var
-                            } else {
-                                ""
-                            }
-                            // TODO: visibility
-                            // TODO: default argument
-                            "$kind${parameter.name}: ${parameter.type.dumpKotlinLike()}"
+                        val property = declaration.properties.singleOrNull { it.name == parameter.name }
+                        val kind = if (property != null) {
+                            property.visibility.pretty().ifNotBlank { "$it " } + if (property.isVar) "var " else "val "
+                        } else {
+                            ""
+                        }
+
+                        val defaultValue = parameter.defaultValue?.let { " ${it.pretty(data)}" } ?: ""
+                        "$kind${parameter.name}: ${parameter.type.dumpKotlinLike()}$defaultValue"
                     }
                 }
             }
@@ -144,23 +139,26 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
 
     override fun visitFunction(declaration: IrFunction, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
-            if (!declaration.isFakeOverride) {
-                newline()
-                indent()
-                string { "fun " }
-                if (declaration.typeParameters.isNotEmpty()) {
-                    commas(declaration.typeParameters, prefix = "<", postfix = "> ") {
-                        it.pretty(data)
-                    }
-                }
-                string { declaration.name.asString() }
-                commas(declaration.parameters.filter { it.kind == IrParameterKind.Regular }, prefix = "(", postfix = ")") {
-                    it.pretty(data)
-                }
-                string { ": ${declaration.returnType.dumpKotlinLike()}"}
-                newline()
-                declaration.body?.let { string { it.pretty(data) } }
-            }
+//            if (!declaration.isFakeOverride) {
+//                newline()
+//                indent()
+//                if ((declaration as? IrSimpleFunction)?.overriddenSymbols?.isNotEmpty() ?: false) {
+//                    string { "override "}
+//                }
+//                string { "fun " }
+//                if (declaration.typeParameters.isNotEmpty()) {
+//                    commas(declaration.typeParameters, prefix = "<", postfix = "> ") {
+//                        it.pretty(data)
+//                    }
+//                }
+//                string { declaration.name.asString() }
+//                commas(declaration.parameters.filter { it.kind == IrParameterKind.Regular }, prefix = "(", postfix = ")") {
+//                    it.pretty(data)
+//                }
+//                string { ": ${declaration.returnType.dumpKotlinLike()}"}
+//                newline()
+//                declaration.body?.let { string { it.pretty(data) } }
+//            }
         }
     }
 
@@ -214,7 +212,34 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitSimpleFunction(declaration, data)
+        return data.apply {
+            if (!declaration.isFakeOverride) {
+                newline()
+                indent()
+
+                if (declaration.overriddenSymbols.isNotEmpty()) string { "override " }
+                if (declaration.isInfix) string { "infix " }
+                if (declaration.isOperator) string { "operator " }
+
+                string { "fun " }
+                if (declaration.typeParameters.isNotEmpty()) {
+                    commas(declaration.typeParameters, prefix = "<", postfix = "> ") {
+                        it.pretty(data)
+                    }
+                }
+                string { declaration.name.asString() }
+                commas(declaration.parameters.filter { it.kind == IrParameterKind.Regular }, prefix = "(", postfix = ")") {
+                    it.pretty(data)
+                }
+                string { ": ${declaration.returnType.dumpKotlinLike()}"}
+                newline()
+                declaration.body?.let { string { it.pretty(data) } }
+            }
+
+        }
+
+
+        //return super.visitSimpleFunction(declaration, data)
     }
 
     override fun visitTypeAlias(declaration: IrTypeAlias, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -252,7 +277,9 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     }
 
     override fun visitExpressionBody(body: IrExpressionBody, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitExpressionBody(body, data)
+        return data.apply {
+            string { "= ${body.expression.pretty(data)}" }
+        }
     }
 
     override fun visitBlockBody(body: IrBlockBody, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -499,7 +526,16 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
-            string { expression.function.body!!.pretty(data) }
+            string { "{ " }
+            if (expression.function.parameters.isNotEmpty()) {
+                commas(expression.function.parameters, prefix = "", postfix = " -> ") {
+                    it.pretty(data)
+                }
+            }
+            strings(expression.function.body!!.statements, separator = "; ") {
+                it.pretty(data)
+            }
+            string { " }" }
         }
     }
 
@@ -527,8 +563,12 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
 
     override fun visitReturn(expression: IrReturn, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
-            // TODO: last statement in lambda -> ommit "return"
-            string { "return ${expression.value.pretty(data)}" }
+            // TODO: labeled returns
+            if ((expression.returnTargetSymbol.owner as IrFunction).origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
+                string { expression.value.pretty(data) }
+            } else {
+                string { "return ${expression.value.pretty(data)}" }
+            }
         }
     }
 
@@ -608,7 +648,22 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
 
     private fun IrElement.pretty(builder: KotlinStringBuilder) =
         accept(this@PrettyPrinter, KotlinStringBuilder(level = builder.level)).print()
+
+    private fun ClassKind.pretty() = when (this) {
+        ClassKind.CLASS -> "class"
+        ClassKind.INTERFACE -> "interface"
+        ClassKind.ENUM_CLASS -> "enum class"
+        ClassKind.ENUM_ENTRY -> ""
+        ClassKind.ANNOTATION_CLASS -> "annotation class"
+        ClassKind.OBJECT -> "object"
+    }
+
+    private fun DescriptorVisibility.pretty(): String =
+        if (delegate == Visibilities.Public) "" else delegate.name
 }
+
+private fun String.ifNotBlank(action: (String) -> String): String =
+    if (this.isNotBlank()) action(this) else this
 
 
 // TODO: expand operators
