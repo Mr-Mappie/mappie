@@ -24,7 +24,7 @@ class ReportTest {
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.ReportTest.*
 
-                class Mapper(internal var a: String, private val b: Int = 1) : ObjectMappie<Input, Output>() {
+                class Mapper private constructor(internal var a: String, private val b: Int = 1) : ObjectMappie<Input, Output>() {
                     val field: Int = 10
                                     
                     private val getter: String
@@ -32,7 +32,13 @@ class ReportTest {
                     
                     internal var setter: Int
                         get() = 5
-                        set(value) { println(value) }         
+                        set(value) { println(value) }
+
+                    val lazyVal by lazy { "1" }
+
+                    private constructor(b: Int) : this("10", b) {
+                        println("test")
+                    }
 
                     init {
                         for (i in (0..<10)) {
@@ -48,6 +54,19 @@ class ReportTest {
 
                     companion object {
                         internal const val X = "1"
+
+                        var size: Long = 9223372036854775807L
+
+                        private fun doWhile() {
+                            var i = 0
+                            do {
+                                println(i)
+                            } while (i++ >= size)
+                        }
+
+                        fun doTryCatch() {
+                            try { throw Exception("test") } catch (e: Exception) { } finally { }
+                        }
                     }
                 }
                 """

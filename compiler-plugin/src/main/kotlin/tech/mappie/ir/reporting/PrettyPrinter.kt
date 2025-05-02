@@ -103,6 +103,7 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
                 declaration.primaryConstructor?.let { constructor ->
 
                     string { " ${declaration.visibility.pretty()}" }
+                    string { " constructor" }
                     commas(constructor.parameters, prefix = "(", postfix = ")") { parameter ->
                         val property = declaration.properties.singleOrNull { it.name == parameter.name }
                         if (property != null) {
@@ -159,13 +160,18 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
             }
         }
     }
-
-    // TODO
     override fun visitConstructor(declaration: IrConstructor, data: KotlinStringBuilder): KotlinStringBuilder {
-        return if (declaration.isPrimary) {
-            data
-        } else {
-            data
+        return data.apply {
+            if (!declaration.isPrimary) {
+                string { declaration.visibility.pretty() }
+                string { " constructor" }
+                commas(declaration.parameters, "(", ") ") {
+                    element(it)
+                }
+                declaration.body?.let {
+                    element(it)
+                }
+            }
         }
     }
 
@@ -184,28 +190,42 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     override fun visitProperty(declaration: IrProperty, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
             if (!declaration.isFakeOverride && declaration.parentAsClass.primaryConstructor?.parameters?.none { it.name == declaration.name } == true) {
-                // TODO: rewrite using string { }
-                string {
-                    buildString {
-                        append(declaration.visibility.pretty())
-                        append(if (declaration.isLateinit) " lateinit" else "")
-                        append(if (declaration.isConst) " const" else "")
-                        append(if (declaration.isVar) " var " else " val ")
-                        append(declaration.name.pretty())
-                        // TODO: type and getter and setter
-//                        append(": ${declaration.g}")
+                string { declaration.visibility.pretty() }
+                if (declaration.isLateinit) string { " lateinit" }
+                if (declaration.isConst) string { " const" }
+                string { if (declaration.isVar) " var " else " val " }
+                string { declaration.name.pretty() }
+
+                declaration.backingField?.initializer?.let {
+                    string { ": " }
+                    string { it.expression.type.dumpKotlinLike() }
+                    string { " = " }
+                    element(it.expression)
+                }
+
+                declaration.getter?.let {
+                    if (it.origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
+                        newline()
+                        indented {
+                            indent()
+                            string { "get " }
+                            it.symbol.owner.body?.let { element(it) } ?: this
+                        }
+                    }
+                }
+
+                declaration.setter?.let {
+                    if (it.origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
+                        newline()
+                        indented {
+                            indent()
+                            string { "set " }
+                            it.symbol.owner.body?.let { element(it) } ?: this
+                        }
                     }
                 }
             }
         }
-    }
-
-    override fun visitScript(declaration: IrScript, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitScript(declaration, data)
-    }
-
-    override fun visitReplSnippet(declaration: IrReplSnippet, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitReplSnippet(declaration, data)
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -244,14 +264,6 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
                 element(it)
             }
         }
-    }
-
-    override fun visitPackageFragment(declaration: IrPackageFragment, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitPackageFragment(declaration, data)
-    }
-
-    override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitExternalPackageFragment(declaration, data)
     }
 
     override fun visitExpressionBody(body: IrExpressionBody, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -337,7 +349,16 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     }
 
     override fun visitComposite(expression: IrComposite, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitComposite(expression, data)
+        return data.apply {
+            curlyOpen()
+            newline()
+            indented {
+                lines(expression.statements) {
+                    element(it)
+                }
+            }
+            indent(); curlyClose()
+        }
     }
 
     override fun visitReturnableBlock(expression: IrReturnableBlock, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -425,7 +446,11 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitPropertyReference(expression, data)
+        return data.apply {
+            string { expression.symbol.owner.parentAsClass.name.pretty() }
+            string { "::" }
+            string { expression.symbol.owner.name.pretty() }
+        }
     }
 
     override fun visitLocalDelegatedPropertyReference(
@@ -455,6 +480,8 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
                 when (expression.value) {
                     is String -> "\"${expression.value}\""
                     is Char -> "'${expression.value}'"
+                    is Long -> "${expression.value}L"
+                    is Float -> "${expression.value}F"
                     null -> "null"
                     else -> expression.value.toString()
                 }
@@ -481,7 +508,12 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitDelegatingConstructorCall(expression, data)
+        return data.apply {
+            string { expression.symbol.owner.parentAsClass.name.pretty()}
+            commas(expression.arguments.filterNotNull(), prefix = "(", postfix = ")") {
+                element(it)
+            }
+        }
     }
 
     override fun visitDynamicExpression(expression: IrDynamicExpression, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -513,11 +545,17 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     }
 
     override fun visitGetField(expression: IrGetField, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitGetField(expression, data)
+        return data.apply {
+            string { expression.symbol.owner.name.pretty() }
+        }
     }
 
     override fun visitSetField(expression: IrSetField, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitSetField(expression, data)
+        return data.apply {
+            string { expression.symbol.owner.name.pretty() }
+            string { " = " }
+            element(expression.value)
+        }
     }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -560,13 +598,19 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitDoWhileLoop(loop, data)
+        return data.apply {
+            string { "do " }
+            loop.body?.let { element(it) }
+            string { " while (" }
+            element(loop.condition)
+            string { ")" }
+        }
     }
 
     override fun visitReturn(expression: IrReturn, data: KotlinStringBuilder): KotlinStringBuilder {
-        return data.apply {
+        return data.apply { Long.MAX_VALUE
             // TODO: labeled returns
-            if ((expression.returnTargetSymbol.owner as IrFunction).origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
+            if ((expression.returnTargetSymbol.owner as IrFunction).origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
                 string { "return " }
             }
             element(expression.value)
@@ -593,11 +637,30 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     }
 
     override fun visitTry(aTry: IrTry, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitTry(aTry, data)
+        return data.apply {
+            string { "try " }
+            element(aTry.tryResult)
+            lines(aTry.catches) {
+                newline()
+                indent()
+                element(it)
+            }
+            aTry.finallyExpression?.let {
+                newline()
+                indent()
+                string { "finally " }
+                element(it)
+            }
+        }
     }
 
     override fun visitCatch(aCatch: IrCatch, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitCatch(aCatch, data)
+        return data.apply {
+            string { "catch (" }
+            element(aCatch.catchParameter)
+            string { ") " }
+            element(aCatch.result)
+        }
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -687,6 +750,10 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
             "times" to "*",
             "div" to "/",
             "rem" to "%",
+            "less" to "<",
+            "lessOrEqual" to "<=",
+            "greater" to ">",
+            "greaterOrEqual" to ">=",
             "rangeTo" to "..",
             "rangeUntil" to "..<",
         )
