@@ -23,6 +23,9 @@ class MappieLogger(private val warningsAsErrors: Boolean, messageCollector: Mess
     fun info(message: String, location: CompilerMessageSourceLocation? = null) =
         report(CompilerMessageSeverity.INFO, message, location)
 
+    fun onlyWarn(message: String, location: CompilerMessageSourceLocation? = null) =
+        report(CompilerMessageSeverity.WARNING, message, location)
+
     fun warn(message: String, location: CompilerMessageSourceLocation? = null) =
         if (warningsAsErrors) {
             report(CompilerMessageSeverity.ERROR, message, location)

@@ -2,8 +2,12 @@ package tech.mappie.ir.reporting
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import tech.mappie.MappieContext
+import tech.mappie.ir.util.location
 import java.io.File
+import java.io.IOException
 
 class ReportGenerator(private val context: MappieContext) {
 
@@ -19,9 +23,18 @@ class ReportGenerator(private val context: MappieContext) {
             }
 
             elements.filterIsInstance<IrClass>().forEach { clazz ->
-                val name = "${clazz.name.asString()}.kt"
-                runCatching { File(directory, name).writeText(generate(clazz)) }.getOrElse {
-                    context.logger.warn("Mappie failed to generate report for $name: $it")
+                val file = File(directory, "${clazz.name.asString()}.kt")
+
+                try {
+                    file.writeText(generate(clazz))
+                } catch (_: IOException) {
+                    context.logger.error("Mappie failed to create report file ${file.path}.", location(clazz))
+                } catch (_: Exception) {
+                    context.logger.onlyWarn(
+                        "Mappie failed to generate comprehensible report for ${clazz.kotlinFqName.asString()}.",
+                        location(clazz)
+                    )
+                    runCatching { file.writeText(clazz.dumpKotlinLike()) }
                 }
             }
         } else if (context.configuration.isMappieDebugMode) {
