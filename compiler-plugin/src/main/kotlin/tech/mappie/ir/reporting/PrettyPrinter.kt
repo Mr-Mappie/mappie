@@ -22,7 +22,12 @@ data class KotlinStringBuilder(val level: Int = 0) {
         apply { builder.append((0..< level).joinToString(separator = "") { " " }) }
 
     fun string(block: () -> CharSequence): KotlinStringBuilder =
-        apply { builder.append(block()) }
+        apply {
+            val string = block()
+            if (string.isNotBlank()) {
+                builder.append(string)
+            }
+        }
 
     fun char(char: Char): KotlinStringBuilder =
         apply { builder.append(char) }
@@ -301,8 +306,27 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     override fun visitConstructorCall(expression: IrConstructorCall, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
             string { expression.type.dumpKotlinLike() }
-            commas(expression.arguments.filterNotNull(), prefix = "(", postfix = ")") {
-                element(it)
+            var i = 0
+            val printer: KotlinStringBuilder.(IrElement?) -> KotlinStringBuilder = {
+                if (it != null) {
+                    string { "${expression.symbol.owner.parameters[i].name.pretty()} = " }
+                    element(it)
+                    if (i != expression.symbol.owner.parameters.lastIndex) {
+                        string { ", " }
+                    }
+                }
+                i++
+                this
+            }
+            if (expression.arguments.size > 2) {
+                string { "(" }
+                newline()
+                indented {
+                    lines(expression.arguments, printer)
+                }
+                line { ")" }
+            } else {
+                strings(expression.arguments, "", "(", ")", printer)
             }
         }
     }
