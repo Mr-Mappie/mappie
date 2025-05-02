@@ -396,7 +396,8 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
                     string { expression.symbol.owner.name.pretty().split("-").last() }
                 }
                 expression.symbol.owner.name.asString() == "CHECK_NOT_NULL" -> {
-                    string { "${element(expression.arguments[0]!!)}!!" }
+                    element(expression.arguments[0]!!)
+                    string { "!!" }
                 }
                 expression.symbol.owner.name.asString() in SYMBOL_OPERATORS -> {
                     char('(')
@@ -618,7 +619,11 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitStringConcatenation(expression, data)
+        return data.apply {
+            strings(expression.arguments, " + ") {
+                element(it)
+            }
+        }
     }
 
     override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -664,7 +669,22 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitTypeOperator(expression, data)
+        return data.apply {
+            element(expression.argument)
+            when (expression.operator) {
+                IrTypeOperator.CAST -> string { " as ${expression.type.dumpKotlinLike()}"  }
+                IrTypeOperator.IMPLICIT_CAST -> this
+                IrTypeOperator.IMPLICIT_NOTNULL -> this
+                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> this
+                IrTypeOperator.IMPLICIT_INTEGER_COERCION -> this
+                IrTypeOperator.SAFE_CAST -> string { " as? ${expression.type.dumpKotlinLike()}"  }
+                IrTypeOperator.INSTANCEOF -> string { " is ${expression.type.dumpKotlinLike()}"  }
+                IrTypeOperator.NOT_INSTANCEOF -> string { " !is ${expression.type.dumpKotlinLike()}"  }
+                IrTypeOperator.SAM_CONVERSION -> this
+                IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> this
+                IrTypeOperator.REINTERPRET_CAST -> this
+            }
+        }
     }
 
     override fun visitValueAccess(expression: IrValueAccessExpression, data: KotlinStringBuilder): KotlinStringBuilder {
