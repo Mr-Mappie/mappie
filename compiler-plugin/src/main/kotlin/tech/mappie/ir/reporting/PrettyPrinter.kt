@@ -181,20 +181,19 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     }
 
     override fun visitEnumEntry(declaration: IrEnumEntry, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitEnumEntry(declaration, data)
+        return data.apply {
+            string { declaration.name.pretty() }
+            string { "," }
+        }
     }
 
-    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitErrorDeclaration(declaration, data)
-    }
-
-    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitLocalDelegatedProperty(declaration, data)
+    override fun visitSyntheticBody(body: IrSyntheticBody, data: KotlinStringBuilder): KotlinStringBuilder {
+        return data
     }
 
     override fun visitProperty(declaration: IrProperty, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
-            if (!declaration.isFakeOverride && declaration.parentAsClass.primaryConstructor?.parameters?.none { it.name == declaration.name } == true) {
+            if (!declaration.isFakeOverride && declaration.origin != IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER && declaration.parentAsClass.primaryConstructor?.parameters?.none { it.name == declaration.name } == true) {
                 string { declaration.visibility.pretty() }
                 if (declaration.isLateinit) string { " lateinit" }
                 if (declaration.isConst) string { " const" }
@@ -235,7 +234,7 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
-            if (!declaration.isFakeOverride) {
+            if (!declaration.isFakeOverride && declaration.origin != IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER) {
                 if (declaration.overriddenSymbols.isNotEmpty()) string { "override " }
                 if (declaration.isInfix) string { "infix " }
                 if (declaration.isOperator) string { "operator " }
@@ -257,7 +256,13 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     }
 
     override fun visitTypeAlias(declaration: IrTypeAlias, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitTypeAlias(declaration, data)
+        return data.apply {
+            string { declaration.visibility.pretty() }
+            string { " typealias " }
+            string { declaration.name.pretty() }
+            string { " = " }
+            string { declaration.expandedType.dumpKotlinLike() }
+        }
     }
 
     override fun visitVariable(declaration: IrVariable, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -291,18 +296,6 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
         }
     }
 
-    override fun visitDeclarationReference(expression: IrDeclarationReference, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitDeclarationReference(expression, data)
-    }
-
-    override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitMemberAccess(expression, data)
-    }
-
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitFunctionAccess(expression, data)
-    }
-
     override fun visitConstructorCall(expression: IrConstructorCall, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
             string { expression.type.dumpKotlinLike() }
@@ -331,10 +324,6 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
         }
     }
 
-    override fun visitSingletonReference(expression: IrGetSingletonValue, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitSingletonReference(expression, data)
-    }
-
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
             string { expression.symbol.owner.name.pretty() }
@@ -353,10 +342,6 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
                 "${expression.type.dumpKotlinLike()}::${expression.symbol.owner.name.pretty()}"
             }
         }
-    }
-
-    override fun visitContainerExpression(expression: IrContainerExpression, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitContainerExpression(expression, data)
     }
 
     override fun visitBlock(expression: IrBlock, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -383,22 +368,6 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
             }
             indent(); curlyClose()
         }
-    }
-
-    override fun visitReturnableBlock(expression: IrReturnableBlock, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitReturnableBlock(expression, data)
-    }
-
-    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitInlinedFunctionBlock(inlinedBlock, data)
-    }
-
-    override fun visitSyntheticBody(body: IrSyntheticBody, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitSyntheticBody(body, data)
-    }
-
-    override fun visitBreakContinue(jump: IrBreakContinue, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitBreakContinue(jump, data)
     }
 
     override fun visitBreak(jump: IrBreak, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -457,10 +426,6 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
         }
     }
 
-    override fun visitCallableReference(expression: IrCallableReference<*>, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitCallableReference(expression, data)
-    }
-
     override fun visitFunctionReference(expression: IrFunctionReference, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
             expression.symbol.owner.parentClassOrNull?.let {
@@ -476,21 +441,6 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
             string { "::" }
             string { expression.symbol.owner.name.pretty() }
         }
-    }
-
-    override fun visitLocalDelegatedPropertyReference(
-        expression: IrLocalDelegatedPropertyReference,
-        data: KotlinStringBuilder,
-    ): KotlinStringBuilder {
-        return super.visitLocalDelegatedPropertyReference(expression, data)
-    }
-
-    override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitRichFunctionReference(expression, data)
-    }
-
-    override fun visitRichPropertyReference(expression: IrRichPropertyReference, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitRichPropertyReference(expression, data)
     }
 
     override fun visitClassReference(expression: IrClassReference, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -520,10 +470,6 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
         }
     }
 
-    override fun visitConstantObject(expression: IrConstantObject, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitConstantObject(expression, data)
-    }
-
     override fun visitConstantArray(expression: IrConstantArray, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
             commas(expression.elements, prefix = "[", postfix = "]") {
@@ -539,34 +485,6 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
                 element(it)
             }
         }
-    }
-
-    override fun visitDynamicExpression(expression: IrDynamicExpression, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitDynamicExpression(expression, data)
-    }
-
-    override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitDynamicOperatorExpression(expression, data)
-    }
-
-    override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitDynamicMemberExpression(expression, data)
-    }
-
-    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitEnumConstructorCall(expression, data)
-    }
-
-    override fun visitErrorExpression(expression: IrErrorExpression, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitErrorExpression(expression, data)
-    }
-
-    override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitErrorCallExpression(expression, data)
-    }
-
-    override fun visitFieldAccess(expression: IrFieldAccessExpression, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitFieldAccess(expression, data)
     }
 
     override fun visitGetField(expression: IrGetField, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -605,14 +523,6 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
         }
     }
 
-    override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitInstanceInitializerCall(expression, data)
-    }
-
-    override fun visitLoop(loop: IrLoop, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitLoop(loop, data)
-    }
-
     override fun visitWhileLoop(loop: IrWhileLoop, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
             string { "while (" }
@@ -648,14 +558,6 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
                 element(it)
             }
         }
-    }
-
-    override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitSuspensionPoint(expression, data)
-    }
-
-    override fun visitSuspendableExpression(expression: IrSuspendableExpression, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitSuspendableExpression(expression, data)
     }
 
     override fun visitThrow(expression: IrThrow, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -711,10 +613,6 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
         }
     }
 
-    override fun visitValueAccess(expression: IrValueAccessExpression, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitValueAccess(expression, data)
-    }
-
     override fun visitGetValue(expression: IrGetValue, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
             string { expression.symbol.owner.name.pretty() }
@@ -727,14 +625,6 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
             string { " = " }
             element(expression.value)
         }
-    }
-
-    override fun visitVararg(expression: IrVararg, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitVararg(expression, data)
-    }
-
-    override fun visitSpreadElement(spread: IrSpreadElement, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitSpreadElement(spread, data)
     }
 
     override fun visitWhen(expression: IrWhen, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -760,10 +650,6 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
         }
     }
 
-    override fun visitElseBranch(branch: IrElseBranch, data: KotlinStringBuilder): KotlinStringBuilder {
-        return super.visitElseBranch(branch, data)
-    }
-
     private fun KotlinStringBuilder.element(element: IrElement) =
         element.accept(this@PrettyPrinter, this)
 
@@ -777,7 +663,7 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     }
 
     private fun DescriptorVisibility.pretty(): String =
-        /*if (delegate == Visibilities.Public) "" else*/ delegate.name
+        delegate.name
 
     private fun Name.pretty(): String =
         asStringStripSpecialMarkers()

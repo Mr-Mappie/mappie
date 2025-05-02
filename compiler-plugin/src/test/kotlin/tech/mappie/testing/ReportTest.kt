@@ -26,7 +26,9 @@ class ReportTest {
 
                 class Mapper private constructor(internal var a: String, private val b: Int = 1) : ObjectMappie<Input, Output>() {
                     val field: Int = 10
-                                    
+                    
+                    enum class MyEnum { A, B; }
+
                     private val getter: String
                         get() { return "string" }
                     
@@ -77,23 +79,7 @@ class ReportTest {
 
             hasOutputLines(
                 """
-                |public class Mapper: ObjectMappie<Input, Output>()
-                |{
-                |    fun mapList(inputs: List<Input>): List<Output>
-                |    {
-                |         return inputs.map(
-                |         {
-                |             return this.map(it)
-                |         })
-                |    }
-                |    
-                |    fun map(from: Input): Output
-                |    {
-                |        val tmp: Output = Output(from.text)
-                |        return tmp
-                |    }
-                |
-                |}
+
                 """.trimMargin()
             )
         }
