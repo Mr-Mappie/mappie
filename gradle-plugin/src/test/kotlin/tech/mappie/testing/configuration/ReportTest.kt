@@ -53,6 +53,7 @@ class ReportTest : TestBase() {
         assertThat(runner.projectDir.resolve("build/mappie/Mapper.kt"))
             .exists()
     }
+
     @Test
     fun `report custom directory`() {
         kotlin("build.gradle.kts",
