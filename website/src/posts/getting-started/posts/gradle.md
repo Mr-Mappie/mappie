@@ -65,6 +65,9 @@ mappie {
         visibility = true // Allow calling constructors not visible from the calling scope
         enums = false // Do not report an error if not all enum sources are mapped 
     }
+    reporting {
+        enabled = true // Enable report generation
+    }
 }
 ```
 
@@ -72,8 +75,10 @@ Local configuration options are applied as annotations on the class level of map
 configuration option on a per-mapper basis.
 
 The following options exist with their corresponding default values
-| Gradle Option           | Annotation             | Default Value |
-|-------------------------|------------------------|---------------|
-| `useDefaultArguments`   | `@UseDefaultArguments` | `true`        |
-| `strictness.visibility` | `@UseStrictVisibility` | `false`       |
-| `strictness.enums`      | `@UseStrictEnums`      | `true`        |
+| Gradle Option           | Annotation             | Default Value      |
+|-------------------------|------------------------|--------------------|
+| `useDefaultArguments`   | `@UseDefaultArguments` | `true`             |
+| `strictness.visibility` | `@UseStrictVisibility` | `false`            |
+| `strictness.enums`      | `@UseStrictEnums`      | `true`             |
+| `reporting.enabled`     |                        | `false`            |
+| `reporting.directory`   |                        | `$buildDir/mappie` |
