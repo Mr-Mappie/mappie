@@ -48,7 +48,7 @@ class NullablePropertyToNonNullablePropertyTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -78,7 +78,7 @@ class NullablePropertyToNonNullablePropertyTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")

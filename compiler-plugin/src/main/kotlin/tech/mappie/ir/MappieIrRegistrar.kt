@@ -3,6 +3,7 @@ package tech.mappie.ir
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import tech.mappie.MappieContext
@@ -18,7 +19,10 @@ import tech.mappie.ir.util.location
 import tech.mappie.ir.analysis.MappingValidation
 import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.analysis.ValidationContext
+import tech.mappie.ir.reporting.ReportGenerator
 import tech.mappie.ir.resolving.MappingRequestResolver
+import java.io.File
+import java.io.IOException
 
 class MappieIrRegistrar(
     private val messageCollector: MessageCollector,
@@ -32,7 +36,7 @@ class MappieIrRegistrar(
             val context = DefinitionsCollector(createMappieContext(pluginContext)).collect(moduleFragment)
             val requests = moduleFragment.accept(MappingRequestResolver(), context)
 
-            requests.forEach { (clazz, options) ->
+            val generated = requests.mapNotNull { (clazz, options) ->
                 val selected = MappingSelector.of(options.associateWith {
                     MappingValidation.of(ValidationContext(context, context.definitions, emptyList(), it.origin), it)
                 }).select()
@@ -43,12 +47,15 @@ class MappieIrRegistrar(
                         .first { it.isMappieMapFunction() }
 
                     context.logger.logAll(validation.problems, location(function))
-                    if (solution != null) {
-                        val model = CodeGenerationModelFactory.of(solution).construct(function)
+
+                    solution?.let {
+                        val model = CodeGenerationModelFactory.of(it).construct(function)
                         clazz.accept(MappieCodeGenerator(CodeGenerationContext(context, model, context.definitions, emptyMap())), null)
                     }
-                } ?: context.logger.log(Problem.error("Target class has no accessible constructor", location(clazz)))
+                } ?: context.logger.log(Problem.error("Target class has no accessible constructor", location(clazz))).let { null }
             }
+
+            ReportGenerator(context).report(generated)
         }
     }
 

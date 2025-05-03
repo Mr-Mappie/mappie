@@ -6,6 +6,7 @@ import org.apache.maven.project.MavenProject
 import org.codehaus.plexus.component.annotations.*
 import org.codehaus.plexus.logging.Logger
 import org.jetbrains.kotlin.maven.*
+import java.io.File
 
 @Component(role = KotlinMavenPluginExtension::class, hint = "mappie")
 class MappieMavenPlugin : KotlinMavenPluginExtension {
@@ -17,7 +18,14 @@ class MappieMavenPlugin : KotlinMavenPluginExtension {
 
     override fun getPluginOptions(project: MavenProject, execution: MojoExecution): List<PluginOption> {
         logger.debug("Loaded Maven plugin " + javaClass.name)
-        return listOf()
+        return listOf(
+            PluginOption(
+                "mappie",
+                "mappie",
+                "report-dir",
+                File(project.basedir, "target/mappie").absolutePath,
+            )
+        )
     }
 
     override fun isApplicable(project: MavenProject, execution: MojoExecution): Boolean {

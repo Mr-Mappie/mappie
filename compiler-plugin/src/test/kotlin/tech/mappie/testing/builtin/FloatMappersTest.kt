@@ -34,7 +34,7 @@ class FloatMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 2.0f
 
@@ -67,7 +67,7 @@ class FloatMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 5.0f
 
@@ -95,7 +95,7 @@ class FloatMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 2.0f
 
@@ -128,7 +128,7 @@ class FloatMappersTest {
             )
         } satisfies  {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 5.0f
 
@@ -156,7 +156,7 @@ class FloatMappersTest {
             )
         } satisfies  {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 2.0f
 
@@ -189,7 +189,7 @@ class FloatMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 5.0f
 

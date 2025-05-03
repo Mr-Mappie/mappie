@@ -49,7 +49,7 @@ class EnumMapperWrongConfigTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
         }
     }
 
@@ -88,7 +88,7 @@ class EnumMapperWrongConfigTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
         }
     }
 }

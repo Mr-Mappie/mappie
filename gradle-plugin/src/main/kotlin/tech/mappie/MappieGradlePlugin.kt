@@ -32,6 +32,12 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
                     extension.strictness.visibility.orNull?.apply {
                         add(SubpluginOption("strict-visibility", this.toString()))
                     }
+                    extension.reporting.enabled.orNull?.apply {
+                        add(SubpluginOption("report-enabled", this.toString()))
+                    }
+                    extension.reporting.directory.convention(layout.buildDirectory.map { it.dir("mappie") }).get().apply {
+                        add(SubpluginOption("report-dir", asFile.absolutePath))
+                    }
                 }
             }
         }

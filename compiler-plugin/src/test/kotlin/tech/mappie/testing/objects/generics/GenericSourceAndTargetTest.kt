@@ -35,7 +35,7 @@ class GenericSourceAndTargetTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input<String, Int>, Output<String, Int>>("Mapper")
@@ -66,7 +66,7 @@ class GenericSourceAndTargetTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input<Int, String>, Output<Int, String>>("Mapper")
@@ -97,7 +97,7 @@ class GenericSourceAndTargetTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input<Int, Int>, Output<String, String>>("Mapper")

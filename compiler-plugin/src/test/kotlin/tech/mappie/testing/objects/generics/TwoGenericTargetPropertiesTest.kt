@@ -35,7 +35,7 @@ class TwoGenericTargetPropertiesTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output<String, Int>>("Mapper")
@@ -65,7 +65,7 @@ class TwoGenericTargetPropertiesTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output<String, Int>>("Mapper")

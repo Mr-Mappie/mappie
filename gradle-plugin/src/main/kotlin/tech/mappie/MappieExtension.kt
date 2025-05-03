@@ -3,6 +3,7 @@
 package tech.mappie
 
 import org.gradle.api.Project
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 
 abstract class MappieExtension(private val project: Project) {
@@ -25,11 +26,23 @@ abstract class MappieExtension(private val project: Project) {
             project.objects.newInstance(MappieStrictnessExtension::class.java)
         } as MappieStrictnessExtension
 
+    internal val reporting: MappieReportingExtension get() =
+        extensions.getOrPut(MappieReportingExtension.NAME) {
+            project.objects.newInstance(MappieReportingExtension::class.java)
+        } as MappieReportingExtension
+
     /**
      * Configuration options for the strictness of validations.
      */
     fun strictness(configuration: MappieStrictnessExtension.() -> Unit) {
         configuration(strictness)
+    }
+
+    /**
+     * Configuration options for reporting.
+     */
+    fun reporting(configuration: MappieReportingExtension.() -> Unit) {
+        configuration(reporting)
     }
 }
 
@@ -47,5 +60,23 @@ abstract class MappieStrictnessExtension {
 
     internal companion object {
         const val NAME = "mappie-strictness-extension"
+    }
+}
+
+
+abstract class MappieReportingExtension {
+
+    /**
+     * Whether to generate reports.
+     */
+    abstract val enabled: Property<Boolean>
+
+    /**
+     * The location where to generate the report.
+     */
+    abstract val directory: DirectoryProperty
+
+    internal companion object {
+        const val NAME = "mappie-reporting-extension"
     }
 }

@@ -35,7 +35,7 @@ class EnumToEnumWithFewerEntriesTest {
             )
         } satisfies  {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadEnumMappieClass<Input, Output>("Mapper")
@@ -66,7 +66,7 @@ class EnumToEnumWithFewerEntriesTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadEnumMappieClass<Input, Output>("Mapper")
@@ -131,7 +131,7 @@ class EnumToEnumWithFewerEntriesTest {
             )
         } satisfies  {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadEnumMappieClass<Input, Output>("Mapper")

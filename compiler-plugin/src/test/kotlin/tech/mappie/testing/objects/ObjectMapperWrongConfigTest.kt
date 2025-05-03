@@ -48,7 +48,7 @@ class ObjectMapperWrongConfigTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
         }
     }
 }

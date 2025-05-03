@@ -53,7 +53,7 @@ class GenericTargetPropertyTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<FooDto, Wrapper<Foo>>("WrapperMapper")

@@ -28,7 +28,7 @@ class EnumToEnumWithSameEntriesTest {
             )
         } satisfies  {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadEnumMappieClass<Input, Output>("Mapper")
@@ -92,7 +92,7 @@ class EnumToEnumWithSameEntriesTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
         }
     }
 }

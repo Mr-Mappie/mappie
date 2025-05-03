@@ -35,7 +35,7 @@ class LongMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Long = 2
 
@@ -68,7 +68,7 @@ class LongMappersTest {
                     )        
            } satisfies {
            isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Long = 5
 
@@ -96,7 +96,7 @@ class LongMappersTest {
                     )        
            } satisfies {
            isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Long = 2
 
@@ -129,7 +129,7 @@ class LongMappersTest {
                     )        
            } satisfies {
            isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Long = 5
 

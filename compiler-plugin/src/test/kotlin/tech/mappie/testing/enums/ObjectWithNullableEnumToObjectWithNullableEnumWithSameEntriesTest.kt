@@ -31,7 +31,7 @@ class ObjectWithNullableEnumToObjectWithNullableEnumWithSameEntriesTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -63,7 +63,7 @@ class ObjectWithNullableEnumToObjectWithNullableEnumWithSameEntriesTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")

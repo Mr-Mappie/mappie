@@ -32,7 +32,7 @@ class DoubleMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 2.0
 
@@ -65,7 +65,7 @@ class DoubleMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 5.0
 
@@ -93,7 +93,7 @@ class DoubleMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 2.0
 
@@ -126,7 +126,7 @@ class DoubleMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = 5.0
 

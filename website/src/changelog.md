@@ -6,6 +6,7 @@ changelog:
     title: "v2.1.20-1.3.0"
     items:
       - "Added support for mapping for MutableList, and mapping between MutableList and List."
+      - "[#193](https://github.com/Mr-Mappie/mappie/issues/193) added support for generating reports. See [Reporting](/getting-started/reporting) for more information."
   - date: "2025-04-13"
     title: "v2.1.20-1.2.3"
     items:

@@ -39,7 +39,7 @@ class ShortMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Short = 2
 
@@ -72,7 +72,7 @@ class ShortMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Short = 5
 
@@ -100,7 +100,7 @@ class ShortMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Short = 2
 
@@ -133,7 +133,7 @@ class ShortMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Short = 5
 
@@ -161,7 +161,7 @@ class ShortMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Short = 2
 
@@ -194,7 +194,7 @@ class ShortMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Short = 5
 
@@ -222,7 +222,7 @@ class ShortMappersTest {
                     )        
            } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Short = 2
 
@@ -255,7 +255,7 @@ class ShortMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input: Short = 5
 

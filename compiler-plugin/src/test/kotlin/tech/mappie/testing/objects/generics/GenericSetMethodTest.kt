@@ -37,7 +37,7 @@ class GenericSetMethodTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input<Int>, Output<Int>>("Mapper")
@@ -64,7 +64,7 @@ class GenericSetMethodTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input<Int>, Output<Int>>("Mapper")
