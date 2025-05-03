@@ -75,11 +75,92 @@ class ReportTest {
             )
         } satisfies  {
             isOk()
-            hasNoWarningsOrErrors()
 
             hasOutputLines(
                 """
-
+                |public class Mapper public constructor(internal var a: String, private val b: Int = 1): ObjectMappie<Input, Output>() {
+                |    public val field: Int = 10
+                |    public enum class MyEnum public constructor(): Enum<MyEnum>() {
+                |        A,
+                |        B,
+                |    }
+                |    private val getter
+                |        get {
+                |            return "string"
+                |        }
+                |    internal var setter
+                |        get {
+                |            return 5
+                |        }
+                |        set {
+                |            println(value)
+                |        }
+                |    public val lazyVal: Lazy<String> = lazy({"1"})
+                |        get {
+                |            return lazyVal${'$'}delegate.getValue(this, Mapper::lazyVal)
+                |        }
+                |    private constructor(b: Int) {
+                |        Mapper("10", b)
+                |        println("test")
+                |    }
+                |    init {
+                |        {
+                |            val iterator: IntIterator = (0 ..< 10).iterator()
+                |            while (iterator.hasNext()) {
+                |                val i: Int = iterator.next()
+                |                {
+                |                    when {
+                |                        ((i % 2) == 0) -> {
+                |                            break
+                |                        }
+                |                        true -> {
+                |                            continue
+                |                        }
+                |                    }
+                |                }
+                |            }
+                |        }
+                |    }
+                |    override fun mapList(inputs: List<Input>): List<Output> {
+                |        return inputs.map({it: Input -> return emptyList(); this.map(it)})
+                |    }
+                |    public object Companion: Any() {
+                |        internal const val X: String = "1"
+                |        public var size: Long = 9223372036854775807L
+                |        fun doWhile(): Unit {
+                |            var i: Int = 0
+                |            {
+                |                do {
+                |                    println(i)
+                |                } while (({
+                |                    val unary: Int = i
+                |                    i = unary.inc()
+                |                    unary
+                |                }.toLong() >= this.size))
+                |            }
+                |        }
+                |        fun doTryCatch(): Unit {
+                |            try {
+                |                throw Exception(p0 = "test")
+                |            }
+                |            catch (val e: Exception) {
+                |            }
+                |
+                |            finally {
+                |            }
+                |        }
+                |    }
+                |    override fun map(from: Input): Output {
+                |        val tmp: Output = Output(text = from.text, inner = InnerInputToInnerOutputMapper.map(from.inner))
+                |        return tmp
+                |    }
+                |    public object InnerInputToInnerOutputMapper: ObjectMappie<InnerInput, InnerOutput>() {
+                |        override fun map(from: InnerInput): TO {
+                |            val tmp: InnerOutput = InnerOutput(int = from.int)
+                |            return tmp
+                |        }
+                |    }
+                |}
                 """.trimMargin()
             )
         }

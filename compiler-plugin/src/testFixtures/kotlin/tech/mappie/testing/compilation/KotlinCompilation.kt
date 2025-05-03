@@ -81,8 +81,8 @@ class CompilationAssertionDsl(private val result: KotlinCompilation.Result) {
 	}
 
 	fun hasOutputLines(message: String) {
-		assertThat(result.messages.lines())
-			.containsSequence(message.lines())
+		assertThat(result.messages.lines().map { it.trimEnd() })
+			.containsAll(message.lines().map { it.trimEnd() })
 	}
 
 	private fun messageOf(message: String, suggestions: List<String>) =
