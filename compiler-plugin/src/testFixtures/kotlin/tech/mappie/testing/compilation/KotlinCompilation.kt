@@ -35,8 +35,9 @@ typealias PluginId = String
 typealias OptionName = String
 typealias OptionValue = String
 
-fun compile(directory: File, dsl: CompilationDsl.() -> Unit): CompilationAssertionDsl =
+fun compile(directory: File, verbose: Boolean = false, dsl: CompilationDsl.() -> Unit): CompilationAssertionDsl =
 	KotlinCompilation(directory).let {
+		it.verbose = verbose
 		dsl.invoke(CompilationDsl(it))
 		CompilationAssertionDsl(it.compile())
 	}
@@ -62,8 +63,9 @@ class CompilationAssertionDsl(private val result: KotlinCompilation.Result) {
 		assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.COMPILATION_ERROR)
 	}
 
-	fun hasNoMessages() {
-		assertThat(result.messages).isEmpty()
+	fun hasNoWarningsOrErrors() {
+		assertThat(result.messages.lines())
+			.noneMatch { it.startsWith("w:") || it.startsWith("e:") }
 	}
 
 	fun hasErrorMessage(line: Int, message: String, suggestions: List<String> = emptyList()) {
@@ -76,6 +78,11 @@ class CompilationAssertionDsl(private val result: KotlinCompilation.Result) {
 		assertThat(result.messages).containsPattern(
 			Pattern.compile("w: file://.+\\.kt:${line}:.+${escape(messageOf(message, suggestions))}")
 		)
+	}
+
+	fun hasOutputLines(message: String) {
+		assertThat(result.messages.lines().map { it.trimEnd() })
+			.containsAll(message.lines().map { it.trimEnd() })
 	}
 
 	private fun messageOf(message: String, suggestions: List<String>) =

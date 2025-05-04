@@ -44,7 +44,11 @@ abstract class TestBase {
             """
             pluginManagement {
                 repositories {
-                    mavenLocal()
+                    mavenLocal {
+                        content {
+                            includeGroupByRegex("tech\\.mappie.*")
+                        }
+                    }
                     gradlePluginPortal()
                 }
              }
@@ -88,7 +92,11 @@ abstract class TestBase {
             }
 
             repositories {
-                mavenLocal()
+                mavenLocal {
+                    content {
+                        includeGroupByRegex("tech\\.mappie*")
+                    }
+                }
                 mavenCentral()
             }
 
@@ -123,7 +131,11 @@ abstract class TestBase {
             }
 
             repositories {
-                mavenLocal()
+                mavenLocal {
+                    content {
+                        includeGroupByRegex("tech\\.mappie*")
+                    }
+                }
                 mavenCentral()
             }
 

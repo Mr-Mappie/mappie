@@ -7,7 +7,7 @@ import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class ObjectWithListObjectToObjectListPrimitiveTest {
+class ListPropertyObjectToListPropertyPrimitiveTest {
     data class Input(val text: List<InnerInput>)
     data class InnerInput(val value: String)
 
@@ -22,7 +22,7 @@ class ObjectWithListObjectToObjectListPrimitiveTest {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.lists.ObjectWithListObjectToObjectListPrimitiveTest.*
+                import tech.mappie.testing.lists.ListPropertyObjectToListPropertyPrimitiveTest.*
 
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input) = mapping {
@@ -37,7 +37,7 @@ class ObjectWithListObjectToObjectListPrimitiveTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -56,7 +56,7 @@ class ObjectWithListObjectToObjectListPrimitiveTest {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.lists.ObjectWithListObjectToObjectListPrimitiveTest.*
+                import tech.mappie.testing.lists.ListPropertyObjectToListPropertyPrimitiveTest.*
 
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input) = mapping {
@@ -71,7 +71,7 @@ class ObjectWithListObjectToObjectListPrimitiveTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")

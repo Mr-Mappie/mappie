@@ -13,21 +13,18 @@ class MappieLogger(private val warningsAsErrors: Boolean, messageCollector: Mess
 
     fun log(problem: Problem, location: CompilerMessageSourceLocation? = null) =
         when (problem.severity) {
-            Problem.Severity.ERROR -> logError(messageOf(problem), problem.location ?: location)
-            Problem.Severity.WARNING -> logWarn(messageOf(problem), problem.location ?: location)
+            Problem.Severity.ERROR -> error(messageOf(problem), problem.location ?: location)
+            Problem.Severity.WARNING -> warn(messageOf(problem), problem.location ?: location)
         }
 
-    fun logInfo(message: String, location: CompilerMessageSourceLocation? = null) =
-        info(message, location)
-
-    fun logWarn(message: String, location: CompilerMessageSourceLocation? = null) =
-        warn(message, location)
-
-    fun logError(message: String, location: CompilerMessageSourceLocation? = null) =
-        error(message, location)
+    fun logging(message: String, location: CompilerMessageSourceLocation? = null) =
+        report(CompilerMessageSeverity.LOGGING, message, location)
 
     fun info(message: String, location: CompilerMessageSourceLocation? = null) =
         report(CompilerMessageSeverity.INFO, message, location)
+
+    fun onlyWarn(message: String, location: CompilerMessageSourceLocation? = null) =
+        report(CompilerMessageSeverity.WARNING, message, location)
 
     fun warn(message: String, location: CompilerMessageSourceLocation? = null) =
         if (warningsAsErrors) {

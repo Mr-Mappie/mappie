@@ -6,31 +6,31 @@ import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
-import java.time.LocalDate
-import java.time.LocalDateTime
 
-class ObjectWithNullableListToObjectNullableListTest {
-    data class Input(val text: List<LocalDateTime>?)
+class ListPropertyPrimitiveToListPropertyPrimitiveTest {
+    data class Input(val a: InnerInput)
+    data class InnerInput(val value: List<String>)
 
-    data class Output(val text: List<LocalDate>?)
+    data class Output(val a: InnerOutput)
+    data class InnerOutput(val value: List<String>)
 
     @TempDir
     lateinit var directory: File
 
     @Test
-    fun `map nested nullable list to nullable list explicit with transform should succeed`() {
+    fun `map object with nested list implicit should succeed`() {
         compile(directory) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.lists.ObjectWithNullableListToObjectNullableListTest.*
+                import tech.mappie.testing.lists.ListPropertyPrimitiveToListPropertyPrimitiveTest.*
 
                 class Mapper : ObjectMappie<Input, Output>()
                 """
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -38,11 +38,8 @@ class ObjectWithNullableListToObjectNullableListTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input(listOf(LocalDateTime.MIN, LocalDateTime.MAX))))
-                .isEqualTo(Output(listOf(LocalDate.MIN, LocalDate.MAX)))
-
-            assertThat(mapper.map(Input(null)))
-                .isEqualTo(Output(null))
+            assertThat(mapper.map(Input(InnerInput(listOf("first", "second")))))
+                .isEqualTo(Output(InnerOutput(listOf("first", "second"))))
         }
     }
 }

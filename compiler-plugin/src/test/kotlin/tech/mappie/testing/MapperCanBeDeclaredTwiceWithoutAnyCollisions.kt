@@ -33,7 +33,7 @@ class MapperCanBeDeclaredTwiceWithoutAnyCollisions {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val firstMapper = classLoader
                 .loadObjectMappieClass<FirstInput, FirstOutput>("FirstMapper")

@@ -151,8 +151,9 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
         args.noCheckActual = noCheckActual
         args.optIn = optIn?.toTypedArray()
 
-        if (languageVersion != null)
+        if (languageVersion != null) {
             args.languageVersion = this.languageVersion
+        }
 
         args.commonSources = sourcesWithPath.filter { it.isCommonSource }.map { it.path.toString() }.toTypedArray()
 

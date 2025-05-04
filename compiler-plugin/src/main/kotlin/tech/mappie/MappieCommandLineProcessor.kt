@@ -36,6 +36,18 @@ class MappieCommandLineProcessor : CommandLineProcessor {
             valueDescription = "boolean",
             description = "strictness of visibility modifiers",
             required = false,
+        ),
+        CliOption(
+            optionName = OPTION_REPORT_ENABLED,
+            valueDescription = "boolean",
+            description = "report enabled",
+            required = false,
+        ),
+        CliOption(
+            optionName = OPTION_REPORT_DIR,
+            valueDescription = "string",
+            description = "report directory",
+            required = false,
         )
     )
 
@@ -45,6 +57,8 @@ class MappieCommandLineProcessor : CommandLineProcessor {
             OPTION_USE_DEFAULT_ARGUMENTS -> configuration.put(ARGUMENT_USE_DEFAULT_ARGUMENTS, value.toBooleanStrict())
             OPTION_STRICTNESS_ENUMS -> configuration.put(ARGUMENT_STRICTNESS_ENUMS, value.toBooleanStrict())
             OPTION_STRICTNESS_VISIBILITY -> configuration.put(ARGUMENT_STRICTNESS_VISIBILITY, value.toBooleanStrict())
+            OPTION_REPORT_ENABLED -> configuration.put(ARGUMENT_REPORT_ENABLED, value.toBooleanStrict())
+            OPTION_REPORT_DIR -> configuration.put(ARGUMENT_REPORT_DIR, value)
             else -> throw IllegalArgumentException("Unknown option ${option.optionName}")
         }
     }
@@ -54,10 +68,14 @@ class MappieCommandLineProcessor : CommandLineProcessor {
         const val OPTION_USE_DEFAULT_ARGUMENTS = "use-default-arguments"
         const val OPTION_STRICTNESS_ENUMS = "strict-enums"
         const val OPTION_STRICTNESS_VISIBILITY = "strict-visibility"
+        const val OPTION_REPORT_ENABLED = "report-enabled"
+        const val OPTION_REPORT_DIR = "report-dir"
 
         val ARGUMENT_WARNINGS_AS_ERRORS = CompilerConfigurationKey<Boolean>(OPTION_WARNINGS_AS_ERRORS)
         val ARGUMENT_USE_DEFAULT_ARGUMENTS = CompilerConfigurationKey<Boolean>(OPTION_USE_DEFAULT_ARGUMENTS)
         val ARGUMENT_STRICTNESS_ENUMS = CompilerConfigurationKey<Boolean>(OPTION_STRICTNESS_ENUMS)
         val ARGUMENT_STRICTNESS_VISIBILITY = CompilerConfigurationKey<Boolean>(OPTION_STRICTNESS_VISIBILITY)
+        val ARGUMENT_REPORT_ENABLED = CompilerConfigurationKey<Boolean>(OPTION_REPORT_ENABLED)
+        val ARGUMENT_REPORT_DIR = CompilerConfigurationKey<String>(OPTION_REPORT_DIR)
     }
 }

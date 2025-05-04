@@ -33,7 +33,7 @@ class DoubleNestedObjectWithEnumToDoubleNestedObjectWithEnumWithSameEntriesTest 
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -61,7 +61,7 @@ class DoubleNestedObjectWithEnumToDoubleNestedObjectWithEnumWithSameEntriesTest 
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")

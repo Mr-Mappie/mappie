@@ -30,7 +30,7 @@ class BigIntegerMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = BigInteger.valueOf(10)
 
@@ -63,7 +63,7 @@ class BigIntegerMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = BigInteger.valueOf(100)
 

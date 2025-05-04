@@ -2,6 +2,20 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "tbd"
+    title: "v2.1.20-1.3.0"
+    items:
+      - "Added support for mapping for MutableList, and mapping between MutableList and List."
+      - "[#193](https://github.com/Mr-Mappie/mappie/issues/193) added support for generating reports. See [Reporting](/getting-started/reporting) for more information."
+  - date: "2025-04-13"
+    title: "v2.1.20-1.2.3"
+    items:
+      - "[#173](https://github.com/Mr-Mappie/mappie/issues/173) fixed compilation error on multiplatform where the this receiver parameter was generated incorrectly."
+      - "[#195](https://github.com/Mr-Mappie/mappie/issues/195) fixed issues with both generic sources and target."
+  - date: "2025-04-09"
+    title: "v2.1.20-1.2.2"
+    items:
+      - "[#173](https://github.com/Mr-Mappie/mappie/issues/173) fixed compilation error when calling generated functions other than map on multiplatform."
   - date: "2025-04-04"
     title: "v2.1.20-1.2.1"
     items:

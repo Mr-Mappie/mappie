@@ -30,7 +30,7 @@ class UUIDMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = UUID.fromString("749c9041-ce3b-416b-aec7-3be7edf52de9")
 
@@ -63,7 +63,7 @@ class UUIDMappersTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val input = UUID.fromString("8cad0e3d-31d1-4d03-9314-a5e3f3b557b4")
 

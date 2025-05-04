@@ -30,7 +30,7 @@ class MapperClassInsideOtherDeclarationTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Thing\$Mapper")

@@ -7,7 +7,7 @@ import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class ObjectWithNonNullableListToObjectWithNullableListTest {
+class ListPropertyToNullableListPropertyTest {
     data class Input(val text: List<InnerInput>, val int: Int)
     data class InnerInput(val value: String)
 
@@ -23,7 +23,7 @@ class ObjectWithNonNullableListToObjectWithNullableListTest {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.lists.ObjectWithNonNullableListToObjectWithNullableListTest.*
+                import tech.mappie.testing.lists.ListPropertyToNullableListPropertyTest.*
 
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input) = mapping {
@@ -36,7 +36,7 @@ class ObjectWithNonNullableListToObjectWithNullableListTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -55,7 +55,7 @@ class ObjectWithNonNullableListToObjectWithNullableListTest {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.lists.ObjectWithNonNullableListToObjectWithNullableListTest.*
+                import tech.mappie.testing.lists.ListPropertyToNullableListPropertyTest.*
 
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input) = mapping {
@@ -68,7 +68,7 @@ class ObjectWithNonNullableListToObjectWithNullableListTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
@@ -87,7 +87,7 @@ class ObjectWithNonNullableListToObjectWithNullableListTest {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.lists.ObjectWithNonNullableListToObjectWithNullableListTest.*
+                import tech.mappie.testing.lists.ListPropertyToNullableListPropertyTest.*
 
                 class Mapper : ObjectMappie<Input, Output>()
 
@@ -98,7 +98,7 @@ class ObjectWithNonNullableListToObjectWithNullableListTest {
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
                 .loadObjectMappieClass<Input, Output>("Mapper")
