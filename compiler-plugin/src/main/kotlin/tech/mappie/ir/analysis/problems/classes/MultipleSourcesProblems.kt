@@ -2,10 +2,10 @@ package tech.mappie.ir.analysis.problems.classes
 
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.ClassMappingSource
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.analysis.Problem
+import tech.mappie.ir.resolving.ClassRequest
 
 class MultipleSourcesProblems(
     private val targetType: IrType,
@@ -17,7 +17,7 @@ class MultipleSourcesProblems(
     }
 
     companion object {
-        fun of(mapping: ClassMappingRequest): MultipleSourcesProblems =
+        fun of(mapping: ClassRequest): MultipleSourcesProblems =
             MultipleSourcesProblems(
                 mapping.target,
                 mapping.mappings

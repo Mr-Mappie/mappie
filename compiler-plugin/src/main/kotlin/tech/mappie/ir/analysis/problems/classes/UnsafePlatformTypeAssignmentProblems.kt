@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fileEntry
-import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.*
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.util.filterSingle
@@ -12,10 +11,11 @@ import tech.mappie.ir.util.hasFlexibleNullabilityAnnotation
 import tech.mappie.ir.util.location
 import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.analysis.ValidationContext
+import tech.mappie.ir.resolving.ClassRequest
 
 class UnsafePlatformTypeAssignmentProblems(
     private val context: ValidationContext,
-    private val mapping: ClassMappingRequest,
+    private val mapping: ClassRequest,
     private val mappings: Map<ClassMappingTarget, ClassMappingSource>,
 ) {
 
@@ -60,12 +60,10 @@ class UnsafePlatformTypeAssignmentProblems(
     }
 
     companion object {
-        fun of(context: ValidationContext, mapping: ClassMappingRequest): UnsafePlatformTypeAssignmentProblems {
-            val mappings = mapping.mappings
-                .filterSingle()
-                .filter { (target, source) ->
-                    source.type.hasFlexibleNullabilityAnnotation() && !target.type.isNullable()
-                }
+        fun of(context: ValidationContext, mapping: ClassRequest): UnsafePlatformTypeAssignmentProblems {
+            val mappings = mapping.mappings.filterSingle().filter { (target, source) ->
+                source.type.hasFlexibleNullabilityAnnotation() && !target.type.isNullable()
+            }
 
             return UnsafePlatformTypeAssignmentProblems(
                 context,

@@ -15,15 +15,27 @@ sealed interface MappingRequest {
     val target: IrType
 }
 
+sealed interface ClassRequest : MappingRequest {
+    val mappings: Map<ClassMappingTarget, List<ClassMappingSource>>
+}
+
 class ClassMappingRequest(
     override val origin: IrFunction,
     val sources: List<IrType>,
     val constructor: IrConstructor,
-    val mappings : Map<ClassMappingTarget, List<ClassMappingSource>>,
+    override val mappings : Map<ClassMappingTarget, List<ClassMappingSource>>,
     val unknowns: Map<Name, List<ClassMappingSource>>,
-) : MappingRequest {
+) : ClassRequest {
     override val source get() = sources.single()
     override val target = constructor.returnType
+}
+data class ClassUpdateRequest(
+    override val origin: IrFunction,
+    override val source: IrType,
+    val name: Name,
+    override val mappings: Map<ClassMappingTarget, List<ClassMappingSource>>,
+): ClassRequest {
+    override val target = source
 }
 
 class EnumMappingRequest(
@@ -32,12 +44,3 @@ class EnumMappingRequest(
     override val target: IrType,
     val mappings: Map<IrEnumEntry, List<EnumMappingTarget>>,
 ) : MappingRequest
-
-data class ClassUpdateRequest(
-    override val origin: IrFunction,
-    override val source: IrType,
-    val name: Name,
-    val mappings : Map<ClassMappingTarget, List<ClassMappingSource>>,
-): MappingRequest {
-    override val target = source
-}

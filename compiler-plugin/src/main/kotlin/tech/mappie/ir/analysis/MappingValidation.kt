@@ -39,14 +39,13 @@ interface MappingValidation {
     ) : MappingValidation {
 
         override val problems: List<Problem> =
-            buildList { // TODO
-//                addAll(MultipleSourcesProblems.of(mapping).all())
-//                addAll(UnsafeTypeAssignmentProblems.of(context, mapping).all())
-//                addAll(UnsafePlatformTypeAssignmentProblems.of(context, mapping).all())
-//                addAll(VisibilityProblems.of(context, mapping).all())
-//                addAll(MapperGenerationRequestProblems.of(context, mapping).all())
-//                addAll(UnnecessaryFromPropertyNotNullProblems.of(context, mapping).all())
-//                addAll(EnumConstructionProblems.of(context, mapping).all())
+            buildList {
+                addAll(MultipleSourcesProblems.of(mapping).all())
+                addAll(UnsafeTypeAssignmentProblems.of(context, mapping).all())
+                addAll(UnsafePlatformTypeAssignmentProblems.of(context, mapping).all())
+                addAll(MapperGenerationRequestProblems.of(context, mapping).all())
+                addAll(UnnecessaryFromPropertyNotNullProblems.of(context, mapping).all())
+                addAll(EnumConstructionProblems.of(context, mapping).all())
             }
     }
 

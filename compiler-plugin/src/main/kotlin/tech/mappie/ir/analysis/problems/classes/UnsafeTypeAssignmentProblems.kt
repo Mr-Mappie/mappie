@@ -2,7 +2,6 @@ package tech.mappie.ir.analysis.problems.classes
 
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.*
-import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.*
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.util.filterSingle
@@ -10,12 +9,13 @@ import tech.mappie.ir.util.hasFlexibleNullabilityAnnotation
 import tech.mappie.ir.util.location
 import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.analysis.ValidationContext
+import tech.mappie.ir.resolving.ClassRequest
 import tech.mappie.ir.util.isList
 import tech.mappie.ir.util.isSet
 
 class UnsafeTypeAssignmentProblems(
     private val context: ValidationContext,
-    private val mapping: ClassMappingRequest,
+    private val mapping: ClassRequest,
     private val mappings: Map<ClassMappingTarget, ClassMappingSource>,
 ) {
 
@@ -62,10 +62,10 @@ class UnsafeTypeAssignmentProblems(
     }
 
     companion object {
-        fun of(context: ValidationContext, mapping: ClassMappingRequest): UnsafeTypeAssignmentProblems {
-            val mappings = mapping.mappings
-                .filterSingle()
-                .filter { (target, source) -> context.isNotCompatible(source, target) }
+        fun of(context: ValidationContext, mapping: ClassRequest): UnsafeTypeAssignmentProblems {
+            val mappings = mapping.mappings.filterSingle().filter { (target, source) ->
+                context.isNotCompatible(source, target)
+            }
 
             return UnsafeTypeAssignmentProblems(
                 context,

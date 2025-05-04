@@ -1,9 +1,6 @@
 package tech.mappie.ir.analysis.problems.classes
 
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import tech.mappie.ir.resolving.ClassMappingRequest
-import tech.mappie.ir.resolving.MappingResolver
-import tech.mappie.ir.resolving.ResolverContext
 import tech.mappie.ir.resolving.classes.sources.*
 import tech.mappie.util.filterSingle
 import tech.mappie.ir.util.location
@@ -11,6 +8,7 @@ import tech.mappie.ir.util.mappieType
 import tech.mappie.ir.analysis.MappingValidation
 import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.analysis.ValidationContext
+import tech.mappie.ir.resolving.*
 
 class MapperGenerationRequestProblems(
     private val context: ValidationContext,
@@ -54,13 +52,12 @@ class MapperGenerationRequestProblems(
         }
 
     companion object {
-        fun of(context: ValidationContext, mapping: ClassMappingRequest): MapperGenerationRequestProblems {
-            val mappings = mapping.mappings.values
-                .filterSingle()
-                .filterIsInstance<TransformableClassMappingSource>()
-                .mapNotNull { it.selectGeneratedTransformationMapping() }
-
-            return MapperGenerationRequestProblems(context, mappings)
-        }
+        fun of(context: ValidationContext, mapping: ClassRequest) =
+            MapperGenerationRequestProblems(
+                context,
+                mapping.mappings.values.filterSingle()
+                    .filterIsInstance<TransformableClassMappingSource>()
+                    .mapNotNull { it.selectGeneratedTransformationMapping() }
+            )
     }
 }
