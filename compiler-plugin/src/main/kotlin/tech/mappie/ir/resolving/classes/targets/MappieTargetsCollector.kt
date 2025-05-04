@@ -28,7 +28,6 @@ class MappieTargetsCollector(function: IrFunction?, constructor: IrConstructor) 
                 }
             }
         }
-            .filter { property -> property.first.name !in parameters.map { it.name } }
             .map { SetterTarget(it.first, it.second) }
     }
 
@@ -43,5 +42,8 @@ class MappieTargetsCollector(function: IrFunction?, constructor: IrConstructor) 
             }
 
 
-    fun collect(): List<ClassMappingTarget> = parameters + setters + setMethods
+    fun all(): List<ClassMappingTarget> = parameters + setters.filter { it.name !in parameters.map { it.name } } + setMethods
+
+    // TODO: rename
+    fun some(): List<ClassMappingTarget> = (setters + setMethods).toList()
 }

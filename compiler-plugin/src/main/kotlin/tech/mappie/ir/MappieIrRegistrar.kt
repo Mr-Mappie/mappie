@@ -3,7 +3,6 @@ package tech.mappie.ir
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import tech.mappie.MappieContext
@@ -21,8 +20,7 @@ import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.analysis.ValidationContext
 import tech.mappie.ir.reporting.ReportGenerator
 import tech.mappie.ir.resolving.MappingRequestResolver
-import java.io.File
-import java.io.IOException
+import tech.mappie.ir.util.isMappieUpdateFunction
 
 class MappieIrRegistrar(
     private val messageCollector: MessageCollector,
@@ -44,7 +42,7 @@ class MappieIrRegistrar(
                 selected?.let { (solution, validation) ->
                     val function = clazz.declarations
                         .filterIsInstance<IrSimpleFunction>()
-                        .first { it.isMappieMapFunction() }
+                        .first { it.isMappieMapFunction() || it.isMappieUpdateFunction() }
 
                     context.logger.logAll(validation.problems, location(function))
 

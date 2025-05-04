@@ -7,7 +7,7 @@ import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class GenericTargetSetterTest {
+class GenericInputSetterTest {
 
     data class Input(
         val a: String,

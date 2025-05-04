@@ -6,6 +6,7 @@ import tech.mappie.ir.resolving.EnumMappingRequest
 import tech.mappie.ir.resolving.MappingRequest
 import tech.mappie.ir.resolving.classes.sources.ExplicitClassMappingSource
 import tech.mappie.ir.analysis.MappingValidation
+import tech.mappie.ir.resolving.ClassUpdateRequest
 
 interface MappingSelector {
 
@@ -34,6 +35,13 @@ interface MappingSelector {
             }
     }
 
+    private class UpdateMappingSelector(private val options: Map<ClassUpdateRequest, MappingValidation>) :
+        MappingSelector {
+
+        override fun select(): Pair<ClassUpdateRequest?, MappingValidation>? =
+            options.entries.singleOrNull()?.toPair()
+    }
+
     private class EnumMappingSelector(private val options: Map<EnumMappingRequest, MappingValidation>) :
         MappingSelector {
         override fun select(): Pair<MappingRequest?, MappingValidation> =
@@ -47,6 +55,7 @@ interface MappingSelector {
         fun of(options: Map<MappingRequest, MappingValidation>): MappingSelector =
             when {
                 options.keys.all { it is ClassMappingRequest } -> ConstructorMappingSelector(options as Map<ClassMappingRequest, MappingValidation>)
+                options.keys.all { it is ClassUpdateRequest } -> UpdateMappingSelector(options as Map<ClassUpdateRequest, MappingValidation>)
                 options.keys.all { it is EnumMappingRequest } -> EnumMappingSelector(options as Map<EnumMappingRequest, MappingValidation>)
                 else -> panic("Not all mappings are of the same type")
             }

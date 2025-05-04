@@ -1,12 +1,9 @@
 package tech.mappie.ir.resolving.classes
 
-import org.jetbrains.kotlin.backend.jvm.ir.upperBound
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.ifEmpty
-import tech.mappie.config.options.useDefaultArguments
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.resolving.*
 import tech.mappie.ir.resolving.classes.sources.*
@@ -23,33 +20,25 @@ import tech.mappie.ir.util.isMappableFrom
 import tech.mappie.ir.util.isPrimitive
 import tech.mappie.ir.util.location
 
-class ClassMappingRequestBuilder(private val constructor: IrConstructor, private val context: ResolverContext)
+class ClassUpdateRequestBuilder(private val context: ResolverContext)
     : TargetAccumulator {
 
     private val targets = mutableListOf<ClassMappingTarget>()
-
-    private val sources = mutableMapOf<Name, IrType>()
 
     private val implicit = mutableMapOf<Name, List<ImplicitClassMappingSource>>()
 
     private val explicit = mutableMapOf<Name, List<ExplicitClassMappingSource>>()
 
-    fun construct(origin: IrFunction): ClassMappingRequest {
-        val useDefaultArguments = context.useDefaultArguments(origin)
-
+    fun construct(origin: IrFunction): ClassUpdateRequest {
         val mappings = targets.associateWith { target ->
-            explicit(target) ?: implicit(target, useDefaultArguments) // TODO: we should add all and select later
-        }
-        val unknowns = explicit.filterKeys { name ->
-            targets.none { it.name == name }
+            explicit(target) ?: implicit(target) // TODO: we should add all and select later
         }
 
-        return ClassMappingRequest(
+        return ClassUpdateRequest(
             origin,
-            sources.map { it.value },
-            constructor,
+            origin.returnType, // TODO: check
+            origin.valueParameters.first().name,
             mappings,
-            unknowns,
         )
     }
 
@@ -64,7 +53,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
             }
         }
 
-    private fun implicit(target: ClassMappingTarget, useDefaultArguments: Boolean): List<ImplicitClassMappingSource> =
+    private fun implicit(target: ClassMappingTarget): List<ImplicitClassMappingSource> =
         implicit.getOrDefault(target.name, emptyList()).let { sources ->
             sources.map { source ->
                 if (source.type.isMappableFrom(target.type)) {
@@ -76,12 +65,6 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
                         is ParameterValueMappingSource -> source.copy(transformation = transformation(source, target))
                         is ParameterDefaultValueMappingSource -> panic("ParameterDefaultValueMappingSource should not occur when resolving a transformation.")
                     }
-                }
-            }.ifEmpty {
-                if (target is ValueParameterTarget && target.value.hasDefaultValue() && useDefaultArguments) {
-                    listOf(ParameterDefaultValueMappingSource(target.value))
-                } else {
-                    emptyList()
                 }
             }
         }
@@ -121,13 +104,9 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
         explicit.merge(entry.first, listOf(entry.second), List<ExplicitClassMappingSource>::plus)
     }
 
-    fun sources(entries: List<Pair<Name, IrType>>) = apply {
-        sources.putAll(entries)
-        entries.map { (name, type) ->
-            implicit.merge(name, listOf(ParameterValueMappingSource(name, type, null)), List<ImplicitClassMappingSource>::plus)
-            type.upperBound.getClass()!!.accept(ImplicitClassMappingSourcesCollector(), name to type).forEach { (name, source) ->
-                implicit.merge(name, listOf(source), List<ImplicitClassMappingSource>::plus)
-            }
+    fun updater(updater: Pair<Name, IrType>) = apply {
+        updater.second.getClass()!!.accept(ImplicitClassMappingSourcesCollector(), updater).forEach { (name, source) ->
+            implicit.merge(name, listOf(source), List<ImplicitClassMappingSource>::plus)
         }
     }
 

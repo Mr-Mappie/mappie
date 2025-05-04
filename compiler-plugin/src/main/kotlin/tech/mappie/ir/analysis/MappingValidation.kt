@@ -33,6 +33,23 @@ interface MappingValidation {
             }
     }
 
+    private class ClassUpdateRequestValidation(
+        private val context: ValidationContext,
+        private val mapping: ClassUpdateRequest,
+    ) : MappingValidation {
+
+        override val problems: List<Problem> =
+            buildList { // TODO
+//                addAll(MultipleSourcesProblems.of(mapping).all())
+//                addAll(UnsafeTypeAssignmentProblems.of(context, mapping).all())
+//                addAll(UnsafePlatformTypeAssignmentProblems.of(context, mapping).all())
+//                addAll(VisibilityProblems.of(context, mapping).all())
+//                addAll(MapperGenerationRequestProblems.of(context, mapping).all())
+//                addAll(UnnecessaryFromPropertyNotNullProblems.of(context, mapping).all())
+//                addAll(EnumConstructionProblems.of(context, mapping).all())
+            }
+    }
+
     private class EnumMappingRequestValidation(
         private val context: ValidationContext,
         private val mapping: EnumMappingRequest,
@@ -48,6 +65,7 @@ interface MappingValidation {
             when (mapping) {
                 is EnumMappingRequest -> EnumMappingRequestValidation(context, mapping)
                 is ClassMappingRequest -> ClassMappingRequestValidation(context, mapping)
+                is ClassUpdateRequest -> ClassUpdateRequestValidation(context, mapping)
             }
 
         fun valid(): MappingValidation =

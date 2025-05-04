@@ -9,7 +9,7 @@ import java.io.File
 
 class CopyWithSameValueTest {
 
-    data class Target(val first: String, val second: Int)
+    data class Input(var first: String, val second: Int)
     data class Updater(val first: String)
 
     @TempDir
@@ -17,27 +17,27 @@ class CopyWithSameValueTest {
 
     @Test
     fun `copy should take property`() {
-        compile(directory) {
+        compile(directory, verbose = true) {
             file("Test.kt",
                 """
                 import tech.mappie.api.updating.ObjectUpdateMappie
                 import tech.mappie.testing.updating.CopyWithSameValueTest.*
 
-                class Mapper : ObjectUpdateMappie<Updater, Target>()
+                class Mapper : ObjectUpdateMappie<Updater, Input>()
                 """
             )
         } satisfies {
             isOk()
-            hasNoMessages()
+            hasNoWarningsOrErrors()
 
             val mapper = classLoader
-                .loadObjectUpdateMappieClass<Updater, Target>("Mapper")
+                .loadObjectUpdateMappieClass<Updater, Input>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.update(Target("original", 1), Updater("updated")))
-                .isEqualTo(Target("updated", 1))
+            assertThat(mapper.update(Input("original", 1), Updater("updated")))
+                .isEqualTo(Input("updated", 1))
         }
     }
 }

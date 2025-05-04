@@ -17,20 +17,20 @@ import tech.mappie.ir.util.location
 import tech.mappie.util.*
 
 class ExplicitClassMappingCollector(private val context: ResolverContext)
-    : BaseVisitor<ClassMappingRequestBuilder, ClassMappingRequestBuilder>() {
-    override fun visitBlockBody(body: IrBlockBody, data: ClassMappingRequestBuilder) =
+    : BaseVisitor<TargetAccumulator, TargetAccumulator>() {
+    override fun visitBlockBody(body: IrBlockBody, data: TargetAccumulator) =
         body.statements.single().accept(data)
 
-    override fun visitReturn(expression: IrReturn, data: ClassMappingRequestBuilder) =
+    override fun visitReturn(expression: IrReturn, data: TargetAccumulator) =
         expression.value.accept(data)
 
-    override fun visitCall(expression: IrCall, data: ClassMappingRequestBuilder) =
+    override fun visitCall(expression: IrCall, data: TargetAccumulator) =
         when (expression.symbol.owner.name) {
             IDENTIFIER_MAPPING -> expression.valueArguments.first()!!.accept(data)
             else -> data
         }
 
-    override fun visitFunctionExpression(expression: IrFunctionExpression, data: ClassMappingRequestBuilder) =
+    override fun visitFunctionExpression(expression: IrFunctionExpression, data: TargetAccumulator) =
         data.apply {
             expression.function.body?.statements?.forEach { statement ->
                 statement.accept(ClassMappingStatementCollector(context), Unit)

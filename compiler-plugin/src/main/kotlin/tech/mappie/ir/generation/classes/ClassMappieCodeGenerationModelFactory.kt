@@ -6,10 +6,7 @@ import tech.mappie.ir.generation.CodeGenerationModelFactory
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.ClassMappingSource
 import tech.mappie.ir.resolving.classes.sources.ExplicitClassMappingSource
-import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
-import tech.mappie.ir.resolving.classes.targets.FunctionCallTarget
-import tech.mappie.ir.resolving.classes.targets.SetterTarget
-import tech.mappie.ir.resolving.classes.targets.ValueParameterTarget
+import tech.mappie.ir.resolving.classes.targets.*
 
 class ClassMappieCodeGenerationModelFactory(private val request: ClassMappingRequest) : CodeGenerationModelFactory {
 

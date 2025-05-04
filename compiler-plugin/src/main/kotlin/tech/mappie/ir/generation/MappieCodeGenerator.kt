@@ -6,12 +6,14 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import tech.mappie.exceptions.MappieProblemException.Companion.fail
 import tech.mappie.ir.generation.classes.ObjectMappieCodeGenerator
+import tech.mappie.ir.generation.classes.ObjectUpdateMappieCodeGenerator
 import tech.mappie.ir.generation.enums.EnumMappieCodeGenerator
 import tech.mappie.ir.resolving.MappingResolver
 import tech.mappie.ir.resolving.ResolverContext
 import tech.mappie.ir.resolving.classes.sources.TransformableClassMappingSource
 import tech.mappie.ir.selection.MappingSelector
 import tech.mappie.ir.util.isMappieMapFunction
+import tech.mappie.ir.util.isMappieUpdateFunction
 import tech.mappie.ir.util.location
 import tech.mappie.ir.util.mappieType
 
@@ -51,9 +53,10 @@ class MappieCodeGenerator(private val context: CodeGenerationContext) : IrElemen
             context
         }
 
-        declaration.declarations.filterIsInstance<IrSimpleFunction>().first { it.isMappieMapFunction() }.apply {
+        declaration.declarations.filterIsInstance<IrSimpleFunction>().first { it.isMappieMapFunction() || it.isMappieUpdateFunction() }.apply {
             val model = when (context.model) {
                 is ClassMappieCodeGenerationModel -> context.model.copy(declaration = this)
+                is ClassUpdateCodeGenerationModel -> context.model.copy(declaration = this)
                 is EnumMappieCodeGenerationModel -> context.model.copy(declaration = this)
             }
             transform(MappieCodeGenerator(context.copy(model = model)), null)
@@ -65,6 +68,7 @@ class MappieCodeGenerator(private val context: CodeGenerationContext) : IrElemen
         body = with(createScope(declaration)) {
             when (context.model) {
                 is EnumMappieCodeGenerationModel -> EnumMappieCodeGenerator(context, context.model).construct(scope)
+                is ClassUpdateCodeGenerationModel -> ObjectUpdateMappieCodeGenerator(context, context.model).construct(scope)
                 is ClassMappieCodeGenerationModel -> ObjectMappieCodeGenerator(context, context.model).construct(scope)
             }
         }

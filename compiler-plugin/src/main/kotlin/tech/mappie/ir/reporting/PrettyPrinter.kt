@@ -383,10 +383,27 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     override fun visitCall(expression: IrCall, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
             when {
-                expression.symbol.owner.isPropertyAccessor -> {
-                    element(expression.arguments.first()!!)
+                expression.symbol.owner.isGetter -> {
+                    expression.dispatchReceiver?.let {
+                        element(it)
+                    }
+                    expression.extensionReceiver?.let {
+                        element(it)
+                    }
                     dot()
                     string { expression.symbol.owner.name.pretty().split("-").last() }
+                }
+                expression.symbol.owner.isSetter -> {
+                    expression.dispatchReceiver?.let {
+                        element(it)
+                    }
+                    expression.extensionReceiver?.let {
+                        element(it)
+                    }
+                    dot()
+                    string { expression.symbol.owner.name.pretty().split("-").last() }
+                    string { " = " }
+                    element(expression.valueArguments.first()!!)
                 }
                 expression.symbol.owner.name.asString() == "CHECK_NOT_NULL" -> {
                     element(expression.arguments[0]!!)

@@ -32,3 +32,12 @@ class EnumMappingRequest(
     override val target: IrType,
     val mappings: Map<IrEnumEntry, List<EnumMappingTarget>>,
 ) : MappingRequest
+
+data class ClassUpdateRequest(
+    override val origin: IrFunction,
+    override val source: IrType,
+    val name: Name,
+    val mappings : Map<ClassMappingTarget, List<ClassMappingSource>>,
+): MappingRequest {
+    override val target = source
+}

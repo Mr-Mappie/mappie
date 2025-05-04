@@ -7,7 +7,7 @@ import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class GenericTargetPropertyTest {
+class GenericInputPropertyTest {
 
     data class FooDto(
         val id: String,

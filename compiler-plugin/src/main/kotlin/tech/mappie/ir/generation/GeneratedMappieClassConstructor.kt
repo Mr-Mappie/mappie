@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.name.Name
 import tech.mappie.referenceEnumMappieClass
 import tech.mappie.referenceObjectMappieClass
 import tech.mappie.ir.resolving.MappingRequest
+import tech.mappie.referenceObjectUpdateMappieClass
 import tech.mappie.util.IDENTIFIER_MAP
 
 class GeneratedMappieClassConstructor(
@@ -17,6 +18,7 @@ class GeneratedMappieClassConstructor(
 ) {
     private val base = when (context.model) {
         is ClassMappieCodeGenerationModel -> context.referenceObjectMappieClass()
+        is ClassUpdateCodeGenerationModel -> context.referenceObjectUpdateMappieClass()
         is EnumMappieCodeGenerationModel -> context.referenceEnumMappieClass()
     }
 
