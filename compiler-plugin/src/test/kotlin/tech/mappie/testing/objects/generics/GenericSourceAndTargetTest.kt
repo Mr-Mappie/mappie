@@ -7,7 +7,7 @@ import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class GenericSourceAndInputTest {
+class GenericSourceAndTargetTest {
 
     data class Input<A, B>(
         val a: A,
