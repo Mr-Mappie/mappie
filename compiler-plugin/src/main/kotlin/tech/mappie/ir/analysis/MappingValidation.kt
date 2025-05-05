@@ -46,6 +46,7 @@ interface MappingValidation {
                 addAll(MapperGenerationRequestProblems.of(context, mapping).all())
                 addAll(UnnecessaryFromPropertyNotNullProblems.of(context, mapping).all())
                 addAll(EnumConstructionProblems.of(context, mapping).all())
+                addAll(EmptyUpdateMappieProblems.of(context, mapping).all())
             }
     }
 

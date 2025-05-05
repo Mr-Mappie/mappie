@@ -15,7 +15,7 @@ class UpdateWithUnitTest {
     lateinit var directory: File
 
     @Test
-    fun `update using Unit should do nothing`() {
+    fun `update using Unit should warn`() {
         compile(directory) {
             file("Test.kt",
                 """
@@ -27,7 +27,7 @@ class UpdateWithUnitTest {
             )
         } satisfies {
             isOk()
-            hasNoWarningsOrErrors()
+            hasWarningMessage(4, "Class does not update anything")
 
             val mapper = classLoader
                 .loadObjectUpdateMappieClass<Unit, Input>("Mapper")
@@ -35,9 +35,9 @@ class UpdateWithUnitTest {
                 .first()
                 .call()
 
-            val input = Input("original", 1)
-            assertThat(mapper.update(input, Unit))
-                .isSameAs(input)
+            val source = Input("original", 1)
+            assertThat(mapper.update(source, Unit))
+                .isSameAs(source)
         }
     }
 
@@ -66,9 +66,9 @@ class UpdateWithUnitTest {
                 .first()
                 .call()
 
-            val input = Input("original", 1)
-            assertThat(mapper.update(input, Unit))
-                .isSameAs(input.apply { second = 10 })
+            val source = Input("original", 1)
+            assertThat(mapper.update(source, Unit))
+                .isSameAs(source.apply { second = 10 })
         }
     }
 }

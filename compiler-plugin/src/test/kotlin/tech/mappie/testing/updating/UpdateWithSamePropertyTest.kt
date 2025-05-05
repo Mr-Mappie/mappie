@@ -40,4 +40,35 @@ class UpdateWithSamePropertyTest {
                 .isEqualTo(Input("updated", 1))
         }
     }
+
+    @Test
+    fun `update with same property but fromValue should use fromValue`() {
+        compile(directory, verbose = true) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.updating.ObjectUpdateMappie
+                import tech.mappie.testing.updating.UpdateWithSamePropertyTest.*
+
+                class Mapper : ObjectUpdateMappie<Updater, Input>() {
+                    override fun update(source: Input, updater: Updater) = updating {
+                        source::first fromValue "constant"
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoWarningsOrErrors()
+
+            val mapper = classLoader
+                .loadObjectUpdateMappieClass<Updater, Input>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            val source = Input("original", 1)
+            assertThat(mapper.update(source, Updater("updated")))
+                .isSameAs(source.apply { first = "constant" })
+        }
+    }
 }
