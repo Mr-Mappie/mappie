@@ -5,8 +5,8 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import tech.mappie.exceptions.MappieProblemException.Companion.fail
-import tech.mappie.ir.generation.classes.ObjectMappieCodeGenerator
-import tech.mappie.ir.generation.classes.ObjectUpdateMappieCodeGenerator
+import tech.mappie.ir.generation.classes.mapping.ObjectMappieCodeGenerator
+import tech.mappie.ir.generation.classes.updating.ObjectUpdateMappieCodeGenerator
 import tech.mappie.ir.generation.enums.EnumMappieCodeGenerator
 import tech.mappie.ir.resolving.MappingResolver
 import tech.mappie.ir.resolving.ResolverContext

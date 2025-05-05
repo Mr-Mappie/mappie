@@ -1,4 +1,4 @@
-package tech.mappie.ir.generation.classes
+package tech.mappie.ir.generation.classes.mapping
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import tech.mappie.ir.generation.ClassMappieCodeGenerationModel

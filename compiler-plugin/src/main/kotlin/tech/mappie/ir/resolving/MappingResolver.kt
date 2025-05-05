@@ -5,8 +5,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
-import tech.mappie.ir.resolving.classes.ClassResolver
-import tech.mappie.ir.resolving.classes.ClassUpdateResolver
+import tech.mappie.ir.resolving.classes.mapping.ClassResolver
+import tech.mappie.ir.resolving.classes.updating.ClassUpdateResolver
 import tech.mappie.ir.resolving.enums.EnumResolver
 import tech.mappie.ir.util.isSubclassOf
 import tech.mappie.referenceEnumMappieClass

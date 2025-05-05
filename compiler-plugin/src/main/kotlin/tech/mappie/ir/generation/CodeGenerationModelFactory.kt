@@ -1,8 +1,8 @@
 package tech.mappie.ir.generation
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import tech.mappie.ir.generation.classes.ClassMappieCodeGenerationModelFactory
-import tech.mappie.ir.generation.classes.ClassUpdateCodeGenerationModelFactory
+import tech.mappie.ir.generation.classes.mapping.ClassMappieCodeGenerationModelFactory
+import tech.mappie.ir.generation.classes.updating.ClassUpdateCodeGenerationModelFactory
 import tech.mappie.ir.generation.enums.EnumMappieCodeGenerationModelFactory
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.ClassUpdateRequest

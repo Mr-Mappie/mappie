@@ -1,4 +1,4 @@
-package tech.mappie.ir.generation.classes
+package tech.mappie.ir.generation.classes.updating
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import tech.mappie.exceptions.MappiePanicException.Companion.panic

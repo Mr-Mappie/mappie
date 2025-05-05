@@ -1,4 +1,4 @@
-package tech.mappie.ir.resolving.classes
+package tech.mappie.ir.resolving.classes.updating
 
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
@@ -13,9 +13,9 @@ import tech.mappie.ir.resolving.classes.sources.ImplicitPropertyMappingSource
 import tech.mappie.ir.resolving.classes.sources.ParameterDefaultValueMappingSource
 import tech.mappie.ir.resolving.classes.sources.ParameterValueMappingSource
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
-import tech.mappie.ir.resolving.classes.targets.ValueParameterTarget
 import tech.mappie.util.*
 import tech.mappie.ir.analysis.Problem
+import tech.mappie.ir.resolving.classes.TargetAccumulator
 import tech.mappie.ir.util.isMappableFrom
 import tech.mappie.ir.util.isPrimitive
 import tech.mappie.ir.util.location
@@ -29,10 +29,11 @@ class ClassUpdateRequestBuilder(private val context: ResolverContext)
 
     private val explicit = mutableMapOf<Name, List<ExplicitClassMappingSource>>()
 
+    @Suppress("UNCHECKED_CAST")
     fun construct(origin: IrFunction): ClassUpdateRequest {
         val mappings = targets.associateWith { target ->
-            explicit(target) ?: implicit(target) // TODO: we should add all and select later
-        }
+            explicit(target) ?: implicit(target)
+        }.filterValues { it != null } as Map<ClassMappingTarget, List<ClassMappingSource>>
 
         return ClassUpdateRequest(
             origin,
@@ -53,8 +54,8 @@ class ClassUpdateRequestBuilder(private val context: ResolverContext)
             }
         }
 
-    private fun implicit(target: ClassMappingTarget): List<ImplicitClassMappingSource> =
-        implicit.getOrDefault(target.name, emptyList()).let { sources ->
+    private fun implicit(target: ClassMappingTarget): List<ImplicitClassMappingSource>? =
+        implicit.get(target.name)?.let { sources ->
             sources.map { source ->
                 if (source.type.isMappableFrom(target.type)) {
                     source

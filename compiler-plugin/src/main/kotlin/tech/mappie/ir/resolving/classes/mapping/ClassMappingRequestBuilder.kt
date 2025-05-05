@@ -1,4 +1,4 @@
-package tech.mappie.ir.resolving.classes
+package tech.mappie.ir.resolving.classes.mapping
 
 import org.jetbrains.kotlin.backend.jvm.ir.upperBound
 import org.jetbrains.kotlin.ir.declarations.*
@@ -19,6 +19,7 @@ import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.resolving.classes.targets.ValueParameterTarget
 import tech.mappie.util.*
 import tech.mappie.ir.analysis.Problem
+import tech.mappie.ir.resolving.classes.TargetAccumulator
 import tech.mappie.ir.util.isMappableFrom
 import tech.mappie.ir.util.isPrimitive
 import tech.mappie.ir.util.location

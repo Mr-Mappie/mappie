@@ -7,23 +7,22 @@ import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectUpdateMappieClass
 import java.io.File
 
-class CopyWithSameValueTest {
+class UpdateWithUnitTest {
 
     data class Input(var first: String, val second: Int)
-    data class Updater(val first: String)
 
     @TempDir
     lateinit var directory: File
 
     @Test
-    fun `copy should take property`() {
+    fun `update using Unit should do nothing`() {
         compile(directory, verbose = true) {
             file("Test.kt",
                 """
                 import tech.mappie.api.updating.ObjectUpdateMappie
-                import tech.mappie.testing.updating.CopyWithSameValueTest.*
+                import tech.mappie.testing.updating.UpdateWithUnitTest.*
 
-                class Mapper : ObjectUpdateMappie<Updater, Input>()
+                class Mapper : ObjectUpdateMappie<Unit, Input>()
                 """
             )
         } satisfies {
@@ -31,13 +30,14 @@ class CopyWithSameValueTest {
             hasNoWarningsOrErrors()
 
             val mapper = classLoader
-                .loadObjectUpdateMappieClass<Updater, Input>("Mapper")
+                .loadObjectUpdateMappieClass<Unit, Input>("Mapper")
                 .constructors
                 .first()
                 .call()
 
-            assertThat(mapper.update(Input("original", 1), Updater("updated")))
-                .isEqualTo(Input("updated", 1))
+            val input = Input("original", 1)
+            assertThat(mapper.update(input, Unit))
+                .isSameAs(input)
         }
     }
 }

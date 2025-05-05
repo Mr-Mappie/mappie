@@ -1,4 +1,4 @@
-package tech.mappie.ir.resolving.classes
+package tech.mappie.ir.resolving.classes.updating
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import tech.mappie.ir.resolving.*
@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.name.Name
+import tech.mappie.ir.resolving.classes.ExplicitClassMappingCollector
 import tech.mappie.ir.resolving.classes.targets.MappieTargetsCollector
 
 class ClassUpdateResolver(
