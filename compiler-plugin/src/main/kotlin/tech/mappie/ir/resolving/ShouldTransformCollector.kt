@@ -12,6 +12,7 @@ import tech.mappie.util.IDENTIFIER_MAPPING
 import tech.mappie.ir.util.isMappieMapFunction
 import tech.mappie.ir.util.isMappieUpdateFunction
 import tech.mappie.shouldGenerateCode
+import tech.mappie.util.IDENTIFIER_UPDATING
 
 class ShouldTransformCollector(private val context: MappieContext) : BaseVisitor<Boolean, Unit>() {
     override fun visitClass(declaration: IrClass, data: Unit): Boolean {
@@ -32,7 +33,7 @@ class ShouldTransformCollector(private val context: MappieContext) : BaseVisitor
     }
 
     override fun visitCall(expression: IrCall, data: Unit): Boolean {
-        return expression.symbol.owner.name in arrayOf(IDENTIFIER_MAPPING)
+        return expression.symbol.owner.name in arrayOf(IDENTIFIER_MAPPING, IDENTIFIER_UPDATING)
     }
 
     override fun visitElement(element: IrElement, data: Unit): Boolean {
