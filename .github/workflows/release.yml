@@ -54,7 +54,7 @@ jobs:
         run: mkdir -p build/jreleaser
 
       - name: Publish to Maven Central
-        run: ./gradlew jreleaserFullRelease
+        run: ./gradlew jreleaserFullRelease --no-configuration-cache
         env:
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.MAVEN_CENTRAL_GPG_SECRET_PASSWORD }}
           JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
