@@ -12,6 +12,6 @@ class OlderKotlinVersionCompatibilityTest : KotlinCompatibilityTestBase() {
         val result = runner.withArguments("build").buildAndFail()
 
         assertThat(result.output.lines())
-            .anyMatch { it == "Mappie unsupported Kotlin version 2.1.10, 2.1.20 was expected. This is highly likely to lead to compilation failure." }
+            .anyMatch { it == "Mappie unsupported Kotlin version 2.1.10, 2.1.21 was expected. This is highly likely to lead to compilation failure." }
     }
 }

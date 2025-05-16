@@ -2,8 +2,8 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-  - date: "tbd"
-    title: "v2.1.20-1.3.0"
+  - date: "2025-05-16"
+    title: "v2.1.21-1.3.0"
     items:
       - "Added support for mapping for MutableList, and mapping between MutableList and List."
       - "[#193](https://github.com/Mr-Mappie/mappie/issues/193) added support for generating reports. See [Reporting](/getting-started/reporting) for more information."
