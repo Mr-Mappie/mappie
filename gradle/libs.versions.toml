@@ -9,7 +9,7 @@ classgraph = { module = "io.github.classgraph:classgraph", version = "4.8.179" }
 okio = { module = "com.squareup.okio:okio", version = "3.12.0" }
 assertj-core = { module = "org.assertj:assertj-core", version = "3.27.3" }
 maven-project = { module = "org.apache.maven:maven-project", version = "2.2.1" }
-maven-core = { module = "org.apache.maven:maven-core", version = "3.9.9" }
+maven-core = { module = "org.apache.maven:maven-core", version = "3.9.10" }
 maven-invoker = { module = "org.apache.maven.shared:maven-invoker", version = "3.3.0" }
 
 [plugins]
