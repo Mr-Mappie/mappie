@@ -1,6 +1,5 @@
 package tech.mappie.ir.resolving.classes
 
-import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
@@ -26,7 +25,7 @@ class ExplicitClassMappingCollector(private val context: ResolverContext)
 
     override fun visitCall(expression: IrCall, data: ClassMappingRequestBuilder) =
         when (expression.symbol.owner.name) {
-            IDENTIFIER_MAPPING -> expression.valueArguments.first()!!.accept(data)
+            IDENTIFIER_MAPPING -> expression.arguments[1]!!.accept(data)
             else -> data
         }
 
@@ -43,32 +42,32 @@ private class ClassMappingStatementCollector(private val context: ResolverContex
     : BaseVisitor<Pair<Name, ExplicitClassMappingSource>?, Unit>() {
     override fun visitCall(expression: IrCall, data: Unit) = when (expression.symbol.owner.name) {
         IDENTIFIER_FROM_PROPERTY, IDENTIFIER_FROM_PROPERTY_NOT_NULL -> {
-            val target = expression.extensionReceiver!!.accept(TargetNameCollector(context), Unit)
+            val target = expression.arguments[1]!!.accept(TargetNameCollector(context), Unit)
             target to ExplicitPropertyMappingSource(
-                expression.valueArguments.first()!! as IrPropertyReference,
+                expression.arguments[2]!! as IrPropertyReference,
                 null,
                 expression.symbol.owner.name == IDENTIFIER_FROM_PROPERTY_NOT_NULL
             )
         }
         IDENTIFIER_FROM_VALUE -> {
-            val target = expression.extensionReceiver!!.accept(TargetNameCollector(context), Unit)
-            target to ValueMappingSource(expression.valueArguments.first()!!)
+            val target = expression.arguments[1]!!.accept(TargetNameCollector(context), Unit)
+            target to ValueMappingSource(expression.arguments[2]!!)
         }
         IDENTIFIER_FROM_EXPRESSION -> {
-            val target = expression.extensionReceiver!!.accept(TargetNameCollector(context), data)
-            target to ExpressionMappingSource(expression.valueArguments.first()!!)
+            val target = expression.arguments[1]!!.accept(TargetNameCollector(context), data)
+            target to ExpressionMappingSource(expression.arguments[2]!!)
         }
         IDENTIFIER_VIA -> {
             expression.dispatchReceiver!!.accept(data)?.let { (name, source) ->
                 name to (source as ExplicitPropertyMappingSource).copy(
-                    transformation = expression.valueArguments.first()!!.accept(MapperReferenceCollector(context), Unit)
+                    transformation = expression.arguments[1]!!.accept(MapperReferenceCollector(context), Unit)
                 )
             }
         }
         IDENTIFIER_TRANSFORM -> {
             expression.dispatchReceiver!!.accept(data)?.let { (name, source) ->
                 name to (source as ExplicitPropertyMappingSource).copy(
-                    transformation = expression.valueArguments.first().let {
+                    transformation = expression.arguments[1]!!.let {
                         when (it) {
                             is IrFunctionExpression -> PropertyMappingTransformTranformation(it)
                             is IrFunctionReference -> PropertyMappingTransformTranformation(it)
@@ -134,7 +133,7 @@ private class TargetNameCollector(private val context: ResolverContext) : BaseVi
     override fun visitCall(expression: IrCall, data: Unit): Name {
         return when (expression.symbol.owner.name) {
             IDENTIFIER_TO -> {
-                val value = expression.valueArguments.first()!!
+                val value = expression.arguments[1]!!
                 return if (value.isConstantLike && value is IrConst) {
                     Name.identifier(value.value as String)
                 } else {
