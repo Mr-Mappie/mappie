@@ -1,6 +1,7 @@
 package tech.mappie.ir.resolving
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -28,10 +29,14 @@ fun interface MappingResolver {
         fun of(declaration: IrFunction, context: ResolverContext) =
             when {
                 declaration.parentAsClass.isSubclassOf(context.referenceEnumMappieClass()) -> {
-                    EnumResolver(context, declaration.valueParameters.first().type, declaration.returnType)
+                    EnumResolver(context, declaration.parameters[1].type, declaration.returnType)
                 }
                 else -> {
-                    ClassResolver(context, declaration.valueParameters.map { it.name to it.type }, declaration.returnType)
+                    val parameters = declaration.parameters
+                        .filter { it.kind == IrParameterKind.Regular }
+                        .map { it.name to it.type }
+
+                    ClassResolver(context, parameters, declaration.returnType)
                 }
             }
     }
