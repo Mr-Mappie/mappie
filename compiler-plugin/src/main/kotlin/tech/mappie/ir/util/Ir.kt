@@ -38,8 +38,8 @@ fun IrSimpleFunction.isMappieMapListFunction() =
 
 fun IrSimpleFunction.isMappieMapNullableSetFunction() =
     name == IDENTIFIER_MAP_NULLABLE_SET
-            && parameters.singleOrNull { it.kind == IrParameterKind.Regular }?.type?.isSet() == true
-            && returnType.isSet()
+        && parameters.singleOrNull { it.kind == IrParameterKind.Regular }?.type?.isSet() == true
+        && returnType.isSet()
 
 fun IrSimpleFunction.isMappieMapSetFunction() =
     name == IDENTIFIER_MAP_SET
