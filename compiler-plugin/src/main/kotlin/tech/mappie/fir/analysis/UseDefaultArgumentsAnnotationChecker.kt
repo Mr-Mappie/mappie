@@ -1,5 +1,6 @@
 package tech.mappie.fir.analysis
 
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.WHOLE_ELEMENT
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -16,6 +17,7 @@ import tech.mappie.fir.util.isSubclassOfEnumMappie
 import tech.mappie.util.CLASS_ID_USE_DEFAULT_ARGUMENTS
 
 class UseDefaultArgumentsAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.Common) {
+    @OptIn(DeprecatedForRemovalCompilerApi::class)
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression.resolvedType.classId == CLASS_ID_USE_DEFAULT_ARGUMENTS) {
             val symbol = expression.containingDeclarationSymbol

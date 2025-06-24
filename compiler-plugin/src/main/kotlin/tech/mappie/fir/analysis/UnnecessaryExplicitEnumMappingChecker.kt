@@ -1,5 +1,6 @@
 package tech.mappie.fir.analysis
 
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.WHOLE_ELEMENT
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -19,14 +20,15 @@ import tech.mappie.util.IDENTIFIER_FROM_ENUM_ENTRY
 
 class UnnecessaryExplicitEnumMappingChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
+    @OptIn(DeprecatedForRemovalCompilerApi::class)
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression.hasCallableId(CallableId(CLASS_ID_ENUM_MAPPING_CONSTRUCTOR, IDENTIFIER_FROM_ENUM_ENTRY))) {
             val lhs = expression.extensionReceiver
             val rhs = expression.arguments.first()
 
             if (lhs is FirPropertyAccessExpression && rhs is FirPropertyAccessExpression) {
-                val lhsReference = (lhs.calleeReference as? FirNamedReference) ?: return
-                val rhsReference = (rhs.calleeReference as? FirNamedReference) ?: return
+                val lhsReference = lhs.calleeReference
+                val rhsReference = rhs.calleeReference
 
                 if (lhsReference.name == rhsReference.name) {
                     val name = "${className(rhsReference)?.let { "$it." }}${rhsReference.name}"
