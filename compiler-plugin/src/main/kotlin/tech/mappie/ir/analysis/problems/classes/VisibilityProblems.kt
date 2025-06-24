@@ -1,6 +1,7 @@
 package tech.mappie.ir.analysis.problems.classes
 
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import tech.mappie.config.options.useStrictVisibility
@@ -13,7 +14,7 @@ class VisibilityProblems(private val context: ValidationContext, private val own
 
     fun all(): List<Problem> =
         if (!owner.visibility.isPublicAPI && context.useStrictVisibility(context.function)) {
-            val constructor = owner.valueParameters.joinToString(prefix = "${owner.constructedClass.name.asString()}(", postfix = ")") {
+            val constructor = owner.parameters.filter { it.kind == IrParameterKind.Regular }.joinToString(prefix = "${owner.constructedClass.name.asString()}(", postfix = ")") {
                 it.name.asString() + ": " + it.type.dumpKotlinLike()
             }
             listOf(Problem.error("Constructor $constructor is not visible from the current scope", location(context.function)))
