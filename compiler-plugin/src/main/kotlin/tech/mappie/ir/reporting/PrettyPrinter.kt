@@ -3,7 +3,6 @@ package tech.mappie.ir.reporting
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
@@ -49,6 +48,8 @@ data class KotlinStringBuilder(val level: Int = 0) {
 
     fun curlyOpen() = char('{')
     fun curlyClose() = char('}')
+
+    fun nothing() = this
 
     fun <T> commas(
         list: List<T>,
@@ -409,8 +410,8 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
                         element(it)
                         dot()
                     }
-                    expression.extensionReceiver?.let {
-                        element(it)
+                    expression.symbol.owner.parameters.singleOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.let {
+                        element(expression.arguments[it]!!)
                         dot()
                     }
                     if (expression.symbol.owner.isStatic) {
@@ -418,8 +419,15 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
                         dot()
                     }
                     string { expression.symbol.owner.name.pretty() }
-                    commas(expression.valueArguments.filterNotNull(), prefix = "(", postfix = ")") {
-                        element(it)
+
+                    val parameters = expression.symbol.owner.parameters.filter { it.kind == IrParameterKind.Regular }
+                    commas(parameters, prefix = "(", postfix = ")") { parameter ->
+                        val argument = expression.arguments[parameter]
+                        if (argument != null) {
+                            element(argument)
+                        } else {
+                            nothing()
+                        }
                     }
                 }
             }
