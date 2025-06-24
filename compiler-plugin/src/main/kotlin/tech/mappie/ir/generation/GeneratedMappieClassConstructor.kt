@@ -56,12 +56,19 @@ class GeneratedMappieClassConstructor(
                     returnType = function.owner.returnType
                     updateFrom(function.owner)
                 }.apply {
-                    dispatchReceiverParameter = context.createThisReceiver(function.owner.dispatchReceiverParameter!!.type, clazz)
                     overriddenSymbols = listOf(function)
                     isFakeOverride = function.owner.name != IDENTIFIER_MAP
 
-                    function.owner.valueParameters.forEach { parameter ->
-                        addValueParameter(parameter.name, (clazz.superTypes.first() as IrSimpleType).arguments.first().typeOrFail)
+                    parameters += buildReceiverParameter {
+                        kind = IrParameterKind.DispatchReceiver
+                        type = function.owner.dispatchReceiverParameter!!.type
+                    }
+
+                    function.owner.parameters.filter { it.kind == IrParameterKind.Regular }.forEach { parameter ->
+                        addValueParameter {
+                            name = parameter.name
+                            type = (clazz.superTypes.first() as IrSimpleType).arguments.first().typeOrFail
+                        }
                     }
                 }
             }
