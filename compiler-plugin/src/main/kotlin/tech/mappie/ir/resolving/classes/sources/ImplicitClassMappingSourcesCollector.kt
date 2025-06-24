@@ -33,5 +33,5 @@ class ImplicitClassMappingSourcesCollector : BaseVisitor<Map<Name, ImplicitClass
         } ?: emptyMap()
 
     private fun IrFunction.isJavaLikeGetter(): Boolean =
-        name.asString().startsWith("get") && symbol.owner.valueParameters.isEmpty()
+        name.asString().startsWith("get") && symbol.owner.parameters.none { it.kind == IrParameterKind.Regular }
 }
