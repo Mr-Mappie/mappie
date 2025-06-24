@@ -38,6 +38,6 @@ class MavenOlderKotlinVersionCompatibilityTest : MavenTestBase() {
 
         assertThat(execute()).isFailure()
         assertThat(logs.lines())
-            .anyMatch { it.matches(Regex("\\[WARNING\\] Mappie unsupported Kotlin version 2.1.10, 2.1.21 was expected. This is highly likely to lead to compilation failure.")) }
+            .anyMatch { it.matches(Regex("\\[WARNING\\] Mappie unsupported Kotlin version 2.1.10, 2.2.0 was expected. This is highly likely to lead to compilation failure.")) }
     }
 }
