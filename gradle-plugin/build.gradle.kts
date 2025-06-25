@@ -1,9 +1,18 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.gradle.plugin.publish)
     alias(libs.plugins.com.github.gmazzo.buildconfig)
+}
+
+kotlin {
+    coreLibrariesVersion = "2.0.0"
+    compilerOptions {
+        languageVersion = KotlinVersion.KOTLIN_2_0
+        apiVersion = KotlinVersion.KOTLIN_2_0
+    }
 }
 
 dependencies {
