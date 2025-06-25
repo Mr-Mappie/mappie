@@ -36,11 +36,6 @@ jobs:
           distribution: temurin
           cache: 'gradle'
 
-      - name: Clean Yarn cache
-        run: |
-          yarn cache clean
-          rm -rf ~/.cache/yarn ~/.yarn ~/.yarnrc.yml node_modules yarn.lock
-
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
