@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.dokka)
     id("maven-publish")
 }
 
@@ -43,9 +44,13 @@ kotlin {
     linuxArm64()
 }
 
+val dokkaHtml by tasks.dokkaGeneratePublicationHtml
 tasks.register<Jar>("javadocJar") {
     group = "build"
     description = "Assemble a javadoc jar containing the Dokka pages of the 'main' feature."
+    archiveClassifier = "javadoc"
+    from(dokkaHtml.outputDirectory)
+    dependsOn(dokkaHtml)
 }
 
 tasks.register<Jar>("emptyJar") {
