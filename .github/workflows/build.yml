@@ -35,6 +35,21 @@ jobs:
           distribution: temurin
           cache: 'gradle'
 
+      - name: Setup Node.js and Yarn
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'  # or '20' depending on your project's compatibility
+          cache: 'yarn'
+
+      - name: Clean Yarn cache
+        run: |
+          yarn cache clean
+          rm -rf ~/.cache/yarn ~/.yarn ~/.yarnrc.yml node_modules yarn.lock
+
+      - name: Reinstall dependencies
+        run: |
+          yarn install --no-cache --force
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
