@@ -12,7 +12,8 @@ on:
     paths:
       - '**'
       - '!website/**'
-      -
+  workflow_dispatch:
+
 permissions:
   pull-requests: read
 
