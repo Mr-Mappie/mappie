@@ -2,6 +2,7 @@ package tech.mappie.ir.resolving.classes.targets
 
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.ir.util.substituteTypeVariable
@@ -13,7 +14,7 @@ class MappieTargetsCollector(function: IrFunction?, constructor: IrConstructor) 
     private val parameters: List<ClassMappingTarget> = run {
         val parameters = constructor.constructedClass.typeParameters
         val arguments = (function?.returnType as? IrSimpleType)?.arguments?.map { it.typeOrFail } ?: emptyList()
-        constructor.valueParameters.map {
+        constructor.parameters.filter { it.kind == IrParameterKind.Regular }.map {
             ValueParameterTarget(it, it.type.substitute(parameters, arguments))
         }
     }
@@ -22,7 +23,7 @@ class MappieTargetsCollector(function: IrFunction?, constructor: IrConstructor) 
         type.classOrFail.owner.properties.mapNotNull { property ->
             property.setter?.let { setter ->
                 if (function != null) {
-                    property to setter.valueParameters.first().type.substituteTypeVariable(constructor.constructedClass, (function.returnType as IrSimpleType).arguments)
+                    property to setter.parameters.first { it.kind == IrParameterKind.Regular }.type.substituteTypeVariable(constructor.constructedClass, (function.returnType as IrSimpleType).arguments)
                 } else {
                     property to type
                 }
@@ -34,11 +35,11 @@ class MappieTargetsCollector(function: IrFunction?, constructor: IrConstructor) 
 
     private val setMethods: Sequence<ClassMappingTarget> =
         type.classOrFail.functions
-            .filter { it.owner.name.asString().startsWith("set") && it.owner.valueParameters.size == 1 }
+            .filter { it.owner.name.asString().startsWith("set") && it.owner.parameters.count { it.kind == IrParameterKind.Regular } == 1 }
             .map {
                 FunctionCallTarget(
                     it,
-                    it.owner.valueParameters.first().type.substituteTypeVariable(constructor.constructedClass, (function?.returnType as? IrSimpleType)?.arguments!!)
+                    it.owner.parameters.first { it.kind == IrParameterKind.Regular }.type.substituteTypeVariable(constructor.constructedClass, (function?.returnType as? IrSimpleType)?.arguments!!)
                 )
             }
 

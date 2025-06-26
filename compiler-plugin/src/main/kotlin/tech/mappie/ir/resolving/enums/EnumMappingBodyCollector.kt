@@ -1,6 +1,5 @@
 package tech.mappie.ir.resolving.enums
 
-import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import tech.mappie.ir.util.BaseVisitor
@@ -13,16 +12,16 @@ class EnumMappingBodyCollector : BaseVisitor<EnumMappingRequestBuilder, EnumMapp
     override fun visitCall(expression: IrCall, data: EnumMappingRequestBuilder): EnumMappingRequestBuilder {
         return when (expression.symbol.owner.name) {
             IDENTIFIER_MAPPING -> {
-                expression.valueArguments.first()?.accept(data) ?: data
+                expression.arguments[1]?.accept(data) ?: data
             }
             IDENTIFIER_FROM_ENUM_ENTRY -> {
-                val target = expression.extensionReceiver!!
-                val source = (expression.valueArguments.first()!! as IrGetEnumValue).symbol.owner
+                val target = expression.arguments[1]!!
+                val source = (expression.arguments[2]!! as IrGetEnumValue).symbol.owner
                 data.explicit(source to ExplicitEnumMappingTarget(target))
             }
             IDENTIFIER_THROWN_BY_ENUM_ENTRY -> {
-                val target = expression.extensionReceiver!!
-                val source = (expression.valueArguments.first()!! as IrGetEnumValue).symbol.owner
+                val target = expression.arguments[1]!!
+                val source = (expression.arguments[2]!! as IrGetEnumValue).symbol.owner
                 data.explicit(source to ThrowingEnumMappingTarget(target))
             }
             else -> {

@@ -29,7 +29,9 @@ class UnsafeTypeAssignmentProblems(
         return when (source) {
             is ExplicitPropertyMappingSource -> {
                 val via = if (source.transformation != null && source.transformation is PropertyMappingViaMapperTransformation) "via ${source.transformation.mapper.clazz.name.asString()} " else ""
-                val description = "Target $targetString of type $targetTypeString cannot be assigned from ${source.reference.dumpKotlinLike()} ${via}of type $sourceTypeString"
+                val reference = source.reference.dispatchReceiver?.dumpKotlinLike() ?: "?"
+                val value = source.reference.symbol.owner.name
+                val description = "Target $targetString of type $targetTypeString cannot be assigned from ${reference}::${value} ${via}of type $sourceTypeString"
                 Problem.error(description, location(context.function.fileEntry, source.reference))
             }
             is ExpressionMappingSource -> {

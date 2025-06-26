@@ -15,22 +15,22 @@ import tech.mappie.ir.util.*
 fun IrBuilderWithScope.constructTransformation(context: CodeGenerationContext, transformation: PropertyMappingTransformation, value: IrExpression) =
     when (transformation) {
         is PropertyMappingTransformTranformation -> {
-            irCall(context.referenceFunctionLet()).also { letCall ->
-                letCall.extensionReceiver = value
-                letCall.putValueArgument(0, transformation.function)
+            irCall(context.referenceFunctionLet()).apply {
+                arguments[0] = value
+                arguments[1] = transformation.function
             }
         }
         is PropertyMappingViaMapperTransformation -> {
             irCall(transformation.selectTransformationFunction(value)).apply {
-                dispatchReceiver = transformation.dispatchReceiver ?: instance(transformation.mapper.clazz)
-                putValueArgument(0, value)
+                arguments[0] = transformation.dispatchReceiver ?: instance(transformation.mapper.clazz)
+                arguments[1] = value
             }
         }
         is GeneratedViaMapperTransformation -> {
             val clazz = context.generated[transformation.source.type.mappieType() to transformation.target.type.mappieType()]!!
             irCall(clazz.selectTransformationFunction(value)).apply {
-                dispatchReceiver = instance(clazz)
-                putValueArgument(0, value)
+                arguments[0] = instance(clazz)
+                arguments[1] = value
             }
         }
     }
@@ -63,7 +63,7 @@ private fun IrClass.selectTransformationFunction(value: IrExpression) =
 private fun IrBuilderWithScope.instance(clazz: IrClass) =
     if (clazz.isObject) {
         irGetObject(clazz.symbol)
-    } else if (clazz.primaryConstructor != null && clazz.primaryConstructor!!.valueParameters.isEmpty()) {
+    } else if (clazz.primaryConstructor != null && clazz.primaryConstructor!!.parameters.isEmpty()) {
         irCallConstructor(clazz.primaryConstructor!!.symbol, emptyList())
     } else {
         panic("Class ${clazz.name.asString()} should either be an object or has an primary constructor without parameters.", clazz)

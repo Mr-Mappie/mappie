@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     branches:
-      - '**'
+      - 'main'
     paths:
       - '**'
       - '!website/**'
@@ -12,7 +12,8 @@ on:
     paths:
       - '**'
       - '!website/**'
-      -
+  workflow_dispatch:
+
 permissions:
   pull-requests: read
 

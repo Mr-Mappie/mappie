@@ -1,5 +1,6 @@
 package tech.mappie.fir.analysis
 
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.WHOLE_ELEMENT
 import org.jetbrains.kotlin.diagnostics.error1
@@ -16,6 +17,7 @@ import tech.mappie.util.ALL_MAPPING_FUNCTIONS
 import tech.mappie.util.CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR
 
 class CompileTimeDslReceiverChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+    @OptIn(DeprecatedForRemovalCompilerApi::class)
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val name = expression.calleeReference.name
         if (name in ALL_MAPPING_FUNCTIONS) {

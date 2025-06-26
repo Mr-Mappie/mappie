@@ -1,6 +1,7 @@
 package tech.mappie.ir.generation.classes
 
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -27,9 +28,8 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
             val call = irCallConstructor(constructor, emptyList()).apply {
                 model.mappings.forEach { (target, source) ->
                     if (target is ValueParameterTarget) {
-                        constructArgument(source, model.declaration.valueParameters)?.let { argument ->
-                            val index = constructor.owner.valueParameters.indexOf(target.value)
-                            putValueArgument(index, argument)
+                        constructArgument(source, model.declaration.parameters.filter { it.kind == IrParameterKind.Regular })?.let { argument ->
+                            arguments[target.value.indexInParameters] = argument
                         }
                     }
                 }
@@ -42,13 +42,13 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
                     is SetterTarget -> {
                         +irCall(target.value.setter!!).apply {
                             dispatchReceiver = irGet(variable)
-                            putValueArgument(0, constructArgument(source ,model.declaration.valueParameters))
+                            arguments[1] = constructArgument(source, model.declaration.parameters.filter { it.kind == IrParameterKind.Regular })
                         }
                     }
                     is FunctionCallTarget -> {
                         +irCall(target.value).apply {
                             dispatchReceiver = irGet(variable)
-                            putValueArgument(0, constructArgument(source, model.declaration.valueParameters))
+                            arguments[1] = constructArgument(source, model.declaration.parameters.filter { it.kind == IrParameterKind.Regular })
                         }
                     }
                     else -> { /* Applied as a constructor call argument */ }
@@ -67,9 +67,9 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
 
                 val getter = if (source.forceNonNull) {
                     irCall(this@ObjectMappieCodeGenerator.context.referenceFunctionRequireNotNull(), source.reference.getter!!.owner.returnType.makeNotNull()).apply {
-                        putValueArgument(0, irCall(source.reference.getter!!).apply {
+                        arguments[0] = irCall(source.reference.getter!!).apply {
                             dispatchReceiver = receiver
-                        })
+                        }
                     }
                 } else {
                     irCall(source.reference.getter!!).apply {
@@ -80,8 +80,8 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
             }
             is ExpressionMappingSource -> {
                 irCall(this@ObjectMappieCodeGenerator.context.referenceFunctionLet()).apply {
-                    extensionReceiver = irGet(parameters.single())
-                    putValueArgument(0, source.expression)
+                    arguments[0] = irGet(parameters.single())
+                    arguments[1] = source.expression
                 }
             }
             is ValueMappingSource -> {
