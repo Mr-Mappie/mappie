@@ -1,6 +1,5 @@
 package tech.mappie.fir.analysis
 
-import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.WHOLE_ELEMENT
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -20,8 +19,8 @@ import tech.mappie.util.IDENTIFIER_FROM_ENUM_ENTRY
 
 class UnnecessaryExplicitEnumMappingChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
-    @OptIn(DeprecatedForRemovalCompilerApi::class)
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         if (expression.hasCallableId(CallableId(CLASS_ID_ENUM_MAPPING_CONSTRUCTOR, IDENTIFIER_FROM_ENUM_ENTRY))) {
             val lhs = expression.extensionReceiver
             val rhs = expression.arguments.first()
@@ -37,7 +36,6 @@ class UnnecessaryExplicitEnumMappingChecker : FirFunctionCallChecker(MppCheckerK
                         expression.source,
                         UNNECESSARY_EXPLICIT_MAPPING,
                         "Unnecessary explicit mapping of source $name",
-                        context
                     )
                 }
             }
