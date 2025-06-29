@@ -117,7 +117,7 @@ private class MapperReferenceCollector(private val context: ResolverContext)
                 context.fail(
                     "Unexpected call of ${name.asString()}, expected forList or forSet",
                     expression,
-                    location(context.origin!!.fileEntry, expression)
+                    location(context.origin.fileEntry, expression)
                 )
             }
         }
@@ -140,7 +140,7 @@ private class TargetNameCollector(private val context: ResolverContext) : BaseVi
                     context.fail(
                         "Identifier must be a compile-time constant",
                         expression,
-                        location(context.origin!!.fileEntry, expression)
+                        location(context.origin.fileEntry, expression)
                     )
                 }
             }

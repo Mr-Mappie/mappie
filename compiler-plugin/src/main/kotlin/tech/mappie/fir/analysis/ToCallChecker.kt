@@ -36,7 +36,6 @@ class ToCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
                     expression.source,
                     NON_CONSTANT_ERROR,
                     "Argument must be a compile-time constant",
-                    context,
                 )
             } else {
                 val target = expression.getTargetRegularClassSymbol()

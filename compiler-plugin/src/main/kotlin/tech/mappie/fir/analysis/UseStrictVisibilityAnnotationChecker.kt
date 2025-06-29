@@ -29,6 +29,6 @@ class UseStrictVisibilityAnnotationChecker : FirAnnotationCallChecker(MppChecker
 
     companion object {
         private val ANNOTATION_NOT_APPLICABLE by warning1<KtElement, String>(WHOLE_ELEMENT)
-        private const val NOT_APPLICABLE_MESSAGE = "Annotation @UseStrictVisibility has no effect on children of EnumMappie"
+        private const val NOT_APPLICABLE_MESSAGE = "Annotation @UseStrictVisibility has no effect on subclass of EnumMappie"
     }
 }
