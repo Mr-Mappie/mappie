@@ -33,7 +33,7 @@ sealed interface TransformableClassMappingSource : ClassMappingSource {
                         else -> transformation.type
                     }.run { if (original.isNullable()) makeNullable() else this }.addAnnotations(original.annotations)
                 }
-                is PropertyMappingTransformTranformation -> {
+                is PropertyMappingTransformTransformation -> {
                     transformation.type
                 }
             }
@@ -46,7 +46,7 @@ sealed interface PropertyMappingTransformation {
 }
 
 @ConsistentCopyVisibility
-data class PropertyMappingTransformTranformation private constructor(
+data class PropertyMappingTransformTransformation private constructor(
     val function: IrExpression,
     override val type: IrType,
 ) : PropertyMappingTransformation {

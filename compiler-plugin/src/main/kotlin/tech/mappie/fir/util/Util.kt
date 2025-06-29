@@ -15,19 +15,22 @@ import org.jetbrains.kotlin.name.CallableId
 import tech.mappie.util.CLASS_ID_ENUM_MAPPIE
 import tech.mappie.util.CLASS_ID_OBJECT_MAPPIE
 
-internal fun FirClassSymbol<*>.isSubclassOfEnumMappie(session: FirSession) =
-    isSubclassOf(CLASS_ID_ENUM_MAPPIE.toLookupTag(), session, false, false)
+context(context: CheckerContext)
+internal fun FirClassSymbol<*>.isSubclassOfEnumMappie() =
+    isSubclassOf(CLASS_ID_ENUM_MAPPIE.toLookupTag(), context.session, false, false)
 
-internal fun FirClassSymbol<*>.isSubclassOfObjectMappie(session: FirSession) =
-    isSubclassOf(CLASS_ID_OBJECT_MAPPIE.toLookupTag(), session, false, false)
+context(context: CheckerContext)
+internal fun FirClassSymbol<*>.isSubclassOfObjectMappie() =
+    isSubclassOf(CLASS_ID_OBJECT_MAPPIE.toLookupTag(), context.session, false, false)
 
 @OptIn(SymbolInternals::class)
-fun FirExpression.toConstant(context: CheckerContext): FirLiteralExpression? =
+context (context: CheckerContext)
+fun FirExpression.toConstant(): FirLiteralExpression? =
     when (this) {
         is FirLiteralExpression -> this
         is FirPropertyAccessExpression -> calleeReference.toResolvedPropertySymbol()?.fir?.let { property ->
             when (val result = FirExpressionEvaluator.evaluatePropertyInitializer(property, context.session)) {
-                is FirEvaluatorResult.Evaluated -> result.result as FirLiteralExpression // TODO: does this work?
+                is FirEvaluatorResult.Evaluated -> result.result as FirLiteralExpression
                 else -> null
             }
         }

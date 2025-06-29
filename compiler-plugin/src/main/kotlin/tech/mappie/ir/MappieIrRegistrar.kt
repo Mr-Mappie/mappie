@@ -3,7 +3,6 @@ package tech.mappie.ir
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import tech.mappie.MappieContext
@@ -21,8 +20,7 @@ import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.analysis.ValidationContext
 import tech.mappie.ir.reporting.ReportGenerator
 import tech.mappie.ir.resolving.MappingRequestResolver
-import java.io.File
-import java.io.IOException
+import tech.mappie.ir.resolving.RequestResolverContext
 
 class MappieIrRegistrar(
     private val messageCollector: MessageCollector,
@@ -34,7 +32,7 @@ class MappieIrRegistrar(
 
         handleMappieProblems {
             val context = DefinitionsCollector(createMappieContext(pluginContext)).collect(moduleFragment)
-            val requests = moduleFragment.accept(MappingRequestResolver(), context)
+            val requests = moduleFragment.accept(MappingRequestResolver(), RequestResolverContext(context, context.definitions))
 
             val generated = requests.mapNotNull { (clazz, options) ->
                 val selected = MappingSelector.of(options.associateWith {

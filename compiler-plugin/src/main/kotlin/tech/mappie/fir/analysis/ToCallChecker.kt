@@ -1,6 +1,5 @@
 package tech.mappie.fir.analysis
 
-import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.error1
@@ -26,20 +25,20 @@ import tech.mappie.util.IDENTIFIER_TO
 
 class ToCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
-    @OptIn(SymbolInternals::class, DeprecatedForRemovalCompilerApi::class)
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    @OptIn(SymbolInternals::class)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         if (expression.hasCallableId(CallableId(CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR, IDENTIFIER_TO))) {
-            val name = expression.arguments.first().toConstant(context)?.value as? String?
+            val name = expression.arguments.first().toConstant()?.value as? String?
 
             if (name == null) {
                 reporter.reportOn(
                     expression.source,
                     NON_CONSTANT_ERROR,
                     "Argument must be a compile-time constant",
-                    context,
                 )
             } else {
-                val target = expression.getTargetRegularClassSymbol(context)
+                val target = expression.getTargetRegularClassSymbol()
                 if (target != null) {
                     val targets = buildList {
                         target.fir.processAllDeclarations(context.session) { declaration ->
@@ -56,7 +55,6 @@ class ToCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
                             expression.source,
                             UNKNOWN_NAME_ERROR,
                             "Identifier $name does not occur as as setter or as a parameter in constructor",
-                            context,
                         )
                     }
                 }
@@ -64,7 +62,8 @@ class ToCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
         }
     }
 
-    private fun FirFunctionCall.getTargetRegularClassSymbol(context: CheckerContext) =
+    context (context: CheckerContext)
+    private fun FirFunctionCall.getTargetRegularClassSymbol() =
         dispatchReceiver?.resolvedType?.typeArguments?.last()?.type?.toRegularClassSymbol(context.session)
 
     companion object {

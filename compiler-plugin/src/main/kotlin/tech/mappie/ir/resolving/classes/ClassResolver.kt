@@ -20,6 +20,6 @@ class ClassResolver(
                 .targets(MappieTargetsCollector(function, constructor).collect())
                 .sources(sources)
                 .also { function?.body?.accept(ExplicitClassMappingCollector(context), it) }
-                .construct(context.function!!)
+                .construct()
         }.toList()
 }

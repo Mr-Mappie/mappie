@@ -17,7 +17,7 @@ class EnumResolver(
             .sources(source.getClass()!!.accept(EnumEntriesCollector(), Unit))
             .targets(target.getClass()!!.accept(EnumEntriesCollector(), Unit))
             .also { function?.body?.accept(EnumMappingBodyCollector(), it) }
-            .construct(context.function!!)
+            .construct(context.origin!!)
             .let { listOf(it) }
 }
 

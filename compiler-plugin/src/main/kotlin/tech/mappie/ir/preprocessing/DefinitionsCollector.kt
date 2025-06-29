@@ -12,15 +12,15 @@ import tech.mappie.*
 import tech.mappie.ir.util.BaseVisitor
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.resolving.MappieDefinition
-import tech.mappie.ir.resolving.ResolverContext
+import tech.mappie.ir.resolving.RequestResolverContext
 import tech.mappie.util.PACKAGE_TECH_MAPPIE_API_BUILTIN
 
 // TODO: we should collect al publicly visible, and add those during resolving that are visible from the current scope.
 class DefinitionsCollector(val context: MappieContext) {
-    fun collect(module: IrModuleFragment): ResolverContext {
+    fun collect(module: IrModuleFragment): RequestResolverContext {
         val builtin = BuiltinMappieDefinitionsCollector(context).collect()
         val defined = module.accept(ProjectMappieDefinitionsCollector(context), Unit)
-        return ResolverContext(context, builtin + defined)
+        return RequestResolverContext(context, builtin + defined)
     }
 }
 

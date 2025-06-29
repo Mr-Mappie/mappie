@@ -29,7 +29,7 @@ class EnumMapperWrongConfigTest {
             )
         } satisfies {
             isOk()
-            hasWarningMessage(5, "Annotation @UseDefaultArguments has no effect on children of EnumMappie")
+            hasWarningMessage(5, "Annotation @UseDefaultArguments has no effect on subclass of EnumMappie")
         }
     }
 
@@ -68,7 +68,7 @@ class EnumMapperWrongConfigTest {
             )
         } satisfies {
             isOk()
-            hasWarningMessage(5, "Annotation @UseStrictVisibility has no effect on children of EnumMappie")
+            hasWarningMessage(5, "Annotation @UseStrictVisibility has no effect on subclass of EnumMappie")
         }
     }
 

@@ -1,6 +1,5 @@
 package tech.mappie.fir.analysis
 
-import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.WHOLE_ELEMENT
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -17,12 +16,13 @@ import tech.mappie.fir.util.isSubclassOfObjectMappie
 import tech.mappie.util.CLASS_ID_USE_STRICT_ENUMS
 
 class UseStrictEnumsAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.Common) {
-    @OptIn(DeprecatedForRemovalCompilerApi::class)
-    override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirAnnotationCall) {
         if (expression.resolvedType.classId == CLASS_ID_USE_STRICT_ENUMS) {
             val symbol = expression.containingDeclarationSymbol
-            if (symbol is FirClassSymbol && symbol.isSubclassOfObjectMappie(context.session)) {
-                reporter.reportOn(expression.source, ANNOTATION_NOT_APPLICABLE, NOT_APPLICABLE_MESSAGE, context)
+            if (symbol is FirClassSymbol && symbol.isSubclassOfObjectMappie()) {
+                reporter.reportOn(expression.source, ANNOTATION_NOT_APPLICABLE, NOT_APPLICABLE_MESSAGE)
             }
         }
     }
