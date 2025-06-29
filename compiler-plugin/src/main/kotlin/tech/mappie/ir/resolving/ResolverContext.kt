@@ -6,8 +6,5 @@ import tech.mappie.MappieContext
 class ResolverContext(
     context: MappieContext,
     val definitions: List<MappieDefinition>,
-    val function: IrFunction? = null,
-) : MappieContext by context {
-
-    constructor(context: ResolverContext, function: IrFunction) : this(context, context.definitions, function)
-}
+    val origin: IrFunction,
+) : MappieContext by context

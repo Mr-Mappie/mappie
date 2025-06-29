@@ -69,8 +69,8 @@ private class ClassMappingStatementCollector(private val context: ResolverContex
                 name to (source as ExplicitPropertyMappingSource).copy(
                     transformation = expression.arguments[1]!!.let {
                         when (it) {
-                            is IrFunctionExpression -> PropertyMappingTransformTranformation(it)
-                            is IrFunctionReference -> PropertyMappingTransformTranformation(it)
+                            is IrFunctionExpression -> PropertyMappingTransformTransformation(it)
+                            is IrFunctionReference -> PropertyMappingTransformTransformation(it)
                             else -> panic("Unexpected expression type: ${expression.dumpKotlinLike()}", expression)
                         }
                     }
@@ -117,7 +117,7 @@ private class MapperReferenceCollector(private val context: ResolverContext)
                 context.fail(
                     "Unexpected call of ${name.asString()}, expected forList or forSet",
                     expression,
-                    location(context.function!!.fileEntry, expression)
+                    location(context.origin!!.fileEntry, expression)
                 )
             }
         }
@@ -140,7 +140,7 @@ private class TargetNameCollector(private val context: ResolverContext) : BaseVi
                     context.fail(
                         "Identifier must be a compile-time constant",
                         expression,
-                        location(context.function!!.fileEntry, expression)
+                        location(context.origin!!.fileEntry, expression)
                     )
                 }
             }

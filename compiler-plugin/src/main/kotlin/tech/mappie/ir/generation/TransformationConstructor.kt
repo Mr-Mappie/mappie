@@ -7,14 +7,14 @@ import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.referenceFunctionLet
 import tech.mappie.ir.resolving.classes.sources.GeneratedViaMapperTransformation
-import tech.mappie.ir.resolving.classes.sources.PropertyMappingTransformTranformation
+import tech.mappie.ir.resolving.classes.sources.PropertyMappingTransformTransformation
 import tech.mappie.ir.resolving.classes.sources.PropertyMappingTransformation
 import tech.mappie.ir.resolving.classes.sources.PropertyMappingViaMapperTransformation
 import tech.mappie.ir.util.*
 
 fun IrBuilderWithScope.constructTransformation(context: CodeGenerationContext, transformation: PropertyMappingTransformation, value: IrExpression) =
     when (transformation) {
-        is PropertyMappingTransformTranformation -> {
+        is PropertyMappingTransformTransformation -> {
             irCall(context.referenceFunctionLet()).apply {
                 arguments[0] = value
                 arguments[1] = transformation.function

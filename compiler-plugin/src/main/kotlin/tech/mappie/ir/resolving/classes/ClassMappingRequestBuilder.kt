@@ -17,7 +17,6 @@ import tech.mappie.ir.resolving.classes.sources.ParameterDefaultValueMappingSour
 import tech.mappie.ir.resolving.classes.sources.ParameterValueMappingSource
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.resolving.classes.targets.ValueParameterTarget
-import tech.mappie.util.*
 import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.util.isMappableFrom
 import tech.mappie.ir.util.isPrimitive
@@ -33,8 +32,8 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
 
     private val explicit = mutableMapOf<Name, List<ExplicitClassMappingSource>>()
 
-    fun construct(origin: IrFunction): ClassMappingRequest {
-        val useDefaultArguments = context.useDefaultArguments(origin)
+    fun construct(): ClassMappingRequest {
+        val useDefaultArguments = context.useDefaultArguments(context.origin)
 
         val mappings = targets.associateWith { target ->
             explicit(target) ?: implicit(target, useDefaultArguments) // TODO: we should add all and select later
@@ -44,7 +43,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
         }
 
         return ClassMappingRequest(
-            origin,
+            context.origin,
             sources.map { it.value },
             constructor,
             mappings,
@@ -93,8 +92,8 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
             }
             mappers.size > 1 -> {
                 val location = when (source) {
-                    is ExplicitClassMappingSource -> location(context.function!!.fileEntry, source.origin)
-                    else -> location(context.function!!)
+                    is ExplicitClassMappingSource -> location(context.origin.fileEntry, source.origin)
+                    else -> location(context.origin)
                 }
                 val error = Problem.error(
                     "Multiple mappers resolved to be used in an implicit via",
