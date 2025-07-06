@@ -1,23 +1,27 @@
 package tech.mappie
 
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_STRICTNESS_ENUMS
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_STRICTNESS_VISIBILITY
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.MODULE_CHUNK
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector.Companion.NONE
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
-import org.jetbrains.kotlin.config.CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.name.ClassId
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_REPORT_DIR
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_REPORT_ENABLED
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_USE_DEFAULT_ARGUMENTS
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_WARNINGS_AS_ERRORS
 import tech.mappie.config.MappieConfiguration
 import tech.mappie.fir.MappieFirRegistrar
+import tech.mappie.fir.resolving.Mapping
 import tech.mappie.ir.MappieIrRegistrar
+
+data class MappieState(
+    val models: MutableMap<ClassId, Mapping> = mutableMapOf()
+)
 
 @OptIn(ExperimentalCompilerApi::class)
 class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
@@ -34,8 +38,10 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
             reportEnabled = configuration.get(ARGUMENT_REPORT_ENABLED, false),
             reportDir = configuration.get(ARGUMENT_REPORT_DIR, ""),
         )
-        FirExtensionRegistrarAdapter.registerExtension(MappieFirRegistrar())
-        IrGenerationExtension.registerExtension(MappieIrRegistrar(configuration.get(MESSAGE_COLLECTOR_KEY, NONE), config))
+        val state = MappieState()
+        FirExtensionRegistrarAdapter.registerExtension(MappieFirRegistrar(state))
+        IrGenerationExtension.registerExtension(MappieIrRegistrar(state))
+//        IrGenerationExtension.registerExtension(MappieIrRegistrar(configuration.get(MESSAGE_COLLECTOR_KEY, NONE), config))
     }
 
     private fun isStartedWithTestFixtures(configuration: CompilerConfiguration) =

@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.config.MappieConfiguration
-import tech.mappie.ir.MappieLogger
+import tech.mappie.ir_old.MappieLogger
 import tech.mappie.util.*
 
 interface MappieContext {

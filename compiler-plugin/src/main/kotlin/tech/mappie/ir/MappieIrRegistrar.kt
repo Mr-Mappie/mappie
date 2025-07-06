@@ -1,72 +1,131 @@
 package tech.mappie.ir
 
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.backend.jvm.functionByName
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import tech.mappie.MappieContext
-import tech.mappie.config.MappieConfiguration
-import tech.mappie.exceptions.MappieProblemException
-import tech.mappie.ir.generation.CodeGenerationContext
-import tech.mappie.ir.generation.CodeGenerationModelFactory
-import tech.mappie.ir.generation.MappieCodeGenerator
-import tech.mappie.ir.preprocessing.DefinitionsCollector
-import tech.mappie.ir.selection.MappingSelector
-import tech.mappie.ir.util.isMappieMapFunction
-import tech.mappie.ir.util.location
-import tech.mappie.ir.analysis.MappingValidation
-import tech.mappie.ir.analysis.Problem
-import tech.mappie.ir.analysis.ValidationContext
-import tech.mappie.ir.reporting.ReportGenerator
-import tech.mappie.ir.resolving.MappingRequestResolver
-import tech.mappie.ir.resolving.RequestResolverContext
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.classOrFail
+import org.jetbrains.kotlin.ir.types.typeOrFail
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.util.superTypes
+import org.jetbrains.kotlin.name.ClassId
+import tech.mappie.MappieState
+import tech.mappie.fir.resolving.Mapping
+import tech.mappie.ir_old.util.blockBody
+import tech.mappie.ir_old.util.isMappieMapFunction
 
-class MappieIrRegistrar(
-    private val messageCollector: MessageCollector,
-    private val configuration: MappieConfiguration,
-) : IrGenerationExtension {
+data class CodeGenerationContext(val pluginContext: IrPluginContext)
+
+class MappieIrRegistrar(private val state: MappieState) : IrGenerationExtension {
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
-        context = pluginContext
+        val context = CodeGenerationContext(pluginContext)
+        val factory = MappieCodeGenerationModelFactory(context)
 
-        handleMappieProblems {
-            val context = DefinitionsCollector(createMappieContext(pluginContext)).collect(moduleFragment)
-            val requests = moduleFragment.accept(MappingRequestResolver(), RequestResolverContext(context, context.definitions))
+        state.models.forEach { (classId, mapping) ->
+            val model = factory.construct(classId, mapping)
 
-            val generated = requests.mapNotNull { (clazz, options) ->
-                val selected = MappingSelector.of(options.associateWith {
-                    MappingValidation.of(ValidationContext(context, context.definitions, emptyList(), it.origin), it)
-                }).select()
+            val clazz = pluginContext.referenceClass(classId)
+            clazz?.owner?.apply { transform(MappieTransformer(context, model), null) }
+        }
+    }
+}
 
-                selected?.let { (solution, validation) ->
-                    val function = clazz.declarations
-                        .filterIsInstance<IrSimpleFunction>()
-                        .first { it.isMappieMapFunction() }
+class MappieCodeGenerationModelFactory(val context: CodeGenerationContext) {
+    fun construct(classId: ClassId, mapping: Mapping): CodeGenerationModel {
+        val clazz = context.pluginContext.referenceClass(classId)!!
+        val (sourceClass, targetClass) = ((clazz.superTypes().single().type as IrSimpleType).arguments.map { it.typeOrFail.classOrFail })
+        val constructor = targetClass.constructors.single()
 
-                    context.logger.logAll(validation.problems, location(function))
-
-                    solution?.let {
-                        val model = CodeGenerationModelFactory.of(it).construct(function)
-                        clazz.accept(MappieCodeGenerator(CodeGenerationContext(context, model, context.definitions, emptyMap())), null)
-                    }
-                } ?: context.logger.log(Problem.error("Target class has no accessible constructor", location(clazz))).let { null }
+        val mappings = mapping.mappings.map { (target, source) ->
+            val target = when (target) {
+                is tech.mappie.fir.resolving.ValueParameterTarget -> {
+                    ValueParameterTarget(
+                        parameter = constructor.owner.parameters.find { it.name == target.parameter.name }!!,
+                    )
+                }
             }
+            val source = when (source!!) {
+                is tech.mappie.fir.resolving.PropertySource -> {
+                    PropertySource(
+                        receiver = clazz.functionByName("map").owner.parameters.single { it.kind == IrParameterKind.Regular },
+                        property = sourceClass.owner.properties.first { it.name == source.property.name },
+                    )
+                }
+            }
+            target to source
+        }
 
-            ReportGenerator(context).report(generated)
+        return UserDefinedClassCodeGenerationModel(
+            constructor.owner,
+            mappings.toMap()
+        )
+    }
+}
+
+class MappieTransformer(val context: CodeGenerationContext, val model: CodeGenerationModel) : IrElementTransformerVoidWithContext() {
+
+    private val generator = ClassBodyGenerator(context)
+
+    override fun visitClassNew(declaration: IrClass): IrStatement {
+        return declaration.apply {
+            functions.single { it.isMappieMapFunction() }.apply {
+                transform()
+                isFakeOverride = false
+            }
         }
     }
 
-    private fun handleMappieProblems(function: () -> Unit): Unit =
-        runCatching { function() }.getOrElse { if (it is MappieProblemException) Unit else throw it }
-
-    private fun createMappieContext(pluginContext: IrPluginContext) = object : MappieContext {
-        override val pluginContext = pluginContext
-        override val configuration = this@MappieIrRegistrar.configuration
-        override val logger = MappieLogger(configuration.warningsAsErrors, messageCollector)
+    override fun visitFunctionNew(declaration: IrFunction): IrStatement {
+        return declaration.apply {
+            context(createScope(declaration)) {
+                body = when (model) {
+                    is UserDefinedClassCodeGenerationModel -> generator.construct(model)
+                }
+            }
+        }
     }
 
-    companion object {
-        lateinit var context: IrPluginContext
+    private fun IrElement.transform() =
+        transform(this@MappieTransformer, null)
+}
+
+class ClassBodyGenerator(val context: CodeGenerationContext) {
+
+    context(scope: ScopeWithIr)
+    fun construct(model: UserDefinedClassCodeGenerationModel): IrBody {
+        return context.pluginContext.blockBody(scope.scope) {
+            val call = irCallConstructor(model.constructor.symbol, emptyList()).apply {
+                model.mappings.forEach { (target, source) ->
+                    constructArgument(source).let { argument ->
+                        arguments[target.parameter.indexInParameters] = argument
+                    }
+                }
+            }
+
+            val variable = createTmpVariable(call)
+
+            +irReturn(irGet(variable))
+        }
+    }
+
+    fun IrBuilderWithScope.constructArgument(source: PropertySource): IrExpression {
+        val getter = irCall(source.property.getter!!).apply {
+            dispatchReceiver = irGet(source.receiver)
+        }
+        return getter
     }
 }
