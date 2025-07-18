@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.name.CallableId
 import tech.mappie.util.CLASS_ID_ENUM_MAPPIE
 import tech.mappie.util.CLASS_ID_OBJECT_MAPPIE
+import tech.mappie.util.CLASS_ID_OBJECT_MAPPIE2
+import tech.mappie.util.CLASS_ID_OBJECT_MAPPIE3
+import tech.mappie.util.CLASS_ID_OBJECT_MAPPIE4
 
 context(context: CheckerContext)
 internal fun FirClassSymbol<*>.isSubclassOfEnumMappie() =
@@ -22,6 +25,26 @@ internal fun FirClassSymbol<*>.isSubclassOfEnumMappie() =
 context(context: CheckerContext)
 internal fun FirClassSymbol<*>.isSubclassOfObjectMappie() =
     isSubclassOf(CLASS_ID_OBJECT_MAPPIE.toLookupTag(), context.session, false, false)
+
+context(context: CheckerContext)
+internal fun FirClassSymbol<*>.isSubclassOfObjectMappie2() =
+    isSubclassOf(CLASS_ID_OBJECT_MAPPIE2.toLookupTag(), context.session, false, false)
+
+context(context: CheckerContext)
+internal fun FirClassSymbol<*>.isSubclassOfObjectMappie3() =
+    isSubclassOf(CLASS_ID_OBJECT_MAPPIE3.toLookupTag(), context.session, false, false)
+
+context(context: CheckerContext)
+internal fun FirClassSymbol<*>.isSubclassOfObjectMappie4() =
+    isSubclassOf(CLASS_ID_OBJECT_MAPPIE4.toLookupTag(), context.session, false, false)
+
+context(context: CheckerContext)
+internal fun FirClassSymbol<*>.isSubclassOfObjectMappie5() =
+    isSubclassOf(CLASS_ID_OBJECT_MAPPIE4.toLookupTag(), context.session, false, false)
+
+context(context: CheckerContext)
+internal fun FirClassSymbol<*>.isSubclassOfAnObjectMappie() =
+    isSubclassOfObjectMappie() || isSubclassOfObjectMappie2() || isSubclassOfObjectMappie3() || isSubclassOfObjectMappie4() || isSubclassOfObjectMappie5()
 
 @OptIn(SymbolInternals::class)
 context (context: CheckerContext)
