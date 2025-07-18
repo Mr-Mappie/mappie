@@ -21,8 +21,10 @@ class UseDefaultArgumentsAnnotationChecker : FirAnnotationCallChecker(MppChecker
     override fun check(expression: FirAnnotationCall) {
         if (expression.resolvedType.classId == CLASS_ID_USE_DEFAULT_ARGUMENTS) {
             val symbol = expression.containingDeclarationSymbol
-            if (symbol is FirClassSymbol && symbol.isSubclassOfEnumMappie()) {
-                reporter.reportOn(expression.source, ANNOTATION_NOT_APPLICABLE, NOT_APPLICABLE_MESSAGE)
+            context(context.session) {
+                if (symbol is FirClassSymbol && symbol.isSubclassOfEnumMappie()) {
+                    reporter.reportOn(expression.source, ANNOTATION_NOT_APPLICABLE, NOT_APPLICABLE_MESSAGE)
+                }
             }
         }
     }

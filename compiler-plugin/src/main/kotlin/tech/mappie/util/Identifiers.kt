@@ -50,6 +50,8 @@ val ALL_MAPPING_FUNCTIONS = listOf(
 
 val PACKAGE_KOTLIN = FqName("kotlin")
 
+val PACKAGE_KOTLIN_REFLECT = FqName("kotlin.reflect")
+
 val PACKAGE_TECH_MAPPIE_API = FqName("tech.mappie.api")
 
 val PACKAGE_TECH_MAPPIE_API_BUILTIN = FqName("tech.mappie.api.builtin")
@@ -79,3 +81,7 @@ val CLASS_ID_USE_STRICT_VISIBILITY = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Nam
 val CLASS_ID_USE_DEFAULT_ARGUMENTS = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("UseDefaultArguments"))
 
 val CLASS_ID_USE_STRICT_ENUMS = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("UseStrictEnums"))
+
+val CLASS_ID_KPROPERTY1 = ClassId(PACKAGE_KOTLIN_REFLECT, Name.identifier("KProperty1"))
+
+val CLASS_ID_KPROPERTY0 = ClassId(PACKAGE_KOTLIN_REFLECT, Name.identifier("KProperty0"))

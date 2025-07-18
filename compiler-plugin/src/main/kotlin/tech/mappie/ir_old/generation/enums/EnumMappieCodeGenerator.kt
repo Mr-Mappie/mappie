@@ -2,13 +2,13 @@ package tech.mappie.ir_old.generation.enums
 
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.ir.builders.*
+import tech.mappie.ir.util.blockBody
 import tech.mappie.ir_old.generation.CodeGenerationContext
 import tech.mappie.ir_old.generation.EnumMappieCodeGenerationModel
 import tech.mappie.ir_old.generation.referenceFunctionValueOf
 import tech.mappie.ir_old.resolving.enums.ExplicitEnumMappingTarget
 import tech.mappie.ir_old.resolving.enums.ResolvedEnumMappingTarget
 import tech.mappie.ir_old.resolving.enums.ThrowingEnumMappingTarget
-import tech.mappie.ir_old.util.blockBody
 
 class EnumMappieCodeGenerator(private val context: CodeGenerationContext, private val model: EnumMappieCodeGenerationModel) {
 

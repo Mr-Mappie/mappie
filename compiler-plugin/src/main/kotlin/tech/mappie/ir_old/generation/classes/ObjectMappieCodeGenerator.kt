@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.types.typeOrFail
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
+import tech.mappie.ir.util.blockBody
 import tech.mappie.ir_old.generation.ClassMappieCodeGenerationModel
 import tech.mappie.ir_old.generation.CodeGenerationContext
 import tech.mappie.ir_old.generation.constructTransformation
@@ -18,7 +19,6 @@ import tech.mappie.ir_old.resolving.classes.sources.*
 import tech.mappie.ir_old.resolving.classes.targets.FunctionCallTarget
 import tech.mappie.ir_old.resolving.classes.targets.SetterTarget
 import tech.mappie.ir_old.resolving.classes.targets.ValueParameterTarget
-import tech.mappie.ir_old.util.blockBody
 
 class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, private val model: ClassMappieCodeGenerationModel) {
 

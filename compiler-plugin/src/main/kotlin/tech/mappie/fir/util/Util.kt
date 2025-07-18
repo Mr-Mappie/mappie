@@ -14,22 +14,27 @@ import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.name.CallableId
 import tech.mappie.util.CLASS_ID_ENUM_MAPPIE
 import tech.mappie.util.CLASS_ID_OBJECT_MAPPIE
+import tech.mappie.util.CLASS_ID_OBJECT_MAPPIE2
+import tech.mappie.util.CLASS_ID_OBJECT_MAPPIE3
+import tech.mappie.util.CLASS_ID_OBJECT_MAPPIE4
 
-context(context: CheckerContext)
+context(session: FirSession)
 internal fun FirClassSymbol<*>.isSubclassOfEnumMappie() =
-    isSubclassOf(CLASS_ID_ENUM_MAPPIE.toLookupTag(), context.session, false, false)
+    isSubclassOf(CLASS_ID_ENUM_MAPPIE.toLookupTag(), session, false, false)
 
-context(context: CheckerContext)
-internal fun FirClassSymbol<*>.isSubclassOfObjectMappie() =
-    isSubclassOf(CLASS_ID_OBJECT_MAPPIE.toLookupTag(), context.session, false, false)
+context(session: FirSession)
+internal fun FirClassSymbol<*>.isSubclassOfAnObjectMappie() =
+    isSubclassOf(CLASS_ID_OBJECT_MAPPIE.toLookupTag(), session, false, false) ||
+    isSubclassOf(CLASS_ID_OBJECT_MAPPIE2.toLookupTag(), session, false, false) ||
+    isSubclassOf(CLASS_ID_OBJECT_MAPPIE3.toLookupTag(), session, false, false) ||
+    isSubclassOf(CLASS_ID_OBJECT_MAPPIE4.toLookupTag(), session, false, false)
 
 @OptIn(SymbolInternals::class)
-context (context: CheckerContext)
-fun FirExpression.toConstant(): FirLiteralExpression? =
+fun FirExpression.toConstant(session: FirSession): FirLiteralExpression? =
     when (this) {
         is FirLiteralExpression -> this
         is FirPropertyAccessExpression -> calleeReference.toResolvedPropertySymbol()?.fir?.let { property ->
-            when (val result = FirExpressionEvaluator.evaluatePropertyInitializer(property, context.session)) {
+            when (val result = FirExpressionEvaluator.evaluatePropertyInitializer(property, session)) {
                 is FirEvaluatorResult.Evaluated -> result.result as FirLiteralExpression
                 else -> null
             }

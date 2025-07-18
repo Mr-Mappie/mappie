@@ -29,7 +29,7 @@ class ToCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         if (expression.hasCallableId(CallableId(CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR, IDENTIFIER_TO))) {
-            val name = expression.arguments.first().toConstant()?.value as? String?
+            val name = expression.arguments.first().toConstant(context.session)?.value as? String?
 
             if (name == null) {
                 reporter.reportOn(

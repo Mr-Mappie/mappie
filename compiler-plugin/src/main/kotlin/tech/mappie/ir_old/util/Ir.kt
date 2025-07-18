@@ -1,9 +1,5 @@
 package tech.mappie.ir_old.util
 
-import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
-import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
-import org.jetbrains.kotlin.ir.builders.IrGeneratorContextInterface
-import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -50,11 +46,3 @@ fun IrSimpleFunction.isMappieMapNullableFunction() =
     name == IDENTIFIER_MAP_NULLABLE
         && parameters.singleOrNull { it.kind == IrParameterKind.Regular }?.type?.isNullable() == true
         && returnType.isNullable()
-
-fun IrGeneratorContextInterface.blockBody(scope: Scope, body: IrBlockBodyBuilder.() -> Unit) =
-    IrBlockBodyBuilder(
-        IrGeneratorContextBase(irBuiltIns),
-        scope,
-        scope.scopeOwnerSymbol.owner.startOffset,
-        scope.scopeOwnerSymbol.owner.endOffset,
-    ).blockBody(body)

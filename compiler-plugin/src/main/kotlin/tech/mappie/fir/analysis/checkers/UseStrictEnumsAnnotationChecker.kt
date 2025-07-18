@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.psi.KtElement
-import tech.mappie.fir.util.isSubclassOfObjectMappie
+import tech.mappie.fir.util.isSubclassOfAnObjectMappie
 import tech.mappie.util.CLASS_ID_USE_STRICT_ENUMS
 
 class UseStrictEnumsAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.Common) {
@@ -21,8 +21,10 @@ class UseStrictEnumsAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.
     override fun check(expression: FirAnnotationCall) {
         if (expression.resolvedType.classId == CLASS_ID_USE_STRICT_ENUMS) {
             val symbol = expression.containingDeclarationSymbol
-            if (symbol is FirClassSymbol && symbol.isSubclassOfObjectMappie()) {
-                reporter.reportOn(expression.source, ANNOTATION_NOT_APPLICABLE, NOT_APPLICABLE_MESSAGE)
+            context(context.session) {
+                if (symbol is FirClassSymbol && symbol.isSubclassOfAnObjectMappie()) {
+                    reporter.reportOn(expression.source, ANNOTATION_NOT_APPLICABLE, NOT_APPLICABLE_MESSAGE)
+                }
             }
         }
     }

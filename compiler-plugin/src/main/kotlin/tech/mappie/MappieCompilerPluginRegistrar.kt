@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.fir.backend.Fir2IrPluginContext
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.name.ClassId
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_REPORT_DIR
@@ -40,7 +41,7 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
         )
         val state = MappieState()
         FirExtensionRegistrarAdapter.registerExtension(MappieFirRegistrar(state))
-        IrGenerationExtension.registerExtension(MappieIrRegistrar(state))
+//        IrGenerationExtension.registerExtension(MappieIrRegistrar(state))
 //        IrGenerationExtension.registerExtension(MappieIrRegistrar(configuration.get(MESSAGE_COLLECTOR_KEY, NONE), config))
     }
 
