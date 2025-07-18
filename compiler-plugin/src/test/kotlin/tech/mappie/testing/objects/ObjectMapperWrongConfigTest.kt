@@ -28,7 +28,7 @@ class ObjectMapperWrongConfigTest {
             )
         } satisfies {
             isOk()
-            hasWarningMessage(5, "Annotation @UseStrictEnums has no effect on children of ObjectMappie")
+            hasWarningMessage(5, "Annotation @UseStrictEnums has no effect on subclass of ObjectMappie")
         }
     }
 
