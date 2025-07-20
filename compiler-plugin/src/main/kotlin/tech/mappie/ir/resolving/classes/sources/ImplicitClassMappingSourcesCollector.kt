@@ -7,13 +7,12 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import tech.mappie.ir.util.BaseVisitor
 import org.jetbrains.kotlin.ir.util.properties
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.MappieContext
 import tech.mappie.ir.util.isSubclassOf
 import tech.mappie.util.merge
 import tech.mappie.ir.util.substituteTypeVariable
+import tech.mappie.util.CLASS_ID_RECORD
 
 class ImplicitClassMappingSourcesCollector(private val context: MappieContext)
     : BaseVisitor<Map<Name, ImplicitClassMappingSource>, Pair<Name, IrType>>() {
@@ -41,11 +40,10 @@ class ImplicitClassMappingSourcesCollector(private val context: MappieContext)
 
     private fun IrFunction.isJavaGetter(): Boolean {
         if (isFromJava()) {
-            if (parentAsClass.isSubclassOf(context.pluginContext.referenceClass(ClassId(FqName("java.lang"), Name.identifier("Record")))!!)) {
+            if (parentAsClass.isSubclassOf(context.pluginContext.referenceClass(CLASS_ID_RECORD)!!)) {
                 return parentAsClass.primaryConstructor!!.parameters.any { it.name == name }
             }
-            return name.asString().startsWith("get") && symbol.owner.parameters.none { it.kind == IrParameterKind.Regular }
         }
-        return false
+        return name.asString().startsWith("get") && symbol.owner.parameters.none { it.kind == IrParameterKind.Regular }
     }
 }
