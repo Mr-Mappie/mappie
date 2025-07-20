@@ -115,19 +115,21 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
         }
     }
 
-    fun explicit(entry: Pair<Name, ExplicitClassMappingSource>): ClassMappingRequestBuilder =
-        apply { explicit.merge(entry.first, listOf(entry.second), List<ExplicitClassMappingSource>::plus) }
+    fun explicit(entry: Pair<Name, ExplicitClassMappingSource>): ClassMappingRequestBuilder = apply {
+        explicit.merge(entry.first, listOf(entry.second), List<ExplicitClassMappingSource>::plus)
+    }
 
-    fun sources(entries: List<Pair<Name, IrType>>) = apply {
-        sources.putAll(entries)
-        entries.map { (name, type) ->
+    fun sources(parameters: List<Pair<Name, IrType>>) = apply {
+        sources.putAll(parameters)
+        parameters.map { (name, type) ->
             implicit.merge(name, listOf(ParameterValueMappingSource(name, type, null)), List<ImplicitClassMappingSource>::plus)
-            type.upperBound.getClass()!!.accept(ImplicitClassMappingSourcesCollector(), name to type).forEach { (name, source) ->
+            type.upperBound.getClass()!!.accept(ImplicitClassMappingSourcesCollector(context), name to type).forEach { (name, source) ->
                 implicit.merge(name, listOf(source), List<ImplicitClassMappingSource>::plus)
             }
         }
     }
 
-    fun targets(targets: List<ClassMappingTarget>) =
-        apply { this.targets.addAll(targets) }
+    fun targets(targets: List<ClassMappingTarget>) = apply {
+        this.targets.addAll(targets)
+    }
 }

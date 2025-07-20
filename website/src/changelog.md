@@ -5,7 +5,9 @@ changelog:
   - date: "tbd"
     title: "v2.2.0-1.4-0"
     items:
+      - "[#204](https://github.com/Mr-Mappie/mappie/issues/204) improved support for Java records."
       - "Improved error and warning messages."
+      - "Improved validation of incorrect application of configuration annotations."
   - date: "2025-06-26"
     title: "v2.2.0-1.3.0"
     items:
