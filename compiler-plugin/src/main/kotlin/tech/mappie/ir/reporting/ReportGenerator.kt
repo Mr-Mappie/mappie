@@ -46,5 +46,5 @@ class ReportGenerator(private val context: MappieContext) {
     }
 
     private fun generate(clazz: IrClass): String =
-        clazz.accept(PrettyPrinter(), KotlinStringBuilder()).print()
+        clazz.pretty()
 }

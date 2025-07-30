@@ -10,6 +10,7 @@ import tech.mappie.ir.util.hasFlexibleNullabilityAnnotation
 import tech.mappie.ir.util.location
 import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.analysis.ValidationContext
+import tech.mappie.ir.reporting.pretty
 import tech.mappie.ir.util.isList
 import tech.mappie.ir.util.isSet
 
@@ -29,9 +30,7 @@ class UnsafeTypeAssignmentProblems(
         return when (source) {
             is ExplicitPropertyMappingSource -> {
                 val via = if (source.transformation != null && source.transformation is PropertyMappingViaMapperTransformation) "via ${source.transformation.mapper.clazz.name.asString()} " else ""
-                val reference = source.reference.dispatchReceiver?.dumpKotlinLike() ?: "?"
-                val value = source.reference.symbol.owner.name
-                val description = "Target $targetString of type $targetTypeString cannot be assigned from ${reference}::${value} ${via}of type $sourceTypeString"
+                val description = "Target $targetString of type $targetTypeString cannot be assigned from ${source.reference.pretty()} ${via}of type $sourceTypeString"
                 Problem.error(description, location(context.function.fileEntry, source.reference))
             }
             is ExpressionMappingSource -> {

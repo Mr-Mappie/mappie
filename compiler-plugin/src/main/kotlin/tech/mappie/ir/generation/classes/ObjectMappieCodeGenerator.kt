@@ -8,10 +8,12 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.types.typeOrFail
+import org.jetbrains.kotlin.ir.util.getKFunctionType
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.generation.ClassMappieCodeGenerationModel
 import tech.mappie.ir.generation.CodeGenerationContext
 import tech.mappie.ir.generation.constructTransformation
+import tech.mappie.ir.reporting.pretty
 import tech.mappie.referenceFunctionLet
 import tech.mappie.referenceFunctionRequireNotNull
 import tech.mappie.ir.resolving.classes.sources.*
@@ -19,6 +21,7 @@ import tech.mappie.ir.resolving.classes.targets.FunctionCallTarget
 import tech.mappie.ir.resolving.classes.targets.SetterTarget
 import tech.mappie.ir.resolving.classes.targets.ValueParameterTarget
 import tech.mappie.ir.util.blockBody
+import tech.mappie.ir.util.irLambda
 
 class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, private val model: ClassMappieCodeGenerationModel) {
 
@@ -69,6 +72,9 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
                     irCall(this@ObjectMappieCodeGenerator.context.referenceFunctionRequireNotNull(), source.reference.getter!!.owner.returnType.makeNotNull()).apply {
                         arguments[0] = irCall(source.reference.getter!!).apply {
                             dispatchReceiver = receiver
+                        };
+                        arguments[1] = this@constructArgument.irLambda(context.irBuiltIns.anyType, context.irBuiltIns.getKFunctionType(context.irBuiltIns.stringType, emptyList())) {
+                            +irReturn(irString("Reference ${source.reference.pretty()} must be non-null."))
                         }
                     }
                 } else {
