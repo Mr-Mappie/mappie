@@ -1,8 +1,8 @@
 package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
@@ -112,8 +112,40 @@ class NestedNullToNullPropertyTest {
 
             assertThat(mapper.map(Input(InnerInput("value"), 20)))
                 .isEqualTo(Output(InnerOutput("value"), 20))
+        }
+    }
 
-            assertThrows<IllegalArgumentException> { mapper.map(Input(null, 20)) }
+    @Test
+    fun `map nested nullable to nullable null explicit fromPropertyNotNull without via should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.NestedNullToNullPropertyTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input) = mapping {
+                        to::text fromPropertyNotNull from::text
+                    }
+                }
+
+                object InnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoWarningsOrErrors()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThatThrownBy { mapper.map(Input(null, 20)) }
+                .isInstanceOf(IllegalArgumentException::class.java)
+                .hasMessage("Reference from::text must be non-null.")
+
         }
     }
 

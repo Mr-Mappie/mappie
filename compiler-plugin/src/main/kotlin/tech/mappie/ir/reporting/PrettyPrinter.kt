@@ -80,7 +80,10 @@ data class KotlinStringBuilder(val level: Int = 0) {
         apply { list.forEach { line { KotlinStringBuilder(level).block(it).print() } } }
 }
 
-class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
+fun IrElement.pretty(): String =
+    accept(PrettyPrinter(), KotlinStringBuilder()).print()
+
+private class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
 
     override fun visitElement(element: IrElement, data: KotlinStringBuilder): KotlinStringBuilder {
         error("This should never happen for ${element::class} ${element.dumpKotlinLike()}")
@@ -443,9 +446,24 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
         }
     }
 
+    override fun visitCallableReference(
+        expression: IrCallableReference<*>,
+        data: KotlinStringBuilder
+    ): KotlinStringBuilder {
+        return super.visitCallableReference(expression, data)
+    }
+
     override fun visitPropertyReference(expression: IrPropertyReference, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
-            string { expression.symbol.owner.parentAsClass.name.pretty() }
+            when {
+                expression.dispatchReceiver != null -> {
+                    element(expression.dispatchReceiver!!)
+                }
+                else -> {
+                    string { expression.symbol.owner.parentAsClass.name.pretty() }
+                }
+            }
+
             string { "::" }
             string { expression.symbol.owner.name.pretty() }
         }
@@ -512,6 +530,7 @@ class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder>() {
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
             curlyOpen()
+
             if (expression.function.parameters.isNotEmpty()) {
                 commas(expression.function.parameters, prefix = "", postfix = " -> ") {
                     element(it)

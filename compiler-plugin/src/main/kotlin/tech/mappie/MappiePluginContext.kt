@@ -3,6 +3,7 @@ package tech.mappie
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -50,7 +51,9 @@ fun MappieContext.referenceFunctionLet() =
     pluginContext.referenceFunctions(CallableId(PACKAGE_KOTLIN, Name.identifier("let"))).first()
 
 fun MappieContext.referenceFunctionRequireNotNull() =
-    pluginContext.referenceFunctions(CallableId(PACKAGE_KOTLIN, Name.identifier("requireNotNull"))).first()
+    pluginContext.referenceFunctions(CallableId(PACKAGE_KOTLIN, Name.identifier("requireNotNull"))).first {
+        it.owner.hasShape(regularParameters = 2)
+    }
 
 fun MappieContext.shouldGenerateCode(clazz: IrClass) =
     clazz.superClass?.symbol in allMappieClasses()

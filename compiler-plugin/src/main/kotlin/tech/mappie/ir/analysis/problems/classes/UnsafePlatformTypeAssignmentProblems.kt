@@ -12,6 +12,7 @@ import tech.mappie.ir.util.hasFlexibleNullabilityAnnotation
 import tech.mappie.ir.util.location
 import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.analysis.ValidationContext
+import tech.mappie.ir.reporting.pretty
 
 class UnsafePlatformTypeAssignmentProblems(
     private val context: ValidationContext,
@@ -28,7 +29,7 @@ class UnsafePlatformTypeAssignmentProblems(
 
         return when (source) {
             is ExplicitPropertyMappingSource -> {
-                val description = "Target $targetString of type $targetTypeString is unsafe to from ${source.reference.dumpKotlinLike()} of platform type $sourceTypeString"
+                val description = "Target $targetString of type $targetTypeString is unsafe to from ${source.reference.pretty()} of platform type $sourceTypeString"
                 Problem.warning(description, location(context.function.fileEntry, source.reference))
             }
             is ExpressionMappingSource -> {
@@ -43,7 +44,6 @@ class UnsafePlatformTypeAssignmentProblems(
                 val function = "${source.parameterType}::${source.function.name.asString()}"
                 val description = "Target $targetString automatically resolved from $function but it is unsafe to assign source platform type $sourceTypeString to target type $targetTypeString"
                 Problem.warning(description, location(mapping.origin))
-
             }
             is ImplicitPropertyMappingSource -> {
                 val description = "Target $targetString automatically resolved from ${source.property.dumpKotlinLike()} but it is unsafe to assign source platform type $sourceTypeString to target type ${target.type.dumpKotlinLike()}"
