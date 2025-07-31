@@ -2,9 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-  - date: "tbd"
+  - date: "2025-07-31"
     title: "v2.2.0-1.4-0"
     items:
+      - "[#228](https://github.com/Mr-Mappie/mappie/issues/228) improved error message when null value is received in fromPropertyNotNull."
       - "[#204](https://github.com/Mr-Mappie/mappie/issues/204) improved support for Java records."
       - "Improved error and warning messages."
       - "Improved validation of incorrect application of configuration annotations."
