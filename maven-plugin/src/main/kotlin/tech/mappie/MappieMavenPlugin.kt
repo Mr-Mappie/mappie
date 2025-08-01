@@ -3,15 +3,18 @@ package tech.mappie
 import org.apache.maven.model.Plugin
 import org.apache.maven.plugin.MojoExecution
 import org.apache.maven.project.MavenProject
-import org.codehaus.plexus.component.annotations.*
 import org.codehaus.plexus.logging.Logger
 import org.jetbrains.kotlin.maven.*
 import java.io.File
+import javax.inject.Inject
+import javax.inject.Named
+import javax.inject.Singleton
 
-@Component(role = KotlinMavenPluginExtension::class, hint = "mappie")
+@Named("mappie")
+@Singleton
 class MappieMavenPlugin : KotlinMavenPluginExtension {
 
-    @Requirement
+    @Inject
     lateinit var logger: Logger
 
     override fun getCompilerPluginId() = PLUGIN_ID

@@ -7,7 +7,7 @@ class Gradle814CompatibilityTest : GradleCompatibilityTestBase() {
     override val gradleVersion = "8.14"
 
     @Test
-    fun `test compatibility with gradle 8_13`() {
+    fun `test compatibility with gradle 8_14`() {
         runner.withArguments("build").build()
     }
 }
