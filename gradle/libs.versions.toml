@@ -6,7 +6,7 @@ kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-em
 kotlin-maven-plugin = { module = "org.jetbrains.kotlin:kotlin-maven-plugin", version.ref = "kotlin" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin" }
 classgraph = { module = "io.github.classgraph:classgraph", version = "4.8.181" }
-okio = { module = "com.squareup.okio:okio", version = "3.15.0" }
+okio = { module = "com.squareup.okio:okio", version = "3.16.0" }
 assertj-core = { module = "org.assertj:assertj-core", version = "3.27.3" }
 maven-project = { module = "org.apache.maven:maven-project", version = "2.2.1" }
 maven-core = { module = "org.apache.maven:maven-core", version = "3.9.11" }
