@@ -39,18 +39,24 @@ class MappieIrRegistrar(
                     MappingValidation.of(ValidationContext(context, context.definitions, emptyList(), it.origin), it)
                 }).select()
 
-                selected?.let { (solution, validation) ->
+                if (selected != null) {
+                    val (solution, validation) = selected
                     val function = clazz.declarations
                         .filterIsInstance<IrSimpleFunction>()
                         .first { it.isMappieMapFunction() }
 
                     context.logger.logAll(validation.problems, location(function))
 
-                    solution?.let {
-                        val model = CodeGenerationModelFactory.of(it).construct(function)
+                    if (solution != null) {
+                        val model = CodeGenerationModelFactory.of(solution).construct(function)
                         clazz.accept(MappieCodeGenerator(CodeGenerationContext(context, model, context.definitions, emptyMap())), null)
+                    } else {
+                        null
                     }
-                } ?: context.logger.log(Problem.error("Target class has no accessible constructor", location(clazz))).let { null }
+                } else {
+                    context.logger.log(Problem.error("Target class has no accessible constructor", location(clazz)))
+                    null
+                }
             }
 
             ReportGenerator(context).report(generated)
