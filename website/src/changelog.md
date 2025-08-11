@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "2025-08-11"
+    title: "v2.2.0-1.4-1"
+    items:
+      - "[#235](https://github.com/Mr-Mappie/mappie/issues/235) Fixed compatibility with pre Java 14."
   - date: "2025-07-31"
     title: "v2.2.0-1.4-0"
     items:
