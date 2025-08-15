@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.2.0"
+kotlin = "2.2.10"
 
 [libraries]
 kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
@@ -7,7 +7,7 @@ kotlin-maven-plugin = { module = "org.jetbrains.kotlin:kotlin-maven-plugin", ver
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin" }
 classgraph = { module = "io.github.classgraph:classgraph", version = "4.8.181" }
 okio = { module = "com.squareup.okio:okio", version = "3.16.0" }
-assertj-core = { module = "org.assertj:assertj-core", version = "3.27.3" }
+assertj-core = { module = "org.assertj:assertj-core", version = "3.27.4" }
 maven-project = { module = "org.apache.maven:maven-project", version = "2.2.1" }
 maven-core = { module = "org.apache.maven:maven-core", version = "3.9.11" }
 maven-invoker = { module = "org.apache.maven.shared:maven-invoker", version = "3.3.0" }
