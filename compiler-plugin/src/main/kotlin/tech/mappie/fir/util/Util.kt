@@ -46,6 +46,11 @@ context(context: CheckerContext)
 internal fun FirClassSymbol<*>.isSubclassOfAnObjectMappie() =
     isSubclassOfObjectMappie() || isSubclassOfObjectMappie2() || isSubclassOfObjectMappie3() || isSubclassOfObjectMappie4() || isSubclassOfObjectMappie5()
 
+context(context: CheckerContext)
+internal fun FirClassSymbol<*>.isSubclassOfAnMappie() =
+    isSubclassOfAnObjectMappie() || isSubclassOfEnumMappie()
+
+
 @OptIn(SymbolInternals::class)
 context (context: CheckerContext)
 fun FirExpression.toConstant(): FirLiteralExpression? =
