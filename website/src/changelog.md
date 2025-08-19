@@ -2,9 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-  - date: "tbd"
-    title: "v2.2.10-1.5.0"
+  - date: "2025-08-19"
+    title: "v2.2.10-1.4.2"
     items:
+      - "[#239](https://github.com/Mr-Mappie/mappie/issues/239) Fixed Java getter resolution when validating if the mapping is complete."
       - "[#237](https://github.com/Mr-Mappie/mappie/issues/237) Added compile time error when defining anonymous mappie objects."
   - date: "2025-08-11"
     title: "v2.2.0-1.4-1"
