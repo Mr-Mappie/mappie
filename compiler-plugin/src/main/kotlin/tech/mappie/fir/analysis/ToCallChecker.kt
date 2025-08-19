@@ -12,14 +12,17 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.processAllDeclarations
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import tech.mappie.fir.util.toConstant
 import tech.mappie.fir.util.hasCallableId
+import tech.mappie.fir.util.isJavaGetter
 import tech.mappie.util.CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR
 import tech.mappie.util.IDENTIFIER_TO
 
@@ -40,11 +43,18 @@ class ToCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
             } else {
                 val target = expression.getTargetRegularClassSymbol()
                 if (target != null) {
-                    val targets = buildList {
+                    val targets = buildSet {
                         target.fir.processAllDeclarations(context.session) { declaration ->
                             when (declaration.fir) {
                                 is FirProperty -> add((declaration.fir as FirProperty).name)
                                 is FirConstructor -> addAll((declaration.fir as FirConstructor).valueParameters.map { it.name })
+                                is FirJavaMethod -> {
+                                    val method = declaration.fir as FirJavaMethod
+                                    if (method.isJavaGetter()) {
+                                        val name = method.name.asString().removePrefix("get").replaceFirstChar { it.lowercaseChar() }
+                                        add(Name.identifier(name))
+                                    }
+                                }
                                 else -> Unit
                             }
                         }
