@@ -1,9 +1,9 @@
 package tech.mappie.fir.util
 
 import org.jetbrains.kotlin.fir.FirEvaluatorResult
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.isSubclassOf
@@ -50,6 +50,10 @@ context(context: CheckerContext)
 internal fun FirClassSymbol<*>.isSubclassOfAnMappie() =
     isSubclassOfAnObjectMappie() || isSubclassOfEnumMappie()
 
+context(context: CheckerContext)
+fun FirJavaMethod.isJavaGetter(): Boolean {
+    return name.asString().startsWith("get") && valueParameters.isEmpty()
+}
 
 @OptIn(SymbolInternals::class)
 context (context: CheckerContext)

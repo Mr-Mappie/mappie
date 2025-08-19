@@ -23,15 +23,7 @@ class Issue239 : TestBase() {
             public class Output {
                 private UUID id;
                 private String name;
-            
-                public Output() {
-                }
-            
-                public Output(UUID id, String name) {
-                    this.id = id;
-                    this.name = name;
-                }
-            
+                        
                 public UUID getId() {
                     return id;
                 }
@@ -88,12 +80,16 @@ class Issue239 : TestBase() {
                     val uuid = java.util.UUID.randomUUID()
                     val name = "test"
 
-                    assertEquals(Output(uuid, name), Mapper.map(Input(uuid, name)))
+                    val output = Output().apply {
+                        setId(uuid)
+                        setName(name)           
+                    }
+
+                    assertEquals(output, Mapper.map(Input(uuid, name)))
                 }
             }
             """.trimIndent()
         )
-
 
         runner.withArguments("build").build()
     }
