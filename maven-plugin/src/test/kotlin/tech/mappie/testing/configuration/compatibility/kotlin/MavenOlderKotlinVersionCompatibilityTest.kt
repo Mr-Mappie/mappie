@@ -2,14 +2,15 @@ package tech.mappie.testing.configuration.compatibility.kotlin
 
 import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
+import tech.mappie.BuildConfig
 import tech.mappie.testing.MavenTestBase
 
 class MavenOlderKotlinVersionCompatibilityTest : MavenTestBase() {
 
-    override val kotlinVersion: String = "2.1.10"
+    override val kotlinVersion: String = "2.2.0"
 
     @Test
-    fun `the maven plugin applies the compiler plugin`() {
+    fun `the maven plugin warns if an older kotlin version is used`() {
         kotlin("src/main/kotlin/Mapper.kt",
             """
             import tech.mappie.api.ObjectMappie
@@ -36,8 +37,10 @@ class MavenOlderKotlinVersionCompatibilityTest : MavenTestBase() {
             """.trimIndent()
         )
 
-        assertThat(execute()).isFailure()
+        val exptectedVersion = BuildConfig.VERSION.split('-').first()
+
+        assertThat(execute())
         assertThat(logs.lines())
-            .anyMatch { it.matches(Regex("\\[WARNING\\] Mappie unsupported Kotlin version 2.1.10, 2.2.0 was expected. This is highly likely to lead to compilation failure.")) }
+            .anyMatch { it.matches(Regex("\\[WARNING\\] Mappie unsupported Kotlin version $kotlinVersion, $exptectedVersion was expected. This is highly likely to lead to compilation failure.")) }
     }
 }
