@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "tbd"
+    title: "v2.2.0-1.5.0"
+    items:
+      - "[#237](https://github.com/Mr-Mappie/mappie/issues/237) Added compile time error when defining anonymous mappie objects."
   - date: "2025-08-11"
     title: "v2.2.0-1.4-1"
     items:
