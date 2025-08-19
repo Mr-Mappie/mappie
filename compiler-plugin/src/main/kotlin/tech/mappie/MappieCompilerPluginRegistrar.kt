@@ -3,9 +3,8 @@ package tech.mappie
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_STRICTNESS_ENUMS
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_STRICTNESS_VISIBILITY
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.MODULE_CHUNK
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector.Companion.NONE
-import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
+import org.jetbrains.kotlin.cli.common.moduleChunk
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY
@@ -39,8 +38,9 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
     }
 
     private fun isStartedWithTestFixtures(configuration: CompilerConfiguration) =
-        configuration.get(MODULE_CHUNK, ModuleChunk(emptyList())).modules
-            .firstOrNull { it.getModuleName() == "main" }
+        configuration.moduleChunk
+            ?.modules
+            ?.firstOrNull { it.getModuleName() == "main" }
             ?.getClasspathRoots()
             ?.any { it.matches(Regex(".*compiler-plugin-.*-test-fixtures.*\\.jar")) }
             ?: false
