@@ -6,9 +6,11 @@ import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
+import java.time.LocalDateTime
 
 class FromExpressionTest {
 
+    data class Input(val value: LocalDateTime?)
     data class Output(val value: String)
 
     @TempDir
