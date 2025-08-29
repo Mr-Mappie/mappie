@@ -1,6 +1,7 @@
 package tech.mappie.ir.analysis.problems.classes
 
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.*
@@ -66,7 +67,7 @@ class UnsafeTypeAssignmentProblems(
         fun of(context: ValidationContext, mapping: ClassMappingRequest): UnsafeTypeAssignmentProblems {
             val mappings = mapping.mappings
                 .filterSingle()
-                .filter { (target, source) -> context.isNotCompatible(source, target) }
+                .filter { (target, source) -> !context.isCompatible(source, target) }
 
             return UnsafeTypeAssignmentProblems(
                 context,
@@ -75,9 +76,14 @@ class UnsafeTypeAssignmentProblems(
             )
         }
 
-        private fun ValidationContext.isNotCompatible(source: ClassMappingSource, target: ClassMappingTarget) =
-            (!source.type.isSubtypeOf(target.type, IrTypeSystemContextImpl(pluginContext.irBuiltIns)) && !isCompatibleCollection(source, target))
-                || ((source.type.isNullable() && !source.type.hasFlexibleNullabilityAnnotation()) && !target.type.isNullable())
+        private fun ValidationContext.isCompatible(source: ClassMappingSource, target: ClassMappingTarget): Boolean {
+            val typeSystem = IrTypeSystemContextImpl(pluginContext.irBuiltIns)
+
+            if (source.type.makeNotNull().isSubtypeOf(target.type, typeSystem) || isCompatibleCollection(source, target)) {
+                return !source.type.isNullable() || source.type.hasFlexibleNullabilityAnnotation() || target.type.isNullable()
+            }
+            return false
+        }
 
         private fun isCompatibleCollection(source: ClassMappingSource, target: ClassMappingTarget): Boolean =
             source.type.isList() && target.type.isList() || source.type.isSet() && target.type.isSet()
