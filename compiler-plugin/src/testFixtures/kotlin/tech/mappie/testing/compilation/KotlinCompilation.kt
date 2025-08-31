@@ -16,18 +16,16 @@
 
 package tech.mappie.testing.compilation
 
-import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.JVMAssertionsMode
 import org.jetbrains.kotlin.config.JvmTarget
+import tech.mappie.testing.CompilationAssertionDsl
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import java.io.*
 import java.net.URLClassLoader
 import java.nio.file.Path
-import java.util.regex.Pattern
-import kotlin.text.Regex.Companion.escape
 
 data class PluginOption(val pluginId: PluginId, val optionName: OptionName, val optionValue: OptionValue)
 
@@ -35,7 +33,7 @@ typealias PluginId = String
 typealias OptionName = String
 typealias OptionValue = String
 
-fun compile(directory: File, verbose: Boolean = false, dsl: CompilationDsl.() -> Unit): CompilationAssertionDsl =
+internal fun compile(directory: File, verbose: Boolean = false, dsl: CompilationDsl.() -> Unit): CompilationAssertionDsl =
 	KotlinCompilation(directory).let {
 		it.verbose = verbose
 		dsl.invoke(CompilationDsl(it))
@@ -46,49 +44,6 @@ class CompilationDsl(private val compilation: KotlinCompilation) {
 	fun file(name: String, @Language("kotlin") contents: String, trimIndent: Boolean = true, isMultiplatformCommonSource: Boolean = false) {
 		compilation.sources.add(kotlin(name, contents, trimIndent, isMultiplatformCommonSource))
 	}
-}
-
-class CompilationAssertionDsl(private val result: KotlinCompilation.Result) {
-
-	val classLoader = result.classLoader
-
-	infix fun satisfies(dsl: CompilationAssertionDsl.() -> Unit) =
-		dsl(this)
-
-	fun isOk() {
-		assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-	}
-
-	fun isCompilationError() {
-		assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.COMPILATION_ERROR)
-	}
-
-	fun hasNoWarningsOrErrors() {
-		assertThat(result.messages.lines())
-			.noneMatch { it.startsWith("w:") || it.startsWith("e:") }
-	}
-
-	fun hasErrorMessage(line: Int, message: String, suggestions: List<String> = emptyList()) {
-		assertThat(result.messages).containsPattern(
-			Pattern.compile("e: file://.+\\.kt:${line}.+ ${escape(messageOf(message, suggestions))}")
-		)
-	}
-
-	fun hasWarningMessage(line: Int, message: String, suggestions: List<String> = emptyList()) {
-		assertThat(result.messages).containsPattern(
-			Pattern.compile("w: file://.+\\.kt:${line}:.+${escape(messageOf(message, suggestions))}")
-		)
-	}
-
-	fun hasOutputLines(message: String) {
-		assertThat(result.messages.lines().map { it.trimEnd() })
-			.containsAll(message.lines().map { it.trimEnd() })
-	}
-
-	private fun messageOf(message: String, suggestions: List<String>) =
-		message + System.lineSeparator() + suggestions
-			.mapIndexed { i, it -> i + 1 to it }
-			.joinToString(separator = "") { "    ${it.first}. ${it.second}" + System.lineSeparator() }
 }
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")

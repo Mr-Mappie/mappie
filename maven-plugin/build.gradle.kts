@@ -1,7 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
-    alias(libs.plugins.kotlin.jvm)
+    id("mappie-jvm-convention")
     alias(libs.plugins.com.github.gmazzo.buildconfig)
     id("maven-publish")
 }

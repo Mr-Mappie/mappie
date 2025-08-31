@@ -1,16 +1,10 @@
-package tech.mappie.testing.builtin
+package tech.mappie.api.builtin
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class CharMappersTest {
-
-    @TempDir
-    lateinit var directory: File
+class CharMappersTest : MappieTestCase() {
 
     data class CharInput(val value: Char)
 
@@ -18,11 +12,12 @@ class CharMappersTest {
 
     @Test
     fun `map Char to String implicit should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file(
+                "Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.builtin.CharMappersTest.*
+                import tech.mappie.api.builtin.CharMappersTest.*
 
                 class Mapper : ObjectMappie<CharInput, StringOutput>()
                 """
@@ -33,11 +28,7 @@ class CharMappersTest {
 
             val input = 'b'
 
-            val mapper = classLoader
-                .loadObjectMappieClass<CharInput, StringOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<CharInput, StringOutput>()
 
             assertThat(mapper.map(CharInput(input)))
                 .isEqualTo(StringOutput(input.toString()))
@@ -46,12 +37,13 @@ class CharMappersTest {
 
     @Test
     fun `map Char to String explicit should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file(
+                "Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.api.builtin.*
-                import tech.mappie.testing.builtin.CharMappersTest.*
+                import tech.mappie.api.builtin.CharMappersTest.*
 
                 class Mapper : ObjectMappie<CharInput, StringOutput>() {
                     override fun map(from: CharInput) = mapping {
@@ -66,11 +58,7 @@ class CharMappersTest {
 
             val input = 'b'
 
-            val mapper = classLoader
-                .loadObjectMappieClass<CharInput, StringOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<CharInput, StringOutput>()
 
             assertThat(mapper.map(CharInput(input)))
                 .isEqualTo(StringOutput(input.toString()))

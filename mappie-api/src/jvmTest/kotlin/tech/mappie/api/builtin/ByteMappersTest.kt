@@ -1,18 +1,12 @@
-package tech.mappie.testing.builtin
+package tech.mappie.api.builtin
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class ByteMappersTest {
-
-    @TempDir
-    lateinit var directory: File
+class ByteMappersTest : MappieTestCase() {
 
     data class ByteInput(val value: Byte)
 
@@ -30,11 +24,11 @@ class ByteMappersTest {
 
     @Test
     fun `map Byte to Short implicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.builtin.ByteMappersTest.*
+                import tech.mappie.api.builtin.ByteMappersTest.*
 
                 class Mapper : ObjectMappie<ByteInput, ShortOutput>()
                 """
@@ -45,11 +39,7 @@ class ByteMappersTest {
 
             val input: Byte = 2
 
-            val mapper = classLoader
-                .loadObjectMappieClass<ByteInput, ShortOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<ByteInput, ShortOutput>()
 
             assertThat(mapper.map(ByteInput(input)))
                 .isEqualTo(ShortOutput(input.toShort()))
@@ -58,12 +48,12 @@ class ByteMappersTest {
 
     @Test
     fun `map Byte to Short explicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.api.builtin.*
-                import tech.mappie.testing.builtin.ByteMappersTest.*
+                import tech.mappie.api.builtin.ByteMappersTest.*
 
                 class Mapper : ObjectMappie<ByteInput, ShortOutput>() {
                     override fun map(from: ByteInput) = mapping {
@@ -78,11 +68,7 @@ class ByteMappersTest {
 
             val input: Byte = 5
 
-            val mapper = classLoader
-                .loadObjectMappieClass<ByteInput, ShortOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<ByteInput, ShortOutput>()
 
             assertThat(mapper.map(ByteInput(input)))
                 .isEqualTo(ShortOutput(input.toShort()))
@@ -91,11 +77,11 @@ class ByteMappersTest {
 
     @Test
     fun `map Byte to Int implicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.builtin.ByteMappersTest.*
+                import tech.mappie.api.builtin.ByteMappersTest.*
 
                 class Mapper : ObjectMappie<ByteInput, IntOutput>()
                 """
@@ -106,11 +92,7 @@ class ByteMappersTest {
 
             val input: Byte = 2
 
-            val mapper = classLoader
-                .loadObjectMappieClass<ByteInput, IntOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<ByteInput, IntOutput>()
 
             assertThat(mapper.map(ByteInput(input)))
                 .isEqualTo(IntOutput(input.toInt()))
@@ -119,12 +101,12 @@ class ByteMappersTest {
 
     @Test
     fun `map Byte to Int explicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.api.builtin.*
-                import tech.mappie.testing.builtin.ByteMappersTest.*
+                import tech.mappie.api.builtin.ByteMappersTest.*
 
                 class Mapper : ObjectMappie<ByteInput, IntOutput>() {
                     override fun map(from: ByteInput) = mapping {
@@ -139,11 +121,7 @@ class ByteMappersTest {
 
             val input: Byte = 5
 
-            val mapper = classLoader
-                .loadObjectMappieClass<ByteInput, IntOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<ByteInput, IntOutput>()
 
             assertThat(mapper.map(ByteInput(input)))
                 .isEqualTo(IntOutput(input.toInt()))
@@ -152,11 +130,11 @@ class ByteMappersTest {
 
     @Test
     fun `map Byte to Long implicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.builtin.ByteMappersTest.*
+                import tech.mappie.api.builtin.ByteMappersTest.*
 
                 class Mapper : ObjectMappie<ByteInput, LongOutput>()
                 """
@@ -167,11 +145,7 @@ class ByteMappersTest {
 
             val input: Byte = 2
 
-            val mapper = classLoader
-                .loadObjectMappieClass<ByteInput, LongOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<ByteInput, LongOutput>()
 
             assertThat(mapper.map(ByteInput(input)))
                 .isEqualTo(LongOutput(input.toLong()))
@@ -180,12 +154,12 @@ class ByteMappersTest {
 
     @Test
     fun `map Byte to Long explicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.api.builtin.*
-                import tech.mappie.testing.builtin.ByteMappersTest.*
+                import tech.mappie.api.builtin.ByteMappersTest.*
 
                 class Mapper : ObjectMappie<ByteInput, LongOutput>() {
                     override fun map(from: ByteInput) = mapping {
@@ -200,11 +174,7 @@ class ByteMappersTest {
 
             val input: Byte = 5
 
-            val mapper = classLoader
-                .loadObjectMappieClass<ByteInput, LongOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<ByteInput, LongOutput>()
 
             assertThat(mapper.map(ByteInput(input)))
                 .isEqualTo(LongOutput(input.toLong()))
@@ -213,11 +183,11 @@ class ByteMappersTest {
 
     @Test
     fun `map Byte to BigInteger implicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.builtin.ByteMappersTest.*
+                import tech.mappie.api.builtin.ByteMappersTest.*
 
                 class Mapper : ObjectMappie<ByteInput, BigIntegerOutput>()
                 """
@@ -228,11 +198,7 @@ class ByteMappersTest {
 
             val input: Byte = 2
 
-            val mapper = classLoader
-                .loadObjectMappieClass<ByteInput, BigIntegerOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<ByteInput, BigIntegerOutput>()
 
             assertThat(mapper.map(ByteInput(input)))
                 .isEqualTo(BigIntegerOutput(BigInteger.valueOf(input.toLong())))
@@ -241,12 +207,12 @@ class ByteMappersTest {
 
     @Test
     fun `map Byte to BigInteger explicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.api.builtin.*
-                import tech.mappie.testing.builtin.ByteMappersTest.*
+                import tech.mappie.api.builtin.ByteMappersTest.*
 
                 class Mapper : ObjectMappie<ByteInput, BigIntegerOutput>() {
                     override fun map(from: ByteInput) = mapping {
@@ -261,11 +227,7 @@ class ByteMappersTest {
 
             val input: Byte = 5
 
-            val mapper = classLoader
-                .loadObjectMappieClass<ByteInput, BigIntegerOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<ByteInput, BigIntegerOutput>()
 
             assertThat(mapper.map(ByteInput(input)))
                 .isEqualTo(BigIntegerOutput(BigInteger.valueOf(input.toLong())))
@@ -274,11 +236,11 @@ class ByteMappersTest {
 
     @Test
     fun `map Byte to BigDecimal implicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.builtin.ByteMappersTest.*
+                import tech.mappie.api.builtin.ByteMappersTest.*
 
                 class Mapper : ObjectMappie<ByteInput, BigDecimalOutput>()
                 """
@@ -289,11 +251,7 @@ class ByteMappersTest {
 
             val input: Byte = 2
 
-            val mapper = classLoader
-                .loadObjectMappieClass<ByteInput, BigDecimalOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<ByteInput, BigDecimalOutput>()
 
             assertThat(mapper.map(ByteInput(input)))
                 .isEqualTo(BigDecimalOutput(BigDecimal.valueOf(input.toLong())))
@@ -302,12 +260,12 @@ class ByteMappersTest {
 
     @Test
     fun `map Byte to BigDecimal explicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.api.builtin.*
-                import tech.mappie.testing.builtin.ByteMappersTest.*
+                import tech.mappie.api.builtin.ByteMappersTest.*
 
                 class Mapper : ObjectMappie<ByteInput, BigDecimalOutput>() {
                     override fun map(from: ByteInput) = mapping {
@@ -322,11 +280,7 @@ class ByteMappersTest {
 
             val input: Byte = 5
 
-            val mapper = classLoader
-                .loadObjectMappieClass<ByteInput, BigDecimalOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<ByteInput, BigDecimalOutput>()
 
             assertThat(mapper.map(ByteInput(input)))
                 .isEqualTo(BigDecimalOutput(BigDecimal.valueOf(input.toLong())))
@@ -335,11 +289,11 @@ class ByteMappersTest {
 
     @Test
     fun `map Byte to String implicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.builtin.ByteMappersTest.*
+                import tech.mappie.api.builtin.ByteMappersTest.*
 
                 class Mapper : ObjectMappie<ByteInput, StringOutput>()
                 """
@@ -350,11 +304,7 @@ class ByteMappersTest {
 
             val input: Byte = 2
 
-            val mapper = classLoader
-                .loadObjectMappieClass<ByteInput, StringOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<ByteInput, StringOutput>()
 
             assertThat(mapper.map(ByteInput(input)))
                 .isEqualTo(StringOutput(input.toString()))
@@ -363,12 +313,12 @@ class ByteMappersTest {
 
     @Test
     fun `map Byte to String explicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.api.builtin.*
-                import tech.mappie.testing.builtin.ByteMappersTest.*
+                import tech.mappie.api.builtin.ByteMappersTest.*
 
                 class Mapper : ObjectMappie<ByteInput, StringOutput>() {
                     override fun map(from: ByteInput) = mapping {
@@ -383,11 +333,7 @@ class ByteMappersTest {
 
             val input: Byte = 5
 
-            val mapper = classLoader
-                .loadObjectMappieClass<ByteInput, StringOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<ByteInput, StringOutput>("Mapper")
 
             assertThat(mapper.map(ByteInput(input)))
                 .isEqualTo(StringOutput(input.toString()))

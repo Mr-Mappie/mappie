@@ -2,21 +2,16 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class NonNullablePropertyToNullablePropertyTest {
+class NonNullablePropertyToNullablePropertyTest : MappieTestCase() {
+
     data class Input(val value: String)
     data class Output(val value: String?)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map object with non-nullable property to nullable property should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -29,13 +24,8 @@ class NonNullablePropertyToNullablePropertyTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
-            assertThat(mapper.map(Input("value"))).isEqualTo(Output("value"))
+            assertThat(objectMappie<Input, Output>().map(Input("value")))
+                .isEqualTo(Output("value"))
         }
     }
 }

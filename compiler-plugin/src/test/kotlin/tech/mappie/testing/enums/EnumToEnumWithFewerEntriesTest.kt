@@ -3,23 +3,17 @@ package tech.mappie.testing.enums
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.assertThrows
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadEnumMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 import kotlin.test.Test
 
-class EnumToEnumWithFewerEntriesTest {
+class EnumToEnumWithFewerEntriesTest : MappieTestCase() {
 
     enum class Input { FIRST, SECOND, THIRD }
     enum class Output { FIRST, SECOND }
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map enums with different entries with explicit fromEnumEntry should succeed`() {
-        compile(directory) {
+        compile {
             file(
                 "Test.kt",
                 """
@@ -37,11 +31,7 @@ class EnumToEnumWithFewerEntriesTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadEnumMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = enumMappie<Input, Output>()
 
             assertThat(mapper.map(Input.FIRST)).isEqualTo(Output.FIRST)
             assertThat(mapper.map(Input.SECOND)).isEqualTo(Output.SECOND)
@@ -51,7 +41,7 @@ class EnumToEnumWithFewerEntriesTest {
 
     @Test
     fun `map enums with the different entries explicit thrownByEnumEntry should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.EnumMappie
@@ -68,11 +58,7 @@ class EnumToEnumWithFewerEntriesTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadEnumMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = enumMappie<Input, Output>()
 
             assertThat(mapper.map(Input.FIRST)).isEqualTo(Output.FIRST)
             assertThat(mapper.map(Input.SECOND)).isEqualTo(Output.SECOND)
@@ -82,7 +68,7 @@ class EnumToEnumWithFewerEntriesTest {
 
     @Test
     fun `map enums with the different entries should fail`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.EnumMappie
@@ -99,7 +85,7 @@ class EnumToEnumWithFewerEntriesTest {
 
     @Test
     fun `map enums with the different entries with strict enums enabled should fail`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.EnumMappie
@@ -118,7 +104,7 @@ class EnumToEnumWithFewerEntriesTest {
 
     @Test
     fun `map enums with the different entries with strict enums disabled should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.EnumMappie
@@ -133,11 +119,7 @@ class EnumToEnumWithFewerEntriesTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadEnumMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = enumMappie<Input, Output>()
 
             assertThat(mapper.map(Input.FIRST)).isEqualTo(Output.FIRST)
             assertThat(mapper.map(Input.SECOND)).isEqualTo(Output.SECOND)

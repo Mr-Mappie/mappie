@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    alias(libs.plugins.kotlin.jvm)
+    id("mappie-jvm-convention")
     id("java-test-fixtures")
     id("maven-publish")
 }
@@ -13,11 +13,16 @@ kotlin {
 dependencies {
     compileOnly(libs.kotlin.compiler.embeddable)
 
+    implementation(project(":mappie-api"))
+
     testFixturesImplementation(project(":mappie-api"))
+    testFixturesImplementation(kotlin("test"))
+    testFixturesImplementation(kotlin("reflect"))
     testFixturesImplementation(libs.kotlin.compiler.embeddable)
     testFixturesImplementation(libs.classgraph)
     testFixturesImplementation(libs.okio)
     testFixturesImplementation(libs.assertj.core)
+    testFixturesImplementation(libs.junit.jupiter.api)
 
     testImplementation(project(":mappie-api"))
     testImplementation(kotlin("reflect"))
@@ -50,12 +55,6 @@ publishing {
             url = uri(layout.buildDirectory.dir("staging-deploy"))
         }
     }
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-
-    maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
 }
 
 tasks.withType<KotlinCompile>().configureEach {

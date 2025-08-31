@@ -1,18 +1,12 @@
-package tech.mappie.testing.builtin
+package tech.mappie.api.builtin
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class LongMappersTest {
-
-    @TempDir
-    lateinit var directory: File
+class LongMappersTest : MappieTestCase() {
 
     data class LongInput(val value: Long)
 
@@ -24,11 +18,12 @@ class LongMappersTest {
 
     @Test
     fun `map Long to BigInteger implicit should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file(
+                "Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.builtin.LongMappersTest.*
+                import tech.mappie.api.builtin.LongMappersTest.*
 
                 class Mapper : ObjectMappie<LongInput, BigIntegerOutput>()
                 """
@@ -39,11 +34,7 @@ class LongMappersTest {
 
             val input: Long = 2
 
-            val mapper = classLoader
-                .loadObjectMappieClass<LongInput, BigIntegerOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<LongInput, BigIntegerOutput>()
 
             assertThat(mapper.map(LongInput(input)))
                 .isEqualTo(BigIntegerOutput(input.toBigInteger()))
@@ -52,12 +43,13 @@ class LongMappersTest {
 
     @Test
     fun `map Long to BigInteger explicit should succeed`() {
-        compile(directory) {
-                    file("Test.kt",
-                        """
+        compile {
+            file(
+                "Test.kt",
+                """
                         import tech.mappie.api.ObjectMappie
                         import tech.mappie.api.builtin.*
-                        import tech.mappie.testing.builtin.LongMappersTest.*
+                        import tech.mappie.api.builtin.LongMappersTest.*
 
                         class Mapper : ObjectMappie<LongInput, BigIntegerOutput>() {
                             override fun map(from: LongInput) = mapping {
@@ -65,18 +57,14 @@ class LongMappersTest {
                             }
                         }
                         """
-                    )        
-           } satisfies {
+            )
+        } satisfies {
            isOk()
             hasNoWarningsOrErrors()
 
             val input: Long = 5
 
-            val mapper = classLoader
-                .loadObjectMappieClass<LongInput, BigIntegerOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<LongInput, BigIntegerOutput>()
 
             assertThat(mapper.map(LongInput(input)))
                 .isEqualTo(BigIntegerOutput(input.toBigInteger()))
@@ -85,26 +73,23 @@ class LongMappersTest {
 
     @Test
     fun `map Long to BigDecimal implicit should succeed`() {
-        compile(directory) {
-                    file("Test.kt",
-                        """
+        compile {
+            file(
+                "Test.kt",
+                """
                         import tech.mappie.api.ObjectMappie
-                        import tech.mappie.testing.builtin.LongMappersTest.*
+                        import tech.mappie.api.builtin.LongMappersTest.*
 
                         class Mapper : ObjectMappie<LongInput, BigDecimalOutput>()
                         """
-                    )        
-           } satisfies {
+            )
+        } satisfies {
            isOk()
             hasNoWarningsOrErrors()
 
             val input: Long = 2
 
-            val mapper = classLoader
-                .loadObjectMappieClass<LongInput, BigDecimalOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<LongInput, BigDecimalOutput>()
 
             assertThat(mapper.map(LongInput(input)))
                 .isEqualTo(BigDecimalOutput(input.toBigDecimal()))
@@ -113,12 +98,13 @@ class LongMappersTest {
 
     @Test
     fun `map Long to BigDecimal explicit should succeed`() {
-        compile(directory) {
-                    file("Test.kt",
-                        """
+        compile {
+            file(
+                "Test.kt",
+                """
                         import tech.mappie.api.ObjectMappie
                         import tech.mappie.api.builtin.*
-                        import tech.mappie.testing.builtin.LongMappersTest.*
+                        import tech.mappie.api.builtin.LongMappersTest.*
 
                         class Mapper : ObjectMappie<LongInput, BigDecimalOutput>() {
                             override fun map(from: LongInput) = mapping {
@@ -126,21 +112,73 @@ class LongMappersTest {
                             }
                         }
                         """
-                    )        
-           } satisfies {
+            )
+        } satisfies {
            isOk()
             hasNoWarningsOrErrors()
 
             val input: Long = 5
 
-            val mapper = classLoader
-                .loadObjectMappieClass<LongInput, BigDecimalOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<LongInput, BigDecimalOutput>()
 
             assertThat(mapper.map(LongInput(input)))
                 .isEqualTo(BigDecimalOutput(input.toBigDecimal()))
         }
     }
+
+    @Test
+    fun `map Long to String implicit should succeed`() {
+        compile {
+            file(
+                "Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.api.builtin.LongMappersTest.*
+
+                class Mapper : ObjectMappie<LongInput, StringOutput>()
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoWarningsOrErrors()
+
+            val input: Long = 2
+
+            val mapper = objectMappie<LongInput, StringOutput>()
+
+            assertThat(mapper.map(LongInput(input)))
+                .isEqualTo(StringOutput(input.toString()))
+        }
+    }
+
+    @Test
+    fun `map Long to String explicit should succeed`() {
+        compile {
+            file(
+                "Test.kt",
+                """
+                        import tech.mappie.api.ObjectMappie
+                        import tech.mappie.api.builtin.*
+                        import tech.mappie.api.builtin.LongMappersTest.*
+
+                        class Mapper : ObjectMappie<LongInput, StringOutput>() {
+                            override fun map(from: LongInput) = mapping {
+                                to::value fromProperty from::value via LongToStringMapper()
+                            }
+                        }
+                        """
+            )
+        } satisfies {
+            isOk()
+            hasNoWarningsOrErrors()
+
+            val input: Long = 5
+
+            val mapper = objectMappie<LongInput, StringOutput>()
+
+            assertThat(mapper.map(LongInput(input)))
+                .isEqualTo(StringOutput(input.toString()))
+        }
+    }
+
 }

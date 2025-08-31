@@ -14,6 +14,7 @@ dependencyResolutionManagement {
 
 include(
     ":mappie-api",
+    ":mappie-kotlinx-datetime",
     ":compiler-plugin",
     ":gradle-plugin",
     ":maven-plugin",

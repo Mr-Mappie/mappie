@@ -1,17 +1,11 @@
-package tech.mappie.testing.builtin
+package tech.mappie.api.builtin
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 import java.math.BigDecimal
 
-class BigDecimalMappersTest {
-
-    @TempDir
-    lateinit var directory: File
+class BigDecimalMappersTest : MappieTestCase() {
 
     data class BigDecimalInput(val value: BigDecimal)
 
@@ -19,11 +13,12 @@ class BigDecimalMappersTest {
 
     @Test
     fun `map BigDecimal to String implicit should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file(
+                "Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.builtin.BigDecimalMappersTest.*
+                import tech.mappie.api.builtin.BigDecimalMappersTest.*
 
                 class Mapper : ObjectMappie<BigDecimalInput, StringOutput>()
                 """
@@ -34,11 +29,7 @@ class BigDecimalMappersTest {
 
             val input = BigDecimal.valueOf(10)
 
-            val mapper = classLoader
-                .loadObjectMappieClass<BigDecimalInput, StringOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<BigDecimalInput, StringOutput>()
 
             assertThat(mapper.map(BigDecimalInput(input)))
                 .isEqualTo(StringOutput(input.toString()))
@@ -47,12 +38,13 @@ class BigDecimalMappersTest {
 
     @Test
     fun `map BigDecimal to String explicit should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file(
+                "Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.api.builtin.*
-                import tech.mappie.testing.builtin.BigDecimalMappersTest.*
+                import tech.mappie.api.builtin.BigDecimalMappersTest.*
 
                 class Mapper : ObjectMappie<BigDecimalInput, StringOutput>() {
                     override fun map(from: BigDecimalInput) = mapping {
@@ -67,11 +59,7 @@ class BigDecimalMappersTest {
 
             val input = BigDecimal.valueOf(100)
 
-            val mapper = classLoader
-                .loadObjectMappieClass<BigDecimalInput, StringOutput>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<BigDecimalInput, StringOutput>()
 
             assertThat(mapper.map(BigDecimalInput(input)))
                 .isEqualTo(StringOutput(input.toString()))

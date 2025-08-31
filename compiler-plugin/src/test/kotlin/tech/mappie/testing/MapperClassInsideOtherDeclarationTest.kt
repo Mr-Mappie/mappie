@@ -2,22 +2,15 @@ package tech.mappie.testing
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
 
-import java.io.File
-
-class MapperClassInsideOtherDeclarationTest {
+class MapperClassInsideOtherDeclarationTest : MappieTestCase() {
 
     data class Input(val text: String)
     data class Output(val text: String)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `mapper can be declared inside an arbitrary class`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -32,13 +25,7 @@ class MapperClassInsideOtherDeclarationTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Thing\$Mapper")
-                .constructors
-                .first()
-                .call()
-
-            assertThat(mapper.map(Input("test")))
+            assertThat(objectMappie<Input, Output>($$"Thing$Mapper").map(Input("test")))
                 .isEqualTo(Output("test"))
         }
     }

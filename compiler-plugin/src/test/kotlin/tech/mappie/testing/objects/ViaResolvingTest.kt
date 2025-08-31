@@ -2,24 +2,18 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class ViaResolvingTest {
+class ViaResolvingTest : MappieTestCase() {
     data class Input(val text: InnerInput, val int: Int)
     data class InnerInput(val value: String)
     data class Output(val text: InnerOutput, val int: Int)
     data class InnerOutput(val value: String)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map without implicit without via should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.ViaResolvingTest.*
@@ -33,11 +27,7 @@ class ViaResolvingTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(InnerInput("inner"), 20)))
                 .isEqualTo(Output(InnerOutput("inner"), 20))
@@ -46,8 +36,8 @@ class ViaResolvingTest {
 
     @Test
     fun `map without explicit without via and two inner mappers should fail`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.ViaResolvingTest.*
@@ -77,8 +67,8 @@ class ViaResolvingTest {
 
     @Test
     fun `map without implicit without via and two inner mappers should fail`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.ViaResolvingTest.*

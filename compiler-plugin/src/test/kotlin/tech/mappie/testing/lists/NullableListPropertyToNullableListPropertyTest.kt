@@ -2,24 +2,18 @@ package tech.mappie.testing.lists
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class NullableListPropertyToNullableListPropertyTest {
+class NullableListPropertyToNullableListPropertyTest : MappieTestCase() {
     data class Input(val text: List<LocalDateTime>?)
 
     data class Output(val text: List<LocalDate>?)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map nested nullable list to nullable list explicit with transform should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -32,11 +26,7 @@ class NullableListPropertyToNullableListPropertyTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(listOf(LocalDateTime.MIN, LocalDateTime.MAX))))
                 .isEqualTo(Output(listOf(LocalDate.MIN, LocalDate.MAX)))

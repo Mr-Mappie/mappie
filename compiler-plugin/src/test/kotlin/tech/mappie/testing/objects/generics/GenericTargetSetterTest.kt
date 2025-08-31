@@ -2,12 +2,9 @@ package tech.mappie.testing.objects.generics
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class GenericTargetSetterTest {
+class GenericTargetSetterTest : MappieTestCase() {
 
     data class Input(
         val a: String,
@@ -18,12 +15,9 @@ class GenericTargetSetterTest {
         var a: A? = null
     }
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map to generic target setter should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -36,11 +30,7 @@ class GenericTargetSetterTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output<String, Int>>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output<String, Int>>()
 
             assertThat(mapper.map(Input("a", 1)))
                 .isEqualTo(Output<String, Int>(1).apply { a = "a" })

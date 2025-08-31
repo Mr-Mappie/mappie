@@ -2,12 +2,9 @@ package tech.mappie.testing.objects.generics
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class GenericSourceAndTargetTest {
+class GenericSourceAndTargetTest : MappieTestCase() {
 
     data class Input<A, B>(
         val a: A,
@@ -19,12 +16,9 @@ class GenericSourceAndTargetTest {
         val b: B,
     )
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map generic source target properties implicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -37,11 +31,7 @@ class GenericSourceAndTargetTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input<String, Int>, Output<String, Int>>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input<String, Int>, Output<String, Int>>()
 
             assertThat(mapper.map(Input("a", 1)))
                 .isEqualTo(Output("a", 1))
@@ -50,7 +40,7 @@ class GenericSourceAndTargetTest {
 
     @Test
     fun `map two generic target properties explicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -68,11 +58,7 @@ class GenericSourceAndTargetTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input<Int, String>, Output<Int, String>>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input<Int, String>, Output<Int, String>>()
 
             assertThat(mapper.map(Input(1, "b")))
                 .isEqualTo(Output(1, "constant"))
@@ -81,7 +67,7 @@ class GenericSourceAndTargetTest {
 
     @Test
     fun `map two generic target properties explicit with transform should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -99,11 +85,7 @@ class GenericSourceAndTargetTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input<Int, Int>, Output<String, String>>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input<Int, Int>, Output<String, String>>()
 
             assertThat(mapper.map(Input(1, 2)))
                 .isEqualTo(Output("1", "10"))
