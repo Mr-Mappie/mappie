@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("mappie-jvm-convention")
-    id("java-test-fixtures")
+    alias(libs.plugins.com.github.gmazzo.buildconfig)
     id("maven-publish")
 }
 
@@ -15,16 +15,8 @@ dependencies {
 
     implementation(project(":mappie-api"))
 
-    testFixturesImplementation(project(":mappie-api"))
-    testFixturesImplementation(kotlin("test"))
-    testFixturesImplementation(kotlin("reflect"))
-    testFixturesImplementation(libs.kotlin.compiler.embeddable)
-    testFixturesImplementation(libs.classgraph)
-    testFixturesImplementation(libs.okio)
-    testFixturesImplementation(libs.assertj.core)
-    testFixturesImplementation(libs.junit.jupiter.api)
-
     testImplementation(project(":mappie-api"))
+    testImplementation(project(":testutil"))
     testImplementation(kotlin("reflect"))
     testImplementation(kotlin("test"))
     testImplementation(libs.assertj.core)
@@ -36,16 +28,14 @@ java {
     withJavadocJar()
 }
 
+buildConfig {
+    buildConfigField("VERSION", version.toString())
+}
+
 publishing {
     publications {
         create<MavenPublication>("kotlin") {
             artifactId = "mappie-compiler-plugin"
-
-            from((components["java"] as AdhocComponentWithVariants).apply {
-                withVariantsFromConfiguration(configurations["testFixturesApiElements"]) { skip() }
-                withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }
-            })
-
             mappiePom(name = "tech.mappie:compiler-plugin")
         }
     }
@@ -59,8 +49,4 @@ publishing {
 
 tasks.withType<KotlinCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI")
-}
-
-tasks.compileTestFixturesKotlin.configure {
-    compilerOptions.freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
 }

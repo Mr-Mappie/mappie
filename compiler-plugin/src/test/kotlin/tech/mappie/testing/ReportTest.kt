@@ -71,7 +71,7 @@ class ReportTest : MappieTestCase() {
             isOk()
 
             hasOutputLines(
-                """
+                $$"""
                 |public class Mapper public constructor(internal var a: String, private val b: Int = 1): ObjectMappie<Input, Output>() {
                 |    public val field: Int = 10
                 |    public enum class MyEnum public constructor(): Enum<MyEnum>() {
@@ -91,7 +91,7 @@ class ReportTest : MappieTestCase() {
                 |        }
                 |    public val lazyVal: Lazy<String> = lazy({"1"})
                 |        get {
-                |            return lazyVal${'$'}delegate.getValue(this, Mapper::lazyVal)
+                |            return lazyVal$delegate.getValue(this, Mapper::lazyVal)
                 |        }
                 |    private constructor(b: Int) {
                 |        Mapper("10", b)

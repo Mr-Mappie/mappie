@@ -38,7 +38,6 @@ public object JavaZoneOffsetToKotlinTimeZoneMapper : ObjectMappie<ZoneOffset, Ti
         from.toKotlinTimeZone()
 }
 
-//
 public object JavaZoneOffsetToKotlinFixedOffsetTimeZoneMapper : ObjectMappie<ZoneOffset, FixedOffsetTimeZone>() {
     override fun map(from: ZoneOffset): FixedOffsetTimeZone =
         from.toKotlinFixedOffsetTimeZone()

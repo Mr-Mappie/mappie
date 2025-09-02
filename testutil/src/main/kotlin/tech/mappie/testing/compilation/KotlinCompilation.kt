@@ -33,7 +33,7 @@ typealias PluginId = String
 typealias OptionName = String
 typealias OptionValue = String
 
-internal fun compile(directory: File, verbose: Boolean = false, dsl: CompilationDsl.() -> Unit): CompilationAssertionDsl =
+fun compile(directory: File, verbose: Boolean = false, dsl: CompilationDsl.() -> Unit): CompilationAssertionDsl =
 	KotlinCompilation(directory).let {
 		it.verbose = verbose
 		dsl.invoke(CompilationDsl(it))

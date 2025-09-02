@@ -5,6 +5,8 @@ changelog:
   - date: "tbd"
     title: "v2.2.10-1.5.0"
     items:
+      - "Added support for kotlinx-datetime to JVM mappers, which can be imported via a separate dependency."
+      - "Improved selection of implicit mapper when multiple of different subtypes are available."
       - "[#246](https://github.com/Mr-Mappie/mappie/issues/246) Fixed type checking of platform types."
   - date: "2025-08-19"
     title: "v2.2.10-1.4.2"

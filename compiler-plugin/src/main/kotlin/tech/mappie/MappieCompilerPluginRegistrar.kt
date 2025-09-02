@@ -14,6 +14,7 @@ import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_REPORT_DIR
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_REPORT_ENABLED
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_USE_DEFAULT_ARGUMENTS
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_WARNINGS_AS_ERRORS
+import tech.mappie.compiler_plugin.BuildConfig
 import tech.mappie.config.MappieConfiguration
 import tech.mappie.fir.MappieFirRegistrar
 import tech.mappie.ir.MappieIrRegistrar
@@ -42,6 +43,6 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
             ?.modules
             ?.firstOrNull { it.getModuleName() == "main" }
             ?.getClasspathRoots()
-            ?.any { it.matches(Regex(".*compiler-plugin-.*-test-fixtures.*\\.jar")) }
+            ?.any { it.matches(Regex(".*testutil-${BuildConfig.VERSION}.*\\.jar")) }
             ?: false
 }

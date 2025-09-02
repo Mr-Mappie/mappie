@@ -39,8 +39,8 @@ jreleaser {
                     if (System.getenv("RELEASE_API") == "true") {
                         add("mappie-api")
                     }
-                    if (System.getenv("RELEASE_KOTLINX_DATETIME") == "true") {
-                        add("mappie-kotlinx-datetime")
+                    if (System.getenv("RELEASE_MODULE_KOTLINX_DATETIME") == "true") {
+                        add("module:kotlinx-datetime")
                     }
                     if (System.getenv("RELEASE_MAVEN_PLUGIN") == "true") {
                         add("maven-plugin")
