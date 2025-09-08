@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import tech.mappie.*
-import tech.mappie.api.PredefinedMapperProvider
+import tech.mappie.api.PredefinedMappieProvider
 import tech.mappie.ir.util.BaseVisitor
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.resolving.MappieDefinition
@@ -24,7 +24,7 @@ class DefinitionsCollector(val context: MappieContext) {
 }
 
 class BuiltinMappieDefinitionsCollector(val context: MappieContext) {
-    fun collect() = PredefinedMapperProvider.all().flatMap { provider ->
+    fun collect() = PredefinedMappieProvider.all().flatMap { provider ->
         buildList {
             addAll(provider.common)
             if (context.pluginContext.platform in JvmPlatforms.allJvmPlatforms) {

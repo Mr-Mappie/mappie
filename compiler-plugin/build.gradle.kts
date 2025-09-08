@@ -15,7 +15,6 @@ dependencies {
 
     implementation(project(":mappie-api"))
 
-    testImplementation(project(":mappie-api"))
     testImplementation(project(":testutil"))
     testImplementation(kotlin("reflect"))
     testImplementation(kotlin("test"))
@@ -35,8 +34,9 @@ buildConfig {
 publishing {
     publications {
         create<MavenPublication>("kotlin") {
+            from(components["java"])
             artifactId = "mappie-compiler-plugin"
-            mappiePom(name = "tech.mappie:compiler-plugin")
+            mappiePom(name = "tech.mappie:mappie-compiler-plugin")
         }
     }
 

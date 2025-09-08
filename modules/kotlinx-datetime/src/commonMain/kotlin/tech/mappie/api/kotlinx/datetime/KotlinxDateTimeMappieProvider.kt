@@ -1,8 +1,8 @@
 package tech.mappie.api.kotlinx.datetime
 
-import tech.mappie.api.PredefinedMapperProvider
+import tech.mappie.api.PredefinedMappieProvider
 
-internal class KotlinxDateTimeMapperProvider : PredefinedMapperProvider() {
+internal class KotlinxDateTimeMappieProvider : PredefinedMappieProvider() {
     override val common = emptyList<String>()
 
     override val jvm = listOf(

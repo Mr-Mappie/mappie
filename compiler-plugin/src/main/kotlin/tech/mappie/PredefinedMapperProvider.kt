@@ -1,9 +1,9 @@
 package tech.mappie
 
-import tech.mappie.api.PredefinedMapperProvider
+import tech.mappie.api.PredefinedMappieProvider
 import java.util.ServiceLoader
 
-fun PredefinedMapperProvider.Companion.all(): Sequence<PredefinedMapperProvider> {
-    val loader = ServiceLoader.load(PredefinedMapperProvider::class.java)
+fun PredefinedMappieProvider.Companion.all(): Sequence<PredefinedMappieProvider> {
+    val loader = ServiceLoader.load(PredefinedMappieProvider::class.java)
     return loader.iterator().asSequence()
 }

@@ -1,8 +1,8 @@
 package tech.mappie.api.builtin
 
-import tech.mappie.api.PredefinedMapperProvider
+import tech.mappie.api.PredefinedMappieProvider
 
-internal class BuiltInMapperProvider : PredefinedMapperProvider() {
+internal class BuiltInMappieProvider : PredefinedMappieProvider() {
     override val common = listOf(
         "tech/mappie/api/builtin/ByteToShortMapper",
         "tech/mappie/api/builtin/ByteToIntMapper",

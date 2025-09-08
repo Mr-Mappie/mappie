@@ -13,19 +13,22 @@ kotlin {
     }
 
     sourceSets {
-        jvmMain.dependencies {
+        commonMain.dependencies {
             implementation(project(":mappie-api"))
+        }
+
+        jvmMain.dependencies {
             implementation(libs.kotlinx.datetime)
         }
 
         jvmTest.dependencies {
             implementation(kotlin("test"))
+            implementation(project(":mappie-api"))
             implementation(project(":testutil"))
             implementation(libs.assertj.core)
         }
     }
 }
-
 
 publishing {
     repositories {
@@ -36,6 +39,7 @@ publishing {
 
     publications.configureEach {
         if (this is MavenPublication) {
+            artifactId = artifactId.replace("kotlinx-datetime", "module-kotlinx-datetime")
             artifact(tasks["javadocJar"])
             // jreleaser workaround
             if (name != "jvm" && name != "kotlinMultiplatform") {

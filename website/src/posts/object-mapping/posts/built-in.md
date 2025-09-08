@@ -56,7 +56,7 @@ The following UUID mappers are built-in
 | *UUID* | -      | X      |
 
 ## kotlinx-datetime Mappers
-The following kotlinx-datetime mappers can be included via TODO
+The following kotlinx-datetime mappers can be included via the dependency `tech.mappie.api:module-kotlinx-datetime`.
 
 The following Period mappers are available
 
