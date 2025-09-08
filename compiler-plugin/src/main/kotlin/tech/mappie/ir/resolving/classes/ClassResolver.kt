@@ -17,7 +17,7 @@ class ClassResolver(
     override fun resolve(function: IrFunction?): List<ClassMappingRequest> =
         target.getClass()!!.constructors.map { constructor ->
             ClassMappingRequestBuilder(constructor, context)
-                .targets(MappieTargetsCollector(function, constructor).collect())
+                .targets(MappieTargetsCollector(target, function, constructor).collect())
                 .sources(sources)
                 .also { function?.body?.accept(ExplicitClassMappingCollector(context), it) }
                 .construct()
