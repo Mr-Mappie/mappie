@@ -2,12 +2,9 @@ package tech.mappie.testing.objects.generics
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class GenericTargetPropertyTest {
+class GenericTargetPropertyTest : MappieTestCase() {
 
     data class FooDto(
         val id: String,
@@ -26,12 +23,9 @@ class GenericTargetPropertyTest {
         val name: String
     )
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map property fromValue should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -55,11 +49,7 @@ class GenericTargetPropertyTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<FooDto, Wrapper<Foo>>("WrapperMapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<FooDto, Wrapper<Foo>>("WrapperMapper")
 
             assertThat(mapper.map(FooDto("id", "name", "description")))
                 .isEqualTo(Wrapper(Foo("id", "name", "description"), "name"))

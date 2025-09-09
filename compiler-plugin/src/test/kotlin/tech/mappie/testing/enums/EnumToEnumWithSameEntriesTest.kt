@@ -1,23 +1,17 @@
 package tech.mappie.testing.enums
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadEnumMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 import kotlin.test.Test
 
-class EnumToEnumWithSameEntriesTest {
+class EnumToEnumWithSameEntriesTest : MappieTestCase() {
 
     enum class Input { SOME, OTHER }
     enum class Output { SOME, OTHER }
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map identical enums should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.EnumMappie
@@ -30,11 +24,7 @@ class EnumToEnumWithSameEntriesTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadEnumMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = enumMappie<Input, Output>()
 
             Input.entries.forEach { entry ->
                 assertThat(mapper.map(entry))
@@ -45,7 +35,7 @@ class EnumToEnumWithSameEntriesTest {
 
     @Test
     fun `map identical enums with an explicit mapping should warn`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.EnumMappie
@@ -62,11 +52,7 @@ class EnumToEnumWithSameEntriesTest {
             isOk()
             hasWarningMessage(6, "Unnecessary explicit mapping of source Input.SOME")
 
-            val mapper = classLoader
-                .loadEnumMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = enumMappie<Input, Output>()
 
             Input.entries.forEach { entry ->
                 assertThat(mapper.map(entry)).isEqualTo(Output.valueOf(entry.name))
@@ -76,7 +62,7 @@ class EnumToEnumWithSameEntriesTest {
 
     @Test
     fun `map identical enums with an explicit mapping should not warn when suppressed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.EnumMappie

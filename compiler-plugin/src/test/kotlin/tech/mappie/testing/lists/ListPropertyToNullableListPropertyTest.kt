@@ -2,24 +2,18 @@ package tech.mappie.testing.lists
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class ListPropertyToNullableListPropertyTest {
+class ListPropertyToNullableListPropertyTest : MappieTestCase() {
     data class Input(val text: List<InnerInput>, val int: Int)
     data class InnerInput(val value: String)
 
     data class Output(val text: List<InnerOutput>?, val int: Int)
     data class InnerOutput(val value: String)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map nested non-nullable list to nullable list explicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -38,11 +32,7 @@ class ListPropertyToNullableListPropertyTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(listOf(InnerInput("first"), InnerInput("second")), 20)))
                 .isEqualTo(Output(listOf(InnerOutput("first"), InnerOutput("second")), 20))
@@ -51,7 +41,7 @@ class ListPropertyToNullableListPropertyTest {
 
     @Test
     fun `map nested non-nullable list to nullable list explicit without via should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -70,11 +60,7 @@ class ListPropertyToNullableListPropertyTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(listOf(InnerInput("first"), InnerInput("second")), 20)))
                 .isEqualTo(Output(listOf(InnerOutput("first"), InnerOutput("second")), 20))
@@ -83,7 +69,7 @@ class ListPropertyToNullableListPropertyTest {
 
     @Test
     fun `map nested non-nullable list to nullable list implicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -100,11 +86,7 @@ class ListPropertyToNullableListPropertyTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(listOf(InnerInput("first"), InnerInput("second")), 20)))
                 .isEqualTo(Output(listOf(InnerOutput("first"), InnerOutput("second")), 20))

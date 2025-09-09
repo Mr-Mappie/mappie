@@ -6,9 +6,12 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
 import tech.mappie.BuildConfig
+import tech.mappie.testing.gradle.SettingsGradleBuilder
 import java.io.File
 
 enum class KotlinPlatform { JVM, MULTIPLATFORM }
+
+enum class MappieModules { MODULE_KOTLINX_DATETIME }
 
 abstract class TestBase {
 
@@ -19,15 +22,22 @@ abstract class TestBase {
 
     protected open val platform: KotlinPlatform = KotlinPlatform.JVM
 
+    protected open val modules: Set<MappieModules> = emptySet()
+
     protected open val gradleVersion: String? = null
 
     protected open val kotlinVersion = "2.2.10"
 
+    private lateinit var settings: SettingsGradleBuilder
+
     @BeforeEach
     fun setup() {
+        settings = SettingsGradleBuilder()
+
         runner = GradleRunner.create().apply {
             forwardOutput()
             withProjectDir(directory)
+            withDebug(true)
             gradleVersion?.let { withGradleVersion(it) }
         }
 
@@ -40,20 +50,7 @@ abstract class TestBase {
             """.trimIndent()
         )
 
-        kotlin("settings.gradle.kts",
-            """
-            pluginManagement {
-                repositories {
-                    mavenLocal {
-                        content {
-                            includeGroupByRegex("tech\\.mappie.*")
-                        }
-                    }
-                    gradlePluginPortal()
-                }
-             }
-            """.trimIndent()
-        )
+        kotlin("settings.gradle.kts", settings.build())
 
         when (platform) {
             KotlinPlatform.JVM -> jvm()
@@ -91,16 +88,18 @@ abstract class TestBase {
                 id("tech.mappie.plugin") version "$VERSION"
             }
 
-            repositories {
-                mavenLocal {
-                    content {
-                        includeGroupByRegex("tech\\.mappie*")
+            dependencies {
+                ${
+                    if (MappieModules.MODULE_KOTLINX_DATETIME in modules) {
+                        """
+                        implementation("tech.mappie:module-kotlinx-datetime:$VERSION")
+                        implementation("org.jetbrains.kotlinx:kotlinx-datetime:+")
+                        """.trimIndent()
+                    } else {
+                        ""
                     }
                 }
-                mavenCentral()
-            }
 
-            dependencies {
                 testImplementation(kotlin("test"))
             }
 
@@ -130,15 +129,6 @@ abstract class TestBase {
                 id("tech.mappie.plugin") version "$VERSION"
             }
 
-            repositories {
-                mavenLocal {
-                    content {
-                        includeGroupByRegex("tech\\.mappie*")
-                    }
-                }
-                mavenCentral()
-            }
-
             kotlin {
                 applyDefaultHierarchyTemplate()
             
@@ -149,10 +139,21 @@ abstract class TestBase {
                     iosX64()
                 }
                 
-                sourceSets {
+                sourceSets {    
                     commonTest.dependencies {
                         implementation(kotlin("test"))
                     }
+                    ${
+                    if (MappieModules.MODULE_KOTLINX_DATETIME in modules) {
+                        """
+                        jvmMain.dependencies { 
+                            implementation("tech.mappie:module-kotlinx-datetime:$VERSION")
+                            implementation("org.jetbrains.kotlinx:kotlinx-datetime:+")
+                        }
+                        """.trimIndent()
+                    } else {
+                        ""
+                    }}   
                 }
             }
             """.trimIndent()

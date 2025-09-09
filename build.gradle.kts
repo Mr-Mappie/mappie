@@ -1,15 +1,9 @@
 import org.jreleaser.model.Signing
 
 plugins {
-    alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.kotlin.multiplatform) apply false
+    id("mappie-convention")
+    java
     alias(libs.plugins.jreleaser)
-}
-
-allprojects {
-    group = "tech.mappie"
-    description = "Kotlin compiler plugin for generating object mappers"
-    version = properties["version"] as String
 }
 
 tasks.jreleaserFullRelease.configure {
@@ -44,6 +38,9 @@ jreleaser {
                 buildList {
                     if (System.getenv("RELEASE_API") == "true") {
                         add("mappie-api")
+                    }
+                    if (System.getenv("RELEASE_MODULE_KOTLINX_DATETIME") == "true") {
+                        add("module:kotlinx-datetime")
                     }
                     if (System.getenv("RELEASE_MAVEN_PLUGIN") == "true") {
                         add("maven-plugin")

@@ -2,24 +2,17 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
-import java.time.LocalDate
+import tech.mappie.testing.MappieTestCase
 import java.time.LocalDateTime
 
-class FromExpressionFlexibleNullableTest {
+class FromExpressionFlexibleNullableTest : MappieTestCase() {
 
     data class Input(val value: LocalDateTime?)
     data class Output(val value: LocalDateTime)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map property fromExpression FlexibleNullable should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import java.time.LocalDateTime
@@ -40,13 +33,10 @@ class FromExpressionFlexibleNullableTest {
                 "Target Output::value of type Output is unsafe to be assigned from expression of platform type LocalDateTime?"
             )
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>("Mapper")
 
-            assertThat(mapper.map(Input(null))).isEqualTo(Output(LocalDateTime.MIN))
+            assertThat(mapper.map(Input(null)))
+                .isEqualTo(Output(LocalDateTime.MIN))
         }
     }
 }

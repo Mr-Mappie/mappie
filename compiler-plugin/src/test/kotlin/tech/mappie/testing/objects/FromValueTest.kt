@@ -2,21 +2,15 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class FromValueTest {
+class FromValueTest : MappieTestCase() {
 
     data class Output(val value: String?)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map property fromValue should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -33,11 +27,7 @@ class FromValueTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Unit, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Unit, Output>()
 
             assertThat(mapper.map(Unit)).isEqualTo(Output(Unit::class.simpleName!!))
         }
@@ -45,7 +35,7 @@ class FromValueTest {
 
     @Test
     fun `map property fromValue null should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -62,19 +52,16 @@ class FromValueTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Unit, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Unit, Output>()
 
-            assertThat(mapper.map(Unit)).isEqualTo(Output(null))
+            assertThat(mapper.map(Unit))
+                .isEqualTo(Output(null))
         }
     }
 
     @Test
     fun `map property fromValue using extension receiver on mapping dsl should fail`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -99,7 +86,7 @@ class FromValueTest {
 
     @Test
     fun `map property fromValue using dispatch receiver on mapping dsl should fail`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie

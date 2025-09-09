@@ -2,22 +2,17 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
+import tech.mappie.testing.MappieTestCase
 import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
 
-class DefaultValueTest {
+class DefaultValueTest : MappieTestCase() {
 
     data class Input(val name: String)
     data class Output(val name: String, val age: Int = 10)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map two data classes with a default argument not set should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -30,19 +25,16 @@ class DefaultValueTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
-            assertThat(mapper.map(Input("name"))).isEqualTo(Output("name", 10))
+            assertThat(mapper.map(Input("name")))
+                .isEqualTo(Output("name", 10))
         }
     }
 
     @Test
     fun `map two data classes with a default argument not set and option enabled should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -63,13 +55,14 @@ class DefaultValueTest {
                 .first()
                 .call()
 
-            assertThat(mapper.map(Input("name"))).isEqualTo(Output("name", 10))
+            assertThat(mapper.map(Input("name")))
+                .isEqualTo(Output("name", 10))
         }
     }
 
     @Test
     fun `map two data classes with a default argument not set and option disabled should fail`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -88,7 +81,7 @@ class DefaultValueTest {
 
     @Test
     fun `map two data classes with a default argument set should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -105,13 +98,10 @@ class DefaultValueTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
-            assertThat(mapper.map(Input("name"))).isEqualTo(Output("name", 20))
+            assertThat(mapper.map(Input("name")))
+                .isEqualTo(Output("name", 20))
         }
     }
 }

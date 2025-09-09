@@ -1,22 +1,16 @@
 package tech.mappie.testing.enums
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-@Suppress("unused")
-class EnumMapperWrongConfigTest {
+class EnumMapperWrongConfigTest : MappieTestCase() {
 
     enum class Input { A, B }
     enum class Output { A, B }
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `declaring an EnumMappie with @UseDefaultArguments should warn`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.EnumMappie
@@ -35,7 +29,7 @@ class EnumMapperWrongConfigTest {
 
     @Test
     fun `declaring an EnumMappie with @UseDefaultArguments should not warn when suppressed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.EnumMappie
@@ -55,7 +49,7 @@ class EnumMapperWrongConfigTest {
 
     @Test
     fun `declaring an EnumMappie with @UseStrictVisibility should warn`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.EnumMappie
@@ -74,7 +68,7 @@ class EnumMapperWrongConfigTest {
 
     @Test
     fun `declaring an EnumMappie with @UseStrictVisibility should not warn when suppressed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.EnumMappie

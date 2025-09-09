@@ -2,23 +2,17 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class GeneratedRecursiveClassTest {
+class GeneratedRecursiveClassTest : MappieTestCase() {
     data class Input(val value: LinkedListInput)
     data class LinkedListInput(val value: String, val next: LinkedListInput?)
     data class Output(val value: LinkedListOutput)
     data class LinkedListOutput(val value: String, val next: LinkedListOutput?)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map object with nested recursive class without declaring mapping should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -31,11 +25,7 @@ class GeneratedRecursiveClassTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(LinkedListInput("a", LinkedListInput("b", null)))))
                 .isEqualTo(Output(LinkedListOutput("a", LinkedListOutput("b", null))))

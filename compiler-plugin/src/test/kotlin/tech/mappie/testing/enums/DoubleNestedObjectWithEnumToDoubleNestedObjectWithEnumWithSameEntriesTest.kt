@@ -2,12 +2,9 @@ package tech.mappie.testing.enums
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class DoubleNestedObjectWithEnumToDoubleNestedObjectWithEnumWithSameEntriesTest {
+class DoubleNestedObjectWithEnumToDoubleNestedObjectWithEnumWithSameEntriesTest : MappieTestCase() {
 
     data class Input(val nested: NestedInput)
     data class NestedInput(val nested: NestedNestedEnumInput)
@@ -17,12 +14,9 @@ class DoubleNestedObjectWithEnumToDoubleNestedObjectWithEnumWithSameEntriesTest 
     data class NestedOutput(val nested: NestedNestedEnumOutput)
     @Suppress("unused") enum class NestedNestedEnumOutput { A, B, C }
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map object with both mappers generated should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -35,11 +29,7 @@ class DoubleNestedObjectWithEnumToDoubleNestedObjectWithEnumWithSameEntriesTest 
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(NestedInput(NestedNestedEnumInput.A))))
                 .isEqualTo(Output(NestedOutput(NestedNestedEnumOutput.A)))
@@ -48,7 +38,7 @@ class DoubleNestedObjectWithEnumToDoubleNestedObjectWithEnumWithSameEntriesTest 
 
     @Test
     fun `map object with explicit inner mapper and generated inner-most mapper should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -63,11 +53,7 @@ class DoubleNestedObjectWithEnumToDoubleNestedObjectWithEnumWithSameEntriesTest 
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(NestedInput(NestedNestedEnumInput.A))))
                 .isEqualTo(Output(NestedOutput(NestedNestedEnumOutput.A)))

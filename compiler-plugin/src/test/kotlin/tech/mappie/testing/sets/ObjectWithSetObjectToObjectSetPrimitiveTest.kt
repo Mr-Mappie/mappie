@@ -2,23 +2,17 @@ package tech.mappie.testing.sets
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class ObjectWithSetObjectToObjectSetPrimitiveTest {
+class ObjectWithSetObjectToObjectSetPrimitiveTest : MappieTestCase() {
     data class Input(val text: Set<InnerInput>)
     data class InnerInput(val value: String)
 
     data class Output(val text: Set<String>)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map set without declaring via succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -39,12 +33,7 @@ class ObjectWithSetObjectToObjectSetPrimitiveTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
+            val mapper = objectMappie<Input, Output>()
             assertThat(mapper.map(Input(setOf(InnerInput("A"), InnerInput("B")))))
                 .isEqualTo(Output(setOf("A", "B")))
         }
@@ -52,7 +41,7 @@ class ObjectWithSetObjectToObjectSetPrimitiveTest {
 
     @Test
     fun `map via forSet should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -73,11 +62,7 @@ class ObjectWithSetObjectToObjectSetPrimitiveTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(setOf(InnerInput("A"), InnerInput("B")))))
                 .isEqualTo(Output(setOf("A", "B")))

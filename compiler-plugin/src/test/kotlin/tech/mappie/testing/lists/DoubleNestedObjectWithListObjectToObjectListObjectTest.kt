@@ -2,12 +2,9 @@ package tech.mappie.testing.lists
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class DoubleNestedObjectWithListObjectToObjectListObjectTest {
+class DoubleNestedObjectWithListObjectToObjectListObjectTest : MappieTestCase() {
     data class Input(val a: InnerInput)
     data class InnerInput(val value: List<InnerInnerInput>)
     data class InnerInnerInput(val value: String)
@@ -16,12 +13,9 @@ class DoubleNestedObjectWithListObjectToObjectListObjectTest {
     data class InnerOutput(val value: List<InnerInnerOutput>)
     data class InnerInnerOutput(val value: String)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map object with nested list with generated mapping should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -34,11 +28,7 @@ class DoubleNestedObjectWithListObjectToObjectListObjectTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(InnerInput(listOf(InnerInnerInput("first"), InnerInnerInput("second"))))))
                 .isEqualTo(Output(InnerOutput(listOf(InnerInnerOutput("first"), InnerInnerOutput("second")))))
@@ -47,7 +37,7 @@ class DoubleNestedObjectWithListObjectToObjectListObjectTest {
 
     @Test
     fun `map object with nested list mapping should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -64,11 +54,7 @@ class DoubleNestedObjectWithListObjectToObjectListObjectTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(InnerInput(listOf(InnerInnerInput("first"), InnerInnerInput("second"))))))
                 .isEqualTo(Output(InnerOutput(listOf(InnerInnerOutput("first"), InnerInnerOutput("second")))))
