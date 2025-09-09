@@ -1,6 +1,7 @@
 package tech.mappie.ir.resolving.classes
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
@@ -18,15 +19,23 @@ import tech.mappie.util.*
 class ExplicitClassMappingCollector(private val context: ResolverContext)
     : BaseVisitor<ClassMappingRequestBuilder, ClassMappingRequestBuilder>() {
     override fun visitBlockBody(body: IrBlockBody, data: ClassMappingRequestBuilder) =
-        body.statements.single().accept(data)
+        body.statements.fold(data) { data, it -> it.accept(data) }
 
     override fun visitReturn(expression: IrReturn, data: ClassMappingRequestBuilder) =
         expression.value.accept(data)
 
+    override fun visitVariable(declaration: IrVariable, data: ClassMappingRequestBuilder): ClassMappingRequestBuilder {
+        return declaration.initializer?.accept(data) ?: data
+    }
+
+    override fun visitGetValue(expression: IrGetValue, data: ClassMappingRequestBuilder): ClassMappingRequestBuilder {
+        return data
+    }
+
     override fun visitCall(expression: IrCall, data: ClassMappingRequestBuilder) =
         when (expression.symbol.owner.name) {
-            IDENTIFIER_MAPPING -> expression.arguments[1]!!.accept(data)
-            else -> data
+            IDENTIFIER_MAPPING -> expression.arguments.getOrNull(1)?.accept(data) ?: data
+            else -> expression.arguments.fold(data) { data, it -> it?.accept(data) ?: data }
         }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: ClassMappingRequestBuilder) =
