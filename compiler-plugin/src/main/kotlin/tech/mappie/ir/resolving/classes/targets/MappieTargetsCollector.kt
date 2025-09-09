@@ -5,11 +5,14 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.constructedClass
 import tech.mappie.ir.util.substituteTypeVariable
 
-class MappieTargetsCollector(function: IrFunction?, constructor: IrConstructor) {
-
-    private val type = constructor.returnType
+class MappieTargetsCollector(
+    private val target: IrType,
+    private val function: IrFunction?,
+    private val constructor: IrConstructor
+) {
 
     private val parameters: List<ClassMappingTarget> = run {
         val parameters = constructor.constructedClass.typeParameters
@@ -20,13 +23,9 @@ class MappieTargetsCollector(function: IrFunction?, constructor: IrConstructor) 
     }
 
     private val setters: Sequence<ClassMappingTarget> = run {
-        type.classOrFail.owner.properties.mapNotNull { property ->
+        target.classOrFail.owner.properties.mapNotNull { property ->
             property.setter?.let { setter ->
-                if (function != null) {
-                    property to setter.parameters.first { it.kind == IrParameterKind.Regular }.type.substituteTypeVariable(constructor.constructedClass, (function.returnType as IrSimpleType).arguments)
-                } else {
-                    property to type
-                }
+                property to setter.parameters.first { it.kind == IrParameterKind.Regular }.type.substituted()
             }
         }
             .filter { property -> property.first.name !in parameters.map { it.name } }
@@ -34,15 +33,21 @@ class MappieTargetsCollector(function: IrFunction?, constructor: IrConstructor) 
     }
 
     private val setMethods: Sequence<ClassMappingTarget> =
-        type.classOrFail.functions
+        target.classOrFail.functions
             .filter { it.owner.name.asString().startsWith("set") && it.owner.parameters.count { it.kind == IrParameterKind.Regular } == 1 }
             .map {
                 FunctionCallTarget(
                     it,
-                    it.owner.parameters.first { it.kind == IrParameterKind.Regular }.type.substituteTypeVariable(constructor.constructedClass, (function?.returnType as? IrSimpleType)?.arguments!!)
+                    it.owner.parameters.first { it.kind == IrParameterKind.Regular }.type.substituted()
                 )
             }
 
+    private fun IrType.substituted(): IrType =
+        if (this is IrSimpleType) {
+            substituteTypeVariable(constructor.constructedClass, (target as IrSimpleType).arguments)
+        } else {
+            type
+        }
 
     fun collect(): List<ClassMappingTarget> = parameters + setters + setMethods
 }
