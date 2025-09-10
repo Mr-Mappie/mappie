@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.psi.KtElement
+import tech.mappie.fir.analysis.MappieErrors.UNNECESSARY_EXPLICIT_MAPPING
 import tech.mappie.fir.util.hasCallableId
 import tech.mappie.util.CLASS_ID_ENUM_MAPPING_CONSTRUCTOR
 import tech.mappie.util.IDENTIFIER_FROM_ENUM_ENTRY
@@ -32,11 +32,7 @@ class UnnecessaryExplicitEnumMappingChecker : FirFunctionCallChecker(MppCheckerK
                 if (lhsReference.name == rhsReference.name) {
                     val name = "${className(rhsReference)?.let { "$it." }}${rhsReference.name}"
 
-                    reporter.reportOn(
-                        expression.source,
-                        UNNECESSARY_EXPLICIT_MAPPING,
-                        "Unnecessary explicit mapping of source $name",
-                    )
+                    reporter.reportOn(expression.source, UNNECESSARY_EXPLICIT_MAPPING, name)
                 }
             }
         }
@@ -46,8 +42,4 @@ class UnnecessaryExplicitEnumMappingChecker : FirFunctionCallChecker(MppCheckerK
         (reference as? FirResolvedNamedReference)
             ?.let { it.resolvedSymbol as? FirEnumEntrySymbol }
             ?.let { it.callableId.className?.shortName() }
-
-    companion object {
-        private val UNNECESSARY_EXPLICIT_MAPPING by warning1<KtElement, String>(WHOLE_ELEMENT)
-    }
 }
