@@ -5,6 +5,10 @@ changelog:
   - date: "2025-09-10"
     title: "v2.2.20-1.5.0"
     items:
+      - "Bumped Kotlin to version 2.2.20."
+  - date: "2025-09-10"
+    title: "v2.2.10-1.5.0"
+    items:
       - "[#246](https://github.com/Mr-Mappie/mappie/issues/246) Fixed type checking of platform types."
       - "Fixed null pointer exception that sometimes occurs when generating a mapper."
   - date: "2025-08-19"
