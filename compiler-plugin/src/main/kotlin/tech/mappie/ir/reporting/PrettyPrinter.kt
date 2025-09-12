@@ -169,6 +169,13 @@ private class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder
             }
         }
     }
+
+    override fun visitVararg(expression: IrVararg, data: KotlinStringBuilder): KotlinStringBuilder {
+        return data.apply {
+            commas(expression.elements) { element(it) }
+        }
+    }
+
     override fun visitConstructor(declaration: IrConstructor, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
             if (!declaration.isPrimary) {
@@ -193,6 +200,17 @@ private class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder
 
     override fun visitSyntheticBody(body: IrSyntheticBody, data: KotlinStringBuilder): KotlinStringBuilder {
         return data
+    }
+
+    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: KotlinStringBuilder): KotlinStringBuilder {
+        return data.apply {
+            string { if (declaration.isVar) "var " else "val " }
+            string { declaration.name.pretty() }
+            string { " by " }
+            declaration.delegate.initializer?.let {
+                string { it.pretty() }
+            }
+        }
     }
 
     override fun visitProperty(declaration: IrProperty, data: KotlinStringBuilder): KotlinStringBuilder {

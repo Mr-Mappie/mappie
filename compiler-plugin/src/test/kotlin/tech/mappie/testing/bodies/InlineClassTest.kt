@@ -61,6 +61,7 @@ class InlineClassTest {
 
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input): Output {
+                        val lazy by lazy { 1 }
                         val nested = object {
                             var property = mapping()
                         }
@@ -80,6 +81,42 @@ class InlineClassTest {
                 .call()
 
             assertThat(mapper.map(Input("name"))).isEqualTo(Output("name"))
+        }
+    }
+
+    @Test
+    fun `mapping via nested object with annotation object should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.bodies.InlineClassTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input): Output {
+                        val nested = object {
+                            @Deprecated("test")
+                            fun test() = mapping {
+                                to::name fromValue "value"
+                            }
+                        }
+                        return nested.test()
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoWarningsOrErrors()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input("name")))
+                .isEqualTo(Output("value"))
         }
     }
 }

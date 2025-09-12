@@ -16,6 +16,39 @@ class StatementsTest {
     lateinit var directory: File
 
     @Test
+    fun `mapping with assignment should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.bodies.StatementsTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() {
+                    var y = 0
+                    override fun map(from: Input): Output {
+                        var x = 1
+                        y = x + 1
+                        return mapping { to::name fromValue y.toString()!! }
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoWarningsOrErrors()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input("name")))
+                .isEqualTo(Output("2"))
+        }
+    }
+
+    @Test
     fun `mapping via if else should succeed`() {
         compile(directory) {
             file("Test.kt",
@@ -53,6 +86,67 @@ class StatementsTest {
     }
 
     @Test
+    fun `mapping via when should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.bodies.StatementsTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input): Output {
+                        return when (from) {
+                            is Input -> mapping()
+                            else -> run { Output("constant") }
+                        }
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input("name")))
+                .isEqualTo(Output("name"))
+        }
+    }
+
+    @Test
+    fun `mapping via try catch should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.bodies.StatementsTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input): Output {
+                        return try { mapping() } catch (e: Exception) { throw e } finally { } 
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input("name")))
+                .isEqualTo(Output("name"))
+        }
+    }
+
+    @Test
     fun `mapping while should succeed`() {
         compile(directory) {
             file("Test.kt",
@@ -68,6 +162,39 @@ class StatementsTest {
                             continue
                         }
                         return Output("constant")       
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoWarningsOrErrors()
+
+            val mapper = classLoader
+                .loadObjectMappieClass<Input, Output>("Mapper")
+                .constructors
+                .first()
+                .call()
+
+            assertThat(mapper.map(Input("name")))
+                .isEqualTo(Output("name"))
+        }
+    }
+
+    @Test
+    fun `mapping for should succeed`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.bodies.StatementsTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input): Output {
+                        for (i in 0..2) {
+                            return mapping();
+                        }
+                        return Output("constant")
                     }
                 }
                 """
