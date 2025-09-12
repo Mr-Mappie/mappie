@@ -28,7 +28,7 @@ class MapperGenerationRequestProblems(
             return if (requests.isEmpty()) {
                 listOf(
                     Problem.error(
-                    "No implicit mapping can be generated from ${source.dumpKotlinLike()} to ${target.dumpKotlinLike()}",
+                    "No implicit mapping can be generated from ${transformation.source.type.dumpKotlinLike()} to ${transformation.target.type.dumpKotlinLike()}",
                     location(context.function),
                     listOf("Target class has no accessible constructor"),
                 ))
@@ -40,8 +40,8 @@ class MapperGenerationRequestProblems(
                         .associateBy { request -> MappingValidation.of(context, request) }
 
                     if (validations.none { it.key.isValid() }) {
-                        val (validation, request) = validations.entries.first { !it.key.isValid() }
-                        val message = "No implicit mapping can be generated from ${request.source.type.dumpKotlinLike()} to ${request.target.type.dumpKotlinLike()}"
+                        val (validation, _) = validations.entries.first { !it.key.isValid() }
+                        val message = "No implicit mapping can be generated from ${transformation.source.type.dumpKotlinLike()} to ${transformation.target.type.dumpKotlinLike()}"
                         add(Problem.error(message, location(context.function), validation.errors().map { it.description }))
                     }
                 }
