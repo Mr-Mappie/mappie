@@ -1,8 +1,6 @@
 package tech.mappie.fir.analysis
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
-import org.jetbrains.kotlin.diagnostics.error1
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -19,7 +17,8 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtElement
+import tech.mappie.fir.analysis.MappieErrors.NON_CONSTANT_ERROR
+import tech.mappie.fir.analysis.MappieErrors.UNKNOWN_NAME_ERROR
 import tech.mappie.fir.util.toConstant
 import tech.mappie.fir.util.hasCallableId
 import tech.mappie.fir.util.isJavaGetter
@@ -35,11 +34,7 @@ class ToCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
             val name = expression.arguments.first().toConstant()?.value as? String?
 
             if (name == null) {
-                reporter.reportOn(
-                    expression.source,
-                    NON_CONSTANT_ERROR,
-                    "Argument must be a compile-time constant",
-                )
+                reporter.reportOn(expression.source, NON_CONSTANT_ERROR)
             } else {
                 val target = expression.getTargetRegularClassSymbol()
                 if (target != null) {
@@ -61,11 +56,7 @@ class ToCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
                     }
 
                     if (targets.none { it.asString().removePrefix("_") == name }) {
-                        reporter.reportOn(
-                            expression.source,
-                            UNKNOWN_NAME_ERROR,
-                            "Identifier $name does not occur as as setter or as a parameter in constructor",
-                        )
+                        reporter.reportOn(expression.source, UNKNOWN_NAME_ERROR, name)
                     }
                 }
             }
@@ -75,9 +66,4 @@ class ToCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     context (context: CheckerContext)
     private fun FirFunctionCall.getTargetRegularClassSymbol() =
         dispatchReceiver?.resolvedType?.typeArguments?.last()?.type?.toRegularClassSymbol(context.session)
-
-    companion object {
-        private val NON_CONSTANT_ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.WHOLE_ELEMENT)
-        private val UNKNOWN_NAME_ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.WHOLE_ELEMENT)
-    }
 }

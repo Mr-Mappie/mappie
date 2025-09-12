@@ -38,7 +38,7 @@ class ConstructorParameterNotAFieldTest {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(6, "Identifier fake does not occur as as setter or as a parameter in constructor")
+            hasErrorMessage(6, "Identifier 'fake' does not occur as as setter or as a parameter in constructor")
         }
     }
 
