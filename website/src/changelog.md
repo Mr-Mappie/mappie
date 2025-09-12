@@ -2,7 +2,11 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-  - date: "tbd"
+  - date: "2025-09-10"
+    title: "v2.2.20-1.5.0"
+    items:
+      - "Bumped Kotlin to version 2.2.20."
+  - date: "2025-09-10"
     title: "v2.2.10-1.5.0"
     items:
       - "[#246](https://github.com/Mr-Mappie/mappie/issues/246) Fixed type checking of platform types."

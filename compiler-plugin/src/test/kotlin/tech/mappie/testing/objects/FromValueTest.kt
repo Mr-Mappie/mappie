@@ -92,7 +92,7 @@ class FromValueTest {
         } satisfies {
             isCompilationError()
             hasErrorMessage(6,
-                "The function run was called as an extension method on the mapping dsl which does not exist after compilation. Did you mean to use kotlin.run?",
+                "The function 'run' was called as an extension method on the mapping dsl which does not exist after compilation",
             )
         }
     }
@@ -114,7 +114,7 @@ class FromValueTest {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(6, "The function toString was called on the mapping dsl which does not exist after compilation")
+            hasErrorMessage(6, "The function 'toString' was called on the mapping dsl which does not exist after compilation")
         }
     }
 }

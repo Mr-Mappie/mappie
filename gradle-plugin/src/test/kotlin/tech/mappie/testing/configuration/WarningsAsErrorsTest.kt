@@ -26,6 +26,6 @@ class WarningsAsErrorsTest : TestBase() {
         val result = runner.withArguments("build").build()
 
         assertThat(result.output.lines())
-            .anyMatch { it.matches(Regex("w: .+ Unnecessary explicit mapping of source Input.A")) }
+            .anyMatch { it.matches(Regex("w: .+ Unnecessary explicit mapping of source 'Input.A'")) }
     }
 }

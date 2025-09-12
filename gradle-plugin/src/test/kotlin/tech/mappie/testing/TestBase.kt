@@ -21,7 +21,7 @@ abstract class TestBase {
 
     protected open val gradleVersion: String? = null
 
-    protected open val kotlinVersion = "2.2.10"
+    protected open val kotlinVersion = "2.2.20"
 
     @BeforeEach
     fun setup() {
