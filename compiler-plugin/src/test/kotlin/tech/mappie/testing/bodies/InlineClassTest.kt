@@ -7,7 +7,7 @@ import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.loadObjectMappieClass
 import java.io.File
 
-class MappingInsideBodyTest {
+class InlineClassTest {
 
     data class Input(val name: String)
     data class Output(val name: String)
@@ -16,17 +16,23 @@ class MappingInsideBodyTest {
     lateinit var directory: File
 
     @Test
-    fun `mapping assigned to variable should succeed`() {
+    fun `mapping via nested object function should succeed`() {
         compile(directory) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.bodies.MappingInsideBodyTest.*
+                import tech.mappie.testing.bodies.InlineClassTest.*
 
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input): Output {
-                        val result = mapping()
-                        return result
+                        val nested = object {
+                            var property 
+                                get() = ""
+                                set(value) = run { println(value) }
+                        
+                            fun test() = mapping()
+                        }
+                        return nested.test()
                     }
                 }
                 """
@@ -46,17 +52,19 @@ class MappingInsideBodyTest {
     }
 
     @Test
-    fun `mapping with also should succeed`() {
+    fun `mapping via nested object property should succeed`() {
         compile(directory) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.bodies.MappingInsideBodyTest.*
+                import tech.mappie.testing.bodies.InlineClassTest.*
 
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input): Output {
-                        val result = mapping().also { println("Test") }
-                        return result
+                        val nested = object {
+                            var property = mapping()
+                        }
+                        return nested.property
                     }
                 }
                 """
@@ -72,34 +80,6 @@ class MappingInsideBodyTest {
                 .call()
 
             assertThat(mapper.map(Input("name"))).isEqualTo(Output("name"))
-        }
-    }
-
-    @Test
-    fun `mapping with let should succeed`() {
-        compile(directory) {
-            file("Test.kt",
-                """
-                import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.bodies.MappingInsideBodyTest.*
-
-                class Mapper : ObjectMappie<Input, Output>() {
-                    override fun map(from: Input): Output = mapping()
-                        .let { Output("constant") }
-                }
-                """
-            )
-        } satisfies {
-            isOk()
-            hasNoWarningsOrErrors()
-
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
-            assertThat(mapper.map(Input("name"))).isEqualTo(Output("constant"))
         }
     }
 }

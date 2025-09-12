@@ -5,6 +5,7 @@ import tech.mappie.ir.resolving.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.ir.resolving.classes.targets.MappieTargetsCollector
 
@@ -19,7 +20,13 @@ class ClassResolver(
             ClassMappingRequestBuilder(constructor, context)
                 .targets(MappieTargetsCollector(target, function, constructor).collect())
                 .sources(sources)
-                .also { function?.body?.accept(ExplicitClassMappingCollector(context), it) }
+                .apply {
+                    val expression = function?.body?.accept(MappingStatementsFinder, Unit)
+                    expression?.function?.body?.statements?.forEach { statement ->
+                        statement.accept(ClassMappingStatementCollector(context), Unit)
+                            ?.let { explicit(it) }
+                    }
+                }
                 .construct()
         }.toList()
 }

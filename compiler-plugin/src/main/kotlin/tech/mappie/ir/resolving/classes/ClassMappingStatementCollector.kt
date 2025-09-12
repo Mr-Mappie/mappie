@@ -1,7 +1,6 @@
 package tech.mappie.ir.resolving.classes
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
@@ -16,38 +15,7 @@ import tech.mappie.ir.util.getterName
 import tech.mappie.ir.util.location
 import tech.mappie.util.*
 
-class ExplicitClassMappingCollector(private val context: ResolverContext)
-    : BaseVisitor<ClassMappingRequestBuilder, ClassMappingRequestBuilder>() {
-    override fun visitBlockBody(body: IrBlockBody, data: ClassMappingRequestBuilder) =
-        body.statements.fold(data) { data, it -> it.accept(data) }
-
-    override fun visitReturn(expression: IrReturn, data: ClassMappingRequestBuilder) =
-        expression.value.accept(data)
-
-    override fun visitVariable(declaration: IrVariable, data: ClassMappingRequestBuilder): ClassMappingRequestBuilder {
-        return declaration.initializer?.accept(data) ?: data
-    }
-
-    override fun visitGetValue(expression: IrGetValue, data: ClassMappingRequestBuilder): ClassMappingRequestBuilder {
-        return data
-    }
-
-    override fun visitCall(expression: IrCall, data: ClassMappingRequestBuilder) =
-        when (expression.symbol.owner.name) {
-            IDENTIFIER_MAPPING -> expression.arguments.getOrNull(1)?.accept(data) ?: data
-            else -> expression.arguments.fold(data) { data, it -> it?.accept(data) ?: data }
-        }
-
-    override fun visitFunctionExpression(expression: IrFunctionExpression, data: ClassMappingRequestBuilder) =
-        data.apply {
-            expression.function.body?.statements?.forEach { statement ->
-                statement.accept(ClassMappingStatementCollector(context), Unit)
-                    ?.let { explicit(it) }
-            }
-        }
-}
-
-private class ClassMappingStatementCollector(private val context: ResolverContext)
+class ClassMappingStatementCollector(private val context: ResolverContext)
     : BaseVisitor<Pair<Name, ExplicitClassMappingSource>?, Unit>() {
     override fun visitCall(expression: IrCall, data: Unit) = when (expression.symbol.owner.name) {
         IDENTIFIER_FROM_PROPERTY, IDENTIFIER_FROM_PROPERTY_NOT_NULL -> {
@@ -67,14 +35,14 @@ private class ClassMappingStatementCollector(private val context: ResolverContex
             target to ExpressionMappingSource(expression.arguments[2]!!)
         }
         IDENTIFIER_VIA -> {
-            expression.dispatchReceiver!!.accept(data)?.let { (name, source) ->
+            expression.dispatchReceiver!!.accept(data)!!.let { (name, source) ->
                 name to (source as ExplicitPropertyMappingSource).copy(
                     transformation = expression.arguments[1]!!.accept(MapperReferenceCollector(context), Unit)
                 )
             }
         }
         IDENTIFIER_TRANSFORM -> {
-            expression.dispatchReceiver!!.accept(data)?.let { (name, source) ->
+            expression.dispatchReceiver!!.accept(data)!!.let { (name, source) ->
                 name to (source as ExplicitPropertyMappingSource).copy(
                     transformation = expression.arguments[1]!!.let {
                         when (it) {
@@ -87,7 +55,7 @@ private class ClassMappingStatementCollector(private val context: ResolverContex
             }
         }
         else -> {
-            null
+            super.visitCall(expression, data)
         }
     }
 
