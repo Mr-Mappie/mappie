@@ -11,9 +11,12 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import tech.mappie.fir.analysis.MappieErrors.COMPILE_TIME_EXTENSION_RECEIVER
 import tech.mappie.fir.analysis.MappieErrors.COMPILE_TIME_RECEIVER
 import tech.mappie.util.ALL_MAPPING_FUNCTIONS
+import tech.mappie.util.CLASS_ID_MULTIPLE_OBJECT_MAPPING_CONSTRUCTOR
 import tech.mappie.util.CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR
 
 class CompileTimeDslReceiverChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+
+    private val targets = listOf(CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR, CLASS_ID_MULTIPLE_OBJECT_MAPPING_CONSTRUCTOR)
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
@@ -22,11 +25,11 @@ class CompileTimeDslReceiverChecker : FirFunctionCallChecker(MppCheckerKind.Comm
             return
         }
 
-        if (expression.dispatchReceiver?.resolvedType?.classId == CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR) {
+        if (expression.dispatchReceiver?.resolvedType?.classId in targets) {
             reporter.reportOn(expression.source, COMPILE_TIME_RECEIVER, name)
         }
 
-        if (expression.extensionReceiver?.resolvedType?.classId == CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR) {
+        if (expression.extensionReceiver?.resolvedType?.classId in targets) {
             reporter.reportOn(expression.source, COMPILE_TIME_EXTENSION_RECEIVER, name)
         }
     }

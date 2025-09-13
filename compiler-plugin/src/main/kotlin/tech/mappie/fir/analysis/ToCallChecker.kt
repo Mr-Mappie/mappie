@@ -22,6 +22,7 @@ import tech.mappie.fir.analysis.MappieErrors.UNKNOWN_NAME_ERROR
 import tech.mappie.fir.util.toConstant
 import tech.mappie.fir.util.hasCallableId
 import tech.mappie.fir.util.isJavaGetter
+import tech.mappie.util.CLASS_ID_MULTIPLE_OBJECT_MAPPING_CONSTRUCTOR
 import tech.mappie.util.CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR
 import tech.mappie.util.IDENTIFIER_TO
 
@@ -30,7 +31,7 @@ class ToCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     @OptIn(SymbolInternals::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
-        if (expression.hasCallableId(CallableId(CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR, IDENTIFIER_TO))) {
+        if (expression.isToCall()) {
             val name = expression.arguments.first().toConstant()?.value as? String?
 
             if (name == null) {
@@ -62,6 +63,10 @@ class ToCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
             }
         }
     }
+
+    private fun FirFunctionCall.isToCall() =
+        hasCallableId(CallableId(CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR, IDENTIFIER_TO))
+            || hasCallableId(CallableId(CLASS_ID_MULTIPLE_OBJECT_MAPPING_CONSTRUCTOR, IDENTIFIER_TO))
 
     context (context: CheckerContext)
     private fun FirFunctionCall.getTargetRegularClassSymbol() =
