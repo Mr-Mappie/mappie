@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "tbd"
+    title: "v2.2.20-1.6.0"
+    items:
+      - "Fixed check of runtime usage of of mapping DSL for multiple object mappie."
   - date: "2025-09-10"
     title: "v2.2.20-1.5.0"
     items:
