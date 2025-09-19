@@ -27,6 +27,8 @@ fun IrType.mappieType() = when {
 
 fun IrType.isList() =
     classOrNull?.owner?.fqNameWhenAvailable?.asString() in listOf(
+        "kotlin.collections.AbstractList",
+        "kotlin.collections.AbstractMutableList",
         "kotlin.collections.List",
         "kotlin.collections.MutableList",
     )
