@@ -119,4 +119,31 @@ class InlineClassTest {
                 .isEqualTo(Output("value"))
         }
     }
+
+    @Test
+    fun `multiple mappings should fail`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.bodies.InlineClassTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input): Output {
+                        val nested = object {
+                            @Deprecated("test")
+                            fun test() = mapping()
+                        }
+                        return mapping()
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isCompilationError()
+            hasErrorMessage(8,
+                "Multiple calls of the function 'mapping' while only one is allowed"
+            )
+        }
+    }
 }

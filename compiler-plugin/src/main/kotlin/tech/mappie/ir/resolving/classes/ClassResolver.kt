@@ -1,6 +1,7 @@
 package tech.mappie.ir.resolving.classes
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import tech.mappie.ir.resolving.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
@@ -21,8 +22,9 @@ class ClassResolver(
                 .targets(MappieTargetsCollector(target, function, constructor).collect())
                 .sources(sources)
                 .apply {
-                    val expression = function?.body?.accept(MappingStatementsFinder, Unit)
-                    expression?.function?.body?.statements?.forEach { statement ->
+                    val expression = mutableListOf<IrFunctionExpression>()
+                    function?.body?.accept(MappingStatementsFinder, expression)
+                    expression.singleOrNull()?.function?.body?.statements?.forEach { statement ->
                         statement.accept(ClassMappingStatementCollector(context), Unit)
                             ?.let { explicit(it) }
                     }

@@ -131,4 +131,29 @@ class ExpressionsTest {
                 .isEqualTo(Output("name"))
         }
     }
+
+    @Test
+    fun `multiple mappings should fail`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.bodies.ExpressionsTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() {
+                    override fun map(from: Input): Output {
+                        var x = mapping { to::name fromProperty from::name transform(String::toString) }
+                        val y = mapping()
+                        return x
+                    }   
+                }
+                """
+            )
+        } satisfies {
+            isCompilationError()
+            hasErrorMessage(6,
+                "Multiple calls of the function 'mapping' while only one is allowed"
+            )
+        }
+    }
 }
