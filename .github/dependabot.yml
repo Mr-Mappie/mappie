@@ -33,3 +33,5 @@ updates:
     schedule:
       interval: "weekly"
       day: "friday"
+    labels:
+      - "dependencies"
