@@ -42,11 +42,11 @@ class ObjectMappieInsteadOfEnumMappieTest {
 
                 class Mapper : ObjectMappie<InputObject, Output>() {
                     override fun map(from: InputObject) = 
-                    if (from.boolean) Output.TRUE else Output.FALSE
+                        if (from.boolean) Output.TRUE else Output.FALSE
                 }
                 """
             )
-        } satisfies  {
+        } satisfies {
             isOk()
         }
     }

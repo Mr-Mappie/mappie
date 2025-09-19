@@ -55,5 +55,10 @@ fun MappieContext.referenceFunctionRequireNotNull() =
         it.owner.hasShape(regularParameters = 2)
     }
 
+fun MappieContext.referenceFunctionRun() =
+    pluginContext.referenceFunctions(CallableId(PACKAGE_KOTLIN, Name.identifier("run"))).first {
+        it.owner.hasShape(regularParameters = 1)
+    }
+
 fun MappieContext.shouldGenerateCode(clazz: IrClass) =
     clazz.superClass?.symbol in allMappieClasses()

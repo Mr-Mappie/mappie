@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 
 object MappieErrors : KtDiagnosticsContainer() {
+    val MULTIPLE_MAPPING_CALLS by error0<KtElement>(WHOLE_ELEMENT)
     val INVALID_ANONYMOUS_OBJECT by error0<KtElement>(WHOLE_ELEMENT)
     val COMPILE_TIME_RECEIVER by error1<KtElement, Name>(WHOLE_ELEMENT)
     val COMPILE_TIME_EXTENSION_RECEIVER by error1<KtElement, Name>(WHOLE_ELEMENT)
@@ -28,6 +29,7 @@ object MappieErrors : KtDiagnosticsContainer() {
 
 object DefaultErrorMessageMappie : BaseDiagnosticRendererFactory() {
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Mappie") { map ->
+        map.put(MappieErrors.MULTIPLE_MAPPING_CALLS, "Multiple calls of the function 'mapping' while only one is allowed")
         map.put(MappieErrors.INVALID_ANONYMOUS_OBJECT, "Anonymous Mappie objects are not supported")
         map.put(MappieErrors.COMPILE_TIME_RECEIVER, "The function ''{0}'' was called on the mapping dsl which does not exist after compilation", CommonRenderers.NAME)
         map.put(MappieErrors.COMPILE_TIME_EXTENSION_RECEIVER, "The function ''{0}'' was called as an extension method on the mapping dsl which does not exist after compilation", CommonRenderers.NAME)

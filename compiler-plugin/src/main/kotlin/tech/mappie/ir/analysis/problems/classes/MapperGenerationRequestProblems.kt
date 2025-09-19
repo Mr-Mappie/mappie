@@ -19,13 +19,13 @@ class MapperGenerationRequestProblems(
 
     fun all(): List<Problem> = requests
         .filter { transformation -> isDuplicate(transformation) }
-        .map { transformation ->
+        .flatMap { transformation ->
             val source = transformation.source.type.mappieType()
             val target = transformation.target.type.mappieType()
             val requests = MappingResolver.of(source, target, ResolverContext(context, context.definitions, context.function))
                 .resolve(null)
 
-            return if (requests.isEmpty()) {
+            if (requests.isEmpty()) {
                 listOf(
                     Problem.error(
                     "No implicit mapping can be generated from ${transformation.source.type.dumpKotlinLike()} to ${transformation.target.type.dumpKotlinLike()}",
