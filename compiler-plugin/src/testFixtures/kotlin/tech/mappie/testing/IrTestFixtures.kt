@@ -33,7 +33,12 @@ object IrTestFixtures {
     fun createIrSimpleType(
         clazz: IrClass,
     ): IrSimpleType =
-        IrSimpleTypeImpl(clazz.symbol, hasQuestionMark = false, arguments = emptyList(), annotations = emptyList())
+        IrSimpleTypeImpl(
+            classifier = clazz.symbol,
+            hasQuestionMark = false,
+            arguments = emptyList(),
+            annotations = emptyList(),
+        )
 
     fun createIrTypeParameter(
         name: String,
@@ -48,6 +53,6 @@ object IrTestFixtures {
             index = 0,
             variance = variance,
             isReified = isReified,
-            symbol = IrTypeParameterSymbolImpl()
+            symbol = IrTypeParameterSymbolImpl(),
         )
 }
