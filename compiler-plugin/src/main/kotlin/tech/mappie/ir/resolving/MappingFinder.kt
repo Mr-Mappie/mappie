@@ -2,18 +2,27 @@ package tech.mappie.ir.resolving
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import tech.mappie.util.IDENTIFIER_MAPPING
 
-object MappingStatementsFinder : IrVisitor<Unit, MutableList<IrFunctionExpression>>() {
-    override fun visitElement(element: IrElement, data: MutableList<IrFunctionExpression>) {
+fun findMappingStatements(element: IrElement?): List<IrCall> {
+    return if (element != null) {
+        val statements = mutableListOf<IrCall>()
+        element.accept(MappingStatementsFinder, statements)
+        statements
+    } else {
+        emptyList()
+    }
+}
+
+private object MappingStatementsFinder : IrVisitor<Unit, MutableList<IrCall>>() {
+    override fun visitElement(element: IrElement, data: MutableList<IrCall>) {
         element.acceptChildren(this, data)
     }
 
-    override fun visitCall(expression: IrCall, data: MutableList<IrFunctionExpression>) {
+    override fun visitCall(expression: IrCall, data: MutableList<IrCall>) {
         when (expression.symbol.owner.name) {
-            IDENTIFIER_MAPPING -> (expression.arguments.getOrNull(1) as? IrFunctionExpression)?.let { data.add(it) }
+            IDENTIFIER_MAPPING -> data.add(expression)
             else -> expression.acceptChildren(this, data)
         }
     }

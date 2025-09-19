@@ -22,9 +22,8 @@ class ClassResolver(
                 .targets(MappieTargetsCollector(target, function, constructor).collect())
                 .sources(sources)
                 .apply {
-                    val expression = mutableListOf<IrFunctionExpression>()
-                    function?.body?.accept(MappingStatementsFinder, expression)
-                    expression.singleOrNull()?.function?.body?.statements?.forEach { statement ->
+                    val mapping = findMappingStatements(function?.body).singleOrNull()?.arguments?.getOrNull(1) as? IrFunctionExpression
+                    mapping?.function?.body?.statements?.forEach { statement ->
                         statement.accept(ClassMappingStatementCollector(context), Unit)
                             ?.let { explicit(it) }
                     }

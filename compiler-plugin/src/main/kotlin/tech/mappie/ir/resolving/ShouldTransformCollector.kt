@@ -22,7 +22,7 @@ class ShouldTransformCollector(private val context: MappieContext) : BaseVisitor
     }
 
     override fun visitBlockBody(body: IrBlockBody, data: Unit): Boolean {
-        return body.statements.singleOrNull()?.accept(data) ?: false
+        return findMappingStatements(body).size == 1
     }
 
     override fun visitReturn(expression: IrReturn, data: Unit): Boolean {

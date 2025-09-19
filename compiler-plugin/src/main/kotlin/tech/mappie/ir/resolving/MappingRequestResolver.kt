@@ -36,11 +36,11 @@ class MappingRequestResolver : BaseVisitor<Map<IrClass, List<MappingRequest>>, R
         }.merge()
 
     override fun visitFunction(declaration: IrFunction, data: RequestResolverContext): Map<IrClass, List<MappingRequest>> {
-//        if (declaration.accept(ShouldTransformCollector(data), Unit)) {
-        val request = MappingResolver.of(declaration, ResolverContext(data, data.definitions, declaration)).resolve(declaration)
-        return mapOf(declaration.parentAsClass to request)
-//        } else {
-//            emptyMap()
-//        }
+        return if (declaration.accept(ShouldTransformCollector(data), Unit)) {
+            val request = MappingResolver.of(declaration, ResolverContext(data, data.definitions, declaration)).resolve(declaration)
+            mapOf(declaration.parentAsClass to request)
+        } else {
+            emptyMap()
+        }
     }
 }
