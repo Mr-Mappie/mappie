@@ -14,6 +14,8 @@ updates:
       gradle:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "org.jreleaser"
     labels:
       - "dependencies"
   - package-ecosystem: "npm"
