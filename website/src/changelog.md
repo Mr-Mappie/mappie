@@ -9,6 +9,8 @@ changelog:
       - "Fixed check of runtime usage of of mapping DSL for multiple object mappie."
       - "Minor performance enhancements - by @ErwinOlie."
       - "Fix for missing reporting when both a mapper and its generated mapper have issues - by @ErwinOlie."
+      - "Improved reporting of type parameters - by @ErwinOlie."
+      - "`AbstractList` and `AbstractMutableList` are now supported as source type for mapping to `List` - by @ErwinOlie."
   - date: "2025-09-10"
     title: "v2.2.20-1.5.0"
     items:
