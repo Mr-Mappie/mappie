@@ -27,7 +27,7 @@ abstract class MavenTestBase {
 
     private lateinit var request: InvocationRequest
 
-    protected open val kotlinVersion = "2.2.10"
+    protected open val kotlinVersion = "2.2.20"
 
     @BeforeEach
     fun setup() {

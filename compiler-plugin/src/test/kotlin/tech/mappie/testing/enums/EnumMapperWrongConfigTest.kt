@@ -36,7 +36,7 @@ class EnumMapperWrongConfigTest : MappieTestCase() {
                 import tech.mappie.testing.enums.EnumMapperWrongConfigTest.*
                 import tech.mappie.api.config.UseDefaultArguments
 
-                @Suppress("ANNOTATION_NOT_APPLICABLE")
+                @Suppress("ANNOTATION_USE_DEFAULT_ARGUMENTS_NOT_APPLICABLE")
                 @UseDefaultArguments
                 class Mapper : EnumMappie<Input, Output>()
                 """
@@ -75,7 +75,7 @@ class EnumMapperWrongConfigTest : MappieTestCase() {
                 import tech.mappie.testing.enums.EnumMapperWrongConfigTest.*
                 import tech.mappie.api.config.UseStrictVisibility
 
-                @Suppress("ANNOTATION_NOT_APPLICABLE")
+                @Suppress("ANNOTATION_USE_STRICT_VISIBILITY_NOT_APPLICABLE")
                 @UseStrictVisibility
                 class Mapper : EnumMappie<Input, Output>()
                 """

@@ -79,7 +79,32 @@ class FromValueTest : MappieTestCase() {
         } satisfies {
             isCompilationError()
             hasErrorMessage(6,
-                "The function run was called as an extension method on the mapping dsl which does not exist after compilation. Did you mean to use kotlin.run?",
+                "The function 'run' was called as an extension method on the mapping dsl which does not exist after compilation",
+            )
+        }
+    }
+
+    @Test
+    fun `map property fromValue using extension receiver on mapping dsl in ObjectMappie2 should fail`() {
+        compile(directory) {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie2
+                import tech.mappie.testing.objects.FromValueTest.*
+
+                class Mapper : ObjectMappie2<Unit, Unit, Output>() {
+                    override fun map(first: Unit, second: Unit) = mapping {
+                        to::value fromValue run {
+                            "test"
+                        }
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isCompilationError()
+            hasErrorMessage(6,
+                "The function 'run' was called as an extension method on the mapping dsl which does not exist after compilation",
             )
         }
     }
@@ -101,7 +126,7 @@ class FromValueTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(6, "The function toString was called on the mapping dsl which does not exist after compilation")
+            hasErrorMessage(6, "The function 'toString' was called on the mapping dsl which does not exist after compilation")
         }
     }
 }

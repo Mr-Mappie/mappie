@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.2.10"
+kotlin = "2.2.20"
 
 [libraries]
 kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
@@ -10,7 +10,7 @@ kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin" }
 dokka-gradle-plugin = { module = "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin", version = "2.0.0" }
 classgraph = { module = "io.github.classgraph:classgraph", version = "4.8.181" }
 okio = { module = "com.squareup.okio:okio", version = "3.16.0" }
-assertj-core = { module = "org.assertj:assertj-core", version = "3.27.4" }
+assertj-core = { module = "org.assertj:assertj-core", version = "3.27.5" }
 maven-project = { module = "org.apache.maven:maven-project", version = "2.2.1" }
 maven-core = { module = "org.apache.maven:maven-core", version = "3.9.11" }
 maven-invoker = { module = "org.apache.maven.shared:maven-invoker", version = "3.3.0" }
@@ -19,5 +19,5 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version 
 
 [plugins]
 gradle-plugin-publish = { id = "com.gradle.plugin-publish", version = "2.0.0" }
-jreleaser = { id = "org.jreleaser", version = "1.20.0" }
-com-github-gmazzo-buildconfig = { id = "com.github.gmazzo.buildconfig", version = "5.6.7" }
+jreleaser = { id = "org.jreleaser", version = "1.19.0" }
+com-github-gmazzo-buildconfig = { id = "com.github.gmazzo.buildconfig", version = "5.6.8" }

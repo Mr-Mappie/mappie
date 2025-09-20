@@ -36,7 +36,7 @@ class ObjectMapperWrongConfigTest : MappieTestCase() {
                 import tech.mappie.testing.objects.ObjectMapperWrongConfigTest.*
                 import tech.mappie.api.config.UseStrictEnums
 
-                @Suppress("ANNOTATION_NOT_APPLICABLE")
+                @Suppress("ANNOTATION_USE_STRICT_ENUMS_NOT_APPLICABLE")
                 @UseStrictEnums
                 class Mapper : ObjectMappie<Input, Output>()
                 """
