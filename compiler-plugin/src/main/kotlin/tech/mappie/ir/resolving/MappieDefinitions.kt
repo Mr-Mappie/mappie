@@ -24,13 +24,13 @@ fun List<MappieDefinition>.matching(source: IrType, target: IrType) =
             (source.isList() && target.isList()) || (source.isSet() && target.isSet()) -> {
                 val source = (source as IrSimpleType).arguments.first().typeOrFail
                 val target = (target as IrSimpleType).arguments.first().typeOrFail
-                it.source.isMappableFrom(source) && target.isMappableFrom(it.target.makeNullable())
+                source.makeNotNull().isMappableFrom(it.source) && it.target.isMappableFrom(target.makeNotNull())
             }
             (source.isList() xor target.isList()) || (source.isSet() xor target.isSet()) -> {
                 false
             }
             else -> {
-                it.source.isMappableFrom(source) && target.isMappableFrom(it.target.makeNullable())
+                source.makeNotNull().isMappableFrom(it.source) && it.target.isMappableFrom(target.makeNotNull())
             }
         }
     }

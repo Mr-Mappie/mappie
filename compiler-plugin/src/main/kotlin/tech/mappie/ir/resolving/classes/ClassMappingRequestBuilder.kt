@@ -91,20 +91,25 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
                 PropertyMappingViaMapperTransformation(mappers.single(), null)
             }
             mappers.size > 1 -> {
-                val location = when (source) {
-                    is ExplicitClassMappingSource -> location(context.origin.fileEntry, source.origin)
-                    else -> location(context.origin)
-                }
-                val error = Problem.error(
-                    "Multiple mappers resolved to be used in an implicit via",
-                    location,
-                    listOf(
-                        "Call one of ${mappers.joinToString { it.clazz.name.asString() }} explicitly.",
-                        "Delete all except one of ${mappers.joinToString { it.clazz.name.asString() }}.",
+                val exact = mappers.singleOrNull { it.source == source.type && it.target == target.type }
+                if (exact != null) {
+                    PropertyMappingViaMapperTransformation(exact, null)
+                } else {
+                    val location = when (source) {
+                        is ExplicitClassMappingSource -> location(context.origin.fileEntry, source.origin)
+                        else -> location(context.origin)
+                    }
+                    val error = Problem.error(
+                        "Multiple mappers resolved to be used in an implicit via",
+                        location,
+                        listOf(
+                            "Call one of ${mappers.joinToString { it.clazz.name.asString() }} explicitly.",
+                            "Delete all except one of ${mappers.joinToString { it.clazz.name.asString() }}.",
+                        )
                     )
-                )
-                context.logger.log(error)
-                PropertyMappingViaMapperTransformation(mappers.first(), null)
+                    context.logger.log(error)
+                    PropertyMappingViaMapperTransformation(mappers.first(), null)
+                }
             }
             !source.type.isPrimitive() && !target.type.isPrimitive() -> {
                 GeneratedViaMapperTransformation(source, target)

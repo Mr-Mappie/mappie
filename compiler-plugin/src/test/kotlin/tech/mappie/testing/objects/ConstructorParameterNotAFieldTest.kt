@@ -3,12 +3,9 @@ package tech.mappie.testing.objects
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.kotlin.com.google.common.base.Objects
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class ConstructorParameterNotAFieldTest {
+class ConstructorParameterNotAFieldTest : MappieTestCase() {
 
     data class Input(val input: String, val age: Int)
     class Output(output: String, val age: Int) {
@@ -18,12 +15,9 @@ class ConstructorParameterNotAFieldTest {
         override fun hashCode(): Int = Objects.hashCode(value, age)
     }
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map two classes with unknown parameter set should fail`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -44,7 +38,7 @@ class ConstructorParameterNotAFieldTest {
 
     @Test
     fun `map two classes with not compile-time parameter set should fail`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -65,7 +59,7 @@ class ConstructorParameterNotAFieldTest {
 
     @Test
     fun `map two classes with parameter set should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -82,13 +76,10 @@ class ConstructorParameterNotAFieldTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
-            assertThat(mapper.map(Input("Sjon", 58))).isEqualTo(Output("Sjon", 58))
+            assertThat(mapper.map(Input("Sjon", 58)))
+                .isEqualTo(Output("Sjon", 58))
         }
     }
 }

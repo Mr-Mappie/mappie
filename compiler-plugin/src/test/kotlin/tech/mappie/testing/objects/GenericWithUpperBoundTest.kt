@@ -2,22 +2,16 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class GenericWithUpperBoundTest {
+class GenericWithUpperBoundTest : MappieTestCase() {
     interface InputInterface { val id: String }
     data class Input(override val id: String) : InputInterface
     data class Output(val id: String)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map from generic interface upper bound implicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -30,19 +24,14 @@ class GenericWithUpperBoundTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
-            assertThat(mapper.map(Input("value"))).isEqualTo(Output("value"))
+            assertThat(objectMappie<Input, Output>().map(Input("value")))
+                .isEqualTo(Output("value"))
         }
     }
 
     @Test
     fun `map from generic interface upper bound explicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -59,13 +48,8 @@ class GenericWithUpperBoundTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
-            assertThat(mapper.map(Input("value"))).isEqualTo(Output("value"))
+            assertThat(objectMappie<Input, Output>().map(Input("value")))
+                .isEqualTo(Output("value"))
         }
     }
 }

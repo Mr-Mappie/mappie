@@ -2,25 +2,19 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class SetPropertyTest {
+class SetPropertyTest : MappieTestCase() {
     data class InputWithoutValue(val age: Int)
     data class Input(val value: String)
     class Output {
         var value: String? = null
     }
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `set property without value should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.SetPropertyTest.*
@@ -32,11 +26,7 @@ class SetPropertyTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<InputWithoutValue, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<InputWithoutValue, Output>()
 
             assertThat(mapper.map(InputWithoutValue(10)))
                 .usingRecursiveComparison()
@@ -46,8 +36,8 @@ class SetPropertyTest {
 
     @Test
     fun `set property with value explicitly automatically should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.SetPropertyTest.*
@@ -63,11 +53,7 @@ class SetPropertyTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input("value")))
                 .usingRecursiveComparison()
@@ -77,8 +63,8 @@ class SetPropertyTest {
 
     @Test
     fun `set property with value resolved automatically should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.SetPropertyTest.*
@@ -90,11 +76,7 @@ class SetPropertyTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input("value")))
                 .usingRecursiveComparison()

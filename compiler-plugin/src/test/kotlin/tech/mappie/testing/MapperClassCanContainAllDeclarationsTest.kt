@@ -2,24 +2,17 @@ package tech.mappie.testing
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-
-import java.io.File
 import kotlin.reflect.full.valueParameters
 
-class MapperClassCanContainAllDeclarationsTest {
+class MapperClassCanContainAllDeclarationsTest : MappieTestCase() {
 
     data class Input(val text: String)
     data class Output(val text: String)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `mapper containing all kind of declarations should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.MapperClassCanContainAllDeclarationsTest.*

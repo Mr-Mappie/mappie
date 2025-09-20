@@ -2,12 +2,9 @@ package tech.mappie.testing.objects.generics
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class GenericSourceTest {
+class GenericSourceTest : MappieTestCase() {
 
     data class Input<A, B>(
         val a: A,
@@ -19,12 +16,9 @@ class GenericSourceTest {
         val b: String,
     )
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map from generic source property implicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -37,11 +31,7 @@ class GenericSourceTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input<Int, String>, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input<Int, String>, Output>()
 
             assertThat(mapper.map(Input(1, "b")))
                 .isEqualTo(Output(1, "b"))
@@ -50,7 +40,7 @@ class GenericSourceTest {
 
     @Test
     fun `map from generic source property explicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -67,11 +57,7 @@ class GenericSourceTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input<Int, String>, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input<Int, String>, Output>()
 
             assertThat(mapper.map(Input(1, "b")))
                 .isEqualTo(Output(1, "constant"))

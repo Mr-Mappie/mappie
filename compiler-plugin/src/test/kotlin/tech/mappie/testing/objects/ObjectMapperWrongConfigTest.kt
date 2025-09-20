@@ -1,21 +1,16 @@
 package tech.mappie.testing.objects
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class ObjectMapperWrongConfigTest {
+class ObjectMapperWrongConfigTest : MappieTestCase() {
 
     data class Input(val value: String)
     data class Output(val value: String)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `declaring an ObjectMappie with @UseStrictEnums should warn`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -34,7 +29,7 @@ class ObjectMapperWrongConfigTest {
 
     @Test
     fun `declaring an ObjectMappie with @UseStrictEnums should not warn when suppressed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie

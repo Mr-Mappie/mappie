@@ -1,6 +1,5 @@
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.dokka)
+    id("mappie-api-convention")
     id("maven-publish")
 }
 
@@ -42,20 +41,14 @@ kotlin {
 
     linuxX64()
     linuxArm64()
-}
 
-val dokkaHtml by tasks.dokkaGeneratePublicationHtml
-tasks.register<Jar>("javadocJar") {
-    group = "build"
-    description = "Assemble a javadoc jar containing the Dokka pages of the 'main' feature."
-    archiveClassifier = "javadoc"
-    from(dokkaHtml.outputDirectory)
-    dependsOn(dokkaHtml)
-}
-
-tasks.register<Jar>("emptyJar") {
-    group = "build"
-    description = "Assemble an empty jar."
+    sourceSets {
+        jvmTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(project(":testutil"))
+            implementation(libs.assertj.core)
+        }
+    }
 }
 
 publishing {

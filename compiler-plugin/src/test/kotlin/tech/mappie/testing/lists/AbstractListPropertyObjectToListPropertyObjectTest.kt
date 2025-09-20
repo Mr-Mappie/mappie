@@ -2,12 +2,9 @@ package tech.mappie.testing.lists
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class AbstractListPropertyObjectToListPropertyObjectTest {
+class AbstractListPropertyObjectToListPropertyObjectTest : MappieTestCase() {
 
     data class Input(val text: AbstractList<InnerInput>)
     data class InnerInput(val value: String)
@@ -15,12 +12,9 @@ class AbstractListPropertyObjectToListPropertyObjectTest {
     data class Output(val text: List<InnerOutput>)
     data class InnerOutput(val value: String)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map abstract list implicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -33,11 +27,7 @@ class AbstractListPropertyObjectToListPropertyObjectTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             val list = object : AbstractList<InnerInput>() {
                 override val size = 2
