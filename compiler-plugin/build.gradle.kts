@@ -13,8 +13,7 @@ kotlin {
 dependencies {
     compileOnly(libs.kotlin.compiler.embeddable)
 
-    implementation(project(":mappie-api"))
-
+    testImplementation(project(":mappie-api"))
     testImplementation(project(":testutil"))
     testImplementation(kotlin("reflect"))
     testImplementation(kotlin("test"))
