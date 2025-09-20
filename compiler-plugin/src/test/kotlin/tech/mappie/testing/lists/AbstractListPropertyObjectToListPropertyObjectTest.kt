@@ -2,11 +2,7 @@ package tech.mappie.testing.lists
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.MappieTestCase
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
 
 class AbstractListPropertyObjectToListPropertyObjectTest : MappieTestCase() {
 
