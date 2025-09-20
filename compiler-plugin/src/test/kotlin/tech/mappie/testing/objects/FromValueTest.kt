@@ -86,7 +86,7 @@ class FromValueTest : MappieTestCase() {
 
     @Test
     fun `map property fromValue using extension receiver on mapping dsl in ObjectMappie2 should fail`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie2
