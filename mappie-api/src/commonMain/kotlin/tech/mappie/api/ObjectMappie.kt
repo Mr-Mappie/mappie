@@ -85,6 +85,19 @@ public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
         from?.let(::mapSet)
 
     /**
+     * Map each element in [from] to an instance of [TO].
+     *
+     * @param from the source values.
+     * @return [from] mapped to an array of instances of [TO].
+     */
+    @Suppress("UNCHECKED_CAST")
+    public open fun mapArray(from: Array<FROM>): Array<@UnsafeVariance TO> {
+        val to = createArrayInstance(inferTargetKClass(this), from.size)
+        from.forEachIndexed { i, v -> setArrayElement(to, i, map(v)) }
+        return to as Array<TO>
+    }
+
+    /**
      * Mapping function which instructs Mappie to generate code for this implementation.
      *
      * @param builder the configuration for the generation of this mapping.
@@ -92,4 +105,3 @@ public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
      */
     protected fun mapping(builder: ObjectMappingConstructor<FROM, TO>.() -> Unit = { }): TO = generated()
 }
-
