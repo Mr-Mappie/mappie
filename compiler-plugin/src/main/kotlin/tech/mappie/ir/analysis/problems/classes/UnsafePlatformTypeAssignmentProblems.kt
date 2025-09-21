@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fileEntry
+import tech.mappie.config.options.useStrictJavaNullability
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.*
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
@@ -20,7 +21,12 @@ class UnsafePlatformTypeAssignmentProblems(
     private val mappings: Map<ClassMappingTarget, ClassMappingSource>,
 ) {
 
-    fun all(): List<Problem> = mappings.mapNotNull { validate(it.key, it.value) }
+    fun all(): List<Problem> =
+        if (context.useStrictJavaNullability(context.function)) {
+            mappings.mapNotNull { validate(it.key, it.value) }
+        } else {
+            emptyList()
+        }
 
     private fun validate(target: ClassMappingTarget, source: ClassMappingSource): Problem? {
         val sourceTypeString = source.type.removeAnnotations().dumpKotlinLike()

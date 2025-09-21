@@ -62,8 +62,9 @@ Mappie can be configured via Gradle or per Mapper. The following configuration o
 mappie {
     useDefaultArguments = false // Disable using default arguments in implicit mappings
     strictness {
+        enums = false // Do not report an error if not all enum sources are mapped
+        javaNullability = true // Enable strict nullability checks for cross-language mappings
         visibility = true // Allow calling constructors not visible from the calling scope
-        enums = false // Do not report an error if not all enum sources are mapped 
     }
     reporting {
         enabled = true // Enable report generation
@@ -75,10 +76,11 @@ Local configuration options are applied as annotations on the class level of map
 configuration option on a per-mapper basis.
 
 The following options exist with their corresponding default values
-| Gradle Option           | Annotation             | Default Value      |
-|-------------------------|------------------------|--------------------|
-| `useDefaultArguments`   | `@UseDefaultArguments` | `true`             |
-| `strictness.visibility` | `@UseStrictVisibility` | `false`            |
-| `strictness.enums`      | `@UseStrictEnums`      | `true`             |
-| `reporting.enabled`     |                        | `false`            |
-| `reporting.directory`   |                        | `$buildDir/mappie` |
+| Gradle Option                | Annotation                  | Default Value      |
+|------------------------------|-----------------------------|--------------------|
+| `useDefaultArguments`        | `@UseDefaultArguments`      | `true`             |
+| `strictness.enums`           | `@UseStrictEnums`           | `true`             |
+| `strictness.javaNullability` | `@UseStrictJavaNullability` | `true`             |
+| `strictness.visibility`      | `@UseStrictVisibility`      | `false`            |
+| `reporting.enabled`          |                             | `false`            |
+| `reporting.directory`        |                             | `$buildDir/mappie` |

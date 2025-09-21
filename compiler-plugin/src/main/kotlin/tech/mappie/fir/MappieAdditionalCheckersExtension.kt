@@ -13,8 +13,9 @@ class MappieAdditionalCheckersExtension(session: FirSession) : FirAdditionalChec
     override val expressionCheckers = object : ExpressionCheckers() {
         override val annotationCallCheckers = setOf(
             UseDefaultArgumentsAnnotationChecker(),
-            UseStrictVisibilityAnnotationChecker(),
             UseStrictEnumsAnnotationChecker(),
+            UseStrictJavaNullabilityAnnotationChecker(),
+            UseStrictVisibilityAnnotationChecker(),
         )
 
         override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(

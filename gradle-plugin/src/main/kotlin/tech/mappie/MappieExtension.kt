@@ -54,6 +54,11 @@ abstract class MappieStrictnessExtension {
     abstract val enums: Property<Boolean>
 
     /**
+     * Give an error if a Java type is used to assign to a non-nullable target.
+     */
+    abstract val javaNullability: Property<Boolean>
+
+    /**
      * Whether to require called elements to be visible from the current scope.
      */
     abstract val visibility: Property<Boolean>
