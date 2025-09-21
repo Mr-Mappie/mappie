@@ -45,12 +45,11 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
 
     private fun IrBlockBodyBuilder.content() {
         val constructor = model.constructor.symbol
+        val regularParameters = model.declaration.parameters.filter { it.kind == IrParameterKind.Regular }
         val call = irCallConstructor(constructor, emptyList()).apply {
             model.mappings.forEach { (target, source) ->
                 if (target is ValueParameterTarget) {
-                    constructArgument(
-                        source,
-                        model.declaration.parameters.filter { it.kind == IrParameterKind.Regular })?.let { argument ->
+                    constructArgument(source, regularParameters)?.let { argument ->
                         arguments[target.value.indexInParameters] = argument
                     }
                 }
@@ -64,18 +63,14 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
                 is SetterTarget -> {
                     +irCall(target.value.setter!!).apply {
                         dispatchReceiver = irGet(variable)
-                        arguments[1] = constructArgument(
-                            source,
-                            model.declaration.parameters.filter { it.kind == IrParameterKind.Regular })
+                        arguments[1] = constructArgument(source, regularParameters)
                     }
                 }
 
                 is FunctionCallTarget -> {
                     +irCall(target.value).apply {
                         dispatchReceiver = irGet(variable)
-                        arguments[1] = constructArgument(
-                            source,
-                            model.declaration.parameters.filter { it.kind == IrParameterKind.Regular })
+                        arguments[1] = constructArgument(source, regularParameters)
                     }
                 }
 
