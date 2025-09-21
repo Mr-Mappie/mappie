@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 
 data class KotlinStringBuilder(val level: Int = 0) {
     private val builder = StringBuilder()
@@ -162,6 +163,13 @@ private class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder
 
     override fun visitTypeParameter(declaration: IrTypeParameter, data: KotlinStringBuilder): KotlinStringBuilder {
         return data.apply {
+            if (declaration.isReified) string { "reified " }
+            when (declaration.variance) {
+                Variance.IN_VARIANCE -> string { "in " }
+                Variance.OUT_VARIANCE -> string { "out " }
+                Variance.INVARIANT -> {}
+            }
+
             string { declaration.name.pretty() }
             if (declaration.superTypes.isNotEmpty()) {
                 string { " : " }
@@ -588,7 +596,7 @@ private class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder
     }
 
     override fun visitReturn(expression: IrReturn, data: KotlinStringBuilder): KotlinStringBuilder {
-        return data.apply { Long.MAX_VALUE
+        return data.apply {
             // TODO: labeled returns
             if ((expression.returnTargetSymbol.owner as IrFunction).origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
                 string { "return " }
