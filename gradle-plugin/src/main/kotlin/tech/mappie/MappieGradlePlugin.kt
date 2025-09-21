@@ -81,8 +81,6 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
                     implementation(dependency)
                 }
             }
-//            dependencies.add("commonMainImplementation", dependency)
-//            dependencies.add("commonTestImplementation", dependency)
         }
     }
 

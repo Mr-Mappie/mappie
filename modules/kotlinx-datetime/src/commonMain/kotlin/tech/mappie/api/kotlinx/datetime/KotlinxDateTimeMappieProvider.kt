@@ -2,10 +2,10 @@ package tech.mappie.api.kotlinx.datetime
 
 import tech.mappie.api.PredefinedMappieProvider
 
-internal class KotlinxDateTimeMappieProvider : PredefinedMappieProvider() {
-    override val common = emptyList<String>()
+public class KotlinxDateTimeMappieProvider : PredefinedMappieProvider {
+    public override val common: List<String> = emptyList()
 
-    override val jvm = listOf(
+    public override val jvm: List<String> = listOf(
         "tech/mappie/api/kotlinx/datetime/KotlinDatePeriodToJavaPeriodMapper",
         "tech/mappie/api/kotlinx/datetime/JavaPeriodToKotlinDatePeriodMapper",
         "tech/mappie/api/kotlinx/datetime/KotlinDayOfWeekToJavaDayOfWeekMapper",

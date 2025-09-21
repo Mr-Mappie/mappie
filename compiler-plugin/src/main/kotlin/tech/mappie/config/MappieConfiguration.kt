@@ -1,6 +1,7 @@
 package tech.mappie.config
 
 data class MappieConfiguration(
+    val modules: List<MappieModule>,
     val isMappieDebugMode: Boolean,
     val warningsAsErrors: Boolean,
     val useDefaultArguments: Boolean,
@@ -9,3 +10,5 @@ data class MappieConfiguration(
     val reportEnabled: Boolean,
     val reportDir: String,
 )
+
+enum class MappieModule { KOTLINX_DATETIME }

@@ -16,8 +16,10 @@ import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_USE_DEFAULT_ARG
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_WARNINGS_AS_ERRORS
 import tech.mappie.compiler_plugin.BuildConfig
 import tech.mappie.config.MappieConfiguration
+import tech.mappie.config.MappieModule
 import tech.mappie.fir.MappieFirRegistrar
 import tech.mappie.ir.MappieIrRegistrar
+import kotlin.text.Regex
 
 @OptIn(ExperimentalCompilerApi::class)
 class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
@@ -26,7 +28,12 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val config = MappieConfiguration(
-            isMappieDebugMode = isStartedWithTestFixtures(configuration),
+            modules = buildList {
+                if (configuration.isStartedWithDependency(Regex(".*module-kotlinx-datetime-${BuildConfig.VERSION}.*\\.jar"))) {
+                    add(MappieModule.KOTLINX_DATETIME)
+                }
+            },
+            isMappieDebugMode = configuration.isStartedWithDependency(Regex(".*testutil-${BuildConfig.VERSION}.*\\.jar")),
             warningsAsErrors = configuration.get(ARGUMENT_WARNINGS_AS_ERRORS, false),
             useDefaultArguments = configuration.get(ARGUMENT_USE_DEFAULT_ARGUMENTS, true),
             strictEnums = configuration.get(ARGUMENT_STRICTNESS_ENUMS, true),
@@ -38,11 +45,11 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
         IrGenerationExtension.registerExtension(MappieIrRegistrar(configuration.get(MESSAGE_COLLECTOR_KEY, NONE), config))
     }
 
-    private fun isStartedWithTestFixtures(configuration: CompilerConfiguration) =
-        configuration.moduleChunk
+    private fun CompilerConfiguration.isStartedWithDependency(pattern: Regex) =
+        moduleChunk
             ?.modules
             ?.firstOrNull { it.getModuleName() == "main" }
             ?.getClasspathRoots()
-            ?.any { it.matches(Regex(".*testutil-${BuildConfig.VERSION}.*\\.jar")) }
+            ?.any { it.matches(pattern) }
             ?: false
 }

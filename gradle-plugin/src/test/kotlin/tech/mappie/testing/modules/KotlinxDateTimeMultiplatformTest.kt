@@ -16,11 +16,12 @@ class KotlinxDateTimeMultiplatformTest : TestBase() {
         kotlin("src/jvmMain/kotlin/Mapper.kt",
             """
             import tech.mappie.api.ObjectMappie
-            import java.time.DayOfWeek as JDayOfWeek
-            import kotlinx.datetime.DayOfWeek
+            import java.time.Period
+            import kotlinx.datetime.DatePeriod
+            import tech.mappie.api.kotlinx.datetime.JavaPeriodToKotlinDatePeriodMapper
             
-            data class Input(val first: JDayOfWeek)
-            data class Output(val first: DayOfWeek)
+            data class Input(val first: Period)
+            data class Output(val first: DatePeriod)
     
             object Mapper : ObjectMappie<Input, Output>()
             """.trimIndent()
@@ -29,22 +30,22 @@ class KotlinxDateTimeMultiplatformTest : TestBase() {
         kotlin("src/jvmTest/kotlin/MapperTest.kt",
             """
             import kotlin.test.*
-            import java.time.DayOfWeek as JDayOfWeek
-            import kotlinx.datetime.DayOfWeek
+            import java.time.Period
+            import kotlinx.datetime.DatePeriod
+            import kotlinx.datetime.toKotlinDatePeriod
 
             class JvmMapperTest {
 
                 @Test
                 fun `map Input to Output`() {
                     assertEquals(
-                        Output(DayOfWeek.SATURDAY),
-                        Mapper.map(Input(JDayOfWeek.SATURDAY)),
+                        Output(Period.ZERO.toKotlinDatePeriod()),
+                        Mapper.map(Input(Period.ZERO)),
                     )
                 }
             }
             """.trimIndent()
         )
-
 
         runner.withArguments("build").build()
     }

@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import tech.mappie.*
 import tech.mappie.api.PredefinedMappieProvider
+import tech.mappie.api.builtin.BuiltInMappieProvider
+import tech.mappie.api.kotlinx.datetime.KotlinxDateTimeMappieProvider
 import tech.mappie.ir.util.BaseVisitor
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.resolving.MappieDefinition
@@ -24,7 +26,7 @@ class DefinitionsCollector(val context: MappieContext) {
 }
 
 class BuiltinMappieDefinitionsCollector(val context: MappieContext) {
-    fun collect() = PredefinedMappieProvider.all().flatMap { provider ->
+    fun collect() = providers().flatMap { provider ->
         buildList {
             addAll(provider.common)
             if (context.pluginContext.platform in JvmPlatforms.allJvmPlatforms) {
@@ -38,6 +40,13 @@ class BuiltinMappieDefinitionsCollector(val context: MappieContext) {
             ?.owner
             ?.let { MappieDefinition(it) }
             ?: panic("Could not find registered mapper $name on classpath.")
+
+    fun providers(): List<PredefinedMappieProvider> {
+        return listOf(
+            BuiltInMappieProvider(),
+            KotlinxDateTimeMappieProvider()
+        )
+    }
 }
 
 class ProjectMappieDefinitionsCollector(val context: MappieContext) : BaseVisitor<List<MappieDefinition>, Unit>() {

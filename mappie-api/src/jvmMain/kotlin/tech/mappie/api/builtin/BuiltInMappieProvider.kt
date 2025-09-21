@@ -2,8 +2,8 @@ package tech.mappie.api.builtin
 
 import tech.mappie.api.PredefinedMappieProvider
 
-internal class BuiltInMappieProvider : PredefinedMappieProvider() {
-    override val common = listOf(
+public class BuiltInMappieProvider : PredefinedMappieProvider {
+    public override val common: List<String> = listOf(
         "tech/mappie/api/builtin/ByteToShortMapper",
         "tech/mappie/api/builtin/ByteToIntMapper",
         "tech/mappie/api/builtin/ByteToLongMapper",
@@ -20,7 +20,7 @@ internal class BuiltInMappieProvider : PredefinedMappieProvider() {
         "tech/mappie/api/builtin/ShortToStringMapper",
     )
 
-    override val jvm = listOf(
+    public override val jvm: List<String> = listOf(
         "tech/mappie/api/builtin/LocalDateTimeToLocalTimeMapper",
         "tech/mappie/api/builtin/LocalDateTimeToLocalDateMapper",
         "tech/mappie/api/builtin/ByteToBigIntegerMapper",

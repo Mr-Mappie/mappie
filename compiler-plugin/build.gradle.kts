@@ -13,12 +13,20 @@ kotlin {
 dependencies {
     compileOnly(libs.kotlin.compiler.embeddable)
 
+    compileOnly(project(":mappie-api"))
+    compileOnly(project(":modules:kotlinx-datetime"))
+
     testImplementation(project(":mappie-api"))
     testImplementation(project(":testutil"))
     testImplementation(kotlin("reflect"))
     testImplementation(kotlin("test"))
     testImplementation(libs.assertj.core)
     testImplementation(libs.kotlin.compiler.embeddable)
+}
+
+tasks.jar {
+    from(project(":mappie-api").sourceSets.named("jvmMain").map { it.output })
+    from(project(":modules:kotlinx-datetime").sourceSets.named("jvmMain").map { it.output })
 }
 
 java {

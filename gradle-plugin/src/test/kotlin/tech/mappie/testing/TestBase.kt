@@ -145,15 +145,15 @@ abstract class TestBase {
                     }
                     ${
                     if (MappieModules.MODULE_KOTLINX_DATETIME in modules) {
-                        """
-                        jvmMain.dependencies { 
-                            implementation("tech.mappie:module-kotlinx-datetime:$VERSION")
-                            implementation("org.jetbrains.kotlinx:kotlinx-datetime:+")
-                        }
-                        """.trimIndent()
+                    """
+                    jvmMain.dependencies {
+                        implementation("tech.mappie:module-kotlinx-datetime:$VERSION")
+                        implementation("org.jetbrains.kotlinx:kotlinx-datetime:+")
+                    }
+                    """.trimIndent()
                     } else {
                         ""
-                    }}   
+                    }}
                 }
             }
             """.trimIndent()
