@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-class IrTestFixtures {
+object IrTestFixtures {
 
     fun createIrClass(
         name: String,
