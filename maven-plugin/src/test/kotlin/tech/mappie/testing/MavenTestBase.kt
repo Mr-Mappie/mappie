@@ -31,6 +31,7 @@ abstract class MavenTestBase {
 
     @BeforeEach
     fun setup() {
+        directory.resolve("src/main/java").mkdirs()
         directory.resolve("src/main/kotlin").mkdirs()
         directory.resolve("src/test/kotlin").mkdirs()
 
@@ -156,6 +157,12 @@ abstract class MavenTestBase {
     }
 
     protected fun kotlin(file: String, @Language("kotlin") code: String) {
+        directory.resolve(file).apply {
+            appendText(code)
+        }
+    }
+
+    protected fun java(file: String, @Language("java") code: String) {
         directory.resolve(file).apply {
             appendText(code)
         }
