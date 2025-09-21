@@ -15,6 +15,7 @@ import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_REPORT_DIR
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_REPORT_ENABLED
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_USE_DEFAULT_ARGUMENTS
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_WARNINGS_AS_ERRORS
+import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_STRICTNESS_JAVA_NULLABILITY
 import tech.mappie.compiler_plugin.BuildConfig
 import tech.mappie.config.MappieConfiguration
 import tech.mappie.config.MappieModule
@@ -38,6 +39,7 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
             warningsAsErrors = configuration.get(ARGUMENT_WARNINGS_AS_ERRORS, false),
             useDefaultArguments = configuration.get(ARGUMENT_USE_DEFAULT_ARGUMENTS, true),
             strictEnums = configuration.get(ARGUMENT_STRICTNESS_ENUMS, true),
+            strictJavaNullability = configuration.get(ARGUMENT_STRICTNESS_JAVA_NULLABILITY, true),
             strictVisiblity = configuration.get(ARGUMENT_STRICTNESS_VISIBILITY, false),
             reportEnabled = configuration.get(ARGUMENT_REPORT_ENABLED, false),
             reportDir = configuration.get(ARGUMENT_REPORT_DIR, ""),

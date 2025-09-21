@@ -7,6 +7,19 @@ eleventyNavigation:
   order: 13
 ---
 
+
+## Java Nullability Errors
+When mapping from Java sources, assigning a platform type to a non-nullable target produces a warning by default.
+This can be disabled locally by adding `@UseStrictJavaNullability(false)` to the mapper, or globally by adding the
+following configuration to the Gradle build file
+```kotlin
+mappie {
+    strictness {
+        javaNullability = false // Allow unsafe assigning Java platform types to non-nullable targets
+    }
+}
+```
+
 ## Ignoring Visibility
 By default, only constructors visible from the current scope can be used to called in a mapping.
 This can be disabled locally by adding `@UseStrictVisibility(true)` to the mapper, or globally
