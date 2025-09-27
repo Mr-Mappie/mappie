@@ -29,11 +29,11 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val config = MappieConfiguration(
             modules = buildList {
-                if (configuration.isStartedWithDependency(Regex(".*module-kotlinx-datetime-${BuildConfig.VERSION}.*\\.jar"))) {
+                if (configuration.isStartedWithDependency(MODULE_KOTLINX_DATETIME_REGEX)) {
                     add(MappieModule.KOTLINX_DATETIME)
                 }
             },
-            isMappieDebugMode = configuration.isStartedWithDependency(Regex(".*testutil-${BuildConfig.VERSION}.*\\.jar")),
+            isMappieDebugMode = configuration.isStartedWithDependency(TESTUTIL_REGEX),
             warningsAsErrors = configuration.get(ARGUMENT_WARNINGS_AS_ERRORS, false),
             useDefaultArguments = configuration.get(ARGUMENT_USE_DEFAULT_ARGUMENTS, true),
             strictEnums = configuration.get(ARGUMENT_STRICTNESS_ENUMS, true),
@@ -48,8 +48,17 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
     private fun CompilerConfiguration.isStartedWithDependency(pattern: Regex) =
         moduleChunk
             ?.modules
-            ?.firstOrNull { it.getModuleName() == "main" }
-            ?.getClasspathRoots()
+            ?.flatMap { it.getClasspathRoots() }
             ?.any { it.matches(pattern) }
             ?: false
+
+    companion object {
+        private val MODULE_KOTLINX_DATETIME_REGEX = Regex(
+            "(.*modules\\\\kotlinx-datetime\\\\build\\\\classes\\\\kotlin\\\\jvm\\\\main)|(.*module-kotlinx-datetime.*-${BuildConfig.VERSION}.*)"
+        )
+
+        private val TESTUTIL_REGEX = Regex(
+            ".*testutil-${BuildConfig.VERSION}.*\\.jar"
+        )
+    }
 }

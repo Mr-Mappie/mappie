@@ -11,6 +11,7 @@ import tech.mappie.*
 import tech.mappie.api.PredefinedMappieProvider
 import tech.mappie.api.builtin.BuiltInMappieProvider
 import tech.mappie.api.kotlinx.datetime.KotlinxDateTimeMappieProvider
+import tech.mappie.config.MappieModule
 import tech.mappie.ir.util.BaseVisitor
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.resolving.MappieDefinition
@@ -42,10 +43,12 @@ class BuiltinMappieDefinitionsCollector(val context: MappieContext) {
             ?: panic("Could not find registered mapper $name on classpath.")
 
     fun providers(): List<PredefinedMappieProvider> {
-        return listOf(
-            BuiltInMappieProvider(),
-            KotlinxDateTimeMappieProvider()
-        )
+        return buildList {
+            add(BuiltInMappieProvider())
+            if (MappieModule.KOTLINX_DATETIME in context.configuration.modules) {
+                add(KotlinxDateTimeMappieProvider())
+            }
+        }
     }
 }
 
