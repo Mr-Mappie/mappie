@@ -2,6 +2,7 @@ package tech.mappie
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 
 @Suppress("unused")
@@ -63,7 +64,7 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
     }
 
     private fun Project.addMappieDependency() {
-        val dependency = dependencies.create("tech.mappie:mappie-api:${getPluginArtifact().version}")
+        val dependency = dependencies.create("tech.mappie:mappie-api:${BuildConfig.VERSION}")
 
         plugins.withId("org.jetbrains.kotlin.jvm") {
             dependencies.add("implementation", dependency)
@@ -75,8 +76,11 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
         }
 
         plugins.withId("org.jetbrains.kotlin.multiplatform") {
-            dependencies.add("commonMainImplementation", dependency)
-            dependencies.add("commonTestImplementation", dependency)
+            kotlinExtension.sourceSets.named("commonMain").configure {
+                it.dependencies {
+                    implementation(dependency)
+                }
+            }
         }
     }
 

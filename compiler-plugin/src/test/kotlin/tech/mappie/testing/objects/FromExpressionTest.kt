@@ -2,21 +2,15 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class FromExpressionTest {
+class FromExpressionTest : MappieTestCase() {
 
     data class Output(val value: String)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map property fromExpression should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -33,11 +27,7 @@ class FromExpressionTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Unit, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Unit, Output>()
 
             assertThat(mapper.map(Unit)).isEqualTo(Output(Unit::class.simpleName!!))
         }
@@ -45,7 +35,7 @@ class FromExpressionTest {
 
     @Test
     fun `map property fromExpression should succeed with method reference`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -62,11 +52,7 @@ class FromExpressionTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Int, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Int, Output>()
 
             assertThat(mapper.map(101)).isEqualTo(Output("101"))
         }
@@ -74,7 +60,7 @@ class FromExpressionTest {
 
     @Test
     fun `map property fromExpression should fail with method reference with wrong return type`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie

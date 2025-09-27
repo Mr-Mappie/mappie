@@ -16,6 +16,8 @@ import java.io.ByteArrayInputStream
 import java.io.File
 import java.lang.System.lineSeparator
 
+enum class MappieModules { MODULE_KOTLINX_DATETIME }
+
 abstract class MavenTestBase {
 
     @TempDir
@@ -24,6 +26,8 @@ abstract class MavenTestBase {
     protected val logs = StringBuilder()
 
     protected open val mappieOptions: Map<String, String> = emptyMap()
+
+    protected open val modules: Set<MappieModules> = emptySet()
 
     private lateinit var request: InvocationRequest
 
@@ -110,6 +114,24 @@ abstract class MavenTestBase {
                         <artifactId>mappie-api-jvm</artifactId>
                         <version>$VERSION</version>
                     </dependency>
+                    ${
+                    if (MappieModules.MODULE_KOTLINX_DATETIME in modules) {
+                    """
+                    <dependency>
+                        <groupId>tech.mappie</groupId>
+                        <artifactId>module-kotlinx-datetime-jvm</artifactId>
+                        <version>$VERSION</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlinx</groupId>
+                        <artifactId>kotlinx-datetime-jvm</artifactId>
+                        <version>RELEASE</version>
+                    </dependency>
+                    """
+                    } else {
+                    ""
+                    } 
+                    }
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
                         <artifactId>kotlin-stdlib</artifactId>

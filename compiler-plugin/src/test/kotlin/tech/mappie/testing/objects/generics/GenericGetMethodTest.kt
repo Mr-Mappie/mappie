@@ -2,12 +2,9 @@ package tech.mappie.testing.objects.generics
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class GenericGetMethodTest {
+class GenericGetMethodTest : MappieTestCase() {
     class Input<T : Any> {
         private lateinit var _value: T
 
@@ -19,12 +16,9 @@ class GenericGetMethodTest {
 
     data class Output<T>(val value: T)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map object via generic getter explicitly should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -41,11 +35,7 @@ class GenericGetMethodTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input<String>, Output<String>>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input<String>, Output<String>>()
 
             assertThat(mapper.map(Input<String>().apply { setValue("string") }))
                 .usingRecursiveComparison()
@@ -55,7 +45,7 @@ class GenericGetMethodTest {
 
     @Test
     fun `map object via generic getter implicitly should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -68,11 +58,7 @@ class GenericGetMethodTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input<String>, Output<String>>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input<String>, Output<String>>()
 
             assertThat(mapper.map(Input<String>().apply { setValue("value") }))
                 .usingRecursiveComparison()

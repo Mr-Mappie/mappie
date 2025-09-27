@@ -2,23 +2,17 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class GeneratedDoubleClassTest {
+class GeneratedDoubleClassTest : MappieTestCase() {
     data class Input(val a: InnerInput, val b: InnerInput)
     data class InnerInput(val value: String)
     data class Output(val a: InnerOutput, val b: InnerOutput)
     data class InnerOutput(val value: String)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map object with nested class without declaring mapping should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -31,11 +25,7 @@ class GeneratedDoubleClassTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(InnerInput("a"), InnerInput("b"))))
                 .isEqualTo(Output(InnerOutput("a"), InnerOutput("b")))

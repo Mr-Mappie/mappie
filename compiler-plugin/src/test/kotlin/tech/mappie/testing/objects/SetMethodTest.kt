@@ -2,12 +2,10 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class SetMethodTest {
+class SetMethodTest : MappieTestCase() {
+
     data class Input(val age: Int)
     class Output {
         private var _age: Int = 0
@@ -17,13 +15,10 @@ class SetMethodTest {
         }
     }
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map object via setter explicitly should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.SetMethodTest.*
@@ -39,13 +34,7 @@ class SetMethodTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
-            assertThat(mapper.map(Input(25)))
+            assertThat(objectMappie<Input, Output>().map(Input(25)))
                 .usingRecursiveComparison()
                 .isEqualTo(Output().apply { setAge(25) })
         }
@@ -53,8 +42,8 @@ class SetMethodTest {
 
     @Test
     fun `map object via setter implicitly should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.SetMethodTest.*
@@ -66,13 +55,7 @@ class SetMethodTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
-            assertThat(mapper.map(Input(50)))
+            assertThat(objectMappie<Input, Output>().map(Input(50)))
                 .usingRecursiveComparison()
                 .isEqualTo(Output().apply { setAge(50) })
         }

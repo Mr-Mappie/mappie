@@ -2,24 +2,18 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class ObjectWithNestedClassTest {
+class ObjectWithNestedClassTest : MappieTestCase() {
     data class Input(val text: InnerInput, val int: Int)
     data class InnerInput(val value: String)
     data class Output(val text: InnerOutput, val int: Int)
     data class InnerOutput(val value: String)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map object with nested class with generated mapper should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.ObjectWithNestedClassTest.*
@@ -31,11 +25,7 @@ class ObjectWithNestedClassTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(InnerInput("inner"), 20)))
                 .isEqualTo(Output(InnerOutput("inner"), 20))
@@ -44,8 +34,8 @@ class ObjectWithNestedClassTest {
 
     @Test
     fun `map object with nested class using object InnerMapper without declaring mapping should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.ObjectWithNestedClassTest.*
@@ -59,11 +49,7 @@ class ObjectWithNestedClassTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(InnerInput("inner"), 20)))
                 .isEqualTo(Output(InnerOutput("inner"), 20))
@@ -72,8 +58,8 @@ class ObjectWithNestedClassTest {
 
     @Test
     fun `map object with nested class using class InnerMapper without declaring mapping should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.ObjectWithNestedClassTest.*
@@ -87,11 +73,7 @@ class ObjectWithNestedClassTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(InnerInput("inner"), 20)))
                 .isEqualTo(Output(InnerOutput("inner"), 20))
@@ -100,7 +82,7 @@ class ObjectWithNestedClassTest {
 
     @Test
     fun `map object with nested class should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -119,11 +101,7 @@ class ObjectWithNestedClassTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(InnerInput("inner"), 20)))
                 .isEqualTo(Output(InnerOutput("inner"), 20))
@@ -132,8 +110,8 @@ class ObjectWithNestedClassTest {
 
     @Test
     fun `map object with nested class and mapper as inner object declaration should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.ObjectWithNestedClassTest.*
@@ -151,11 +129,7 @@ class ObjectWithNestedClassTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(InnerInput("value"), 30)))
                 .isEqualTo(Output(InnerOutput("value"), 30))
@@ -164,7 +138,7 @@ class ObjectWithNestedClassTest {
 
     @Test
     fun `map object with nested class and mapper as inner class declaration should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -183,11 +157,7 @@ class ObjectWithNestedClassTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(InnerInput("value"), 30)))
                 .isEqualTo(Output(InnerOutput("value"), 30))

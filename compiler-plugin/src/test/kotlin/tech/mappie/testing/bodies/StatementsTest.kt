@@ -2,22 +2,16 @@ package tech.mappie.testing.bodies
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class StatementsTest {
+class StatementsTest : MappieTestCase() {
 
     data class Input(val name: String)
     data class Output(val name: String)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `mapping with assignment should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -37,12 +31,7 @@ class StatementsTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
+            val mapper = objectMappie<Input, Output>()
             assertThat(mapper.map(Input("name")))
                 .isEqualTo(Output("2"))
         }
@@ -50,7 +39,7 @@ class StatementsTest {
 
     @Test
     fun `mapping via if else should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -71,11 +60,7 @@ class StatementsTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input("true")))
                 .isEqualTo(Output("constant"))
@@ -87,7 +72,7 @@ class StatementsTest {
 
     @Test
     fun `mapping via when should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -106,12 +91,7 @@ class StatementsTest {
         } satisfies {
             isOk()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
+            val mapper = objectMappie<Input, Output>()
             assertThat(mapper.map(Input("name")))
                 .isEqualTo(Output("name"))
         }
@@ -119,7 +99,7 @@ class StatementsTest {
 
     @Test
     fun `mapping via try catch should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -135,12 +115,7 @@ class StatementsTest {
         } satisfies {
             isOk()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
+            val mapper = objectMappie<Input, Output>()
             assertThat(mapper.map(Input("name")))
                 .isEqualTo(Output("name"))
         }
@@ -148,7 +123,7 @@ class StatementsTest {
 
     @Test
     fun `mapping while should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -170,12 +145,7 @@ class StatementsTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
+            val mapper = objectMappie<Input, Output>()
             assertThat(mapper.map(Input("name")))
                 .isEqualTo(Output("name"))
         }
@@ -183,7 +153,7 @@ class StatementsTest {
 
     @Test
     fun `mapping for should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -203,12 +173,7 @@ class StatementsTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
+            val mapper = objectMappie<Input, Output>()
             assertThat(mapper.map(Input("name")))
                 .isEqualTo(Output("name"))
         }

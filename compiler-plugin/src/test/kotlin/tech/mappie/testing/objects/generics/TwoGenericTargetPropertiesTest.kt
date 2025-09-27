@@ -2,12 +2,9 @@ package tech.mappie.testing.objects.generics
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class TwoGenericTargetPropertiesTest {
+class TwoGenericTargetPropertiesTest : MappieTestCase() {
 
     data class Input(
         val a: String,
@@ -19,12 +16,9 @@ class TwoGenericTargetPropertiesTest {
         val b: B,
     )
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map two generic target properties implicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -37,11 +31,7 @@ class TwoGenericTargetPropertiesTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output<String, Int>>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output<String, Int>>()
 
             assertThat(mapper.map(Input("a", 1)))
                 .isEqualTo(Output("a", 1))
@@ -50,7 +40,7 @@ class TwoGenericTargetPropertiesTest {
 
     @Test
     fun `map two generic target properties explicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -67,11 +57,7 @@ class TwoGenericTargetPropertiesTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output<String, Int>>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output<String, Int>>()
 
             assertThat(mapper.map(Input("a", 1)))
                 .isEqualTo(Output("constant", 1))
