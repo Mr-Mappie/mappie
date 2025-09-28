@@ -1,23 +1,18 @@
 package tech.mappie.testing.enums
 
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 import kotlin.test.Test
 
-class ObjectMappieInsteadOfEnumMappieTest {
+class ObjectMappieInsteadOfEnumMappieTest : MappieTestCase() {
 
     data class InputObject(val boolean: Boolean)
     enum class Input { TRUE, FALSE }
 
     enum class Output { TRUE, FALSE }
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map enum to enum in ObjectMappie should fail`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -34,7 +29,7 @@ class ObjectMappieInsteadOfEnumMappieTest {
 
     @Test
     fun `map object to enum explicitly in ObjectMappie should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -53,7 +48,7 @@ class ObjectMappieInsteadOfEnumMappieTest {
 
     @Test
     fun `map object to enum implicitly in ObjectMappie should fail`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie

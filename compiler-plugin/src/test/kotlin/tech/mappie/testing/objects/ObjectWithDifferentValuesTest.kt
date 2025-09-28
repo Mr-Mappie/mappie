@@ -2,23 +2,17 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class ObjectWithDifferentValuesTest {
+class ObjectWithDifferentValuesTest : MappieTestCase() {
 
     data class Input(val firstname: String, val age: Int)
     data class Output(val name: String, val age: Int)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map two data classes with the different values should fail`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.ObjectWithDifferentValuesTest.*
@@ -34,8 +28,8 @@ class ObjectWithDifferentValuesTest {
 
     @Test
     fun `map two data classes with the different values from KProperty0 should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.ObjectWithDifferentValuesTest.*
@@ -51,20 +45,15 @@ class ObjectWithDifferentValuesTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
-            assertThat(mapper.map(Input("Stefan", 30))).isEqualTo(Output("Stefan", 30))
+            assertThat(objectMappie<Input, Output>("Mapper").map(Input("Stefan", 30)))
+                .isEqualTo(Output("Stefan", 30))
         }
     }
 
     @Test
     fun `map two data classes using to with the different values from KProperty0 should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.ObjectWithDifferentValuesTest.*
@@ -80,20 +69,15 @@ class ObjectWithDifferentValuesTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
-            assertThat(mapper.map(Input("Stefan", 30))).isEqualTo(Output("Stefan", 30))
+            assertThat(objectMappie<Input, Output>().map(Input("Stefan", 30)))
+                .isEqualTo(Output("Stefan", 30))
         }
     }
 
     @Test
     fun `map two data classes with the different values from KProperty1 should succeed`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.ObjectWithDifferentValuesTest.*
@@ -109,20 +93,15 @@ class ObjectWithDifferentValuesTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
-            assertThat(mapper.map(Input("Sjon", 58))).isEqualTo(Output("Sjon", 58))
+            assertThat(objectMappie<Input, Output>("Mapper").map(Input("Sjon", 58)))
+                .isEqualTo(Output("Sjon", 58))
         }
     }
 
     @Test
     fun `map property fromProperty should succeed with method reference transform`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.ObjectWithDifferentValuesTest.*
@@ -139,20 +118,15 @@ class ObjectWithDifferentValuesTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
-
-            assertThat(mapper.map(Input("101", 9))).isEqualTo(Output("9", 101))
+            assertThat(objectMappie<Input, Output>().map(Input("101", 9)))
+                .isEqualTo(Output("9", 101))
         }
     }
 
     @Test
     fun `map property fromProperty should fail with method reference with wrong signature`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.ObjectWithDifferentValuesTest.*

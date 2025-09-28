@@ -2,12 +2,9 @@ package tech.mappie.testing.objects.generics
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class GenericSetMethodTest {
+class GenericSetMethodTest : MappieTestCase() {
     data class Input<T: Any>(val age: T)
     class Output<T : Any> {
         private lateinit var _age: T
@@ -17,12 +14,9 @@ class GenericSetMethodTest {
         }
     }
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map object via generic setter explicitly should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -39,11 +33,7 @@ class GenericSetMethodTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input<Int>, Output<Int>>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input<Int>, Output<Int>>()
 
             assertThat(mapper.map(Input(25)))
                 .usingRecursiveComparison()
@@ -53,7 +43,7 @@ class GenericSetMethodTest {
 
     @Test
     fun `map object via generic setter implicitly should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -66,11 +56,7 @@ class GenericSetMethodTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input<Int>, Output<Int>>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input<Int>, Output<Int>>()
 
             assertThat(mapper.map(Input(50)))
                 .usingRecursiveComparison()

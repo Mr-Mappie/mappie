@@ -1,21 +1,17 @@
 package tech.mappie.testing.objects
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 import java.math.BigDecimal
 
-class NullablePropertyObjectToNonNullablePropertyTest {
+class NullablePropertyObjectToNonNullablePropertyTest : MappieTestCase() {
+
     data class Input(val value: BigDecimal?)
     data class Output(val value: BigDecimal)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map object with null property to non-null property should fail`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie

@@ -2,10 +2,11 @@ package tech.mappie.testing.objects
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import tech.mappie.testing.MappieTestCase
 import tech.mappie.testing.compilation.compile
 import java.io.File
 
-class GeneratedClassFailMultipleTest {
+class GeneratedClassFailMultipleTest : MappieTestCase() {
     data class Input(val a: InnerInputA, val b: InnerInputB)
     data class InnerInputA(val value: String)
     data class InnerInputB(val value: String)
@@ -13,12 +14,9 @@ class GeneratedClassFailMultipleTest {
     data class InnerOutputA(val value: Int)
     data class InnerOutputB(val value: Int)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map object with multiple nested classes without declaring mapping should fail all`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie

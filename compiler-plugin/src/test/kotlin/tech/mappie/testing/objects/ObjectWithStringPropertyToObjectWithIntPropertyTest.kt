@@ -1,22 +1,17 @@
 package tech.mappie.testing.objects
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class ObjectWithStringPropertyToObjectWithIntPropertyTest {
+class ObjectWithStringPropertyToObjectWithIntPropertyTest : MappieTestCase() {
 
     data class Input(val value: String)
     data class Output(val value: Int)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `explicit mapping using fromProperty with wrong type should fail`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.ObjectWithStringPropertyToObjectWithIntPropertyTest.*
@@ -36,7 +31,7 @@ class ObjectWithStringPropertyToObjectWithIntPropertyTest {
 
     @Test
     fun `implicit mapping using fromProperty with wrong type should fail`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -56,8 +51,8 @@ class ObjectWithStringPropertyToObjectWithIntPropertyTest {
 
     @Test
     fun `explicit mapping using fromValue with wrong type should fail`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.ObjectWithStringPropertyToObjectWithIntPropertyTest.*
@@ -77,8 +72,8 @@ class ObjectWithStringPropertyToObjectWithIntPropertyTest {
 
     @Test
     fun `explicit mapping using fromExpression with wrong type should fail`() {
-        compile(directory) {
-            file("Test.kt",
+        compile {
+            file("Mapper.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.objects.ObjectWithStringPropertyToObjectWithIntPropertyTest.*

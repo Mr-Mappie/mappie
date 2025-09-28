@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    alias(libs.plugins.kotlin.jvm)
-    id("java-test-fixtures")
+    id("mappie-jvm-convention")
+    alias(libs.plugins.com.github.gmazzo.buildconfig)
     id("maven-publish")
 }
 
@@ -13,17 +13,20 @@ kotlin {
 dependencies {
     compileOnly(libs.kotlin.compiler.embeddable)
 
-    testFixturesImplementation(project(":mappie-api"))
-    testFixturesImplementation(libs.kotlin.compiler.embeddable)
-    testFixturesImplementation(libs.classgraph)
-    testFixturesImplementation(libs.okio)
-    testFixturesImplementation(libs.assertj.core)
+    compileOnly(project(":mappie-api"))
+    compileOnly(project(":modules:kotlinx-datetime"))
 
     testImplementation(project(":mappie-api"))
+    testImplementation(project(":testutil"))
     testImplementation(kotlin("reflect"))
     testImplementation(kotlin("test"))
     testImplementation(libs.assertj.core)
     testImplementation(libs.kotlin.compiler.embeddable)
+}
+
+tasks.jar {
+    from(project(":mappie-api").sourceSets.named("jvmMain").map { it.output })
+    from(project(":modules:kotlinx-datetime").sourceSets.named("jvmMain").map { it.output })
 }
 
 java {
@@ -31,17 +34,16 @@ java {
     withJavadocJar()
 }
 
+buildConfig {
+    buildConfigField("VERSION", version.toString())
+}
+
 publishing {
     publications {
         create<MavenPublication>("kotlin") {
+            from(components["java"])
             artifactId = "mappie-compiler-plugin"
-
-            from((components["java"] as AdhocComponentWithVariants).apply {
-                withVariantsFromConfiguration(configurations["testFixturesApiElements"]) { skip() }
-                withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }
-            })
-
-            mappiePom(name = "tech.mappie:compiler-plugin")
+            mappiePom(name = "tech.mappie:mappie-compiler-plugin")
         }
     }
 
@@ -52,16 +54,6 @@ publishing {
     }
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-
-    maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
-}
-
 tasks.withType<KotlinCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI")
-}
-
-tasks.compileTestFixturesKotlin.configure {
-    compilerOptions.freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
 }

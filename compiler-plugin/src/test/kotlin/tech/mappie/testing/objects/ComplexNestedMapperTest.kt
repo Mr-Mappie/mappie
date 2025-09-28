@@ -2,12 +2,9 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class ComplexNestedMapperTest {
+class ComplexNestedMapperTest : MappieTestCase() {
 
     data class InputObject(
         val name: String,
@@ -26,12 +23,9 @@ class ComplexNestedMapperTest {
         val boolean: Boolean,
     )
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map complex nested object`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -56,11 +50,7 @@ class ComplexNestedMapperTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<InputObject, OutputObject>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<InputObject, OutputObject>()
 
             assertThat(mapper.map(InputObject("test", 34, NestedInput(NestedInput.BooleanEnum.TRUE))))
                 .isEqualTo(OutputObject("test", 34, true))
@@ -69,7 +59,7 @@ class ComplexNestedMapperTest {
 
     @Test
     fun `map complex nested with explicit via object`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -94,11 +84,7 @@ class ComplexNestedMapperTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<InputObject, OutputObject>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<InputObject, OutputObject>()
 
             assertThat(mapper.map(InputObject("test", 34, NestedInput(NestedInput.BooleanEnum.TRUE))))
                 .isEqualTo(OutputObject("test", 34, true))

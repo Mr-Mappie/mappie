@@ -6,14 +6,16 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import tech.mappie.*
+import tech.mappie.api.PredefinedMappieProvider
+import tech.mappie.api.builtin.BuiltInMappieProvider
+import tech.mappie.api.kotlinx.datetime.KotlinxDateTimeMappieProvider
+import tech.mappie.config.MappieModule
 import tech.mappie.ir.util.BaseVisitor
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.resolving.MappieDefinition
 import tech.mappie.ir.resolving.RequestResolverContext
-import tech.mappie.util.PACKAGE_TECH_MAPPIE_API_BUILTIN
 
 // TODO: we should collect al publicly visible, and add those during resolving that are visible from the current scope.
 class DefinitionsCollector(val context: MappieContext) {
@@ -25,54 +27,28 @@ class DefinitionsCollector(val context: MappieContext) {
 }
 
 class BuiltinMappieDefinitionsCollector(val context: MappieContext) {
-    fun collect() = mappers().map { name ->
-        context.pluginContext
-            .referenceClass(ClassId(PACKAGE_TECH_MAPPIE_API_BUILTIN, Name.identifier(name)))
+    fun collect() = providers().flatMap { provider ->
+        buildList {
+            addAll(provider.common)
+            if (context.pluginContext.platform in JvmPlatforms.allJvmPlatforms) {
+                addAll(provider.jvm)
+            }
+        }
+    }.map { load(it) }.toList()
+
+    private fun load(name: String) =
+        context.pluginContext.referenceClass(ClassId.fromString(name))
             ?.owner
             ?.let { MappieDefinition(it) }
-            ?: panic("Could not find mappie-api on classpath.")
-    }
+            ?: panic("Could not find registered mapper $name on classpath.")
 
-    private fun mappers(): List<String> = COMMON_MAPPERS + when (context.pluginContext.platform) {
-        in JvmPlatforms.allJvmPlatforms -> JVM_MAPPERS
-        else -> emptyList()
-    }
-
-    companion object {
-        private val JVM_MAPPERS = listOf(
-            "LocalDateTimeToLocalTimeMapper",
-            "LocalDateTimeToLocalDateMapper",
-            "ByteToBigIntegerMapper",
-            "ByteToBigDecimalMapper",
-            "ShortToBigIntegerMapper",
-            "ShortToBigDecimalMapper",
-            "IntToBigIntegerMapper",
-            "IntToBigDecimalMapper",
-            "LongToBigIntegerMapper",
-            "LongToBigDecimalMapper",
-            "FloatToBigDecimalMapper",
-            "BigIntegerToStringMapper",
-            "BigDecimalToStringMapper",
-            "UUIDToStringMapper",
-            "DoubleToBigDecimalMapper",
-        )
-
-        private val COMMON_MAPPERS = listOf(
-            "CharToStringMapper",
-            "LongToStringMapper",
-            "IntToLongMapper",
-            "IntToStringMapper",
-            "ShortToIntMapper",
-            "ShortToLongMapper",
-            "ShortToStringMapper",
-            "ByteToShortMapper",
-            "ByteToIntMapper",
-            "ByteToLongMapper",
-            "ByteToStringMapper",
-            "FloatToDoubleMapper",
-            "FloatToStringMapper",
-            "DoubleToStringMapper",
-        )
+    fun providers(): List<PredefinedMappieProvider> {
+        return buildList {
+            add(BuiltInMappieProvider())
+            if (MappieModule.KOTLINX_DATETIME in context.configuration.modules) {
+                add(KotlinxDateTimeMappieProvider())
+            }
+        }
     }
 }
 

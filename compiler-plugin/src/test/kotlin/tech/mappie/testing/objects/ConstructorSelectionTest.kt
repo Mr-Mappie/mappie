@@ -2,24 +2,18 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class ConstructorSelectionTest {
+class ConstructorSelectionTest : MappieTestCase() {
 
     data class Input(val name: String)
     data class Output(val name: String, val age: Int) {
         constructor(name: String) : this(name, -1)
     }
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map object with all values should call primary constructor`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -36,11 +30,7 @@ class ConstructorSelectionTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input("value")))
                 .isEqualTo(Output("value", 50))
@@ -49,7 +39,7 @@ class ConstructorSelectionTest {
 
     @Test
     fun `map object with only values of secondary constructor should call secondary constructor`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -62,11 +52,7 @@ class ConstructorSelectionTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input("value")))
                 .isEqualTo(Output("value", -1))

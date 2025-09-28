@@ -6,6 +6,7 @@ changelog:
     title: "v2.2.20-1.6.0"
     items:
       - "Allow `mapping` to be used anywhere (at most once) in the body of the map function."
+      - "Added support for kotlinx-datetime to JVM mappers, which can be imported via a separate dependency."
       - "Fixed check of runtime usage of of mapping DSL for multiple object mappie."
       - "Minor performance enhancements - by @ErwinOlie."
       - "Fix for missing reporting when both a mapper and its generated mapper have issues - by @ErwinOlie."
@@ -18,6 +19,7 @@ changelog:
   - date: "2025-09-10"
     title: "v2.2.10-1.5.0"
     items:
+      - "Improved selection of implicit mapper when multiple of different subtypes are available."
       - "[#246](https://github.com/Mr-Mappie/mappie/issues/246) Fixed type checking of platform types."
       - "Fixed null pointer exception that sometimes occurs when generating a mapper."
   - date: "2025-08-19"

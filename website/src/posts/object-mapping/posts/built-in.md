@@ -48,11 +48,71 @@ The following numeric mappers are built-in
 |-----------------|-----------------|-------------|-------------|
 | *LocalDateTime* | -               |  X          | X           |
 
-{.table-matrix}
-
 ## UUID Mappers
 The following UUID mappers are built-in
 
 |        | *UUID* | String |
 |--------|--------|--------|
 | *UUID* | -      | X      |
+
+## kotlinx-datetime Mappers
+The following kotlinx-datetime mappers can be included via the dependency `tech.mappie.api:module-kotlinx-datetime`.
+
+The following Period mappers are available
+
+|            | DatePeriod | *Period* |
+|------------|------------|----------|
+| DatePeriod | -          | X        |
+| *Period*   | X          | -        |
+
+The following DayOfWeek mappers are available
+
+|             | DayOfWeek | *DayOfWeek* |
+|-------------|-----------|-------------|
+| DayOfWeek   | -         | X           |
+| *DayOfWeek* | X         | -           |
+
+The following Instant mappers are available
+
+|           | Instant | *Instant* |
+|-----------|---------|-----------|
+| Instant   | -       | X         |
+| *Instant* | X       | -         |
+
+The following LocalDate mappers are available
+
+|             | LocalDate | *LocalDate* |
+|-------------|-----------|-------------|
+| LocalDate   | -         | X           |
+| *LocalDate* | X         | -           |
+
+The following LocalDateTime mappers are available
+
+|                 | LocalDateTime | *LocalDateTime* |
+|-----------------|---------------|-----------------|
+| LocalDateTime   | -             | X               |
+| *LocalDateTime* | X             | -               |
+
+The following LocalTime mappers are available
+
+|             | LocalTime | *LocalTime* |
+|-------------|-----------|-------------|
+| LocalTime   | -         | X           |
+| *LocalTime* | X         | -           |
+
+The following Month mappers are available
+
+|         | Month | *Month* |
+|---------|-------|---------|
+| Month   | -     | X       |
+| *Month* | X     | -       |
+
+The following timezone mappers are available
+
+|                     | TimeZone | FixedOffsetTimeZone | UtcOffset | *ZoneId* | *ZoneOffset* |
+|---------------------|----------|---------------------|-----------|----------|--------------|
+| TimeZone            | -        |                     |           | X        |              |
+| FixedOffsetTimeZone |          | -                   |           |          | X            |
+| UtcOffset           |          |                     | -         |          | X            |
+| *ZoneId*            | X        | -                   |           | -        |              |
+| *ZoneOffset*        | X        | X                   | X         |          | -            |

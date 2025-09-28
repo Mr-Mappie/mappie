@@ -1,11 +1,8 @@
 package tech.mappie.testing
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import java.io.File
 
-class ReportTest {
+class ReportTest : MappieTestCase() {
 
     data class Input(val text: String, val inner: InnerInput)
     data class InnerInput(val int: Int)
@@ -13,12 +10,9 @@ class ReportTest {
     data class Output(val text: String, val inner: InnerOutput)
     data class InnerOutput(val int: Int)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `validate report`() {
-        compile(directory, verbose = true) {
+        compile(verbose = true) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -73,11 +67,11 @@ class ReportTest {
                 }
                 """
             )
-        } satisfies  {
+        } satisfies {
             isOk()
 
             hasOutputLines(
-                """
+                $$"""
                 |public class Mapper public constructor(internal var a: String, private val b: Int = 1): ObjectMappie<Input, Output>() {
                 |    public val field: Int = 10
                 |    public enum class MyEnum public constructor(): Enum<MyEnum>() {
@@ -97,7 +91,7 @@ class ReportTest {
                 |        }
                 |    public val lazyVal: Lazy<String> = lazy({"1"})
                 |        get {
-                |            return lazyVal${'$'}delegate.getValue(this, Mapper::lazyVal)
+                |            return lazyVal$delegate.getValue(this, Mapper::lazyVal)
                 |        }
                 |    private constructor(b: Int) {
                 |        Mapper("10", b)

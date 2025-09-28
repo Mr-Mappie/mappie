@@ -2,23 +2,18 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class NestedNullToNonNullPropertyTest {
+class NestedNullToNonNullPropertyTest : MappieTestCase() {
+
     data class Input(val text: InnerInput?, val int: Int)
     data class InnerInput(val value: String)
     data class Output(val text: InnerOutput, val int: Int)
     data class InnerOutput(val value: String)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map object with nested null to non-null implicit should fail`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -37,7 +32,7 @@ class NestedNullToNonNullPropertyTest {
 
     @Test
     fun `map object with nested null to non-null explicit without via should fail`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -63,7 +58,7 @@ class NestedNullToNonNullPropertyTest {
 
     @Test
     fun `map object with nested null to non-null explicit fromPropertyNotNull without via should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -82,11 +77,7 @@ class NestedNullToNonNullPropertyTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(InnerInput("test"), 1)))
                 .isEqualTo(Output(InnerOutput("test"), 1))
@@ -95,7 +86,7 @@ class NestedNullToNonNullPropertyTest {
 
     @Test
     fun `map object with nested null to non-null explicit should fail`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -121,7 +112,7 @@ class NestedNullToNonNullPropertyTest {
 
     @Test
     fun `map object with nested null to non-null fromPropertyNotNull explicit should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -140,11 +131,7 @@ class NestedNullToNonNullPropertyTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.map(Input(InnerInput("test"), 1)))
                 .isEqualTo(Output(InnerOutput("test"), 1))

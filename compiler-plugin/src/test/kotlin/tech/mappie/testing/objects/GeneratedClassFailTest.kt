@@ -1,22 +1,17 @@
 package tech.mappie.testing.objects
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class GeneratedClassFailTest {
+class GeneratedClassFailTest : MappieTestCase() {
     data class Input(val a: InnerInput)
     data class InnerInput(val value: String)
     data class Output(val a: InnerOutput)
     data class InnerOutput(val value: Int)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map object with nested class without declaring mapping should fail`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie

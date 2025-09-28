@@ -2,14 +2,11 @@ package tech.mappie.testing.scenarios
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappie2Class
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 import java.math.BigDecimal
 import java.time.Instant
 
-class InvoiceTest {
+class InvoiceTest : MappieTestCase() {
 
     data class EventMetadataDto(
         val eventTimestamp: Instant,
@@ -54,12 +51,9 @@ class InvoiceTest {
         val eventMetadata: EventMetadata,
     )
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map InvoiceDto to Invoice`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -92,12 +86,7 @@ class InvoiceTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappie2Class<InvoiceDto, EventMetadataDto, Invoice>("Mapper")
-                .constructors
-                .first()
-                .call()
-
+            val mapper = objectMappie2<InvoiceDto, EventMetadataDto, Invoice>()
             assertThat(mapper.map(InvoiceDto("10"),EventMetadataDto(Instant.EPOCH)))
                 .isEqualTo(Invoice(0, "10", mutableListOf(), EventMetadata()))
         }

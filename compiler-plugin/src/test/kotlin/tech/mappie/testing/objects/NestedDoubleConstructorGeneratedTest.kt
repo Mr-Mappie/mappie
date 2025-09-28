@@ -1,11 +1,9 @@
 package tech.mappie.testing.objects
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 
-class NestedDoubleConstructorGeneratedTest {
+class NestedDoubleConstructorGeneratedTest : MappieTestCase() {
 
     data class Input(val a: String, val inner: InnerInput)
 
@@ -19,12 +17,9 @@ class NestedDoubleConstructorGeneratedTest {
         constructor(both: String) : this(both, both)
     }
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `map object with nested having multiple constructors should succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie

@@ -2,25 +2,19 @@ package tech.mappie.testing.lists
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import tech.mappie.testing.compilation.compile
-import tech.mappie.testing.loadObjectMappieClass
-import java.io.File
+import tech.mappie.testing.MappieTestCase
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class MapListTest {
+class MapListTest : MappieTestCase() {
 
     data class Input(val value: LocalDateTime)
 
     data class Output(val value: LocalDate)
 
-    @TempDir
-    lateinit var directory: File
-
     @Test
     fun `mapListNullable implicit succeed`() {
-        compile(directory) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -33,11 +27,7 @@ class MapListTest {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = classLoader
-                .loadObjectMappieClass<Input, Output>("Mapper")
-                .constructors
-                .first()
-                .call()
+            val mapper = objectMappie<Input, Output>()
 
             assertThat(mapper.mapList(listOf(Input(LocalDateTime.MIN), Input(LocalDateTime.MAX))))
                 .isEqualTo(listOf(Output(LocalDate.MIN), Output(LocalDate.MAX)))

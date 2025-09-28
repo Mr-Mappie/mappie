@@ -2,7 +2,8 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
-    alias(libs.plugins.kotlin.jvm)
+    id("mappie-jvm-convention")
+    `java-test-fixtures`
     alias(libs.plugins.gradle.plugin.publish)
     alias(libs.plugins.com.github.gmazzo.buildconfig)
 }
@@ -50,6 +51,7 @@ tasks.test {
     dependsOn("publishToMavenLocal")
     dependsOn(":compiler-plugin:publishToMavenLocal")
     dependsOn(":mappie-api:publishToMavenLocal")
+    dependsOn(":modules:kotlinx-datetime:publishToMavenLocal")
 
     testLogging {
         showCauses = true
