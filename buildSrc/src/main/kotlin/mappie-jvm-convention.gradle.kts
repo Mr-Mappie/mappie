@@ -6,5 +6,6 @@ plugins {
 tasks.withType<Test> {
     useJUnitPlatform()
 
+    maxHeapSize = "1024m"
     maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
 }
