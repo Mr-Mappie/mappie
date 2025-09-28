@@ -16,6 +16,9 @@ import tech.mappie.ir.util.BaseVisitor
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.resolving.MappieDefinition
 import tech.mappie.ir.resolving.RequestResolverContext
+import tech.mappie.ir.util.isSubclassOf
+import tech.mappie.ir.util.mappieSuperType
+import tech.mappie.ir.util.mappieType
 
 // TODO: we should collect al publicly visible, and add those during resolving that are visible from the current scope.
 class DefinitionsCollector(val context: MappieContext) {
@@ -64,8 +67,10 @@ class ProjectMappieDefinitionsCollector(val context: MappieContext) : BaseVisito
     override fun visitClass(declaration: IrClass, data: Unit) =
         buildList {
             if (context.shouldGenerateCode(declaration)) {
-                (declaration.superTypes.single() as? IrSimpleType)?.let {
-                    add(MappieDefinition(declaration))
+                context(context) {
+                    declaration.mappieSuperType()?.let {
+                        add(MappieDefinition(declaration))
+                    }
                 }
             }
             addAll(declaration.declarations.filterIsInstance<IrClass>().flatMap { it.accept(data) })

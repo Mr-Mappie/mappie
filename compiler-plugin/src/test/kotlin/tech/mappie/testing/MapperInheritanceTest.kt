@@ -30,4 +30,26 @@ class MapperInheritanceTest : MappieTestCase() {
                 .isEqualTo(Output("test"))
         }
     }
+
+    @Test
+    fun `inherit with interface mapper should succeed`() {
+        compile {
+            file("Mapper.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.MapperInheritanceTest.*
+
+                class Mapper : ObjectMappie<Input, Output>(), AutoCloseable {
+                    override fun close() { }
+                }
+                """
+            )
+        } satisfies  {
+            isOk()
+            hasNoWarningsOrErrors()
+
+            assertThat(objectMappie<Input, Output>().map(Input("test")))
+                .isEqualTo(Output("test"))
+        }
+    }
 }
