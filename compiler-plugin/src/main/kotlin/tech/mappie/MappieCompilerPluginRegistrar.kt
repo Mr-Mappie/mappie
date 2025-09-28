@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.konan.file.File
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_REPORT_DIR
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_REPORT_ENABLED
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_USE_DEFAULT_ARGUMENTS
@@ -53,12 +54,15 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
             ?: false
 
     companion object {
+        private val SEPARATOR = Regex.escapeReplacement(File.separator)
+
         private val MODULE_KOTLINX_DATETIME_REGEX = Regex(
-            "(.*modules\\\\kotlinx-datetime\\\\build\\\\classes\\\\kotlin\\\\jvm\\\\main)|(.*module-kotlinx-datetime.*-${BuildConfig.VERSION}.*)"
+            "(.*modules${SEPARATOR}kotlinx-datetime${SEPARATOR}build${SEPARATOR}classes${SEPARATOR}kotlin${SEPARATOR}jvm${SEPARATOR}main)|(.*module-kotlinx-datetime.*-${BuildConfig.VERSION}.*)"
         )
 
         private val TESTUTIL_REGEX = Regex(
             ".*testutil-${BuildConfig.VERSION}.*\\.jar"
         )
+
     }
 }
