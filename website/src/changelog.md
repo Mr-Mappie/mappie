@@ -9,6 +9,7 @@ changelog:
       - "Added support for kotlinx-datetime to JVM mappers, which can be imported via a separate dependency."
       - "Fixed check of runtime usage of of mapping DSL for multiple object mappie."
       - "[#264](https://github.com/Mr-Mappie/mappie/issues/264) Fix compilation error with ObjectMappie5."
+      - "[#262](https://github.com/Mr-Mappie/mappie/issues/262) Fixed compilation error when mapper inherits from more than a Mappie subclass."
       - "Minor performance enhancements - by @ErwinOlie."
       - "Fix for missing reporting when both a mapper and its generated mapper have issues - by @ErwinOlie."
       - "Improved reporting of type parameters - by @ErwinOlie."
