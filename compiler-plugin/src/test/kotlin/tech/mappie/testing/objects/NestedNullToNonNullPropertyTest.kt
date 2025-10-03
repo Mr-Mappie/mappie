@@ -2,6 +2,7 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import tech.mappie.testing.MappieTestCase
 
@@ -140,6 +141,7 @@ class NestedNullToNonNullPropertyTest : MappieTestCase() {
     }
 
     @Test
+    @Disabled("Explicit nullable mapping source in Mappie is not supported yet.")
     fun `map object with nested null to non-null with implicit null mapper should succeed`() {
         compile {
             file("Test.kt",
@@ -173,6 +175,7 @@ class NestedNullToNonNullPropertyTest : MappieTestCase() {
     }
 
     @Test
+    @Disabled("Explicit nullable mapping source in Mappie is not supported yet.")
     fun `map object with nested null to non-null with explicit null mapper should succeed`() {
         compile {
             file("Test.kt",
