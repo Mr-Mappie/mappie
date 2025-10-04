@@ -46,7 +46,7 @@ public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
      * @return [from] mapped to an instance of [TO].
      */
     public open fun mapNullable(from: FROM?): TO? =
-        from?.let { map(it) }
+        from?.let(::map)
 
     /**
      * Map each element in [from] to an instance of [TO].
@@ -64,7 +64,7 @@ public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
      * @return [from] mapped to a list of instances of [TO].
      */
     public open fun mapNullableList(from: List<FROM>?): List<TO>? =
-        from?.let { ArrayList<TO>(it.size).apply { it.forEach { add(map(it)) } } }
+        from?.let(::mapList)
 
     /**
      * Map each element in [from] to an instance of [TO].
@@ -82,7 +82,7 @@ public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
      * @return [from] mapped to a set of instances of [TO].
      */
     public open fun mapNullableSet(from: Set<FROM>?): Set<TO>? =
-        from?.let { HashSet<TO>(it.size).apply { from.forEach { add(map(it)) } } }
+        from?.let(::mapSet)
 
     /**
      * Mapping function which instructs Mappie to generate code for this implementation.
