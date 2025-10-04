@@ -76,10 +76,12 @@ val CLASS_ID_OBJECT_MAPPIE4 = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("
 
 val CLASS_ID_OBJECT_MAPPIE5 = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("ObjectMappie5"))
 
-val CLASS_ID_USE_STRICT_VISIBILITY = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("UseStrictVisibility"))
-
 val CLASS_ID_USE_DEFAULT_ARGUMENTS = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("UseDefaultArguments"))
 
 val CLASS_ID_USE_STRICT_ENUMS = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("UseStrictEnums"))
+
+val CLASS_ID_USE_STRICT_JAVA_NULLABILITY = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("UseStrictJavaNullability"))
+
+val CLASS_ID_USE_STRICT_VISIBILITY = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("UseStrictVisibility"))
 
 val CLASS_ID_RECORD = ClassId(FqName("java.lang"), Name.identifier("Record"))
