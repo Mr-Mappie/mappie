@@ -64,8 +64,6 @@ abstract class MavenTestBase {
                 </repositories>
                 
                 <build>
-                    <sourceDirectory>src/main/kotlin</sourceDirectory>
-                    <testSourceDirectory>src/test/kotlin</testSourceDirectory>
                     <plugins>
                           <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
@@ -83,12 +81,24 @@ abstract class MavenTestBase {
                                     <goals>
                                         <goal>compile</goal>
                                     </goals>
+                                    <configuration>
+                                        <sourceDirs>
+                                            <sourceDir>src/main/java</sourceDir>
+                                            <sourceDir>src/main/kotlin</sourceDir>
+                                        </sourceDirs>
+                                    </configuration>
                                 </execution>
                                 <execution>
                                     <id>test-compile</id>
                                     <goals>
                                         <goal>test-compile</goal>
                                     </goals>
+                                    <configuration>
+                                        <sourceDirs>
+                                            <sourceDir>src/test/java</sourceDir>
+                                            <sourceDir>src/test/kotlin</sourceDir>
+                                        </sourceDirs>
+                                    </configuration>
                                 </execution>
                             </executions>
                             <configuration>
