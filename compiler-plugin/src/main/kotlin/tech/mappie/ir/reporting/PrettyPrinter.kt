@@ -79,6 +79,20 @@ data class KotlinStringBuilder(val level: Int = 0) {
 
     fun <T> lines(list: List<T>, block: KotlinStringBuilder.(T) -> KotlinStringBuilder): KotlinStringBuilder =
         apply { list.forEach { line { KotlinStringBuilder(level).block(it).print() } } }
+
+    fun <T> block(
+        statements: List<T>,
+        renderStatement: KotlinStringBuilder.(T) -> KotlinStringBuilder,
+    ): KotlinStringBuilder =
+        apply {
+            curlyOpen()
+            newline()
+            indented {
+                lines(statements, renderStatement)
+            }
+            indent()
+            curlyClose()
+        }
 }
 
 fun IrElement.pretty(): String =
@@ -143,14 +157,7 @@ private class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder
 
             space()
 
-            curlyOpen()
-            newline()
-            indented {
-                lines(declaration.declarations) {
-                    element(it)
-                }
-            }
-            indent(); curlyClose()
+            block(declaration.declarations) { element(it) }
         }
     }
 
@@ -314,16 +321,7 @@ private class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder
     }
 
     override fun visitBlockBody(body: IrBlockBody, data: KotlinStringBuilder): KotlinStringBuilder {
-        return data.apply {
-            curlyOpen()
-            newline()
-            indented {
-                lines(body.statements) {
-                    element(it)
-                }
-            }
-            indent(); curlyClose()
-        }
+        return data.block(body.statements) { element(it) }
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -375,29 +373,11 @@ private class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder
     }
 
     override fun visitBlock(expression: IrBlock, data: KotlinStringBuilder): KotlinStringBuilder {
-        return data.apply {
-            curlyOpen()
-            newline()
-            indented {
-                lines(expression.statements) {
-                    element(it)
-                }
-            }
-            indent(); curlyClose()
-        }
+        return data.block(expression.statements) { element(it) }
     }
 
     override fun visitComposite(expression: IrComposite, data: KotlinStringBuilder): KotlinStringBuilder {
-        return data.apply {
-            curlyOpen()
-            newline()
-            indented {
-                lines(expression.statements) {
-                    element(it)
-                }
-            }
-            indent(); curlyClose()
-        }
+        return data.block(expression.statements) { element(it) }
     }
 
     override fun visitBreak(jump: IrBreak, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -470,13 +450,6 @@ private class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder
             }
             string { "::${expression.symbol.owner.name.pretty()}" }
         }
-    }
-
-    override fun visitCallableReference(
-        expression: IrCallableReference<*>,
-        data: KotlinStringBuilder
-    ): KotlinStringBuilder {
-        return super.visitCallableReference(expression, data)
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: KotlinStringBuilder): KotlinStringBuilder {
@@ -684,14 +657,7 @@ private class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder
         return data.apply {
             string { "when" }
             space()
-            curlyOpen()
-            newline()
-            indented {
-                lines(expression.branches) {
-                    element(it)
-                }
-            }
-            indent(); curlyClose()
+            block(expression.branches) { element(it) }
         }
     }
 
