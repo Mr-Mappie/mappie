@@ -48,7 +48,7 @@ We create a mapping between `Dog` and `DogDto` via
 ```kotlin
 object DogMapper : ObjectMappie<Dog, DogDto>() {
     override fun map(from: Dog): DogDto = mapping {
-        DogDto::name fromProperty DogDto::name transform {
+        DogDto::name fromProperty Dog::name transform {
             it ?: "unknown"
         }
     }

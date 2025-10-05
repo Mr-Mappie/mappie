@@ -26,13 +26,13 @@
           "external": false
         },
         {
-          "caption": "Installation",
-          "url": "/getting-started/installation/",
+          "caption": "Gradle Configuration",
+          "url": "/getting-started/gradle-configuration/",
           "external": false
         },
         {
-          "caption": "Configuration",
-          "url": "/getting-started/configuration/",
+          "caption": "Maven Configuration",
+          "url": "/getting-started/maven-configuration/",
           "external": false
         }
       ]
