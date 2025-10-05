@@ -18,7 +18,7 @@ For example, suppose we want to map the sources `Person`, `Address`, and `Contac
 to `PersonDto`. We can write this as
 ```kotlin
 object PersonDtoMapper : ObjectMappie3<Person, Address, ContactInformation, PersonDto>() {
-    override fun mapping(first: Person, second: Address, third: ContactInformation): PersonDto = mapping {
+    override fun map(first: Person, second: Address, third: ContactInformation): PersonDto = mapping {
         // mapping logic
     }
 }

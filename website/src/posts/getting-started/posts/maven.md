@@ -55,7 +55,7 @@ Mappie can be configured via Maven or per Mapper. The following configuration op
     <option>mappie:use-default-arguments=false</option> <!-- Disable using default arguments in implicit mappings -->
     <option>mappie:strict-visibility=true</option> <!-- Allow calling constructors not visible from the calling scope -->
     <option>mappie:strict-enums=false</option> <!-- Do not report an error if not all enum sources are mapped  -->
-    <option>mappie:reporting-enabled=true</option> <!-- Enable report generation -->
+    <option>mappie:report-enabled=true</option> <!-- Enable report generation -->
 </pluginOptions>
 ```
 

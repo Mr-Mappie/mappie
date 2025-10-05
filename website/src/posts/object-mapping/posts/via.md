@@ -41,7 +41,7 @@ we can then reuse `AddressMapper` to construct a mapper for `Person` and `Person
 the operator `via`
 ```kotlin
 object PersonMapper : ObjectMappie<Person, PersonDto>() {
-    override fun map(from: Address) = mapping {
+    override fun map(from: Person) = mapping {
         to::addressDto fromProperty from::address via AddressMapper
     }
 }
