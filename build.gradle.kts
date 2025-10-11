@@ -24,7 +24,7 @@ jreleaser {
         armored = true
         mode = Signing.Mode.COMMAND
         passphrase = properties["signing.passphrase"] as? String
-        verify = false
+        publicKey = properties["signing.publicKey"] as? String
     }
     release {
         github {
