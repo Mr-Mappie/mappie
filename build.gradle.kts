@@ -23,12 +23,10 @@ jreleaser {
         active = org.jreleaser.model.Active.ALWAYS
         armored = true
         mode = Signing.Mode.COMMAND
-        passphrase = properties["signing.passphrase"] as? String
-        publicKey = properties["signing.publicKey"] as? String
+        verify = false
     }
     release {
         github {
-            token = properties["release.github.token"] as? String
             draft = true
         }
     }
