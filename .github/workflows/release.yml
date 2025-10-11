@@ -49,7 +49,7 @@ jobs:
       - name: Install GPG
         run: |
           cat <(echo -e "${{ secrets.MAVEN_CENTRAL_GPG_SECRET_KEY }}") | gpg --batch --import
-          cat <(echo -e "${{ secrets.MAVEN_CENTRAL_GPG_PUBLIC_KEY }}") | gpg --batch --import
+          cat <(echo -e "${{ secrets.MAVEN_CENTRAL_GPG_PUBLIC_KEY }}") | gpg --no-check-certificate --batch --import
           gpg --list-secret-keys --keyid-format LONG
 
       - name: Staging
