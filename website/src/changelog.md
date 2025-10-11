@@ -2,7 +2,7 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-  - date: "tbd"
+  - date: "2025-11-10"
     title: "v2.2.20-1.6.0"
     items:
       - "Allow `mapping` to be used anywhere (at most once) in the body of the map function."
