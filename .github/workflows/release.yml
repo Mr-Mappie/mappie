@@ -31,12 +31,7 @@ jobs:
       contents: write
     runs-on: macos-latest
     env:
-      PUBLISH_MAVEN: ${{
-        inputs.release_api == 'true' ||
-        inputs.release_module_kotlinx_datetime == 'true' ||
-        inputs.release_compiler_plugin == 'true' ||
-        inputs.release_maven_plugin == 'true'
-      }}
+      PUBLISH_MAVEN: ${{inputs.release_api == 'true' || inputs.release_module_kotlinx_datetime == 'true' || inputs.release_compiler_plugin == 'true' || inputs.release_maven_plugin == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
