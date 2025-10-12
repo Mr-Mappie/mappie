@@ -23,11 +23,10 @@ jreleaser {
         active = org.jreleaser.model.Active.ALWAYS
         armored = true
         mode = Signing.Mode.COMMAND
-        passphrase = properties["signing.passphrase"] as? String
+        verify = false
     }
     release {
         github {
-            token = properties["release.github.token"] as? String
             draft = true
         }
     }
@@ -35,30 +34,17 @@ jreleaser {
         maven {
             mavenCentral {
                 active = org.jreleaser.model.Active.ALWAYS
-                buildList {
-                    if (System.getenv("RELEASE_API") == "true") {
-                        add("mappie-api")
-                    }
-                    if (System.getenv("RELEASE_MODULE_KOTLINX_DATETIME") == "true") {
-                        add("module:kotlinx-datetime")
-                    }
-                    if (System.getenv("RELEASE_MAVEN_PLUGIN") == "true") {
-                        add("maven-plugin")
-                    }
-                    if (System.getenv("RELEASE_COMPILER_PLUGIN") == "true") {
-                        add("compiler-plugin")
-                    }
-                }.forEach {
-                    create(it) {
-                        active = org.jreleaser.model.Active.ALWAYS
-                        url = "https://central.sonatype.com/api/v1/publisher"
-                        stagingRepository(project(":$it").layout.buildDirectory.dir("staging-deploy").get().toString())
-                        username = properties["mavenCentralUsername"] as? String
-                        password = properties["mavenCentralPassword"] as? String
-                        applyMavenCentralRules = true
-                        verifyPom = false
-                        retryDelay = 20
-                    }
+
+                create("mappie") {
+                    active = org.jreleaser.model.Active.ALWAYS
+                    url = "https://central.sonatype.com/api/v1/publisher"
+                    username = properties["mavenCentralUsername"] as? String
+                    password = properties["mavenCentralPassword"] as? String
+                    applyMavenCentralRules = true
+                    verifyPom = false
+                    retryDelay = 20
+
+                    stagingRepository(layout.buildDirectory.dir("staging-deploy").get().toString())
                 }
             }
         }

@@ -52,20 +52,22 @@ kotlin {
 }
 
 publishing {
-    repositories {
-        maven {
-            url = uri(layout.buildDirectory.dir("staging-deploy"))
+    if (System.getenv("RELEASE_API").toBoolean()) {
+        publications.configureEach {
+            if (this is MavenPublication) {
+                artifact(tasks["javadocJar"])
+                // jreleaser workaround
+                if (name != "jvm" && name != "kotlinMultiplatform") {
+                    artifact(tasks["emptyJar"])
+                }
+                mappiePom(name = "tech.mappie:mappie-api")
+            }
         }
     }
 
-    publications.configureEach {
-        if (this is MavenPublication) {
-            artifact(tasks["javadocJar"])
-            // jreleaser workaround
-            if (name != "jvm" && name != "kotlinMultiplatform") {
-                artifact(tasks["emptyJar"])
-            }
-            mappiePom(name = "tech.mappie:mappie-api")
+    repositories {
+        maven {
+            url = uri(rootProject.layout.buildDirectory.file("staging-deploy"))
         }
     }
 }
