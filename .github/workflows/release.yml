@@ -30,6 +30,13 @@ jobs:
     permissions:
       contents: write
     runs-on: macos-latest
+    env:
+      PUBLISH_MAVEN: ${{
+        inputs.release_api == 'true' ||
+        inputs.release_module_kotlinx_datetime == 'true' ||
+        inputs.release_compiler_plugin == 'true' ||
+        inputs.release_maven_plugin == 'true'
+      }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -52,6 +59,7 @@ jobs:
           gpg --list-secret-keys --keyid-format LONG
 
       - name: Staging
+        if: ${{ env.PUBLISH_MAVEN == 'true' }}
         run: ./gradlew publish
         env:
           RELEASE_API: ${{ inputs.release_api }}
@@ -60,6 +68,7 @@ jobs:
           RELEASE_MAVEN_PLUGIN: ${{ inputs.release_maven_plugin }}
 
       - name: Publish to Maven Central
+        if: ${{ env.PUBLISH_MAVEN == 'true' }}
         run: ./gradlew jreleaserFullRelease --no-configuration-cache --stacktrace
         env:
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.MAVEN_CENTRAL_GPG_SECRET_PASSWORD }}
