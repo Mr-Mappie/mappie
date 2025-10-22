@@ -19,7 +19,7 @@ class ClassMappingStatementCollector(private val context: ResolverContext)
     : BaseVisitor<Pair<Name, ExplicitClassMappingSource>?, Unit>() {
     override fun visitCall(expression: IrCall, data: Unit) = when (expression.symbol.owner.name) {
         IDENTIFIER_FROM_PROPERTY, IDENTIFIER_FROM_PROPERTY_NOT_NULL -> {
-            val target = expression.arguments[1]!!.accept(TargetNameCollector(context), Unit)
+            val target = expression.arguments[2]!!.accept(TargetNameCollector(context), Unit)
             target to ExplicitPropertyMappingSource(
                 expression.arguments[2]!! as IrPropertyReference,
                 null,
@@ -80,24 +80,6 @@ private class MapperReferenceCollector(private val context: ResolverContext)
     override fun visitConstructorCall(expression: IrConstructorCall, data: Unit): PropertyMappingViaMapperTransformation {
         val mapper = expression.type.getClass()!!
         return PropertyMappingViaMapperTransformation(MappieDefinition(mapper), expression)
-    }
-
-    override fun visitCall(expression: IrCall, data: Unit): PropertyMappingViaMapperTransformation {
-        require(expression.origin == IrStatementOrigin.GET_PROPERTY)
-
-        return when (val name = expression.symbol.owner.name) {
-            getterName("forList"), getterName("forSet") -> {
-                val mapper = expression.symbol.owner.parent as IrClass
-                PropertyMappingViaMapperTransformation(MappieDefinition(mapper), expression.dispatchReceiver!!)
-            }
-            else -> {
-                context.fail(
-                    "Unexpected call of ${name.asString()}, expected forList or forSet",
-                    expression,
-                    location(context.origin.fileEntry, expression)
-                )
-            }
-        }
     }
 }
 

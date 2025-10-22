@@ -88,7 +88,7 @@ class NestedNullToNonNullPropertyTest : MappieTestCase() {
 
     @Test
     fun `map object with nested null to non-null explicit should fail`() {
-        compile {
+        compile(verbose = true) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie

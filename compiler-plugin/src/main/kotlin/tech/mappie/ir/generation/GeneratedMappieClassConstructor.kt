@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import tech.mappie.ir.resolving.MappieDefinition
 import tech.mappie.referenceEnumMappieClass
 import tech.mappie.referenceObjectMappieClass
 import tech.mappie.ir.resolving.MappingRequest

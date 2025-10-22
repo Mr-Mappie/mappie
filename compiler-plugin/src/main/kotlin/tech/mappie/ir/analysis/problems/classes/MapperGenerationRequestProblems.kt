@@ -7,7 +7,6 @@ import tech.mappie.ir.resolving.ResolverContext
 import tech.mappie.ir.resolving.classes.sources.*
 import tech.mappie.util.filterSingle
 import tech.mappie.ir.util.location
-import tech.mappie.ir.util.mappieType
 import tech.mappie.ir.analysis.MappingValidation
 import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.analysis.ValidationContext
@@ -20,8 +19,8 @@ class MapperGenerationRequestProblems(
     fun all(): List<Problem> = requests
         .filter { transformation -> isDuplicate(transformation) }
         .flatMap { transformation ->
-            val source = transformation.source.type.mappieType()
-            val target = transformation.target.type.mappieType()
+            val source = transformation.source.type
+            val target = transformation.target.type
             val requests = MappingResolver.of(source, target, ResolverContext(context, context.definitions, context.function))
                 .resolve(null)
 
@@ -50,7 +49,7 @@ class MapperGenerationRequestProblems(
 
     private fun isDuplicate(transformation: GeneratedViaMapperTransformation): Boolean =
         context.generated.none {
-            it.first == transformation.source.type.mappieType() && it.second == transformation.target.type.mappieType()
+            it.first == transformation.source.type && it.second == transformation.target.type
         }
 
     companion object {

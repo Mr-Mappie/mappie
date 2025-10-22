@@ -17,7 +17,7 @@ data class ExplicitPropertyMappingSource(
     val forceNonNull: Boolean,
 ) : ExplicitClassMappingSource, TransformableClassMappingSource {
     val getterType = (reference.type as IrSimpleType).arguments.last().typeOrFail
-    override val type = type(getterType.let { if (forceNonNull) it.makeNotNull() else it }, transformation)
+    override val type = type(getterType.let { if (forceNonNull) it.makeNotNull() else it })
     override val origin = reference
 }
 

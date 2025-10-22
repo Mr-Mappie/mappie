@@ -17,27 +17,7 @@ package tech.mappie.api
  * @param FROM the source type to map from.
  * @param TO the target type to map to.
  */
-public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
-
-    /**
-     * A mapper for [List] to be used in [TransformableValue.via].
-     */
-    public val forList: ListMappie<TO> get() =
-        error("The mapper forList should only be used in the context of 'via'. Use mapList instead.")
-
-    /**
-     * A mapper for [Set] to be used in [TransformableValue.via].
-     */
-    public val forSet: SetMappie<TO> get() =
-        error("The mapper forSet should only be used in the context of 'via'. Use mapSet instead.")
-
-    /**
-     * Map [from] to an instance of [TO].
-     *
-     * @param from the source value.
-     * @return [from] mapped to an instance of [TO].
-     */
-    public open fun map(from: FROM): TO = generated()
+public abstract class ObjectMappie<FROM, out TO> : Mappie1<FROM, TO> {
 
     /**
      * Map nullable [from] to an instance of [TO].

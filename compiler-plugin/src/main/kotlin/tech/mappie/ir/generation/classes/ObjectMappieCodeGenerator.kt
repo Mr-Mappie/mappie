@@ -20,6 +20,7 @@ import tech.mappie.ir.reporting.pretty
 import tech.mappie.referenceFunctionLet
 import tech.mappie.referenceFunctionRequireNotNull
 import tech.mappie.ir.resolving.classes.sources.*
+import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.resolving.classes.targets.FunctionCallTarget
 import tech.mappie.ir.resolving.classes.targets.SetterTarget
 import tech.mappie.ir.resolving.classes.targets.ValueParameterTarget
@@ -49,7 +50,7 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
         val call = irCallConstructor(constructor, emptyList()).apply {
             model.mappings.forEach { (target, source) ->
                 if (target is ValueParameterTarget) {
-                    constructArgument(source, regularParameters)?.let { argument ->
+                    constructArgument(source, target, regularParameters)?.let { argument ->
                         arguments[target.value.indexInParameters] = argument
                     }
                 }
@@ -63,14 +64,14 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
                 is SetterTarget -> {
                     +irCall(target.value.setter!!).apply {
                         dispatchReceiver = irGet(variable)
-                        arguments[1] = constructArgument(source, regularParameters)
+                        arguments[1] = constructArgument(source, target, regularParameters)
                     }
                 }
 
                 is FunctionCallTarget -> {
                     +irCall(target.value).apply {
                         dispatchReceiver = irGet(variable)
-                        arguments[1] = constructArgument(source, regularParameters)
+                        arguments[1] = constructArgument(source, target, regularParameters)
                     }
                 }
 
@@ -89,7 +90,7 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
             }
     }
 
-    private fun IrBuilderWithScope.constructArgument(source: ClassMappingSource, parameters: List<IrValueParameter>): IrExpression? =
+    private fun IrBuilderWithScope.constructArgument(source: ClassMappingSource, target: ClassMappingTarget, parameters: List<IrValueParameter>): IrExpression? =
         when (source) {
             is ExplicitPropertyMappingSource -> {
                 val receiver = source.reference.dispatchReceiver
@@ -110,7 +111,7 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
                         dispatchReceiver = receiver
                     }
                 }
-                source.transformation?.let { constructTransformation(this@ObjectMappieCodeGenerator.context, it, getter) } ?: getter
+                source.transformation?.let { constructTransformation(this@ObjectMappieCodeGenerator.context, it, getter, target) } ?: getter
             }
             is ExpressionMappingSource -> {
                 irCall(this@ObjectMappieCodeGenerator.context.referenceFunctionLet()).apply {
@@ -125,7 +126,12 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
                 val getter = irCall(source.property.getter!!).apply {
                     dispatchReceiver = irGet(parameters.first { it.name == source.parameter })
                 }
-                source.transformation?.let { constructTransformation(this@ObjectMappieCodeGenerator.context, it, getter) } ?: getter
+                source.transformation?.let { constructTransformation(
+                    this@ObjectMappieCodeGenerator.context,
+                    it,
+                    getter,
+                    target
+                ) } ?: getter
             }
             is FunctionMappingSource -> {
                 irCall(source.function.symbol).apply {
@@ -134,7 +140,12 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
             }
             is ParameterValueMappingSource -> {
                 val getter = irGet(parameters.first { it.name == source.parameter })
-                source.transformation?.let { constructTransformation(this@ObjectMappieCodeGenerator.context, it, getter) }
+                source.transformation?.let { constructTransformation(
+                    this@ObjectMappieCodeGenerator.context,
+                    it,
+                    getter,
+                    target
+                ) }
                     ?: getter
             }
             is ParameterDefaultValueMappingSource -> {

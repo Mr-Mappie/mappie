@@ -5,15 +5,10 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.addAnnotations
-import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.types.typeWith
-import tech.mappie.ir.MappieIrRegistrar.Companion.context
+import org.jetbrains.kotlin.ir.util.isNullable
 import tech.mappie.ir.resolving.MappieDefinition
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
-import tech.mappie.ir.util.isList
-import tech.mappie.ir.util.isSet
-import tech.mappie.ir.util.mappieType
 
 sealed interface TransformableClassMappingSource : ClassMappingSource {
     val transformation: PropertyMappingTransformation?
@@ -21,24 +16,19 @@ sealed interface TransformableClassMappingSource : ClassMappingSource {
     fun selectGeneratedTransformationMapping(): GeneratedViaMapperTransformation? =
         transformation as? GeneratedViaMapperTransformation?
 
-    fun type(original: IrType, transformation: PropertyMappingTransformation?): IrType {
-        return if (transformation == null) {
-            original
-        } else {
-            when (transformation) {
-                is PropertyMappingViaMapperTransformation, is GeneratedViaMapperTransformation -> {
-                    when {
-                        original.isSet() -> context.irBuiltIns.setClass.typeWith(transformation.type)
-                        original.isList() -> context.irBuiltIns.listClass.typeWith(transformation.type)
-                        else -> transformation.type
-                    }.run { if (original.isNullable()) makeNullable() else this }.addAnnotations(original.annotations)
-                }
-                is PropertyMappingTransformTransformation -> {
-                    transformation.type
+    fun type(original: IrType): IrType =
+        when (transformation) {
+            is PropertyMappingViaMapperTransformation, is GeneratedViaMapperTransformation -> {
+                if (original.isNullable()) {
+                    transformation!!.type.makeNullable().addAnnotations(original.annotations)
+                } else {
+                    transformation!!.type
                 }
             }
+            else -> {
+                transformation?.type ?: original.type
+            }
         }
-    }
 }
 
 sealed interface PropertyMappingTransformation {
@@ -65,5 +55,5 @@ data class GeneratedViaMapperTransformation(
     val source: ClassMappingSource,
     val target: ClassMappingTarget,
 ) : PropertyMappingTransformation {
-    override val type = target.type.mappieType()
+    override val type = target.type
 }

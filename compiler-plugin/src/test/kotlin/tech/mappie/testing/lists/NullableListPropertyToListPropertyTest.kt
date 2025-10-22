@@ -46,11 +46,12 @@ class NullableListPropertyToListPropertyTest : MappieTestCase() {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
+                import tech.mappie.api.builtin.collections.*
                 import tech.mappie.testing.lists.NullableListPropertyToListPropertyTest.*
 
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input) = mapping {
-                        to::text fromPropertyNotNull from::text via InnerMapper.forList
+                        to::text fromPropertyNotNull from::text via IterableToListMapper(InnerMapper)
                     }
                 }
 

@@ -41,7 +41,7 @@ class NestedNullToNullPropertyTest : MappieTestCase() {
 
     @Test
     fun `map nested nullable to nullable explicit without via should succeed`() {
-        compile {
+        compile(verbose = true) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie

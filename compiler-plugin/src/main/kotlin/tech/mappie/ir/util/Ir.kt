@@ -19,17 +19,10 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
-import org.jetbrains.kotlin.ir.util.isStrictSubtypeOfClass
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.Name
-import tech.mappie.MappieContext
-import tech.mappie.referenceMappieClass
 import tech.mappie.util.*
-
-context (context: MappieContext)
-fun IrClass.mappieSuperType(): IrType? =
-    allSuperTypes().singleOrNull { it.isStrictSubtypeOfClass(context.referenceMappieClass()) }
 
 fun IrClass.isSubclassOf(clazz: IrClassSymbol) =
     allSuperTypes().any { it.erasedUpperBound == clazz.defaultType.getClass()!! }
@@ -43,30 +36,10 @@ fun getterName(name: String) =
 fun IrSimpleFunction.isMappieMapFunction() =
     name == IDENTIFIER_MAP && overriddenSymbols.isNotEmpty()
 
-fun IrSimpleFunction.isMappieMapNullableListFunction() =
-    name == IDENTIFIER_MAP_NULLABLE_LIST
-            && parameters.singleOrNull { it.kind == IrParameterKind.Regular }?.type?.isList() == true
-            && returnType.isList()
-
-fun IrSimpleFunction.isMappieMapListFunction() =
-    name == IDENTIFIER_MAP_LIST
-        && parameters.singleOrNull { it.kind == IrParameterKind.Regular }?.type?.isList() == true
-        && returnType.isList()
-
-fun IrSimpleFunction.isMappieMapNullableSetFunction() =
-    name == IDENTIFIER_MAP_NULLABLE_SET
-        && parameters.singleOrNull { it.kind == IrParameterKind.Regular }?.type?.isSet() == true
-        && returnType.isSet()
-
-fun IrSimpleFunction.isMappieMapSetFunction() =
-    name == IDENTIFIER_MAP_SET
-        && parameters.singleOrNull { it.kind == IrParameterKind.Regular }?.type?.isSet() == true
-        && returnType.isSet()
-
 fun IrSimpleFunction.isMappieMapNullableFunction() =
     name == IDENTIFIER_MAP_NULLABLE
-        && parameters.singleOrNull { it.kind == IrParameterKind.Regular }?.type?.isNullable() == true
-        && returnType.isNullable()
+            && parameters.singleOrNull { it.kind == IrParameterKind.Regular }?.type?.isNullable() == true
+            && returnType.isNullable()
 
 fun IrGeneratorContextInterface.blockBody(scope: Scope, body: IrBlockBodyBuilder.() -> Unit) =
     IrBlockBodyBuilder(

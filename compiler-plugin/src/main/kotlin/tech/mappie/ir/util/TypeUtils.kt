@@ -3,41 +3,15 @@ package tech.mappie.ir.util
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOf
 
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.MappieIrRegistrar.Companion.context
 
-fun IrType.isMappableFrom(other: IrType): Boolean = when {
-    (isList() && other.isList()) || (isSet() && other.isSet()) ->
-        (this as IrSimpleType).arguments.first().typeOrFail.isMappableFrom((other as IrSimpleType).arguments.first().typeOrFail)
-    (isList() xor other.isList()) || (isSet() xor other.isSet()) ->
-        false
-    else ->
-        isSubtypeOf(other, IrTypeSystemContextImpl(context.irBuiltIns))
-}
-
-fun IrType.mappieType() = when {
-    isList() || isSet() -> (this as IrSimpleType).arguments.first().typeOrFail
-    isNullable() -> this.makeNotNull()
-    else -> this
-}
-
-fun IrType.isList() =
-    classOrNull?.owner?.fqNameWhenAvailable?.asString() in listOf(
-        "kotlin.collections.AbstractList",
-        "kotlin.collections.AbstractMutableList",
-        "kotlin.collections.List",
-        "kotlin.collections.MutableList",
-    )
-
-fun IrType.isSet() =
-    classOrNull?.owner?.fqNameWhenAvailable?.asString() in listOf(
-        "kotlin.collections.Set",
-        "kotlin.collections.MutableSet",
-    )
+// TODO: other isNothing is the wrong way around.
+fun IrType.isSubtypeOf(other: IrType) =
+    other.isNothing() || isSubtypeOf(other, IrTypeSystemContextImpl(context.irBuiltIns))
 
 fun IrType.hasFlexibleNullabilityAnnotation(): Boolean =
     annotations.any { it.symbol.owner.parentAsClass.classId == FlexibleNullability }

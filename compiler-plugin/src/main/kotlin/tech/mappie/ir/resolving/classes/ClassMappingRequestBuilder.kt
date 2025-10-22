@@ -18,8 +18,8 @@ import tech.mappie.ir.resolving.classes.sources.ParameterValueMappingSource
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.resolving.classes.targets.ValueParameterTarget
 import tech.mappie.ir.analysis.Problem
-import tech.mappie.ir.util.isMappableFrom
 import tech.mappie.ir.util.isPrimitive
+import tech.mappie.ir.util.isSubtypeOf
 import tech.mappie.ir.util.location
 
 class ClassMappingRequestBuilder(private val constructor: IrConstructor, private val context: ResolverContext) {
@@ -54,7 +54,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
     private fun explicit(target: ClassMappingTarget): List<ExplicitClassMappingSource>? =
         explicit[target.name]?.let { sources ->
             sources.map { source ->
-                if (source is ExplicitPropertyMappingSource && source.transformation == null && !source.type.isMappableFrom(target.type)) {
+                if (source is ExplicitPropertyMappingSource && source.transformation == null && !target.type.isSubtypeOf(source.type)) {
                     source.copy(transformation = transformation(source, target))
                 } else {
                     source
@@ -65,7 +65,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
     private fun implicit(target: ClassMappingTarget, useDefaultArguments: Boolean): List<ImplicitClassMappingSource> =
         implicit.getOrDefault(target.name, emptyList()).let { sources ->
             sources.map { source ->
-                if (source.type.isMappableFrom(target.type)) {
+                if (source.type.isSubtypeOf(target.type)) {
                     source
                 } else {
                     when (source) {

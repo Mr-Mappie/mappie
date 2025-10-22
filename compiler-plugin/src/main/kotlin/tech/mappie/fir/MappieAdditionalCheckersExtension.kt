@@ -3,10 +3,12 @@ package tech.mappie.fir
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirAnonymousObjectChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import tech.mappie.fir.analysis.*
+import tech.mappie.fir.resolving.MappieCollector
 
 class MappieAdditionalCheckersExtension(session: FirSession) : FirAdditionalCheckersExtension(session) {
 
@@ -25,6 +27,11 @@ class MappieAdditionalCheckersExtension(session: FirSession) : FirAdditionalChec
     }
 
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
+
+        override val classCheckers: Set<FirClassChecker> = setOf(
+            MappieCollector()
+        )
+
         override val anonymousObjectCheckers: Set<FirAnonymousObjectChecker> = setOf(
             AnonymousMappieObjectChecker()
         )

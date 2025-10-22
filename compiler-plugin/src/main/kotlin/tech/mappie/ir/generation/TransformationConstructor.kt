@@ -2,69 +2,76 @@ package tech.mappie.ir.generation
 
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.functions
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.referenceFunctionLet
 import tech.mappie.ir.resolving.classes.sources.GeneratedViaMapperTransformation
 import tech.mappie.ir.resolving.classes.sources.PropertyMappingTransformTransformation
 import tech.mappie.ir.resolving.classes.sources.PropertyMappingTransformation
 import tech.mappie.ir.resolving.classes.sources.PropertyMappingViaMapperTransformation
-import tech.mappie.ir.util.*
+import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
+import tech.mappie.ir.resolving.matching
+import tech.mappie.ir.util.isMappieMapFunction
+import tech.mappie.ir.util.isMappieMapNullableFunction
+import tech.mappie.util.CLASS_ID_ANNOTATION_MAPPIE_RESOLVED
 
-fun IrBuilderWithScope.constructTransformation(context: CodeGenerationContext, transformation: PropertyMappingTransformation, value: IrExpression) =
+fun IrBuilderWithScope.constructTransformation(
+    context: CodeGenerationContext,
+    transformation: PropertyMappingTransformation,
+    source: IrExpression,
+    target: ClassMappingTarget,
+) =
     when (transformation) {
         is PropertyMappingTransformTransformation -> {
             irCall(context.referenceFunctionLet()).apply {
-                arguments[0] = value
+                arguments[0] = source
                 arguments[1] = transformation.function
             }
         }
         is PropertyMappingViaMapperTransformation -> {
-            irCall(transformation.selectTransformationFunction(value)).apply {
-                arguments[0] = transformation.dispatchReceiver ?: instance(transformation.mapper.clazz)
-                arguments[1] = value
+            irCall(transformation.selectMappingFunction(source)).apply {
+                arguments[0] = transformation.dispatchReceiver ?: instance(context, source, target, transformation.mapper.clazz)
+                arguments[1] = source
             }
         }
         is GeneratedViaMapperTransformation -> {
-            val clazz = context.generated[transformation.source.type.mappieType() to transformation.target.type.mappieType()]!!
-            irCall(clazz.selectTransformationFunction(value)).apply {
-                arguments[0] = instance(clazz)
-                arguments[1] = value
+            val clazz = context.generated[transformation.source.type to transformation.target.type]!!
+            irCall(clazz.selectMappingFunction(source)).apply {
+                arguments[0] = instance(context, source, target, clazz)
+                arguments[1] = source
             }
         }
     }
 
-private fun PropertyMappingViaMapperTransformation.selectTransformationFunction(value: IrExpression) =
+private fun PropertyMappingViaMapperTransformation.selectMappingFunction(value: IrExpression) =
     when {
-        value.type.isList() && value.type.isNullable() -> mapper.referenceMapNullableListFunction()
-        value.type.isList() -> mapper.referenceMapListFunction()
-        value.type.isSet() && value.type.isNullable() -> mapper.referenceMapNullableSetFunction()
-        value.type.isSet() -> mapper.referenceMapSetFunction()
         value.type.isNullable() -> mapper.referenceMapNullableFunction()
         else -> mapper.referenceMapFunction()
     }
 
-private fun IrClass.selectTransformationFunction(value: IrExpression) =
+private fun IrClass.selectMappingFunction(value: IrExpression) =
     when {
-        value.type.isList() && value.type.isNullable() ->
-            listOf(this, superClass!!).firstNotNullOf { it.functions.firstOrNull { it.isMappieMapNullableListFunction() } }
-        value.type.isList() ->
-            listOf(this, superClass!!).firstNotNullOf { it.functions.firstOrNull { it.isMappieMapListFunction() } }
-        value.type.isSet() && value.type.isNullable() ->
-            listOf(this, superClass!!).firstNotNullOf { it.functions.firstOrNull { it.isMappieMapNullableSetFunction() } }
-        value.type.isSet() ->
-            listOf(this, superClass!!).firstNotNullOf { it.functions.firstOrNull { it.isMappieMapSetFunction() } }
-        value.type.isNullable() ->
-            listOf(this, superClass!!).firstNotNullOf { it.functions.firstOrNull { it.isMappieMapNullableFunction() } }
+        value.type.isNullable() -> listOf(this, superClass!!).firstNotNullOf { it.functions.firstOrNull { it.isMappieMapNullableFunction() } }
         else -> functions.first { it.isMappieMapFunction() }
     }
 
-private fun IrBuilderWithScope.instance(clazz: IrClass) =
+// TODO: does not contain generated mappers
+private fun IrBuilderWithScope.instance(context: CodeGenerationContext, source: IrExpression, target: ClassMappingTarget, clazz: IrClass): IrDeclarationReference =
     if (clazz.isObject) {
         irGetObject(clazz.symbol)
-    } else if (clazz.primaryConstructor != null && clazz.primaryConstructor!!.parameters.isEmpty()) {
-        irCallConstructor(clazz.primaryConstructor!!.symbol, emptyList())
+    } else if (clazz.primaryConstructor != null && clazz.primaryConstructor!!.parameters.all { it.hasAnnotation(CLASS_ID_ANNOTATION_MAPPIE_RESOLVED) }) {
+        irCallConstructor(clazz.primaryConstructor!!.symbol, emptyList()).apply {
+            clazz.primaryConstructor!!.parameters.forEach { parameter ->
+                val inner = context.definitions.matching((source.type as IrSimpleType).arguments.first().typeOrFail, (target.type as IrSimpleType).arguments.first().typeOrFail).single()
+                val instance = instance(context, source, target, inner.clazz) // TODO: should collect inner source and target.
+                this.arguments[parameter.indexInParameters] = instance
+            }
+        }
     } else {
         panic("Class ${clazz.name.asString()} should either be an object or has an primary constructor without parameters.", clazz)
     }

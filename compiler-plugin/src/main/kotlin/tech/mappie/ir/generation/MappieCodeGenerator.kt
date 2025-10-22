@@ -16,7 +16,6 @@ import tech.mappie.ir.resolving.classes.sources.TransformableClassMappingSource
 import tech.mappie.ir.selection.MappingSelector
 import tech.mappie.ir.util.isMappieMapFunction
 import tech.mappie.ir.util.location
-import tech.mappie.ir.util.mappieType
 import tech.mappie.util.IDENTIFIER_MAPPING
 
 class MappieCodeGenerator(private val context: CodeGenerationContext) : IrElementTransformerVoidWithContext() {
@@ -28,8 +27,8 @@ class MappieCodeGenerator(private val context: CodeGenerationContext) : IrElemen
                 .mapNotNull { source -> source.selectGeneratedTransformationMapping() }
                 .distinctBy { it.source.type to it.target.type }
                 .map { transformation ->
-                    val source = transformation.source.type.mappieType()
-                    val target = transformation.target.type.mappieType()
+                    val source = transformation.source.type
+                    val target = transformation.target.type
                     val options = MappingResolver.of(
                         source,
                         target,
