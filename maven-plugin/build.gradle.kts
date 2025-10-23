@@ -33,19 +33,19 @@ java {
 }
 
 publishing {
-    if (System.getenv("RELEASE_MAVEN_PLUGIN").toBoolean()) {
-        publications {
-            create<MavenPublication>("java-maven-plugin") {
-                artifactId = "mappie-maven-plugin"
-                from(components["java"])
-                mappiePom(name = "tech.mappie:maven-plugin")
-            }
+    publications {
+        create<MavenPublication>("java-maven-plugin") {
+            artifactId = "mappie-maven-plugin"
+            from(components["java"])
+            mappiePom(name = "tech.mappie:maven-plugin")
         }
     }
 
-    repositories {
-        maven {
-            url = uri(rootProject.layout.buildDirectory.file("staging-deploy"))
+    if (System.getenv("RELEASE_MAVEN_PLUGIN").toBoolean()) {
+        repositories {
+            maven {
+                url = uri(rootProject.layout.buildDirectory.file("staging-deploy"))
+            }
         }
     }
 }
