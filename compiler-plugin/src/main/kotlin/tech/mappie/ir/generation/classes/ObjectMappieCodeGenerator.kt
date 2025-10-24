@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.types.typeOrFail
+import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.getKFunctionType
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.generation.ClassMappieCodeGenerationModel
@@ -46,7 +47,9 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
     private fun IrBlockBodyBuilder.content() {
         val constructor = model.constructor.symbol
         val regularParameters = model.declaration.parameters.filter { it.kind == IrParameterKind.Regular }
-        val call = irCallConstructor(constructor, emptyList()).apply {
+        val typeArguments = (model.declaration.returnType.type as IrSimpleType).arguments.map { it.typeOrNull ?: context.irBuiltIns.anyType }
+
+        val call = irCallConstructor(constructor, typeArguments).apply {
             model.mappings.forEach { (target, source) ->
                 if (target is ValueParameterTarget) {
                     constructArgument(source, regularParameters)?.let { argument ->
