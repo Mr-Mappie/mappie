@@ -31,23 +31,23 @@ kotlin {
 }
 
 publishing {
-    if (System.getenv("RELEASE_MODULE_KOTLINX_DATETIME").toBoolean()) {
-        publications.configureEach {
-            if (this is MavenPublication) {
-                artifactId = artifactId.replace("kotlinx-datetime", "module-kotlinx-datetime")
-                artifact(tasks["javadocJar"])
-                // jreleaser workaround
-                if (name != "jvm" && name != "kotlinMultiplatform") {
-                    artifact(tasks["emptyJar"])
-                }
-                mappiePom(name = "tech.mappie:module-kotlinx-datetime")
+    publications.configureEach {
+        if (this is MavenPublication) {
+            artifactId = artifactId.replace("kotlinx-datetime", "module-kotlinx-datetime")
+            artifact(tasks["javadocJar"])
+            // jreleaser workaround
+            if (name != "jvm" && name != "kotlinMultiplatform") {
+                artifact(tasks["emptyJar"])
             }
+            mappiePom(name = "tech.mappie:module-kotlinx-datetime")
         }
     }
 
-    repositories {
-        maven {
-            url = uri(rootProject.layout.buildDirectory.file("staging-deploy"))
+    if (System.getenv("RELEASE_MODULE_KOTLINX_DATETIME").toBoolean()) {
+        repositories {
+            maven {
+                url = uri(rootProject.layout.buildDirectory.file("staging-deploy"))
+            }
         }
     }
 }

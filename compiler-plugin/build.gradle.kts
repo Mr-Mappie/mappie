@@ -40,18 +40,18 @@ buildConfig {
 
 publishing {
     publications {
-        if (System.getenv("RELEASE_COMPILER_PLUGIN").toBoolean()) {
-            create<MavenPublication>("kotlin") {
-                from(components["java"])
-                artifactId = "mappie-compiler-plugin"
-                mappiePom(name = "tech.mappie:mappie-compiler-plugin")
-            }
+        create<MavenPublication>("kotlin") {
+            from(components["java"])
+            artifactId = "mappie-compiler-plugin"
+            mappiePom(name = "tech.mappie:mappie-compiler-plugin")
         }
     }
 
-    repositories {
-        maven {
-            url = uri(rootProject.layout.buildDirectory.file("staging-deploy"))
+    if (System.getenv("RELEASE_COMPILER_PLUGIN").toBoolean()) {
+        repositories {
+            maven {
+                url = uri(rootProject.layout.buildDirectory.file("staging-deploy"))
+            }
         }
     }
 }

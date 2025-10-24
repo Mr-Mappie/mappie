@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "2025-10-24"
+    title: "v2.2.21-1.6.1"
+    items:
+      - "[#290](https://github.com/Mr-Mappie/mappie/issues/290) Fix IndexOutOfBoundsException with generic target type."
   - date: "2025-10-12"
     title: "v2.2.20-1.6.0"
     items:
