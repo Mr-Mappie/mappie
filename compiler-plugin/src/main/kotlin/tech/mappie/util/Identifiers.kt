@@ -80,7 +80,7 @@ val CLASS_ID_USE_DEFAULT_ARGUMENTS = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Nam
 
 val CLASS_ID_USE_STRICT_ENUMS = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("UseStrictEnums"))
 
-val CLASS_ID_USE_STRICT_JAVA_NULLABILITY = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("UseStrictJavaNullability"))
+val CLASS_ID_USE_STRICT_JAVA_NULLABILITY = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("UseStrictPlatformTypeNullabilityValidation"))
 
 val CLASS_ID_USE_STRICT_VISIBILITY = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("UseStrictVisibility"))
 

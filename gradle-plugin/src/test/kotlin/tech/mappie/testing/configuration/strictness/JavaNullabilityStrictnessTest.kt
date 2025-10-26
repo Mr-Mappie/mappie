@@ -4,7 +4,7 @@ import tech.mappie.testing.TestBase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class JavaNullabilityStrictnessTest : TestBase() {
+class platformTypeNullabilityStrictnessTest : TestBase() {
 
     @Test
     fun `java nullability warning is emitted when enabled`() {
@@ -12,7 +12,7 @@ class JavaNullabilityStrictnessTest : TestBase() {
             """
             mappie {
                 strictness {
-                    javaNullability = true        
+                    platformTypeNullability = true        
                 }
             }                
             """.trimIndent()
@@ -56,7 +56,7 @@ class JavaNullabilityStrictnessTest : TestBase() {
             """
             mappie {
                 strictness {
-                    javaNullability = false        
+                    platformTypeNullability = false        
                 }
             }                
             """.trimIndent()
@@ -100,7 +100,7 @@ class JavaNullabilityStrictnessTest : TestBase() {
             """
             mappie {
                 strictness {
-                    javaNullability = true        
+                    platformTypeNullability = true        
                 }
             }                
             """.trimIndent()
@@ -125,11 +125,11 @@ class JavaNullabilityStrictnessTest : TestBase() {
         kotlin("src/main/kotlin/Mapper.kt",
             """
             import tech.mappie.api.ObjectMappie
-            import tech.mappie.api.config.UseStrictJavaNullability
+            import tech.mappie.api.config.UseStrictPlatformTypeNullabilityValidation
 
             data class Output(val value: String)
 
-            @UseStrictJavaNullability(false)
+            @UseStrictPlatformTypeNullabilityValidation(false)
             object Mapper : ObjectMappie<Input, Output>()
             """.trimIndent()
         )

@@ -30,8 +30,8 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
                     extension.strictness.enums.orNull?.apply {
                         add(SubpluginOption("strict-enums", this.toString()))
                     }
-                    extension.strictness.javaNullability.orNull?.apply {
-                        add(SubpluginOption("strict-java-nullability", this.toString()))
+                    extension.strictness.platformTypeNullability.orNull?.apply {
+                        add(SubpluginOption("strict-platform-type-nullability", this.toString()))
                     }
                     extension.strictness.visibility.orNull?.apply {
                         add(SubpluginOption("strict-visibility", this.toString()))

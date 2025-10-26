@@ -4,10 +4,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import tech.mappie.testing.MavenTestBase
 
-class MavenJavaNullabilityStrictnessTest : MavenTestBase() {
+class MavenplatformTypeNullabilityStrictnessTest : MavenTestBase() {
 
     override val mappieOptions = mapOf(
-        "strict-java-nullability" to "false"
+        "strict-platform-type-nullability" to "false"
     )
 
     @Test

@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fileEntry
-import tech.mappie.config.options.useStrictJavaNullability
+import tech.mappie.config.options.useStrictPlatformTypeNullabilityValidation
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.*
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
@@ -22,7 +22,7 @@ class UnsafePlatformTypeAssignmentProblems(
 ) {
 
     fun all(): List<Problem> =
-        if (context.useStrictJavaNullability(context.function)) {
+        if (context.useStrictPlatformTypeNullabilityValidation(context.function)) {
             mappings.mapNotNull { validate(it.key, it.value) }
         } else {
             emptyList()

@@ -56,7 +56,7 @@ abstract class MappieStrictnessExtension {
     /**
      * Give an error if a Java type is used to assign to a non-nullable target.
      */
-    abstract val javaNullability: Property<Boolean>
+    abstract val platformTypeNullability: Property<Boolean>
 
     /**
      * Whether to require called elements to be visible from the current scope.

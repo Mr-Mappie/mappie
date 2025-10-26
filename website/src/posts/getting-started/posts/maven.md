@@ -54,7 +54,7 @@ Mappie can be configured via Maven or per Mapper. The following configuration op
 <pluginOptions>
     <option>mappie:use-default-arguments=false</option> <!-- Disable using default arguments in implicit mappings -->
     <option>mappie:strict-enums=false</option> <!-- Do not report an error if not all enum sources are mapped  -->
-    <option>mappie:strict-java-nullability=false</option> <!-- Allow unsafe assigning Java platform types to non-nullable targets -->
+    <option>mappie:strict-platform-type-nullability=false</option> <!-- Allow unsafe assigning Java platform types to non-nullable targets -->
     <option>mappie:strict-visibility=true</option> <!-- Allow calling constructors not visible from the calling scope -->
     <option>mappie:report-enabled=true</option> <!-- Enable report generation -->
 </pluginOptions>
@@ -64,11 +64,11 @@ Local configuration options are applied as annotations on the class level of map
 configuration option on a per-mapper basis.
 
 The following options exist with their corresponding default values
-| Maven Option                     | Annotation                  | Default Value       |
-|----------------------------------|-----------------------------|---------------------|
-| `mappie:use-default-arguments`   | `@UseDefaultArguments`      | `true`              |
-| `mappie:strict-enums`            | `@UseStrictEnums`           | `true`              |
-| `mappie:strict-java-nullability` | `@UseStrictJavaNullability` | `true`              |
-| `mappie:strict-visibility`       | `@UseStrictVisibility`      | `false`             |
-| `mappie:report-enabled`          |                             | `false`             |
-| `mappie:report-dir`              |                             | `$outputDir/mappie` |
+| Maven Option                              | Annotation                                    | Default Value       |
+|-------------------------------------------|-----------------------------------------------|---------------------|
+| `mappie:use-default-arguments`            | `@UseDefaultArguments`                        | `true`              |
+| `mappie:strict-enums`                     | `@UseStrictEnums`                             | `true`              |
+| `mappie:strict-platform-type-nullability` | `@UseStrictPlatformTypeNullabilityValidation` | `true`              |
+| `mappie:strict-visibility`                | `@UseStrictVisibility`                        | `false`             |
+| `mappie:report-enabled`                   |                                               | `false`             |
+| `mappie:report-dir`                       |                                               | `$outputDir/mappie` |

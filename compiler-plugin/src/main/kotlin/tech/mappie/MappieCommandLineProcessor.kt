@@ -74,7 +74,7 @@ class MappieCommandLineProcessor : CommandLineProcessor {
         const val OPTION_WARNINGS_AS_ERRORS = "warnings-as-errors"
         const val OPTION_USE_DEFAULT_ARGUMENTS = "use-default-arguments"
         const val OPTION_STRICTNESS_ENUMS = "strict-enums"
-        const val OPTION_STRICTNESS_JAVA_NULLABILITY = "strict-java-nullability"
+        const val OPTION_STRICTNESS_JAVA_NULLABILITY = "strict-platform-type-nullability"
         const val OPTION_STRICTNESS_VISIBILITY = "strict-visibility"
         const val OPTION_REPORT_ENABLED = "report-enabled"
         const val OPTION_REPORT_DIR = "report-dir"
