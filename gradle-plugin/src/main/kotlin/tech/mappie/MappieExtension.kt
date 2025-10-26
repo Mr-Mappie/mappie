@@ -54,7 +54,7 @@ abstract class MappieStrictnessExtension {
     abstract val enums: Property<Boolean>
 
     /**
-     * Give an error if a Java type is used to assign to a non-nullable target.
+     * Report a warning if a nullable platform type is used to assign to a non-nullable target.
      */
     abstract val platformTypeNullability: Property<Boolean>
 

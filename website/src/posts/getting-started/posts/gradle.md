@@ -63,7 +63,7 @@ mappie {
     useDefaultArguments = false // Disable using default arguments in implicit mappings
     strictness {
         enums = false // Do not report an error if not all enum sources are mapped
-        platformTypeNullability = true // Enable strict nullability checks for cross-language mappings
+        platformTypeNullability = true // Enable strict nullability checks for platform types in mappings
         visibility = true // Allow calling constructors not visible from the calling scope
     }
     reporting {
