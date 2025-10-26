@@ -18,6 +18,8 @@ and its generated getters are inferred.
 Also note that in Java all types are nullable. Mappie will give a warning if a Java type is used to assign to a 
 non-nullable target. The Kotlin compiler uses several nullability annotations to determine whether the platform type 
 is nullable or not. See for more information [Nullability annotations](https://kotlinlang.org/docs/java-interop.html#nullability-annotations).
+These warnings can be disabled globally with the `strictplatformTypeNullability` configuration option or locally by
+adding `@UseStrictPlatformTypeNullabilityValidation(false)` to the mapper.
 
 For example, suppose we have the Java class `Person`
 ```java

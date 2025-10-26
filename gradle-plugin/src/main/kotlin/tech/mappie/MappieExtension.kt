@@ -54,6 +54,11 @@ abstract class MappieStrictnessExtension {
     abstract val enums: Property<Boolean>
 
     /**
+     * Report a warning if a nullable platform type is used to assign to a non-nullable target.
+     */
+    abstract val platformTypeNullability: Property<Boolean>
+
+    /**
      * Whether to require called elements to be visible from the current scope.
      */
     abstract val visibility: Property<Boolean>
