@@ -27,7 +27,7 @@
                 </ul>
             </nav>
         {% endif %}
-        <button class="btn btn--primary btn--icon header__toggle" data-action="sidebar-toggle" aria-controls="primary-menu" aria-expanded="false" aria-label="Toogle navigation">
+        <button class="btn btn--primary btn--icon header__toggle" data-action="sidebar-toggle" aria-controls="primary-menu" aria-expanded="false" aria-label="Toggle navigation">
             {% svgIcon './src/img/icon/menu.svg', 'btn__icon' %}
         </button>
     </div>
@@ -41,7 +41,7 @@
                 </a>
             {% endif %}
             {% if (site.social.discord) %}
-                <a href="{{ site.social.discord }}" aria-label="Discrod">
+                <a href="{{ site.social.discord }}" aria-label="Discord">
                     {% svgIcon './src/img/icon/discord.svg' %}
                 </a>
             {% endif %}

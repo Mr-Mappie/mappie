@@ -19,4 +19,4 @@ fun MappieContext.getUseStrictVisibilityAnnotation(origin: IrFunction): IrConstr
 fun MappieContext.useStrictVisibility(origin: IrFunction): Boolean =
     getUseStrictVisibilityAnnotation(origin)
         ?.let { it.getValueArgument(Name.identifier("value"))?.isTrueConst() ?: true }
-        ?: configuration.strictVisiblity
+        ?: configuration.strictVisibility
