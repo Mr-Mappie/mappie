@@ -20,7 +20,7 @@ class EnumMappingRequestBuilder(val source: IrType, val target: IrType) {
                 addAll(targets.filter { target -> target.name == source.name }.map { ResolvedEnumMappingTarget(it) })
             }
         }
-        return EnumMappingRequest(origin.referenceMapFunction(), source, target, mappings)
+        return EnumMappingRequest(origin, source, target, mappings)
     }
 
     fun explicit(entry: Pair<IrEnumEntry, EnumMappingTarget>) =

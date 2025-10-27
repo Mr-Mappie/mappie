@@ -18,10 +18,6 @@ class MappieTranformer(private val context: MappieContext, private val model: Co
 
     override fun visitClassNew(declaration: IrClass): IrStatement = declaration.apply {
         declaration.declarations.filterIsInstance<IrSimpleFunction>().first { it.isMappieMapFunction() }.apply {
-            val model = when (model) {
-                is ClassMappieCodeGenerationModel -> model
-                is EnumMappieCodeGenerationModel -> model
-            }
             transform(MappieTranformer(context, model), null)
             isFakeOverride = false
         }

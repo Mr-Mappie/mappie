@@ -19,8 +19,8 @@ class AllSourcesMappedProblems(
     fun all(): List<Problem> = mappings.map { (source, targets) ->
         val name = "${source.parent.kotlinFqName.shortName().asString()}.${source.name.asString()}"
         when {
-            targets.isEmpty() -> Problem.error("Source $name has no target defined", location(mapping.origin))
-            else -> Problem.error("Source $name has multiple targets defined", location(mapping.origin))
+            targets.isEmpty() -> Problem.error("Source $name has no target defined", location(mapping.origin.referenceMapFunction()))
+            else -> Problem.error("Source $name has multiple targets defined", location(mapping.origin.referenceMapFunction()))
         }
     }
 
@@ -28,7 +28,7 @@ class AllSourcesMappedProblems(
 
         context(context: MappieContext)
         fun of(mapping: EnumMappingRequest): AllSourcesMappedProblems {
-            return if (context.useStrictEnums(mapping.origin)) {
+            return if (context.useStrictEnums(mapping.origin.referenceMapFunction())) {
                 AllSourcesMappedProblems(
                     mapping,
                     mapping.mappings.filter { (_, targets) ->

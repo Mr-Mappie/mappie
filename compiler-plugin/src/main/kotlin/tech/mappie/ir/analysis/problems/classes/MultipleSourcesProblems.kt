@@ -16,7 +16,7 @@ class MultipleSourcesProblems(
 ) {
 
     fun all(): List<Problem> = mappings.map { (target, sources) ->
-        error("Target ${targetType.dumpKotlinLike()}::${target.name.asString()} has ${if (sources.isEmpty()) "no source defined" else "multiple sources defined"}", location(mapping.origin))
+        error("Target ${targetType.dumpKotlinLike()}::${target.name.asString()} has ${if (sources.isEmpty()) "no source defined" else "multiple sources defined"}", location(mapping.origin.referenceMapFunction()))
     }
 
     companion object {

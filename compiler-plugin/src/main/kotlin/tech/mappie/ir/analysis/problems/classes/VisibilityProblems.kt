@@ -15,11 +15,11 @@ class VisibilityProblems(private val mapping: ClassMappingRequest) {
 
     context (context: MappieContext)
     fun all(): List<Problem> =
-        if (!constructor.visibility.isPublicAPI && context.useStrictVisibility(mapping.origin)) {
+        if (!constructor.visibility.isPublicAPI && context.useStrictVisibility(mapping.origin.referenceMapFunction())) {
             val constructor = constructor.parameters.filter { it.kind == IrParameterKind.Regular }.joinToString(prefix = "${constructor.constructedClass.name.asString()}(", postfix = ")") {
                 it.name.asString() + ": " + it.type.dumpKotlinLike()
             }
-            listOf(Problem.error("Constructor $constructor is not visible from the current scope", location(mapping.origin)))
+            listOf(Problem.error("Constructor $constructor is not visible from the current scope", location(mapping.origin.referenceMapFunction())))
         } else {
             emptyList()
         }

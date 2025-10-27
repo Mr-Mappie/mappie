@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.primaryConstructor
@@ -44,12 +43,12 @@ fun IrBuilderWithScope.constructTransformation(
                 arguments[1] = source
             }
         }
-        is GeneratedViaMapperTransformation -> { TODO()
-//            val clazz = context.generated[transformation.source.type to transformation.target.type]!!
-//            irCall(clazz.selectMappingFunction(source)).apply {
-//                arguments[0] = instance(context, source, target, clazz)
-//                arguments[1] = source
-//            }
+        is GeneratedViaMapperTransformation -> {
+            val clazz = context.definitions.matching(transformation.source.type, transformation.target.type).first().clazz
+            irCall(clazz.selectMappingFunction(source)).apply {
+                arguments[0] = instance(source, target, clazz)
+                arguments[1] = source
+            }
         }
     }
 
@@ -65,7 +64,6 @@ private fun IrClass.selectMappingFunction(value: IrExpression) =
         else -> functions.first { it.isMappieMapFunction() }
     }
 
-// TODO: does not contain generated mappers
 context(context: MappieContext)
 private fun IrBuilderWithScope.instance(source: IrExpression, target: ClassMappingTarget, clazz: IrClass): IrDeclarationReference =
     if (clazz.isObject) {

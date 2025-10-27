@@ -21,7 +21,7 @@ class EnumMappieCodeGenerator(private val model: EnumMappieCodeGenerationModel) 
     fun lambda(scope: Scope): IrCall =
         with(context.pluginContext.irBuiltIns.createIrBuilder(scope.scopeOwnerSymbol)) {
             irCall(context.referenceFunctionRun()).apply {
-                arguments[0] = irLambda(model.function.returnType, model.function.returnType) {
+                arguments[0] = irLambda(model.definition.referenceMapFunction().returnType, model.definition.referenceMapFunction().returnType) {
                     content()
                 }
             }
@@ -36,7 +36,7 @@ class EnumMappieCodeGenerator(private val model: EnumMappieCodeGenerationModel) 
     private fun IrBlockBodyBuilder.content() {
         +irReturn(irWhen(model.target, buildList {
             model.mappings.forEach { (source, target) ->
-                val lhs = irGet(model.function.parameters[1])
+                val lhs = irGet(model.definition.referenceMapFunction().parameters[1])
                 val rhs = irCall(source.referenceFunctionValueOf()).apply {
                     arguments[0] = irString(source.name.asString())
                 }

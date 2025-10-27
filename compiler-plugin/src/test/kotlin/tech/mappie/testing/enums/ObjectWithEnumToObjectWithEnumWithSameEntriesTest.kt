@@ -6,15 +6,15 @@ import tech.mappie.testing.MappieTestCase
 
 class ObjectWithEnumToObjectWithEnumWithSameEntriesTest : MappieTestCase() {
 
-    data class Input(val text: InnerEnum)
-    @Suppress("unused") enum class InnerEnum { A, B, C; }
+    data class Input(val text: InnerInput)
+    @Suppress("unused") enum class InnerInput { A, B, C; }
 
-    data class Output(val text: OuterEnum)
-    @Suppress("unused") enum class OuterEnum(val value: String) { A("A"), B("B"), C("C"); }
+    data class Output(val text: InnerOutput)
+    @Suppress("unused") enum class InnerOutput(val value: String) { A("A"), B("B"), C("C"); }
 
     @Test
     fun `map object with nested enum with generated mapper should succeed`() {
-        compile {
+        compile(verbose = true) {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
@@ -30,8 +30,8 @@ class ObjectWithEnumToObjectWithEnumWithSameEntriesTest : MappieTestCase() {
 
             val mapper = objectMappie<Input, Output>()
 
-            assertThat(mapper.map(Input(InnerEnum.A)))
-                .isEqualTo(Output(OuterEnum.A))
+            assertThat(mapper.map(Input(InnerInput.A)))
+                .isEqualTo(Output(InnerOutput.A))
         }
     }
 
@@ -46,7 +46,7 @@ class ObjectWithEnumToObjectWithEnumWithSameEntriesTest : MappieTestCase() {
 
                 class Mapper : ObjectMappie<Input, Output>()
 
-                object InnerMapper : EnumMappie<InnerEnum, OuterEnum>()
+                object InnerMapper : EnumMappie<InnerInput, InnerOutput>()
                 """
             )
         } satisfies {
@@ -55,8 +55,8 @@ class ObjectWithEnumToObjectWithEnumWithSameEntriesTest : MappieTestCase() {
 
             val mapper = objectMappie<Input, Output>()
 
-            assertThat(mapper.map(Input(InnerEnum.A)))
-                .isEqualTo(Output(OuterEnum.A))
+            assertThat(mapper.map(Input(InnerInput.A)))
+                .isEqualTo(Output(InnerOutput.A))
         }
     }
 }

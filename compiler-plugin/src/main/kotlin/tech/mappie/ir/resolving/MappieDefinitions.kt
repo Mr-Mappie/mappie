@@ -11,15 +11,17 @@ import tech.mappie.ir.MappieContext
 import tech.mappie.ir.util.*
 
 class MappieDefinitionCollection(
-    val internal: MutableList<InternalMappieDefinition>,
-    val external: MutableList<ExternalMappieDefinition>,
+    val internal: MutableList<InternalMappieDefinition> = mutableListOf(),
+    val external: MutableList<ExternalMappieDefinition> = mutableListOf(),
+    val generated: MutableList<GeneratedMappieDefinition> = mutableListOf(),
 ) {
     val definitions: Sequence<MappieDefinition>
-        get() = internal.asSequence() + external.asSequence()
+        get() = internal.asSequence() + generated.asSequence() + external.asSequence()
 
     fun load(other: MappieDefinitionCollection) {
         internal.addAll(other.internal)
         external.addAll(other.external)
+        generated.addAll(other.generated)
     }
 
     context (context: MappieContext)

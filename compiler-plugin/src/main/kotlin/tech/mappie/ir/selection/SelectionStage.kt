@@ -1,10 +1,9 @@
 package tech.mappie.ir.selection
 
 import tech.mappie.ir.MappieContext
-import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.analysis.Problem.Companion.error
 import tech.mappie.ir.analysis.RequestValidator
-import tech.mappie.ir.resolving.InternalMappieDefinition
+import tech.mappie.ir.resolving.MappieDefinition
 import tech.mappie.ir.resolving.MappingRequest
 import tech.mappie.ir.util.location
 
@@ -14,8 +13,8 @@ import tech.mappie.ir.util.location
 object SelectionStage {
 
     context(context: MappieContext)
-    fun execute(requests: Map<InternalMappieDefinition, List<MappingRequest>>): SelectionResult {
-        val mappings: Map<InternalMappieDefinition, MappingRequest> = requests.mapNotNull { (definition, mappings) ->
+    fun execute(requests: Map<MappieDefinition, List<MappingRequest>>): SelectionResult {
+        val mappings = requests.mapNotNull { (definition, mappings) ->
             val validations = mappings.associateWith { RequestValidator.of(it).evaluate() }
             val selected = MappingSelector.of(validations).select()
 
@@ -39,4 +38,4 @@ object SelectionStage {
     }
 }
 
-class SelectionResult(val mappings: Map<InternalMappieDefinition, MappingRequest>)
+class SelectionResult(val mappings: Map<MappieDefinition, MappingRequest>)

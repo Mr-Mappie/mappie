@@ -9,13 +9,13 @@ import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.resolving.enums.EnumMappingTarget
 
 sealed interface MappingRequest {
-    val origin: IrFunction
+    val origin: InternalMappieDefinition
     val source: IrType
     val target: IrType
 }
 
 class ClassMappingRequest(
-    override val origin: IrFunction,
+    override val origin: InternalMappieDefinition,
     val sources: List<IrType>,
     val constructor: IrConstructor,
     val mappings : Map<ClassMappingTarget, List<ClassMappingSource>>,
@@ -25,7 +25,7 @@ class ClassMappingRequest(
 }
 
 class EnumMappingRequest(
-    override val origin: IrFunction,
+    override val origin: InternalMappieDefinition,
     override val source: IrType,
     override val target: IrType,
     val mappings: Map<IrEnumEntry, List<EnumMappingTarget>>,
