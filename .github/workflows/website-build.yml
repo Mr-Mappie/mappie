@@ -38,25 +38,10 @@ jobs:
         run: npm run prod
         working-directory: ./website
 
-      - name: Archive artifact
-        shell: sh
-        run: |
-          echo ::group::Archive artifact
-          tar \
-            --dereference --hard-dereference \
-            --directory "website/dist" \
-            -cvf "$RUNNER_TEMP/artifact.tar" \
-            .
-          echo ::endgroup::
-
-      - name: Upload artifact
-        id: upload-artifact
-        uses: actions/upload-artifact@v4
+      - name: Package and upload artifact
+        uses: actions/upload-pages-artifact@v4
         with:
-          name: github-pages
-          path: ${{ runner.temp }}/artifact.tar
-          retention-days: 1
-          if-no-files-found: error
+          path: website/dist/
 
       - name: Deploy to GitHub Pages
         id: deployment

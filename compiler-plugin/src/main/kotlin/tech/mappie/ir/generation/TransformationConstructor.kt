@@ -79,5 +79,5 @@ private fun IrBuilderWithScope.instance(source: IrExpression, target: ClassMappi
             }
         }
     } else {
-        panic("Class ${clazz.name.asString()} should either be an object or has an primary constructor without parameters.", clazz)
+        panic("Class ${clazz.name.asString()} should either be an object or have a primary constructor without parameters.", clazz)
     }

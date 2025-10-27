@@ -34,7 +34,7 @@ object DefaultErrorMessageMappie : BaseDiagnosticRendererFactory() {
         map.put(MappieErrors.COMPILE_TIME_RECEIVER, "The function ''{0}'' was called on the mapping dsl which does not exist after compilation", CommonRenderers.NAME)
         map.put(MappieErrors.COMPILE_TIME_EXTENSION_RECEIVER, "The function ''{0}'' was called as an extension method on the mapping dsl which does not exist after compilation", CommonRenderers.NAME)
         map.put(MappieErrors.NON_CONSTANT_ERROR, "Argument must be a compile-time constant")
-        map.put(MappieErrors.UNKNOWN_NAME_ERROR, "Identifier ''{0}'' does not occur as as setter or as a parameter in constructor", CommonRenderers.STRING)
+        map.put(MappieErrors.UNKNOWN_NAME_ERROR, "Identifier ''{0}'' does not occur as a setter or as a parameter in constructor", CommonRenderers.STRING)
         map.put(MappieErrors.ANNOTATION_USE_DEFAULT_ARGUMENTS_NOT_APPLICABLE, "Annotation @UseDefaultArguments has no effect on subclass of EnumMappie")
         map.put(MappieErrors.ANNOTATION_USE_STRICT_ENUMS_NOT_APPLICABLE, "Annotation @UseStrictEnums has no effect on subclass of ObjectMappie")
         map.put(MappieErrors.ANNOTATION_USE_STRICT_VISIBILITY_NOT_APPLICABLE, "Annotation @UseStrictVisibility has no effect on subclass of EnumMappie")
