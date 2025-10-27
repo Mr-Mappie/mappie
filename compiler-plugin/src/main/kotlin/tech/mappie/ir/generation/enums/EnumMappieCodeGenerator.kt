@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import tech.mappie.ir.generation.CodeGenerationContext
+import tech.mappie.ir.MappieContext
 import tech.mappie.ir.generation.EnumMappieCodeGenerationModel
 import tech.mappie.ir.generation.referenceFunctionValueOf
 import tech.mappie.ir.resolving.enums.ExplicitEnumMappingTarget
@@ -13,19 +13,21 @@ import tech.mappie.ir.resolving.enums.ResolvedEnumMappingTarget
 import tech.mappie.ir.resolving.enums.ThrowingEnumMappingTarget
 import tech.mappie.ir.util.blockBody
 import tech.mappie.ir.util.irLambda
-import tech.mappie.referenceFunctionRun
+import tech.mappie.ir.referenceFunctionRun
 
-class EnumMappieCodeGenerator(private val context: CodeGenerationContext, private val model: EnumMappieCodeGenerationModel) {
+class EnumMappieCodeGenerator(private val model: EnumMappieCodeGenerationModel) {
 
+    context(context: MappieContext)
     fun lambda(scope: Scope): IrCall =
         with(context.pluginContext.irBuiltIns.createIrBuilder(scope.scopeOwnerSymbol)) {
-            irCall(this@EnumMappieCodeGenerator.context.referenceFunctionRun()).apply {
-                arguments[0] = irLambda(model.declaration.returnType, model.declaration.returnType) {
+            irCall(context.referenceFunctionRun()).apply {
+                arguments[0] = irLambda(model.function.returnType, model.function.returnType) {
                     content()
                 }
             }
         }
 
+    context(context: MappieContext)
     fun body(scope: Scope): IrBlockBody =
         context.pluginContext.blockBody(scope) {
             content()
@@ -34,7 +36,7 @@ class EnumMappieCodeGenerator(private val context: CodeGenerationContext, privat
     private fun IrBlockBodyBuilder.content() {
         +irReturn(irWhen(model.target, buildList {
             model.mappings.forEach { (source, target) ->
-                val lhs = irGet(model.declaration.parameters[1])
+                val lhs = irGet(model.function.parameters[1])
                 val rhs = irCall(source.referenceFunctionValueOf()).apply {
                     arguments[0] = irString(source.name.asString())
                 }

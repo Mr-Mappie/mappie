@@ -1,4 +1,4 @@
-package tech.mappie
+package tech.mappie.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -8,13 +8,14 @@ import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.config.MappieConfiguration
-import tech.mappie.ir.MappieLogger
+import tech.mappie.ir.resolving.MappieDefinitionCollection
 import tech.mappie.util.*
 
 interface MappieContext {
     val pluginContext: IrPluginContext
     val logger: MappieLogger
     val configuration: MappieConfiguration
+    val definitions: MappieDefinitionCollection
 }
 
 fun MappieContext.allMappieClasses(): Set<IrClassSymbol> = setOf(

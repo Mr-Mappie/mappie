@@ -1,28 +1,26 @@
 package tech.mappie.ir.reporting
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.kotlinFqName
-import tech.mappie.MappieContext
+import tech.mappie.ir.MappieContext
 import tech.mappie.ir.util.location
 import java.io.File
 import java.io.IOException
 
-class ReportGenerator(private val context: MappieContext) {
+class ReportGenerator {
 
-    private val enabled = context.configuration.reportEnabled
+    context (context: MappieContext)
+    fun report(elements: List<IrClass>) {
+        if (context.configuration.reportEnabled) {
+            val directory = File(context.configuration.reportDir)
 
-    private val directory by lazy { File(context.configuration.reportDir) }
-
-    fun report(elements: List<IrElement>) {
-        if (enabled) {
             runCatching { directory.mkdirs() }.getOrElse {
                 context.logger.error("Mappie failed to create report output directory ${context.configuration.reportDir}.")
                 throw it
             }
 
-            elements.filterIsInstance<IrClass>().forEach { clazz ->
+            elements.forEach { clazz ->
                 val file = File(directory, "${clazz.name.asString()}.kt")
 
                 try {
@@ -38,7 +36,7 @@ class ReportGenerator(private val context: MappieContext) {
                 }
             }
         } else if (context.configuration.isMappieDebugMode) {
-            elements.filterIsInstance<IrClass>().forEach { clazz ->
+            elements.forEach { clazz ->
                 val name = "${clazz.name.asString()}.kt"
                 context.logger.logging(name + System.lineSeparator() + generate(clazz))
             }

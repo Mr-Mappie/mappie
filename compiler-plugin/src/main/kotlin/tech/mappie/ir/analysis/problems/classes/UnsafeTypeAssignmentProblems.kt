@@ -2,18 +2,17 @@ package tech.mappie.ir.analysis.problems.classes
 
 import org.jetbrains.kotlin.backend.jvm.ir.upperBound
 import org.jetbrains.kotlin.ir.util.*
+import tech.mappie.ir.MappieContext
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.*
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.util.filterSingle
 import tech.mappie.ir.util.location
 import tech.mappie.ir.analysis.Problem
-import tech.mappie.ir.analysis.ValidationContext
 import tech.mappie.ir.reporting.pretty
 import tech.mappie.ir.util.isSubtypeOf
 
 class UnsafeTypeAssignmentProblems(
-    private val context: ValidationContext,
     private val mapping: ClassMappingRequest,
     private val mappings: Map<ClassMappingTarget, ClassMappingSource>,
 ) {
@@ -29,15 +28,15 @@ class UnsafeTypeAssignmentProblems(
             is ExplicitPropertyMappingSource -> {
                 val via = if (source.transformation != null && source.transformation is PropertyMappingViaMapperTransformation) "via ${source.transformation.mapper.clazz.name.asString()} " else ""
                 val description = "Target $targetString of type $targetTypeString cannot be assigned from ${source.reference.pretty()} ${via}of type $sourceTypeString"
-                Problem.error(description, location(context.function.fileEntry, source.reference))
+                Problem.error(description, location(mapping.origin.fileEntry, source.reference))
             }
             is ExpressionMappingSource -> {
                 val description = "Target $targetString of type $targetTypeString cannot be assigned from expression of type $sourceTypeString"
-                Problem.error(description, location(context.function.fileEntry, source.expression))
+                Problem.error(description, location(mapping.origin.fileEntry, source.expression))
             }
             is ValueMappingSource -> {
                 val description = "Target $targetString of type $targetTypeString cannot be assigned from value of type $sourceTypeString"
-                Problem.error(description, location(context.function.fileEntry, source.expression))
+                Problem.error(description, location(mapping.origin.fileEntry, source.expression))
             }
             is FunctionMappingSource -> {
                 val function = "${source.parameterType.dumpKotlinLike()}::${source.function.name.asString()}"
@@ -52,7 +51,7 @@ class UnsafeTypeAssignmentProblems(
             }
             is ParameterValueMappingSource -> {
                 val description = "Target $targetString automatically resolved parameter ${source.parameter.asString()} but cannot assign source type $sourceTypeString to target type $targetTypeString}"
-                Problem.warning(description, location(context.function.fileEntry, mapping.origin))
+                Problem.warning(description, location(mapping.origin))
             }
             is ParameterDefaultValueMappingSource -> {
                 null
@@ -61,13 +60,14 @@ class UnsafeTypeAssignmentProblems(
     }
 
     companion object {
-        fun of(context: ValidationContext, mapping: ClassMappingRequest): UnsafeTypeAssignmentProblems {
+
+        context(context: MappieContext)
+        fun of(mapping: ClassMappingRequest): UnsafeTypeAssignmentProblems {
             val mappings = mapping.mappings
                 .filterSingle()
                 .filter { (target, source) -> !target.type.upperBound.isSubtypeOf(source.type.upperBound) }
 
             return UnsafeTypeAssignmentProblems(
-                context,
                 mapping,
                 mappings
             )

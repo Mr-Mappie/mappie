@@ -2,7 +2,7 @@ package tech.mappie.exceptions
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.ir.IrElement
-import tech.mappie.MappieContext
+import tech.mappie.ir.MappieContext
 import tech.mappie.ir.analysis.Problem
 
 class MappiePanicException private constructor(message: String, val origin: IrElement? = null)

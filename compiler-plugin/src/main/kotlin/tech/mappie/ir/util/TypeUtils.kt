@@ -6,12 +6,13 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isSubtypeOf
 
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
+import tech.mappie.ir.MappieContext
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
-import tech.mappie.ir.MappieIrRegistrar.Companion.context
 
 // TODO: other isNothing is the wrong way around.
+context(context: MappieContext)
 fun IrType.isSubtypeOf(other: IrType) =
-    other.isNothing() || isSubtypeOf(other, IrTypeSystemContextImpl(context.irBuiltIns))
+    other.isNothing() || isSubtypeOf(other, IrTypeSystemContextImpl(context.pluginContext.irBuiltIns))
 
 fun IrType.hasFlexibleNullabilityAnnotation(): Boolean =
     annotations.any { it.symbol.owner.parentAsClass.classId == FlexibleNullability }

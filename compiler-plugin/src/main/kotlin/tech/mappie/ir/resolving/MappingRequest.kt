@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.name.Name
 import tech.mappie.ir.resolving.classes.sources.ClassMappingSource
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.resolving.enums.EnumMappingTarget
@@ -20,7 +19,6 @@ class ClassMappingRequest(
     val sources: List<IrType>,
     val constructor: IrConstructor,
     val mappings : Map<ClassMappingTarget, List<ClassMappingSource>>,
-    val unknowns: Map<Name, List<ClassMappingSource>>,
 ) : MappingRequest {
     override val source get() = sources.single()
     override val target = constructor.returnType

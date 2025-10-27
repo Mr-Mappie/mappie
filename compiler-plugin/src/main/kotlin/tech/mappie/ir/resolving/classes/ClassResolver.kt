@@ -8,26 +8,27 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.name.Name
+import tech.mappie.ir.MappieContext
 import tech.mappie.ir.resolving.classes.targets.MappieTargetsCollector
 
 class ClassResolver(
-    private val context: ResolverContext,
     private val sources: List<Pair<Name, IrType>>,
     private val target: IrType,
 ) : MappingResolver {
 
-    override fun resolve(function: IrFunction?): List<ClassMappingRequest> =
+    context(context: MappieContext)
+    override fun resolve(origin: InternalMappieDefinition, function: IrFunction?): List<ClassMappingRequest> =
         target.getClass()!!.constructors.map { constructor ->
-            ClassMappingRequestBuilder(constructor, context)
+            ClassMappingRequestBuilder(constructor)
                 .targets(MappieTargetsCollector(target, function, constructor).collect())
                 .sources(sources)
                 .apply {
                     val mapping = findMappingStatements(function?.body).singleOrNull()?.arguments?.getOrNull(1) as? IrFunctionExpression
                     mapping?.function?.body?.statements?.forEach { statement ->
-                        statement.accept(ClassMappingStatementCollector(context), Unit)
+                        statement.accept(ClassMappingStatementCollector(), context)
                             ?.let { explicit(it) }
                     }
                 }
-                .construct()
+                .construct(origin)
         }.toList()
 }

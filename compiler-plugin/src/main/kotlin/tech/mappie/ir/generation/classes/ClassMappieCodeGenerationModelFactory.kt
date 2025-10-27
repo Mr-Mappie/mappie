@@ -20,7 +20,7 @@ class ClassMappieCodeGenerationModelFactory(private val request: ClassMappingReq
             request.constructor,
             request.mappings
                 .mapValues { (target, sources) -> select(target, sources) }
-                .filter { it.value != null } as Map<ClassMappingTarget, ClassMappingSource>
+                .filter { it.value != null } as Map<ClassMappingTarget, ClassMappingSource>,
         )
 
     private fun select(target: ClassMappingTarget, sources: List<ClassMappingSource>): ClassMappingSource? =

@@ -6,26 +6,31 @@ import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.typeOrFail
-import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.irCall
+import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.superClass
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
-import tech.mappie.referenceFunctionLet
+import tech.mappie.ir.MappieContext
+import tech.mappie.ir.referenceFunctionLet
 import tech.mappie.ir.resolving.classes.sources.GeneratedViaMapperTransformation
 import tech.mappie.ir.resolving.classes.sources.PropertyMappingTransformTransformation
 import tech.mappie.ir.resolving.classes.sources.PropertyMappingTransformation
 import tech.mappie.ir.resolving.classes.sources.PropertyMappingViaMapperTransformation
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
-import tech.mappie.ir.resolving.matching
 import tech.mappie.ir.util.isMappieMapFunction
 import tech.mappie.ir.util.isMappieMapNullableFunction
 import tech.mappie.util.CLASS_ID_ANNOTATION_MAPPIE_RESOLVED
 
+context(context: MappieContext)
 fun IrBuilderWithScope.constructTransformation(
-    context: CodeGenerationContext,
     transformation: PropertyMappingTransformation,
     source: IrExpression,
     target: ClassMappingTarget,
-) =
+): IrExpression =
     when (transformation) {
         is PropertyMappingTransformTransformation -> {
             irCall(context.referenceFunctionLet()).apply {
@@ -35,16 +40,16 @@ fun IrBuilderWithScope.constructTransformation(
         }
         is PropertyMappingViaMapperTransformation -> {
             irCall(transformation.selectMappingFunction(source)).apply {
-                arguments[0] = transformation.dispatchReceiver ?: instance(context, source, target, transformation.mapper.clazz)
+                arguments[0] = transformation.dispatchReceiver ?: instance(source, target, transformation.mapper.clazz)
                 arguments[1] = source
             }
         }
-        is GeneratedViaMapperTransformation -> {
-            val clazz = context.generated[transformation.source.type to transformation.target.type]!!
-            irCall(clazz.selectMappingFunction(source)).apply {
-                arguments[0] = instance(context, source, target, clazz)
-                arguments[1] = source
-            }
+        is GeneratedViaMapperTransformation -> { TODO()
+//            val clazz = context.generated[transformation.source.type to transformation.target.type]!!
+//            irCall(clazz.selectMappingFunction(source)).apply {
+//                arguments[0] = instance(context, source, target, clazz)
+//                arguments[1] = source
+//            }
         }
     }
 
@@ -61,14 +66,15 @@ private fun IrClass.selectMappingFunction(value: IrExpression) =
     }
 
 // TODO: does not contain generated mappers
-private fun IrBuilderWithScope.instance(context: CodeGenerationContext, source: IrExpression, target: ClassMappingTarget, clazz: IrClass): IrDeclarationReference =
+context(context: MappieContext)
+private fun IrBuilderWithScope.instance(source: IrExpression, target: ClassMappingTarget, clazz: IrClass): IrDeclarationReference =
     if (clazz.isObject) {
         irGetObject(clazz.symbol)
     } else if (clazz.primaryConstructor != null && clazz.primaryConstructor!!.parameters.all { it.hasAnnotation(CLASS_ID_ANNOTATION_MAPPIE_RESOLVED) }) {
         irCallConstructor(clazz.primaryConstructor!!.symbol, emptyList()).apply {
             clazz.primaryConstructor!!.parameters.forEach { parameter ->
                 val inner = context.definitions.matching((source.type as IrSimpleType).arguments.first().typeOrFail, (target.type as IrSimpleType).arguments.first().typeOrFail).single()
-                val instance = instance(context, source, target, inner.clazz) // TODO: should collect inner source and target.
+                val instance = instance(source, target, inner.clazz) // TODO: should collect inner source and target.
                 this.arguments[parameter.indexInParameters] = instance
             }
         }

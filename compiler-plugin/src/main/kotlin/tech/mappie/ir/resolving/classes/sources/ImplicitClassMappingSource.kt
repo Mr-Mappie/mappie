@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.name.Name
 
 sealed interface ImplicitClassMappingSource : ClassMappingSource
@@ -14,12 +15,16 @@ data class ParameterValueMappingSource(
     override val transformation: PropertyMappingTransformation?,
 ) : ImplicitClassMappingSource, TransformableClassMappingSource {
     override val type = type(parameterType)
+
+    override fun toString() = "$parameter: ${parameterType.dumpKotlinLike()} via $transformation"
 }
 
 data class ParameterDefaultValueMappingSource(
     val parameter: IrValueParameter,
 ) : ImplicitClassMappingSource {
     override val type: IrType = parameter.type
+
+    override fun toString() = "${parameter.name}: ${type.dumpKotlinLike()}"
 }
 
 data class ImplicitPropertyMappingSource(
@@ -30,6 +35,8 @@ data class ImplicitPropertyMappingSource(
     override val transformation: PropertyMappingTransformation?,
 ) : ImplicitClassMappingSource, TransformableClassMappingSource {
     override val type = type(propertyType)
+
+    override fun toString() = "$parameter.${property.name}: ${propertyType.dumpKotlinLike()} via $transformation"
 }
 
 data class FunctionMappingSource(
@@ -40,4 +47,6 @@ data class FunctionMappingSource(
     override val transformation: PropertyMappingTransformation?,
 ) : ImplicitClassMappingSource, TransformableClassMappingSource {
     override val type = type(functionType)
+
+    override fun toString() = "$parameter.${function.name}: ${functionType.dumpKotlinLike()} via $transformation"
 }

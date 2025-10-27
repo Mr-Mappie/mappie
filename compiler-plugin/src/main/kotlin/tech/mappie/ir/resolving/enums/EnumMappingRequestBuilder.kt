@@ -1,9 +1,9 @@
 package tech.mappie.ir.resolving.enums
 
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.IrType
 import tech.mappie.ir.resolving.EnumMappingRequest
+import tech.mappie.ir.resolving.InternalMappieDefinition
 
 class EnumMappingRequestBuilder(val source: IrType, val target: IrType) {
 
@@ -13,14 +13,14 @@ class EnumMappingRequestBuilder(val source: IrType, val target: IrType) {
 
     private val sources = mutableListOf<IrEnumEntry>()
 
-    fun construct(origin: IrFunction): EnumMappingRequest {
+    fun construct(origin: InternalMappieDefinition): EnumMappingRequest {
         val mappings = sources.associateWith { source ->
             buildList {
                 explicit[source]?.let { addAll(it) }
                 addAll(targets.filter { target -> target.name == source.name }.map { ResolvedEnumMappingTarget(it) })
             }
         }
-        return EnumMappingRequest(origin, source, target, mappings)
+        return EnumMappingRequest(origin.referenceMapFunction(), source, target, mappings)
     }
 
     fun explicit(entry: Pair<IrEnumEntry, EnumMappingTarget>) =

@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.ir.util.primaryConstructor
 import tech.mappie.ir.util.BaseVisitor
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.name.Name
-import tech.mappie.MappieContext
+import tech.mappie.ir.MappieContext
 import tech.mappie.ir.util.isSubclassOf
 import tech.mappie.util.merge
 import tech.mappie.ir.util.substituteTypeVariable

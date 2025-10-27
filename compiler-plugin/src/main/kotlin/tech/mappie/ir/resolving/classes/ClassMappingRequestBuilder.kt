@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.ifEmpty
+import tech.mappie.ir.MappieContext
 import tech.mappie.config.options.useDefaultArguments
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.resolving.*
@@ -22,7 +23,7 @@ import tech.mappie.ir.util.isPrimitive
 import tech.mappie.ir.util.isSubtypeOf
 import tech.mappie.ir.util.location
 
-class ClassMappingRequestBuilder(private val constructor: IrConstructor, private val context: ResolverContext) {
+class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
 
     private val targets = mutableListOf<ClassMappingTarget>()
 
@@ -32,46 +33,45 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
 
     private val explicit = mutableMapOf<Name, List<ExplicitClassMappingSource>>()
 
-    fun construct(): ClassMappingRequest {
-        val useDefaultArguments = context.useDefaultArguments(context.origin)
+    context(context: MappieContext)
+    fun construct(origin: InternalMappieDefinition): ClassMappingRequest {
+        val useDefaultArguments = context.useDefaultArguments(origin.referenceMapFunction())
 
         val mappings = targets.associateWith { target ->
-            explicit(target) ?: implicit(target, useDefaultArguments) // TODO: we should add all and select later
-        }
-        val unknowns = explicit.filterKeys { name ->
-            targets.none { it.name == name }
+            explicit(origin, target) ?: implicit(origin, target, useDefaultArguments)
         }
 
         return ClassMappingRequest(
-            context.origin,
+            origin.referenceMapFunction(),
             sources.map { it.value },
             constructor,
             mappings,
-            unknowns,
         )
     }
 
-    private fun explicit(target: ClassMappingTarget): List<ExplicitClassMappingSource>? =
+    context(context: MappieContext)
+    private fun explicit(origin: InternalMappieDefinition, target: ClassMappingTarget): List<ExplicitClassMappingSource>? =
         explicit[target.name]?.let { sources ->
             sources.map { source ->
                 if (source is ExplicitPropertyMappingSource && source.transformation == null && !target.type.isSubtypeOf(source.type)) {
-                    source.copy(transformation = transformation(source, target))
+                    source.copy(transformation = transformation(origin, source, target))
                 } else {
                     source
                 }
             }
         }
 
-    private fun implicit(target: ClassMappingTarget, useDefaultArguments: Boolean): List<ImplicitClassMappingSource> =
+    context(context: MappieContext)
+    private fun implicit(origin: InternalMappieDefinition, target: ClassMappingTarget, useDefaultArguments: Boolean): List<ImplicitClassMappingSource> =
         implicit.getOrDefault(target.name, emptyList()).let { sources ->
             sources.map { source ->
                 if (source.type.isSubtypeOf(target.type)) {
                     source
                 } else {
                     when (source) {
-                        is ImplicitPropertyMappingSource -> source.copy(transformation = transformation(source, target))
-                        is FunctionMappingSource -> source.copy(transformation = transformation(source, target))
-                        is ParameterValueMappingSource -> source.copy(transformation = transformation(source, target))
+                        is ImplicitPropertyMappingSource -> source.copy(transformation = transformation(origin, source, target))
+                        is FunctionMappingSource -> source.copy(transformation = transformation(origin, source, target))
+                        is ParameterValueMappingSource -> source.copy(transformation = transformation(origin, source, target))
                         is ParameterDefaultValueMappingSource -> panic("ParameterDefaultValueMappingSource should not occur when resolving a transformation.")
                     }
                 }
@@ -84,8 +84,9 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
             }
         }
 
-    private fun transformation(source: ClassMappingSource, target: ClassMappingTarget): PropertyMappingTransformation? {
-        val mappers = context.definitions.matching(source.type, target.type)
+    context(context: MappieContext)
+    private fun transformation(origin: InternalMappieDefinition, source: ClassMappingSource, target: ClassMappingTarget): PropertyMappingTransformation? {
+        val mappers = context.definitions.matching(source.type, target.type).toList()
         return when {
             mappers.size == 1 -> {
                 PropertyMappingViaMapperTransformation(mappers.single(), null)
@@ -96,17 +97,10 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
                     PropertyMappingViaMapperTransformation(exact, null)
                 } else {
                     val location = when (source) {
-                        is ExplicitClassMappingSource -> location(context.origin.fileEntry, source.origin)
-                        else -> location(context.origin)
+                        is ExplicitClassMappingSource -> location(origin.referenceMapFunction().fileEntry, source.origin)
+                        else -> location(origin.referenceMapFunction())
                     }
-                    val error = Problem.error(
-                        "Multiple mappers resolved to be used in an implicit via",
-                        location,
-                        listOf(
-                            "Call one of ${mappers.joinToString { it.clazz.name.asString() }} explicitly.",
-                            "Delete all except one of ${mappers.joinToString { it.clazz.name.asString() }}.",
-                        )
-                    )
+                    val error = Problem.error("Multiple mappers resolved to be used in an implicit via", location)
                     context.logger.log(error)
                     PropertyMappingViaMapperTransformation(mappers.first(), null)
                 }
@@ -124,6 +118,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor, private
         explicit.merge(entry.first, listOf(entry.second), List<ExplicitClassMappingSource>::plus)
     }
 
+    context(context: MappieContext)
     fun sources(parameters: List<Pair<Name, IrType>>) = apply {
         sources.putAll(parameters)
         parameters.map { (name, type) ->
