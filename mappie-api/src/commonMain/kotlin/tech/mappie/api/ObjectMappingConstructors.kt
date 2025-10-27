@@ -63,7 +63,7 @@ public class ObjectMappingConstructor<FROM, out TO> {
         generated()
 
     /**
-     * Reference a constructor parameter or target property in lieu of a property reference, if it not exists as a property.
+     * Reference a constructor parameter or target property in lieu of a property reference, if it does not exist as a property.
      *
      * For example
      * ```kotlin
@@ -123,7 +123,7 @@ public class MultipleObjectMappingConstructor<out TO> {
         generated()
 
     /**
-     * Reference a constructor parameter or target property in lieu of a property reference, if it not exists as a property.
+     * Reference a constructor parameter or target property in lieu of a property reference, if it does not exist as a property.
      *
      * For example
      * ```kotlin

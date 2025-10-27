@@ -29,7 +29,7 @@ class UnsafePlatformTypeAssignmentProblems(
 
         return when (source) {
             is ExplicitPropertyMappingSource -> {
-                val description = "Target $targetString of type $targetTypeString is unsafe to from ${source.reference.pretty()} of platform type $sourceTypeString"
+                val description = "Target $targetString of type $targetTypeString is unsafe to assign from ${source.reference.pretty()} of platform type $sourceTypeString"
                 Problem.warning(description, location(context.function.fileEntry, source.reference))
             }
             is ExpressionMappingSource -> {
@@ -37,7 +37,7 @@ class UnsafePlatformTypeAssignmentProblems(
                 Problem.warning(description, location(context.function.fileEntry, source.expression))
             }
             is ValueMappingSource -> {
-                val description = "Target $targetString of type $targetTypeString is unsafe to assigned from value of platform type $sourceTypeString"
+                val description = "Target $targetString of type $targetTypeString is unsafe to be assigned from value of platform type $sourceTypeString"
                 Problem.warning(description, location(context.function.fileEntry, source.expression))
             }
             is FunctionMappingSource -> {

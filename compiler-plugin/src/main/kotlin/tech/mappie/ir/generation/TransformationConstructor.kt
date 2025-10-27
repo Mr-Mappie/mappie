@@ -66,5 +66,5 @@ private fun IrBuilderWithScope.instance(clazz: IrClass) =
     } else if (clazz.primaryConstructor != null && clazz.primaryConstructor!!.parameters.isEmpty()) {
         irCallConstructor(clazz.primaryConstructor!!.symbol, emptyList())
     } else {
-        panic("Class ${clazz.name.asString()} should either be an object or has an primary constructor without parameters.", clazz)
+        panic("Class ${clazz.name.asString()} should either be an object or have a primary constructor without parameters.", clazz)
     }
