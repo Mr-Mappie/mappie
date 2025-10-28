@@ -61,5 +61,8 @@ fun MappieContext.referenceFunctionRun() =
         it.owner.hasShape(regularParameters = 1)
     }
 
+fun MappieContext.referenceFunctionError() =
+    pluginContext.referenceFunctions(CallableId(PACKAGE_KOTLIN, Name.identifier("error"))).first()
+
 fun MappieContext.shouldGenerateCode(clazz: IrClass) =
     clazz.superClass?.symbol in allMappieClasses()

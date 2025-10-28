@@ -19,11 +19,18 @@ class MappieIrRegistrar(
 ) : IrGenerationExtension {
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
-        context(createMappieContext(pluginContext)) {
+        val context = createMappieContext(pluginContext)
+
+        context(context) {
             PreprocessingStage.execute(moduleFragment)
             val resolved = ResolvingStage.execute()
             val selected = SelectionStage.execute(resolved.requests)
-            val models = CodeModelGenerationStage.execute(selected.mappings)
+
+            selected.mappings.forEach { (_, request) ->
+                context.logger.logAll(request.validation.problems)
+            }
+
+            val models = CodeModelGenerationStage.execute(selected.mappings.filter { it.value.request != null && it.value.validation.isValid }.mapValues { it.value.request!! }.toMap())
             val generated = CodeGenerationStage.execute(models.models)
             ReportGenerator().report(generated.classes)
         }

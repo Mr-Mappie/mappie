@@ -4,16 +4,20 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.typeOrFail
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.superClass
+import org.jetbrains.kotlin.ir.util.toIrConst
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.MappieContext
+import tech.mappie.ir.referenceFunctionError
 import tech.mappie.ir.referenceFunctionLet
 import tech.mappie.ir.resolving.classes.sources.GeneratedViaMapperTransformation
 import tech.mappie.ir.resolving.classes.sources.PropertyMappingTransformTransformation
@@ -45,9 +49,20 @@ fun IrBuilderWithScope.constructTransformation(
         }
         is GeneratedViaMapperTransformation -> {
             val clazz = context.definitions.matching(transformation.source.type, transformation.target.type).first().clazz
-            irCall(clazz.selectMappingFunction(source)).apply {
-                arguments[0] = instance(source, target, clazz)
-                arguments[1] = source
+            if (clazz is IrLazyGeneratedClass) {
+                irCall(context.referenceFunctionError()).apply {
+                    arguments[0] = IrConstImpl.string(
+                        SYNTHETIC_OFFSET,
+                        SYNTHETIC_OFFSET,
+                        context.pluginContext.irBuiltIns.stringType,
+                        "Failed to reference mapper ${clazz.name}"
+                    )
+                }
+            } else {
+                irCall(clazz.selectMappingFunction(source)).apply {
+                    arguments[0] = instance(source, target, clazz)
+                    arguments[1] = source
+                }
             }
         }
     }

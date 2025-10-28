@@ -3,6 +3,7 @@ package tech.mappie.ir.selection
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.analysis.Problem.Companion.error
 import tech.mappie.ir.analysis.RequestValidator
+import tech.mappie.ir.analysis.ValidationResult
 import tech.mappie.ir.resolving.MappieDefinition
 import tech.mappie.ir.resolving.MappingRequest
 import tech.mappie.ir.util.location
@@ -14,23 +15,14 @@ object SelectionStage {
 
     context(context: MappieContext)
     fun execute(requests: Map<MappieDefinition, List<MappingRequest>>): SelectionResult {
-        val mappings = requests.mapNotNull { (definition, mappings) ->
+        val mappings = requests.map { (definition, mappings) ->
             val validations = mappings.associateWith { RequestValidator.of(it).evaluate() }
             val selected = MappingSelector.of(validations).select()
 
             if (selected == null) {
-                context.logger.log(error("Target class has no accessible constructor", location(definition.clazz)))
-                null
+                definition to MappingRequestProblemDecorator(null, ValidationResult(listOf(error("Target class has no accessible constructor", location(definition.clazz)))))
             } else {
-                val request = selected.first
-
-                context.logger.logAll(selected.second.problems)
-
-                if (request == null) {
-                    null
-                } else {
-                    definition to request
-                }
+                definition to MappingRequestProblemDecorator(selected.first, selected.second)
             }
         }.toMap()
 
@@ -38,4 +30,6 @@ object SelectionStage {
     }
 }
 
-class SelectionResult(val mappings: Map<MappieDefinition, MappingRequest>)
+data class MappingRequestProblemDecorator(val request: MappingRequest?, val validation: ValidationResult)
+
+class SelectionResult(val mappings: Map<MappieDefinition, MappingRequestProblemDecorator>)

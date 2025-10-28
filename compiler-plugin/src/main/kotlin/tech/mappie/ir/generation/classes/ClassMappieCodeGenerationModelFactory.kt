@@ -1,9 +1,9 @@
 package tech.mappie.ir.generation.classes
 
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.name.Name.identifier
 import tech.mappie.ir.MappieContext
+import tech.mappie.ir.analysis.Problem.Companion.error
 import tech.mappie.ir.generation.ClassMappieCodeGenerationModel
 import tech.mappie.ir.generation.CodeGenerationModel
 import tech.mappie.ir.generation.CodeModelGenerationStage
@@ -22,6 +22,7 @@ import tech.mappie.ir.resolving.classes.targets.FunctionCallTarget
 import tech.mappie.ir.resolving.classes.targets.SetterTarget
 import tech.mappie.ir.resolving.classes.targets.ValueParameterTarget
 import tech.mappie.ir.selection.SelectionStage
+import tech.mappie.ir.util.location
 
 class ClassMappieCodeGenerationModelFactory(private val request: ClassMappingRequest) {
 
@@ -52,17 +53,38 @@ class ClassMappieCodeGenerationModelFactory(private val request: ClassMappingReq
             if (source is TransformableClassMappingSource) {
                 val transformation = source.transformation
                 if (transformation is GeneratedViaMapperTransformation) {
+                    val (source, target) = transformation.source.type to target.type
                     val definition = GeneratedMappieDefinition(
-                        IrLazyGeneratedClass(identifier(transformation.source.type.dumpKotlinLike() + "To" + target.type.dumpKotlinLike() + "Mapper")),
-                        transformation.source.type,
-                        target.type,
+                        IrLazyGeneratedClass(identifier(source.dumpKotlinLike() + "To" + target.dumpKotlinLike() + "Mapper")),
+                        source,
+                        target,
                     )
 
                     context.definitions.generated.add(definition)
 
                     val resolved = ResolvingStage.execute(origin, definition)
                     val selected = SelectionStage.execute(resolved.requests)
-                    CodeModelGenerationStage.execute(selected.mappings).models.mapKeys { it.key as GeneratedMappieDefinition }.toList().single()
+
+                    selected.mappings.filter { !it.value.validation.isValid }.forEach { (_, request) ->
+                        context.logger.log(
+                            error(
+                            "No implicit mapping can be generated from ${source.dumpKotlinLike()} to ${target.dumpKotlinLike()}",
+                            location(origin.clazz),
+                            request.validation.problems.map { it.description }
+                            )
+                        )
+                    }
+
+                    val requests = selected.mappings
+                        .filter { it.value.request != null && it.value.validation.isValid }
+                        .mapValues { it.value.request!! }
+                        .toMap()
+
+                    if (requests.isNotEmpty()) {
+                        CodeModelGenerationStage.execute(requests).models.mapKeys { it.key as GeneratedMappieDefinition }.toList().single()
+                    } else {
+                        null
+                    }
                 } else {
                     null
                 }
