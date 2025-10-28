@@ -7,7 +7,9 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.parents
 import tech.mappie.ir.MappieContext
+import tech.mappie.ir.generation.IrLazyGeneratedClass
 import tech.mappie.ir.util.*
 
 class MappieDefinitionCollection(
@@ -25,9 +27,11 @@ class MappieDefinitionCollection(
     }
 
     context (context: MappieContext)
-    fun matching(source: IrType, target: IrType) =
+    fun matching(source: IrType, target: IrType, parent: IrClass? = null) =
         definitions.filter { mappie ->
-            source.upperBound.isSubtypeOf(mappie.source.upperBound) && mappie.target.upperBound.isSubtypeOf(target.upperBound)
+            val isSubtype = source.upperBound.isSubtypeOf(mappie.source.upperBound) && mappie.target.upperBound.isSubtypeOf(target.upperBound)
+            val isCorrectParent = parent?.let { mappie.clazz !is IrLazyGeneratedClass && (it == mappie.clazz || it in mappie.clazz.parents) } ?: true
+            isSubtype && isCorrectParent
         }
 }
 

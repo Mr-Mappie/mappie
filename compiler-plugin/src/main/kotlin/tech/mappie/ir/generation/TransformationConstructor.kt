@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.superClass
-import org.jetbrains.kotlin.ir.util.toIrConst
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.MappieContext
+import tech.mappie.ir.analysis.Problem.Companion.internal
 import tech.mappie.ir.referenceFunctionError
 import tech.mappie.ir.referenceFunctionLet
 import tech.mappie.ir.resolving.classes.sources.GeneratedViaMapperTransformation
@@ -48,8 +48,10 @@ fun IrBuilderWithScope.constructTransformation(
             }
         }
         is GeneratedViaMapperTransformation -> {
-            val clazz = context.definitions.matching(transformation.source.type, transformation.target.type).first().clazz
+            val clazz = context.definitions.matching(transformation.source.type, transformation.target.type, transformation.lookupScope).first().clazz
             if (clazz is IrLazyGeneratedClass) {
+                context.logger.log(internal("failed to reference generated mapper ${clazz.name}."))
+
                 irCall(context.referenceFunctionError()).apply {
                     arguments[0] = IrConstImpl.string(
                         SYNTHETIC_OFFSET,

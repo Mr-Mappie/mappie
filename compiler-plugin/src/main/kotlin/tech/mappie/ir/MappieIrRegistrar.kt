@@ -30,7 +30,11 @@ class MappieIrRegistrar(
                 context.logger.logAll(request.validation.problems)
             }
 
-            val models = CodeModelGenerationStage.execute(selected.mappings.filter { it.value.request != null && it.value.validation.isValid }.mapValues { it.value.request!! }.toMap())
+            val requests = selected.mappings
+                .filter { it.value.request != null && it.value.validation.isValid }
+                .mapValues { it.value.request!! }
+
+            val models = CodeModelGenerationStage.execute(requests)
             val generated = CodeGenerationStage.execute(models.models)
             ReportGenerator().report(generated.classes)
         }

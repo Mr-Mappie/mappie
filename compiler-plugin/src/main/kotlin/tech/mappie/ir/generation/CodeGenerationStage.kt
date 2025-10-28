@@ -8,7 +8,7 @@ object CodeGenerationStage {
 
     context(context: MappieContext)
     fun execute(mappings: Map<MappieDefinition, CodeGenerationModel>): CodeGenerationResult {
-        val elements = mappings.map { (definition, model) ->
+        val elements = mappings.toList().map { (definition, model) ->
             if (model is ClassMappieCodeGenerationModel) {
                 model.generated.map {
                     val definition = GeneratedMappieClassConstructor()
@@ -16,8 +16,6 @@ object CodeGenerationStage {
 
                     definition.clazz.transform(MappieTranformer(context, it.value.clone(definition = definition)), null)
                 }
-            } else {
-                emptyList()
             }
 
             definition.clazz.transform(MappieTranformer(context, model), null)

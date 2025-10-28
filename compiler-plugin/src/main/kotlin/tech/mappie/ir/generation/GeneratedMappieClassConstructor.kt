@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.typeOrFail
@@ -71,12 +70,11 @@ class GeneratedMappieClassConstructor {
             }
 
             parent.addChild(clazz)
-
-            context.definitions.generated.apply {
-                remove(definition)
-                add(definition.copy(clazz = clazz))
+            definition.copy(clazz = clazz).also { newDefinition ->
+                context.definitions.generated.apply {
+                    remove(definition)
+                    add(newDefinition)
+                }
             }
-
-            definition.copy(clazz = clazz)
         }
 }

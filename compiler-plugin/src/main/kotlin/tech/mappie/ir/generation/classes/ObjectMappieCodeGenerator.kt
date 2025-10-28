@@ -73,15 +73,14 @@ class ObjectMappieCodeGenerator(private val model: ClassMappieCodeGenerationMode
                         arguments[1] = constructArgument(source, target, regularParameters)
                     }
                 }
-
                 is FunctionCallTarget -> {
                     +irCall(target.value).apply {
                         dispatchReceiver = irGet(variable)
                         arguments[1] = constructArgument(source, target, regularParameters)
                     }
                 }
-
-                else -> { /* Applied as a constructor call argument */
+                else -> {
+                    /* Applied as a constructor call argument */
                 }
             }
         }
@@ -109,7 +108,7 @@ class ObjectMappieCodeGenerator(private val model: ClassMappieCodeGenerationMode
                     irCall(context.referenceFunctionRequireNotNull(), source.reference.getter!!.owner.returnType.makeNotNull()).apply {
                         arguments[0] = irCall(source.reference.getter!!).apply {
                             dispatchReceiver = receiver
-                        };
+                        }
                         arguments[1] = this@constructArgument.irLambda(context.pluginContext.irBuiltIns.anyType, context.pluginContext.irBuiltIns.getKFunctionType(context.pluginContext.irBuiltIns.stringType, emptyList())) {
                             +irReturn(irString("Reference ${source.reference.pretty()} must be non-null."))
                         }

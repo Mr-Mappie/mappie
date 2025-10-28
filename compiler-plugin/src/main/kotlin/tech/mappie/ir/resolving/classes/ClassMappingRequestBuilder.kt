@@ -101,7 +101,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
                 }
             }
             !source.type.isPrimitive() && !target.type.isPrimitive() -> {
-                GeneratedViaMapperTransformation(source, target)
+                GeneratedViaMapperTransformation(source, target, origin.clazz)
             }
             else -> {
                 null

@@ -1,5 +1,6 @@
 package tech.mappie.ir.resolving.classes.sources
 
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
@@ -7,7 +8,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.addAnnotations
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.isNullable
-import tech.mappie.ir.resolving.InternalMappieDefinition
 import tech.mappie.ir.resolving.MappieDefinition
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 
@@ -55,6 +55,7 @@ data class PropertyMappingViaMapperTransformation(
 data class GeneratedViaMapperTransformation(
     val source: ClassMappingSource,
     val target: ClassMappingTarget,
+    val lookupScope: IrClass?
 ) : PropertyMappingTransformation {
     override val type = target.type
 }

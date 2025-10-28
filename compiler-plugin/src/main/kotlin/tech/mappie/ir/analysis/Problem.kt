@@ -11,6 +11,11 @@ data class Problem(
     enum class Severity { ERROR, WARNING; }
 
     companion object {
+        private const val ISSUES_URL = "https://github.com/Mr-Mappie/mappie/issues"
+
+        fun internal(decription: String) =
+            Problem("Internal Mappie error: $decription", Severity.ERROR, listOf("Please report this bug at $ISSUES_URL."), null)
+
         fun error(description: String, location: CompilerMessageLocation? = null, suggestions: List<String> = emptyList()) =
             Problem(description, Severity.ERROR, suggestions, location)
 
