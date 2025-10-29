@@ -41,29 +41,51 @@ fun IrBuilderWithScope.constructTransformation(
                 arguments[1] = transformation.function
             }
         }
+
         is PropertyMappingViaMapperTransformation -> {
             irCall(transformation.selectMappingFunction(source)).apply {
                 arguments[0] = transformation.dispatchReceiver ?: instance(source, target, transformation.mapper.clazz)
                 arguments[1] = source
             }
         }
+
         is GeneratedViaMapperTransformation -> {
-            val clazz = context.definitions.matching(transformation.source.type, transformation.target.type, transformation.lookupScope).first().clazz
-            if (clazz is IrLazyGeneratedClass) {
-                context.logger.log(internal("failed to reference generated mapper ${clazz.name}."))
+            val definitions = context.definitions.matching(
+                transformation.source.type,
+                transformation.target.type,
+                transformation.lookupScope
+            ).toList()
+
+            if (definitions.size == 1) {
+                val definition = definitions.first().clazz
+
+                if (definition is IrLazyGeneratedClass) {
+                    context.logger.log(internal("failed to reference generated mapper ${definition.name}."))
+
+                    irCall(context.referenceFunctionError()).apply {
+                        arguments[0] = IrConstImpl.string(
+                            SYNTHETIC_OFFSET,
+                            SYNTHETIC_OFFSET,
+                            context.pluginContext.irBuiltIns.stringType,
+                            "Failed to reference generated mapper ${definition.name}"
+                        )
+                    }
+                } else {
+                    irCall(definition.selectMappingFunction(source)).apply {
+                        arguments[0] = instance(source, target, definition)
+                        arguments[1] = source
+                    }
+                }
+            } else {
+                context.logger.log(internal("failed to reference generated mapper."))
 
                 irCall(context.referenceFunctionError()).apply {
                     arguments[0] = IrConstImpl.string(
                         SYNTHETIC_OFFSET,
                         SYNTHETIC_OFFSET,
                         context.pluginContext.irBuiltIns.stringType,
-                        "Failed to reference mapper ${clazz.name}"
+                        "Failed to reference generated mapper}"
                     )
-                }
-            } else {
-                irCall(clazz.selectMappingFunction(source)).apply {
-                    arguments[0] = instance(source, target, clazz)
-                    arguments[1] = source
                 }
             }
         }

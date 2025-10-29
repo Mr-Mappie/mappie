@@ -25,7 +25,6 @@ interface RequestValidator {
             addAll(UnsafeTypeAssignmentProblems.of(mapping).all())
             addAll(UnsafePlatformTypeAssignmentProblems.of(mapping).all())
             addAll(VisibilityProblems.of(mapping).all())
-//            addAll(MapperGenerationRequestProblems.of(mapping).all())
             addAll(UnnecessaryFromPropertyNotNullProblems.of(mapping).all())
             addAll(EnumConstructionProblems.of(mapping).all())
         })

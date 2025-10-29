@@ -1,6 +1,8 @@
 package tech.mappie.ir.analysis.problems.classes
 
 import org.jetbrains.kotlin.backend.jvm.ir.upperBound
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.resolving.ClassMappingRequest
@@ -60,17 +62,17 @@ class UnsafeTypeAssignmentProblems(
     }
 
     companion object {
-
         context(context: MappieContext)
         fun of(mapping: ClassMappingRequest): UnsafeTypeAssignmentProblems {
             val mappings = mapping.mappings
                 .filterSingle()
-                .filter { (target, source) -> !target.type.upperBound.isSubtypeOf(source.type.upperBound) }
+                .filter { (target, source) ->
+                    val s: IrType = source.type.upperBound.let { if (source.type.isNullable()) it.makeNullable() else it }
+                    val t = target.type.upperBound.let { if (target.type.isNullable()) it.makeNullable() else it }
+                    !s.isSubtypeOf(t)
+                }
 
-            return UnsafeTypeAssignmentProblems(
-                mapping,
-                mappings
-            )
+            return UnsafeTypeAssignmentProblems(mapping, mappings)
         }
     }
 }

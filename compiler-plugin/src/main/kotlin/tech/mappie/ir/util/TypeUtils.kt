@@ -1,5 +1,6 @@
 package tech.mappie.ir.util
 
+import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -11,8 +12,14 @@ import tech.mappie.exceptions.MappiePanicException.Companion.panic
 
 // TODO: other isNothing is the wrong way around.
 context(context: MappieContext)
-fun IrType.isSubtypeOf(other: IrType) =
-    other.isNothing() || isSubtypeOf(other, IrTypeSystemContextImpl(context.pluginContext.irBuiltIns))
+fun IrType.isSubtypeOf(other: IrType): Boolean {
+    val current = if (isWithFlexibleNullability()) {
+        makeNotNull()
+    } else {
+        this
+    }
+    return other.isNothing() || current.isSubtypeOf(other, IrTypeSystemContextImpl(context.pluginContext.irBuiltIns))
+}
 
 fun IrType.hasFlexibleNullabilityAnnotation(): Boolean =
     annotations.any { it.symbol.owner.parentAsClass.classId == FlexibleNullability }
