@@ -20,7 +20,7 @@ class EnumMappieCodeGenerator(private val model: EnumMappieCodeGenerationModel) 
     context(context: MappieContext)
     fun lambda(scope: Scope): IrCall =
         with(context.pluginContext.irBuiltIns.createIrBuilder(scope.scopeOwnerSymbol)) {
-            irCall(context.referenceFunctionRun()).apply {
+            irCall(referenceFunctionRun()).apply {
                 arguments[0] = irLambda(model.definition.referenceMapFunction().returnType, model.definition.referenceMapFunction().returnType) {
                     content()
                 }

@@ -34,7 +34,7 @@ class ObjectMappieCodeGenerator(private val model: ClassMappieCodeGenerationMode
     context(context: MappieContext)
     fun lambda(scope: Scope): IrCall =
         with(context.pluginContext.irBuiltIns.createIrBuilder(scope.scopeOwnerSymbol)) {
-            irCall(context.referenceFunctionRun()).apply {
+            irCall(referenceFunctionRun()).apply {
                 arguments[0] = irLambda(model.definition.referenceMapFunction().returnType, model.definition.referenceMapFunction().returnType) {
                     content()
                 }
@@ -90,7 +90,7 @@ class ObjectMappieCodeGenerator(private val model: ClassMappieCodeGenerationMode
 
     context(context: MappieContext)
     fun construct(builder: DeclarationIrBuilder): IrCall {
-            return builder.irCall(context.referenceFunctionRun()).apply {
+            return builder.irCall(referenceFunctionRun()).apply {
                 arguments[0] = builder.irLambda(model.definition.referenceMapFunction().returnType, model.definition.referenceMapFunction().returnType) {
                 }
             }
@@ -105,7 +105,7 @@ class ObjectMappieCodeGenerator(private val model: ClassMappieCodeGenerationMode
                             ?: panic("Could not determine value parameter for property reference.", source.reference))
 
                 val getter = if (source.forceNonNull) {
-                    irCall(context.referenceFunctionRequireNotNull(), source.reference.getter!!.owner.returnType.makeNotNull()).apply {
+                    irCall(referenceFunctionRequireNotNull(), source.reference.getter!!.owner.returnType.makeNotNull()).apply {
                         arguments[0] = irCall(source.reference.getter!!).apply {
                             dispatchReceiver = receiver
                         }
@@ -123,7 +123,7 @@ class ObjectMappieCodeGenerator(private val model: ClassMappieCodeGenerationMode
                 } ?: getter
             }
             is ExpressionMappingSource -> {
-                irCall(context.referenceFunctionLet()).apply {
+                irCall(referenceFunctionLet()).apply {
                     arguments[0] = irGet(parameters.single())
                     arguments[1] = source.expression
                 }

@@ -32,7 +32,7 @@ fun interface MappingResolver {
         context(context: MappieContext)
         fun of(declaration: IrFunction) =
             when {
-                declaration.parentAsClass.isSubclassOf(context.referenceEnumMappieClass()) -> {
+                declaration.parentAsClass.isSubclassOf(referenceEnumMappieClass()) -> {
                     EnumResolver(declaration.parameters[1].type, declaration.returnType)
                 }
                 else -> {

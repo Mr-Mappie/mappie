@@ -1,5 +1,6 @@
 package tech.mappie.ir.preprocessing
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -21,11 +22,13 @@ class InternalDefinitionsCollector(val context: MappieContext) : BaseVisitor<Lis
 
     override fun visitClass(declaration: IrClass, data: Unit) =
         buildList {
-                context(context) {
-                    if (declaration.isSubclassOf(context.referenceMappieClass())) {
-                        add(InternalMappieDefinition(declaration))
-                    }
+            context(context) {
+                if (declaration.isSubclassOf(with(context) {
+                        referenceMappieClass()
+                    }) && declaration.modality != Modality.ABSTRACT) {
+                    add(InternalMappieDefinition.of(declaration))
                 }
+            }
             addAll(declaration.declarations.filterIsInstance<IrClass>().flatMap { it.accept(data) })
         }
 

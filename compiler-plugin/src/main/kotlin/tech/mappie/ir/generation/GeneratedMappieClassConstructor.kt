@@ -30,8 +30,8 @@ class GeneratedMappieClassConstructor {
             kind = ClassKind.OBJECT
         }.let { clazz ->
             val base = when (request) {
-                is ClassMappieCodeGenerationModel -> context.referenceObjectMappieClass()
-                is EnumMappieCodeGenerationModel -> context.referenceEnumMappieClass()
+                is ClassMappieCodeGenerationModel -> referenceObjectMappieClass()
+                is EnumMappieCodeGenerationModel -> referenceEnumMappieClass()
             }
 
             clazz.parent = parent

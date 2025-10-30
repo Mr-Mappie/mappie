@@ -36,7 +36,7 @@ fun IrBuilderWithScope.constructTransformation(
 ): IrExpression =
     when (transformation) {
         is PropertyMappingTransformTransformation -> {
-            irCall(context.referenceFunctionLet()).apply {
+            irCall(referenceFunctionLet()).apply {
                 arguments[0] = source
                 arguments[1] = transformation.function
             }
@@ -62,7 +62,7 @@ fun IrBuilderWithScope.constructTransformation(
                 if (definition is IrLazyGeneratedClass) {
                     context.logger.log(internal("failed to reference generated mapper ${definition.name}."))
 
-                    irCall(context.referenceFunctionError()).apply {
+                    irCall(referenceFunctionError()).apply {
                         arguments[0] = IrConstImpl.string(
                             SYNTHETIC_OFFSET,
                             SYNTHETIC_OFFSET,
@@ -79,7 +79,7 @@ fun IrBuilderWithScope.constructTransformation(
             } else {
                 context.logger.log(internal("failed to reference generated mapper."))
 
-                irCall(context.referenceFunctionError()).apply {
+                irCall(referenceFunctionError()).apply {
                     arguments[0] = IrConstImpl.string(
                         SYNTHETIC_OFFSET,
                         SYNTHETIC_OFFSET,

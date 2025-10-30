@@ -46,13 +46,22 @@ interface MappieDefinition {
 
 data class InternalMappieDefinition(
     override val clazz: IrClass,
-    override val source: IrType = (clazz.superTypes.first() as IrSimpleType).arguments[0].typeOrFail,
-    override val target: IrType = (clazz.superTypes.first() as IrSimpleType).arguments[1].typeOrFail,
+    override val source: IrType,
+    override val target: IrType,
 ) : MappieDefinition {
 
     override fun toString() = "${clazz.name} ${source.dumpKotlinLike()} to ${target.dumpKotlinLike()}"
+
+    companion object {
+        context (context: MappieContext)
+        fun of(clazz: IrClass): InternalMappieDefinition {
+            val (source, target) = clazz.mappieSuperClassTypes()
+            return InternalMappieDefinition(clazz, source, target)
+        }
+    }
 }
 
+// TODO: also via of companion object function.
 class ExternalMappieDefinition(override val clazz: IrClass) : MappieDefinition {
     override val source: IrType = (clazz.superTypes.first() as IrSimpleType).arguments[0].typeOrFail
     override val target: IrType = (clazz.superTypes.first() as IrSimpleType).arguments[1].typeOrFail

@@ -14,7 +14,9 @@ import tech.mappie.ir.shouldGenerateCode
 
 class ShouldTransformCollector(private val context: MappieContext) : BaseVisitor<Boolean, Unit>() {
     override fun visitClass(declaration: IrClass, data: Unit): Boolean {
-        return context.shouldGenerateCode(declaration)
+        return context(context) {
+            shouldGenerateCode(declaration)
+        }
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Unit): Boolean {
