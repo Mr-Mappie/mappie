@@ -1,7 +1,6 @@
 package tech.mappie.ir.generation.classes
 
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import org.jetbrains.kotlin.name.Name.identifier
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.analysis.Problem.Companion.error
 import tech.mappie.ir.generation.ClassMappieCodeGenerationModel
@@ -55,7 +54,7 @@ class ClassMappieCodeGenerationModelFactory(private val request: ClassMappingReq
                 if (transformation is GeneratedViaMapperTransformation) {
                     val (source, target) = transformation.source.type to target.type
                     val definition = GeneratedMappieDefinition(
-                        IrLazyGeneratedClass(identifier(source.dumpKotlinLike() + "To" + target.dumpKotlinLike() + "Mapper")),
+                        IrLazyGeneratedClass.named(source, target),
                         source,
                         target,
                     )

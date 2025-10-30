@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.Name.identifier
 
 class IrLazyGeneratedClass(override var name: Name) : IrClass() {
     @ObsoleteDescriptorBasedAPI
@@ -102,4 +105,12 @@ class IrLazyGeneratedClass(override var name: Name) : IrClass() {
     override var metadata: MetadataSource?
         get() = TODO("Not yet implemented")
         set(value) {}
+
+    companion object {
+        fun named(source: IrType, target: IrType): IrClass {
+            val source = source.makeNotNull().dumpKotlinLike()
+            val target  = target.makeNotNull().dumpKotlinLike()
+            return IrLazyGeneratedClass(identifier(source + "To" + target + "Mapper"))
+        }
+    }
 }
