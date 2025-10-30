@@ -2,7 +2,7 @@ package tech.mappie.ir.generation
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import tech.mappie.ir.MappieContext
-import tech.mappie.ir.resolving.MappieDefinition
+import tech.mappie.ir.MappieDefinition
 
 object CodeGenerationStage {
 

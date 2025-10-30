@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
+import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.resolving.classes.ClassResolver
 import tech.mappie.ir.resolving.enums.EnumResolver

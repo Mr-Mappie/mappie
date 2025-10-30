@@ -8,7 +8,7 @@ import tech.mappie.ir.MappieContext
 import tech.mappie.ir.util.BaseVisitor
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.exceptions.MappieProblemException.Companion.fail
-import tech.mappie.ir.resolving.InternalMappieDefinition
+import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.resolving.classes.sources.*
 import tech.mappie.ir.util.location
 import tech.mappie.util.*

@@ -2,7 +2,7 @@ package tech.mappie.ir.preprocessing
 
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import tech.mappie.ir.MappieContext
-import tech.mappie.ir.resolving.MappieDefinitionCollection
+import tech.mappie.ir.MappieDefinitionCollection
 
 class DefinitionsCollector(val context: MappieContext) {
     fun collect(module: IrModuleFragment): MappieDefinitionCollection {

@@ -3,7 +3,7 @@ package tech.mappie.ir.generation.enums
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import tech.mappie.ir.generation.EnumMappieCodeGenerationModel
 import tech.mappie.ir.resolving.EnumMappingRequest
-import tech.mappie.ir.resolving.MappieDefinition
+import tech.mappie.ir.MappieDefinition
 import tech.mappie.ir.resolving.enums.EnumMappingTarget
 import tech.mappie.ir.resolving.enums.ResolvedEnumMappingTarget
 

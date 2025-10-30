@@ -2,6 +2,7 @@ package tech.mappie.ir.resolving
 
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
+import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.util.BaseVisitor
 import tech.mappie.ir.util.isMappieMapFunction

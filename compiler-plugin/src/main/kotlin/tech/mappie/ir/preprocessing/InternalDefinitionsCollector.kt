@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import tech.mappie.ir.MappieContext
-import tech.mappie.ir.resolving.InternalMappieDefinition
+import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.util.BaseVisitor
 import tech.mappie.ir.util.isSubclassOf
 import tech.mappie.ir.referenceMappieClass

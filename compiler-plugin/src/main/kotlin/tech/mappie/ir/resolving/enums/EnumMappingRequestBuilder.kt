@@ -3,7 +3,7 @@ package tech.mappie.ir.resolving.enums
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.types.IrType
 import tech.mappie.ir.resolving.EnumMappingRequest
-import tech.mappie.ir.resolving.InternalMappieDefinition
+import tech.mappie.ir.InternalMappieDefinition
 
 class EnumMappingRequestBuilder(val source: IrType, val target: IrType) {
 

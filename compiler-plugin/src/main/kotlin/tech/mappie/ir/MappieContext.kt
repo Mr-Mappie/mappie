@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name.identifier
 import tech.mappie.config.MappieConfiguration
-import tech.mappie.ir.resolving.MappieDefinitionCollection
 import tech.mappie.util.*
 
 interface MappieContext {

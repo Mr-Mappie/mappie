@@ -9,7 +9,6 @@ import tech.mappie.ir.generation.CodeGenerationStage
 import tech.mappie.ir.generation.CodeModelGenerationStage
 import tech.mappie.ir.preprocessing.PreprocessingStage
 import tech.mappie.ir.reporting.ReportGenerator
-import tech.mappie.ir.resolving.MappieDefinitionCollection
 import tech.mappie.ir.resolving.ResolvingStage
 import tech.mappie.ir.selection.SelectionStage
 

@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.name.Name
+import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.resolving.classes.targets.MappieTargetsCollector
 

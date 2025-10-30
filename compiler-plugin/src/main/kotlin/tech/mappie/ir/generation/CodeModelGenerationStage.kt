@@ -5,7 +5,7 @@ import tech.mappie.ir.generation.classes.ClassMappieCodeGenerationModelFactory
 import tech.mappie.ir.generation.enums.EnumMappieCodeGenerationModelFactory
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.EnumMappingRequest
-import tech.mappie.ir.resolving.MappieDefinition
+import tech.mappie.ir.MappieDefinition
 import tech.mappie.ir.resolving.MappingRequest
 import kotlin.collections.component1
 import kotlin.collections.component2

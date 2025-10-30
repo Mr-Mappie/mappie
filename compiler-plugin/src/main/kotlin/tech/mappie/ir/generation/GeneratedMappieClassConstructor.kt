@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.util.functions
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.referenceEnumMappieClass
 import tech.mappie.ir.referenceObjectMappieClass
-import tech.mappie.ir.resolving.GeneratedMappieDefinition
+import tech.mappie.ir.GeneratedMappieDefinition
 import tech.mappie.util.IDENTIFIER_MAP
 
 class GeneratedMappieClassConstructor {

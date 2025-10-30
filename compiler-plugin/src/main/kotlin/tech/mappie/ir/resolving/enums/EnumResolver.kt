@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.statements
 import tech.mappie.ir.MappieContext
-import tech.mappie.ir.resolving.InternalMappieDefinition
+import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.resolving.MappingResolver
 import tech.mappie.ir.resolving.findMappingStatements
 

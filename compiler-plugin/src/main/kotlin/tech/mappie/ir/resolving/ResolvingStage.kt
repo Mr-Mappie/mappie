@@ -1,6 +1,9 @@
 package tech.mappie.ir.resolving
 
+import tech.mappie.ir.GeneratedMappieDefinition
+import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.MappieContext
+import tech.mappie.ir.MappieDefinition
 
 /**
  * IR stage responsible for matching the sources and targets of all internal definitions.

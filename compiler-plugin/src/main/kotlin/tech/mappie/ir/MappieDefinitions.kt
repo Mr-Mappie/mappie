@@ -1,4 +1,4 @@
-package tech.mappie.ir.resolving
+package tech.mappie.ir
 
 import org.jetbrains.kotlin.backend.jvm.ir.upperBound
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.parents
-import tech.mappie.ir.MappieContext
 import tech.mappie.ir.generation.IrLazyGeneratedClass
 import tech.mappie.ir.util.*
 

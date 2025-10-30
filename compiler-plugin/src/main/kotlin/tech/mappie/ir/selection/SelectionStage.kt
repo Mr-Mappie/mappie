@@ -4,7 +4,7 @@ import tech.mappie.ir.MappieContext
 import tech.mappie.ir.analysis.Problem.Companion.error
 import tech.mappie.ir.analysis.RequestValidator
 import tech.mappie.ir.analysis.ValidationResult
-import tech.mappie.ir.resolving.MappieDefinition
+import tech.mappie.ir.MappieDefinition
 import tech.mappie.ir.resolving.MappingRequest
 import tech.mappie.ir.util.location
 

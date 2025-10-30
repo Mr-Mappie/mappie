@@ -8,7 +8,7 @@ import tech.mappie.api.builtin.BuiltInMappieProvider
 import tech.mappie.api.kotlinx.datetime.KotlinxDateTimeMappieProvider
 import tech.mappie.config.MappieModule
 import tech.mappie.exceptions.MappiePanicException
-import tech.mappie.ir.resolving.ExternalMappieDefinition
+import tech.mappie.ir.ExternalMappieDefinition
 
 class ExternalDefinitionsCollector(val context: MappieContext) {
     fun collect(): List<ExternalMappieDefinition> = providers().flatMap { provider ->

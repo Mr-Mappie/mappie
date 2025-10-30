@@ -3,6 +3,7 @@ package tech.mappie.ir.resolving
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.types.IrType
+import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.resolving.classes.sources.ClassMappingSource
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.resolving.enums.EnumMappingTarget
