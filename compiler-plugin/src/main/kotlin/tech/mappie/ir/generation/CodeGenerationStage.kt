@@ -10,11 +10,12 @@ object CodeGenerationStage {
     fun execute(mappings: Map<MappieDefinition, CodeGenerationModel>): CodeGenerationResult {
         val elements = mappings.toList().map { (definition, model) ->
             if (model is ClassMappieCodeGenerationModel) {
-                model.generated.map {
+                model.generated.forEach {
                     val generated = GeneratedMappieClassConstructor()
                         .construct(definition.clazz, it.key, it.value)
 
-                    generated.clazz.transform(MappieTranformer(context, it.value.clone(definition = generated)), null)
+                    val model = it.value.clone(definition = generated)
+                    execute(mapOf(generated to model))
                 }
             }
 
