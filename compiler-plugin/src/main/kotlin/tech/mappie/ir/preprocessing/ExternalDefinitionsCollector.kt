@@ -11,6 +11,8 @@ import tech.mappie.exceptions.MappiePanicException
 import tech.mappie.ir.ExternalMappieDefinition
 
 class ExternalDefinitionsCollector(val context: MappieContext) {
+
+    context(context: MappieContext)
     fun collect(): List<ExternalMappieDefinition> = providers().flatMap { provider ->
         buildList {
             addAll(provider.common)
@@ -29,9 +31,10 @@ class ExternalDefinitionsCollector(val context: MappieContext) {
         }
     }
 
+    context(context: MappieContext)
     private fun load(name: String) =
-        context.pluginContext.referenceClass(ClassId.Companion.fromString(name))
+        context.pluginContext.referenceClass(ClassId.fromString(name))
             ?.owner
-            ?.let { ExternalMappieDefinition(it) }
-            ?: MappiePanicException.Companion.panic("Could not find registered mapper $name on classpath.")
+            ?.let { ExternalMappieDefinition.of(it) }
+            ?: MappiePanicException.panic("Could not find registered mapper $name on classpath.")
 }

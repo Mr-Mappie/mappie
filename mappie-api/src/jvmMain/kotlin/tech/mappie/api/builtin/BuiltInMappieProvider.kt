@@ -6,6 +6,8 @@ public class BuiltInMappieProvider : PredefinedMappieProvider {
     public override val common: List<String> = listOf(
         "tech/mappie/api/builtin/collections/IterableToSetMapper",
         "tech/mappie/api/builtin/collections/IterableToListMapper",
+        "tech/mappie/api/builtin/collections/IterableToMutableSetMapper",
+        "tech/mappie/api/builtin/collections/IterableToMutableListMapper",
         "tech/mappie/api/builtin/IdentityMapper",
         "tech/mappie/api/builtin/ByteToShortMapper",
         "tech/mappie/api/builtin/ByteToIntMapper",

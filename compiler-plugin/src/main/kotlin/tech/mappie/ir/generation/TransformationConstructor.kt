@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.superClass
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
+import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.analysis.Problem.Companion.internal
+import tech.mappie.ir.generation.classes.ClassMappieCodeGenerationModelFactory
 import tech.mappie.ir.referenceFunctionError
 import tech.mappie.ir.referenceFunctionLet
 import tech.mappie.ir.resolving.classes.sources.GeneratedViaMapperTransformation
@@ -30,6 +32,7 @@ import tech.mappie.util.CLASS_ID_ANNOTATION_MAPPIE_RESOLVED
 
 context(context: MappieContext)
 fun IrBuilderWithScope.constructTransformation(
+    origin: InternalMappieDefinition,
     transformation: PropertyMappingTransformation,
     source: IrExpression,
     target: ClassMappingTarget,
@@ -44,7 +47,7 @@ fun IrBuilderWithScope.constructTransformation(
 
         is PropertyMappingViaMapperTransformation -> {
             irCall(transformation.selectMappingFunction(source)).apply {
-                arguments[0] = transformation.dispatchReceiver ?: instance(source, target, transformation.mapper.clazz)
+                arguments[0] = transformation.dispatchReceiver ?: instance(origin, source, target, transformation.mapper.clazz)
                 arguments[1] = source
             }
         }
@@ -72,7 +75,7 @@ fun IrBuilderWithScope.constructTransformation(
                     }
                 } else {
                     irCall(definition.selectMappingFunction(source)).apply {
-                        arguments[0] = instance(source, target, definition)
+                        arguments[0] = instance(origin, source, target, definition)
                         arguments[1] = source
                     }
                 }
@@ -104,15 +107,31 @@ private fun IrClass.selectMappingFunction(value: IrExpression) =
     }
 
 context(context: MappieContext)
-private fun IrBuilderWithScope.instance(source: IrExpression, target: ClassMappingTarget, clazz: IrClass): IrDeclarationReference =
+private fun IrBuilderWithScope.instance(origin: InternalMappieDefinition, source: IrExpression, target: ClassMappingTarget, clazz: IrClass): IrDeclarationReference =
     if (clazz.isObject) {
         irGetObject(clazz.symbol)
     } else if (clazz.primaryConstructor != null && clazz.primaryConstructor!!.parameters.all { it.hasAnnotation(CLASS_ID_ANNOTATION_MAPPIE_RESOLVED) }) {
         irCallConstructor(clazz.primaryConstructor!!.symbol, emptyList()).apply {
             clazz.primaryConstructor!!.parameters.forEach { parameter ->
-                val inner = context.definitions.matching((source.type as IrSimpleType).arguments.first().typeOrFail, (target.type as IrSimpleType).arguments.first().typeOrFail).single()
-                val instance = instance(source, target, inner.clazz) // TODO: should collect inner source and target.
-                this.arguments[parameter.indexInParameters] = instance
+                val sourceType = (source.type as IrSimpleType).arguments.first().typeOrFail
+                val targetType = (target.type as IrSimpleType).arguments.first().typeOrFail
+
+                val inner = context.definitions.matching(sourceType, targetType).singleOrNull()
+
+                if (inner == null) {
+                    // TODO: correct error handling
+                    val model = ClassMappieCodeGenerationModelFactory().generate(sourceType, origin, targetType)
+                    val generated = GeneratedMappieClassConstructor()
+                        .construct(origin.clazz, model!!.first, model.second)
+
+                    generated.clazz.transform(MappieTranformer(context, model.second.clone(definition = generated)), null)
+
+                    val instance = instance(origin, source, target, generated.clazz) // TODO: should collect inner source and target.
+                    this.arguments[parameter.indexInParameters] = instance
+                } else {
+                    val instance = instance(origin, source, target, inner.clazz) // TODO: should collect inner source and target.
+                    this.arguments[parameter.indexInParameters] = instance
+                }
             }
         }
     } else {

@@ -11,8 +11,8 @@ import tech.mappie.ir.MappieDefinition
 object ResolvingStage {
 
     context(context: MappieContext)
-    fun execute(): ResolvingResult {
-        val requests = context.definitions.internal.associateWith { definition ->
+    fun execute(definitions: List<InternalMappieDefinition>): ResolvingResult {
+        val requests = definitions.associateWith { definition ->
             definition.clazz.accept(MappingRequestResolver(definition), context)
         }.mapKeys { it.key as MappieDefinition }
         return ResolvingResult(requests)

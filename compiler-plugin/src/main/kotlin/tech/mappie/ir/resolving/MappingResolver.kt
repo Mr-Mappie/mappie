@@ -20,7 +20,7 @@ fun interface MappingResolver {
 
     companion object {
         context(context: MappieContext)
-        fun of(source: IrType, target:IrType) =
+        fun of(source: IrType, target: IrType) =
             when {
                 source.isSubtypeOfClass(context.pluginContext.irBuiltIns.enumClass) -> {
                     EnumResolver(source, target)

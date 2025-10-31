@@ -21,8 +21,8 @@ class MappieIrRegistrar(
         val context = createMappieContext(pluginContext)
 
         context(context) {
-            PreprocessingStage.execute(moduleFragment)
-            val resolved = ResolvingStage.execute()
+            val preprocessed = PreprocessingStage.execute(moduleFragment)
+            val resolved = ResolvingStage.execute(preprocessed.definitions.internal)
             val selected = SelectionStage.execute(resolved.requests)
 
             selected.mappings.forEach { (_, request) ->

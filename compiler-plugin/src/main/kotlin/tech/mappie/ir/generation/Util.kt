@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 
+// TODO: refine selection for any overloads
 fun IrEnumEntry.referenceFunctionValueOf(): IrSimpleFunction =
     parentAsClass.declarations
         .filterIsInstance<IrSimpleFunction>()

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.getKFunctionType
 import tech.mappie.ir.MappieContext
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
+import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.generation.ClassMappieCodeGenerationModel
 import tech.mappie.ir.generation.constructTransformation
 import tech.mappie.ir.reporting.pretty
@@ -119,7 +120,7 @@ class ObjectMappieCodeGenerator(private val model: ClassMappieCodeGenerationMode
                     }
                 }
                 source.transformation?.let {
-                    constructTransformation(it, getter, target)
+                    constructTransformation(model.origin, it, getter, target)
                 } ?: getter
             }
             is ExpressionMappingSource -> {
@@ -136,7 +137,7 @@ class ObjectMappieCodeGenerator(private val model: ClassMappieCodeGenerationMode
                     dispatchReceiver = irGet(parameters.first { it.name == source.parameter })
                 }
                 source.transformation?.let {
-                    constructTransformation(it, getter, target)
+                    constructTransformation(model.origin, it, getter, target)
                 } ?: getter
             }
             is FunctionMappingSource -> {
@@ -147,7 +148,7 @@ class ObjectMappieCodeGenerator(private val model: ClassMappieCodeGenerationMode
             is ParameterValueMappingSource -> {
                 val getter = irGet(parameters.first { it.name == source.parameter })
                 source.transformation?.let {
-                    constructTransformation(it, getter, target)
+                    constructTransformation(model.origin, it, getter, target)
                 } ?: getter
             }
             is ParameterDefaultValueMappingSource -> {

@@ -24,51 +24,22 @@ import tech.mappie.ir.resolving.classes.targets.ValueParameterTarget
 import tech.mappie.ir.selection.SelectionStage
 import tech.mappie.ir.util.location
 
-class ClassMappieCodeGenerationModelFactory(private val request: ClassMappingRequest) {
+class ClassMappieCodeGenerationModelFactory {
 
     @Suppress("UNCHECKED_CAST")
     context (context: MappieContext)
-    fun construct(definition: MappieDefinition): ClassMappieCodeGenerationModel {
+    fun construct(request: ClassMappingRequest, definition: MappieDefinition): ClassMappieCodeGenerationModel {
         val mappings = request.mappings
             .mapValues { (target, sources) -> select(target, sources) }
             .filter { it.value != null } as Map<ClassMappingTarget, ClassMappingSource>
 
-        return ClassMappieCodeGenerationModel(definition, request.constructor, mappings, generated(request.origin, mappings))
+        return ClassMappieCodeGenerationModel( definition.origin, definition, request.constructor, mappings, generated(request.origin, mappings))
     }
 
-    private fun select(target: ClassMappingTarget, sources: List<ClassMappingSource>): ClassMappingSource? =
-        if (sources.isEmpty()) {
-            null
-        } else {
-            sources.singleOrNull() ?: when (target) {
-                is FunctionCallTarget -> sources.first()
-                is SetterTarget -> sources.first()
-                is ValueParameterTarget -> sources.first { it is ExplicitClassMappingSource }
-            }
-        }
-
-    context (context: MappieContext)
-    private fun generated(origin: InternalMappieDefinition, mappings: Map<ClassMappingTarget, ClassMappingSource>): Map<GeneratedMappieDefinition, CodeGenerationModel> =
-        mappings.entries.fold(mutableMapOf<GeneratedMappieDefinition, CodeGenerationModel>()) { acc, (target, source) ->
-            acc.apply {
-                if (source is TransformableClassMappingSource) {
-                    val transformation = source.transformation
-                    if (transformation is GeneratedViaMapperTransformation) {
-                        val (source, target) = transformation.source.type to target.type
-                        val existing = acc.entries.find { it.key.target == target && it.key.source == source }
-                        if (existing == null) {
-                            generate(source, target, origin)?.also {
-                                acc[it.first] = it.second
-                            }
-                        }
-                    }
-                }
-            }
-        }.toMap()
-
-    context (context: MappieContext)
-    private fun generate(source: IrType, target: IrType, origin: InternalMappieDefinition): Pair<GeneratedMappieDefinition, CodeGenerationModel>? {
+    context(context: MappieContext)
+    fun generate(source: IrType, origin: InternalMappieDefinition, target: IrType): Pair<GeneratedMappieDefinition, CodeGenerationModel>? {
         val definition = GeneratedMappieDefinition(
+            origin,
             IrLazyGeneratedClass.named(source, target),
             source,
             target,
@@ -101,4 +72,33 @@ class ClassMappieCodeGenerationModelFactory(private val request: ClassMappingReq
             null
         }
     }
+
+    private fun select(target: ClassMappingTarget, sources: List<ClassMappingSource>): ClassMappingSource? =
+        if (sources.isEmpty()) {
+            null
+        } else {
+            sources.singleOrNull() ?: when (target) {
+                is FunctionCallTarget -> sources.first()
+                is SetterTarget -> sources.first()
+                is ValueParameterTarget -> sources.first { it is ExplicitClassMappingSource }
+            }
+        }
+
+    context (context: MappieContext)
+    private fun generated(origin: InternalMappieDefinition, mappings: Map<ClassMappingTarget, ClassMappingSource>): Map<GeneratedMappieDefinition, CodeGenerationModel> =
+        mappings.entries.fold(mutableMapOf<GeneratedMappieDefinition, CodeGenerationModel>()) { acc, (target, source) ->
+            acc.apply {
+                when (val transformation = (source as? TransformableClassMappingSource)?.transformation) {
+                    is GeneratedViaMapperTransformation -> {
+                        val (source, target) = transformation.source.type to target.type
+                        if (acc.entries.none { it.key.target == target && it.key.source == source }) {
+                            generate(source, origin, target)?.also {
+                                acc[it.first] = it.second
+                            }
+                        }
+                    }
+                    else -> { }
+                }
+            }
+        }.toMap()
 }

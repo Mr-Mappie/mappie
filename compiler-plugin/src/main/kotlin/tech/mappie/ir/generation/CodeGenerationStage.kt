@@ -11,10 +11,10 @@ object CodeGenerationStage {
         val elements = mappings.toList().map { (definition, model) ->
             if (model is ClassMappieCodeGenerationModel) {
                 model.generated.map {
-                    val definition = GeneratedMappieClassConstructor()
+                    val generated = GeneratedMappieClassConstructor()
                         .construct(definition.clazz, it.key, it.value)
 
-                    definition.clazz.transform(MappieTranformer(context, it.value.clone(definition = definition)), null)
+                    generated.clazz.transform(MappieTranformer(context, it.value.clone(definition = generated)), null)
                 }
             }
 

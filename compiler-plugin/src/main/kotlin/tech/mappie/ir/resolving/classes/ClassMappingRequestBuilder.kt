@@ -5,11 +5,14 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.model.eraseContainingTypeParameters
 import org.jetbrains.kotlin.utils.ifEmpty
 import tech.mappie.ir.MappieContext
 import tech.mappie.config.options.useDefaultArguments
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.InternalMappieDefinition
+import tech.mappie.ir.PrioritizationMap
+import tech.mappie.ir.PrioritizationMap.Companion.prioritize
 import tech.mappie.ir.resolving.*
 import tech.mappie.ir.resolving.classes.sources.*
 import tech.mappie.ir.resolving.classes.sources.FunctionMappingSource
@@ -82,25 +85,25 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
 
     context(context: MappieContext)
     private fun transformation(origin: InternalMappieDefinition, source: ClassMappingSource, target: ClassMappingTarget): PropertyMappingTransformation? {
-        val mappers = context.definitions.matching(source.type, target.type).toList()
+        val mappers = context.definitions.matching(source.type, target.type)
+        val prioritized = mappers.prioritize(source.type, target.type)
+        val selected = prioritized.select()
+
         return when {
-            mappers.size == 1 -> {
-                PropertyMappingViaMapperTransformation(mappers.single(), null)
+            selected != null -> {
+                PropertyMappingViaMapperTransformation(selected, null)
             }
-            mappers.size > 1 -> {
-                val exact = mappers.singleOrNull { it.source == source.type && it.target == target.type }
-                if (exact != null) {
-                    PropertyMappingViaMapperTransformation(exact, null)
-                } else {
-                    val location = when (source) {
-                        is ExplicitClassMappingSource -> location(origin.referenceMapFunction().fileEntry, source.origin)
-                        else -> location(origin.referenceMapFunction())
-                    }
-                    val error = Problem.error("Multiple mappers resolved to be used in an implicit via", location)
-                    context.logger.log(error)
-                    PropertyMappingViaMapperTransformation(mappers.first(), null)
+            prioritized.size > 1 -> {
+                val location = when (source) {
+                    is ExplicitClassMappingSource -> location(origin.referenceMapFunction().fileEntry, source.origin)
+                    else -> location(origin.referenceMapFunction())
                 }
+                val error = Problem.error("Multiple mappers resolved to be used in an implicit via", location)
+                context.logger.log(error)
+                null
+//                PropertyMappingViaMapperTransformation(mappers.first(), null)
             }
+            // TODO: which branch?
             !source.type.isPrimitive() && !target.type.isPrimitive() -> {
                 GeneratedViaMapperTransformation(source, target, origin.clazz)
             }

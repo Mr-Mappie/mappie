@@ -7,10 +7,10 @@ import tech.mappie.ir.MappieDefinition
 import tech.mappie.ir.resolving.enums.EnumMappingTarget
 import tech.mappie.ir.resolving.enums.ResolvedEnumMappingTarget
 
-class EnumMappieCodeGenerationModelFactory(private val request: EnumMappingRequest) {
+class EnumMappieCodeGenerationModelFactory() {
 
     @Suppress("UNCHECKED_CAST")
-    fun construct(definition: MappieDefinition): EnumMappieCodeGenerationModel =
+    fun construct(request: EnumMappingRequest, definition: MappieDefinition): EnumMappieCodeGenerationModel =
         EnumMappieCodeGenerationModel(
             definition,
             request.source,

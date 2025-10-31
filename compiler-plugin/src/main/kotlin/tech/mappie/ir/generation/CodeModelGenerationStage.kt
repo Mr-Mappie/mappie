@@ -25,11 +25,11 @@ object CodeModelGenerationStage {
 
     context(context: MappieContext)
     private fun execute(definition: MappieDefinition, request: ClassMappingRequest): ClassMappieCodeGenerationModel {
-        return ClassMappieCodeGenerationModelFactory(request).construct(definition)
+        return ClassMappieCodeGenerationModelFactory().construct(request, definition)
     }
 
     private fun execute(definition: MappieDefinition, request: EnumMappingRequest): EnumMappieCodeGenerationModel {
-        return EnumMappieCodeGenerationModelFactory(request).construct(definition)
+        return EnumMappieCodeGenerationModelFactory().construct(request, definition)
     }
 }
 

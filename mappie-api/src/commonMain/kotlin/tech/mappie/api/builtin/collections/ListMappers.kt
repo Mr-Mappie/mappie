@@ -10,3 +10,10 @@ public class IterableToListMapper<FROM, TO>(@MappieResolved private val inner: M
     override fun map(from: Iterable<FROM>): List<TO> =
         from.map(inner::map).toList()
 }
+
+public class IterableToMutableListMapper<FROM, TO>(@MappieResolved private val inner: Mappie1<FROM, TO>)
+    : ObjectMappie<Iterable<FROM>, MutableList<TO>>() {
+
+    override fun map(from: Iterable<FROM>): MutableList<TO> =
+        from.map(inner::map).toMutableList()
+}

@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.types.IrType
 import tech.mappie.ir.GeneratedMappieDefinition
+import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.MappieDefinition
 import tech.mappie.ir.resolving.classes.sources.ClassMappingSource
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
@@ -26,6 +27,7 @@ data class EnumMappieCodeGenerationModel(
 ) : CodeGenerationModel
 
 data class ClassMappieCodeGenerationModel(
+    val origin: InternalMappieDefinition,
     override val definition: MappieDefinition,
     val constructor: IrConstructor,
     val mappings: Map<ClassMappingTarget, ClassMappingSource>,

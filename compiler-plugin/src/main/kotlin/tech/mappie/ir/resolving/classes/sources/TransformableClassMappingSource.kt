@@ -14,9 +14,6 @@ import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 sealed interface TransformableClassMappingSource : ClassMappingSource {
     val transformation: PropertyMappingTransformation?
 
-    fun selectGeneratedTransformationMapping(): GeneratedViaMapperTransformation? =
-        transformation as? GeneratedViaMapperTransformation?
-
     fun type(original: IrType): IrType =
         when (transformation) {
             is PropertyMappingViaMapperTransformation, is GeneratedViaMapperTransformation -> {
