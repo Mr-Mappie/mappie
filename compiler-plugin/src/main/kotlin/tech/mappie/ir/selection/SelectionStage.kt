@@ -20,7 +20,7 @@ object SelectionStage {
             val selected = MappingSelector.of(validations).select()
 
             if (selected == null) {
-                definition to MappingRequestProblemDecorator(null, ValidationResult(listOf(error("Target class has no accessible constructor", location(definition.clazz)))))
+                definition to MappingRequestProblemDecorator(null, ValidationResult(listOf(error("Target class has no accessible constructor", location(definition.origin.clazz)))))
             } else {
                 definition to MappingRequestProblemDecorator(selected.first, selected.second)
             }
