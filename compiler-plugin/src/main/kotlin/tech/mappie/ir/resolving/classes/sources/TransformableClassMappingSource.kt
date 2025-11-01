@@ -28,6 +28,13 @@ sealed interface TransformableClassMappingSource : ClassMappingSource {
                 transformation?.type ?: original.type
             }
         }
+
+    fun clone(transformation: PropertyMappingTransformation?) = when (this) {
+        is ExplicitPropertyMappingSource -> copy(transformation = transformation)
+        is FunctionMappingSource -> copy(transformation = transformation)
+        is ImplicitPropertyMappingSource -> copy(transformation = transformation)
+        is ParameterValueMappingSource -> copy(transformation = transformation)
+    }
 }
 
 sealed interface PropertyMappingTransformation {
