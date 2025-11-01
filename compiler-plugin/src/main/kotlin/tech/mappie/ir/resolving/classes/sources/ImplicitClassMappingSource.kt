@@ -14,6 +14,7 @@ data class ParameterValueMappingSource(
     val parameterType: IrType,
     override val transformation: PropertyMappingTransformation?,
 ) : ImplicitClassMappingSource, TransformableClassMappingSource {
+    override val source = parameterType
     override val type = type(parameterType)
 
     override fun toString() = "$parameter: ${parameterType.dumpKotlinLike()} via $transformation"
@@ -34,6 +35,7 @@ data class ImplicitPropertyMappingSource(
     val parameterType: IrType,
     override val transformation: PropertyMappingTransformation?,
 ) : ImplicitClassMappingSource, TransformableClassMappingSource {
+    override val source = propertyType
     override val type = type(propertyType)
 
     override fun toString() = "$parameter.${property.name}: ${propertyType.dumpKotlinLike()} via $transformation"
@@ -46,6 +48,7 @@ data class FunctionMappingSource(
     val parameterType: IrType,
     override val transformation: PropertyMappingTransformation?,
 ) : ImplicitClassMappingSource, TransformableClassMappingSource {
+    override val source = functionType
     override val type = type(functionType)
 
     override fun toString() = "$parameter.${function.name}: ${functionType.dumpKotlinLike()} via $transformation"

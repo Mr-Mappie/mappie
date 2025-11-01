@@ -17,11 +17,11 @@ data class ExplicitPropertyMappingSource(
     override val transformation : PropertyMappingTransformation?,
     val forceNonNull: Boolean,
 ) : ExplicitClassMappingSource, TransformableClassMappingSource {
-    val getterType = (reference.type as IrSimpleType).arguments.last().typeOrFail
-    override val type = type(getterType.let { if (forceNonNull) it.makeNotNull() else it })
+    override val source = (reference.type as IrSimpleType).arguments.last().typeOrFail
+    override val type = type(source.let { if (forceNonNull) it.makeNotNull() else it })
     override val origin = reference
 
-    override fun toString() = "${reference.getter!!.owner.name}: ${getterType.dumpKotlinLike()} via $transformation"
+    override fun toString() = "${reference.getter!!.owner.name}: ${source.dumpKotlinLike()} via $transformation"
 }
 
 data class ValueMappingSource(val expression: IrExpression) : ExplicitClassMappingSource {

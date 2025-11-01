@@ -16,17 +16,17 @@ import tech.mappie.ir.allMappieClasses
 // TODO: other isNothing is the wrong way around.
 context(context: MappieContext)
 fun IrType.isSubtypeOf(other: IrType): Boolean {
-//    val current = if (isWithFlexibleNullability()) {
-//        makeNotNull()
-//    } else {
-//        this
-//    }
-//    val other = if (other.isWithFlexibleNullability()) {
-//        other.makeNotNull()
-//    } else {
-//        other
-//    }
-    return other.isNothing() || this.isSubtypeOf(other, IrTypeSystemContextImpl(context.pluginContext.irBuiltIns))
+    val current = if (isWithFlexibleNullability()) {
+        makeNotNull()
+    } else {
+        this
+    }
+    val other = if (other.isWithFlexibleNullability()) {
+        other.makeNotNull()
+    } else {
+        other
+    }
+    return other.isNothing() || current.isSubtypeOf(other, IrTypeSystemContextImpl(context.pluginContext.irBuiltIns))
 }
 
 context(context: MappieContext)
@@ -58,4 +58,10 @@ fun IrType.substituteTypeVariable(container: IrTypeParametersContainer, argument
         mapping[classifierOrNull!!.owner]?.typeOrNull ?: panic("Could not resolve generic type", container)
     } else {
         this
+    }
+
+val IrType.arguments: List<IrTypeArgument>
+    get() = when (this) {
+        is IrSimpleType -> this.arguments
+        else -> emptyList()
     }

@@ -1,6 +1,7 @@
 package tech.mappie.ir.generation.classes
 
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.analysis.Problem.Companion.error
@@ -16,12 +17,14 @@ import tech.mappie.ir.resolving.ResolvingStage
 import tech.mappie.ir.resolving.classes.sources.ClassMappingSource
 import tech.mappie.ir.resolving.classes.sources.ExplicitClassMappingSource
 import tech.mappie.ir.resolving.classes.sources.GeneratedViaMapperTransformation
+import tech.mappie.ir.resolving.classes.sources.PropertyMappingViaMapperTransformation
 import tech.mappie.ir.resolving.classes.sources.TransformableClassMappingSource
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.resolving.classes.targets.FunctionCallTarget
 import tech.mappie.ir.resolving.classes.targets.SetterTarget
 import tech.mappie.ir.resolving.classes.targets.ValueParameterTarget
 import tech.mappie.ir.selection.SelectionStage
+import tech.mappie.ir.util.arguments
 import tech.mappie.ir.util.location
 
 class ClassMappieCodeGenerationModelFactory {
@@ -33,7 +36,7 @@ class ClassMappieCodeGenerationModelFactory {
             .mapValues { (target, sources) -> select(target, sources) }
             .filter { it.value != null } as Map<ClassMappingTarget, ClassMappingSource>
 
-        return ClassMappieCodeGenerationModel( definition.origin, definition, request.constructor, mappings, generated(request.origin, mappings))
+        return ClassMappieCodeGenerationModel(definition.origin, definition, request.constructor, mappings, generated(request.origin, mappings))
     }
 
     context(context: MappieContext)
@@ -88,10 +91,23 @@ class ClassMappieCodeGenerationModelFactory {
     private fun generated(origin: InternalMappieDefinition, mappings: Map<ClassMappingTarget, ClassMappingSource>): Map<GeneratedMappieDefinition, CodeGenerationModel> =
         mappings.entries.fold(mutableMapOf<GeneratedMappieDefinition, CodeGenerationModel>()) { acc, (target, source) ->
             acc.apply {
-                when (val transformation = (source as? TransformableClassMappingSource)?.transformation) {
+                fun isUnique(source: IrType, target: IrType) = acc.entries.none { it.key.target == target && it.key.source == source }
+
+                val source = source as? TransformableClassMappingSource
+                when (val transformation = source?.transformation) {
+                    is PropertyMappingViaMapperTransformation -> {
+                        if (transformation.target.arguments.isNotEmpty() && source.source.type.arguments.isNotEmpty()) {
+                            val (source, target) = source.source.arguments.first().typeOrFail to transformation.target.arguments.first().typeOrFail
+                            if (isUnique(source, target) && context.definitions.matching(source, target).firstOrNull() == null) {
+                                generate(source, origin, target)?.also {
+                                    acc[it.first] = it.second
+                                }
+                            }
+                        }
+                    }
                     is GeneratedViaMapperTransformation -> {
                         val (source, target) = transformation.source.type to target.type
-                        if (acc.entries.none { it.key.target == target && it.key.source == source }) {
+                        if (isUnique(source, target)) {
                             generate(source, origin, target)?.also {
                                 acc[it.first] = it.second
                             }

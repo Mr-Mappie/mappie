@@ -91,7 +91,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
 
         return when {
             selected != null -> {
-                PropertyMappingViaMapperTransformation(selected, null)
+                PropertyMappingViaMapperTransformation(selected, null, target.type)
             }
             prioritized.size > 1 -> {
                 val location = when (source) {
@@ -101,7 +101,6 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
                 val error = Problem.error("Multiple mappers resolved to be used in an implicit via", location)
                 context.logger.log(error)
                 null
-//                PropertyMappingViaMapperTransformation(mappers.first(), null)
             }
             // TODO: which branch?
             !source.type.isPrimitive() && !target.type.isPrimitive() -> {

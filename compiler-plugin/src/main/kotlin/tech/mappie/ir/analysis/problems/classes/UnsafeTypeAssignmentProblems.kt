@@ -67,9 +67,7 @@ class UnsafeTypeAssignmentProblems(
             val mappings = mapping.mappings
                 .filterSingle()
                 .filter { (target, source) ->
-                    val s: IrType = source.type.upperBound.let { if (source.type.isNullable()) it.makeNullable() else it }
-                    val t = target.type.upperBound.let { if (target.type.isNullable()) it.makeNullable() else it }
-                    !s.isSubtypeOf(t)
+                    !source.type.isSubtypeOf(target.type)
                 }
 
             return UnsafeTypeAssignmentProblems(mapping, mappings)

@@ -129,7 +129,7 @@ class NestedNullToNullPropertyTest : MappieTestCase() {
     }
 
     @Test
-    fun `map nested nullable to nullable explicit should succeed`() {
+    fun `map nested nullable to nullable class explicit should succeed`() {
         compile {
             file("Test.kt",
                 """

@@ -134,7 +134,7 @@ class NullableListPropertyToListPropertyTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(4, "Target Output::text automatically resolved from Input::text but cannot assign source type List<InnerOutput>? to target type List<InnerOutput>")
+            hasErrorMessage(4, "Target Output::text automatically resolved from Input::text via IterableToListMapper but cannot assign source type List<InnerOutput>? to target type List<InnerOutput>")
         }
     }
 }

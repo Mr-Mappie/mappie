@@ -16,7 +16,7 @@ class UnnecessaryFromPropertyNotNullProblems(
 
     fun all(): List<Problem> = mappings.map {
         Problem.warning(
-            "Unnecessary fromPropertyNotNull for non-nullable type ${it.getterType.dumpKotlinLike()}",
+            "Unnecessary fromPropertyNotNull for non-nullable type ${it.source.dumpKotlinLike()}",
             location(mapping.origin.clazz.fileEntry, it.origin),
             listOf("Use fromProperty instead of fromPropertyNotNull")
         )
@@ -29,7 +29,7 @@ class UnnecessaryFromPropertyNotNullProblems(
                 mapping.mappings.values
                     .filterSingle()
                     .filterIsInstance<ExplicitPropertyMappingSource>()
-                    .filter { it.forceNonNull && !it.getterType.isNullable() }
+                    .filter { it.forceNonNull && !it.source.isNullable() }
             )
     }
 }

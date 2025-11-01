@@ -1,7 +1,10 @@
 package tech.mappie.ir.resolving.classes
 
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.ir.MappieContext
@@ -10,6 +13,7 @@ import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.exceptions.MappieProblemException.Companion.fail
 import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.resolving.classes.sources.*
+import tech.mappie.ir.util.isMappieMapFunction
 import tech.mappie.ir.util.location
 import tech.mappie.util.*
 
@@ -33,6 +37,23 @@ class ClassMappingStatementCollector : BaseVisitor<Pair<Name, ExplicitClassMappi
         }
         IDENTIFIER_VIA -> {
             expression.dispatchReceiver!!.accept(data)!!.let { (name, source) ->
+//                val constructorCall = expression.arguments[1]!! as IrConstructorCall
+//                val mapperClass = constructorCall.type.classOrFail
+//                val typeArguments = if (constructorCall.typeArguments.isNotEmpty()) {
+//                    listOf(constructorCall.typeArguments.last()!!)
+//                } else {
+//                    emptyList()
+//                }
+//
+//                val target = mapperClass.functions
+//                    .map { it.owner }
+//                    .first { it.isMappieMapFunction() }
+//                    .returnType
+//                    .classOrFail
+//                    .typeWith(typeArguments)
+
+//                val target = expression.arguments[1]!!.accept(ClassMappingTargetTypeResolver(), Unit)
+
                 name to (source as ExplicitPropertyMappingSource).copy(
                     transformation = expression.arguments[1]!!.accept(MapperReferenceCollector(), data)
                 )
@@ -69,16 +90,35 @@ class ClassMappingStatementCollector : BaseVisitor<Pair<Name, ExplicitClassMappi
 private class MapperReferenceCollector : BaseVisitor<PropertyMappingViaMapperTransformation, MappieContext>() {
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: MappieContext): PropertyMappingViaMapperTransformation {
-        val mapper = data.pluginContext.referenceClass(expression.symbol.owner.classId!!)!!
+        val mapper = data.pluginContext.referenceClass(expression.symbol.owner.classId!!)!!.owner
+
+        val target = mapper.functions
+            .first { it.isMappieMapFunction() }
+            .returnType
+            .classOrFail
+            .typeWith(emptyList())
+
         return context(data) {
-            PropertyMappingViaMapperTransformation(InternalMappieDefinition.of(mapper.owner), expression)
+            PropertyMappingViaMapperTransformation(InternalMappieDefinition.of(mapper), expression, target)
         }
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: MappieContext): PropertyMappingViaMapperTransformation {
         val mapper = expression.type.getClass()!!
+        val typeArguments = if (expression.typeArguments.isNotEmpty()) {
+            listOf(expression.typeArguments.last()!!)
+        } else {
+            emptyList()
+        }
+
+        val target = mapper.functions
+            .first { it.isMappieMapFunction() }
+            .returnType
+            .classOrFail
+            .typeWith(typeArguments)
+
         return context(data) {
-            PropertyMappingViaMapperTransformation(InternalMappieDefinition.of(mapper), expression)
+            PropertyMappingViaMapperTransformation(InternalMappieDefinition.of(mapper), expression, target)
         }
     }
 }
