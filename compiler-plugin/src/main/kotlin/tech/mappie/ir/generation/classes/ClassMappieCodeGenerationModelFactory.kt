@@ -8,7 +8,7 @@ import tech.mappie.ir.analysis.Problem.Companion.error
 import tech.mappie.ir.generation.ClassMappieCodeGenerationModel
 import tech.mappie.ir.generation.CodeGenerationModel
 import tech.mappie.ir.generation.CodeModelGenerationStage
-import tech.mappie.ir.generation.IrLazyGeneratedClass
+import tech.mappie.ir.generation.IrMappieGeneratedClass
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.GeneratedMappieDefinition
 import tech.mappie.ir.InternalMappieDefinition
@@ -43,7 +43,7 @@ class ClassMappieCodeGenerationModelFactory {
     fun generate(source: IrType, origin: InternalMappieDefinition, target: IrType): Pair<GeneratedMappieDefinition, CodeGenerationModel>? {
         val definition = GeneratedMappieDefinition(
             origin,
-            IrLazyGeneratedClass.named(source, target),
+            IrMappieGeneratedClass.named(source, target),
             source,
             target,
         )

@@ -17,7 +17,7 @@ object CodeGenerationStage {
                     val generated = GeneratedMappieClassConstructor()
                         .construct(definition.clazz, it.key, it.value)
 
-                    val model = it.value.substitute(it.key.clazz as IrLazyGeneratedClass, generated)
+                    val model = it.value.substitute(it.key.clazz as IrMappieGeneratedClass, generated)
                     execute(mapOf(generated to model))
                 }
             }
@@ -28,7 +28,7 @@ object CodeGenerationStage {
         return CodeGenerationResult(elements.filterIsInstance<IrClass>())
     }
 
-    fun CodeGenerationModel.substitute(original: IrLazyGeneratedClass, concrete: GeneratedMappieDefinition): CodeGenerationModel {
+    fun CodeGenerationModel.substitute(original: IrMappieGeneratedClass, concrete: GeneratedMappieDefinition): CodeGenerationModel {
         return when (this) {
             is ClassMappieCodeGenerationModel -> {
                 ClassMappieCodeGenerationModel(

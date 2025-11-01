@@ -24,93 +24,94 @@ import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.Name.identifier
+import tech.mappie.ir.analysis.Problem.Companion.exception
 
-class IrLazyGeneratedClass(override var name: Name) : IrClass() {
+class IrMappieGeneratedClass(override var name: Name) : IrClass() {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
     override val symbol: IrClassSymbol
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
     override var kind: ClassKind
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var modality: Modality
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var isCompanion: Boolean
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var isInner: Boolean
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var isData: Boolean
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var isValue: Boolean
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var isExpect: Boolean
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var isFun: Boolean
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var hasEnumEntries: Boolean
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override val source: SourceElement
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
     override var superTypes: List<IrType>
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var thisReceiver: IrValueParameter?
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var valueClassRepresentation: ValueClassRepresentation<IrSimpleType>?
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var sealedSubclasses: List<IrClassSymbol>
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var startOffset: Int
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var endOffset: Int
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var attributeOwnerId: IrElement
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var origin: IrDeclarationOrigin
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override val factory: IrFactory
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
     override var annotations: List<IrConstructorCall>
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var isExternal: Boolean
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var visibility: DescriptorVisibility
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
     override var typeParameters: List<IrTypeParameter>
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
 
     @UnsafeDuringIrConstructionAPI
     override val declarations: MutableList<IrDeclaration>
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
     override var metadata: MetadataSource?
-        get() = TODO("Not yet implemented")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
         set(value) {}
 
     companion object {
         fun named(source: IrType, target: IrType): IrClass {
             val source = source.makeNotNull().dumpKotlinLike()
             val target  = target.makeNotNull().dumpKotlinLike()
-            return IrLazyGeneratedClass(identifier(source + "To" + target + "Mapper"))
+            return IrMappieGeneratedClass(identifier(source + "To" + target + "Mapper"))
         }
     }
 }

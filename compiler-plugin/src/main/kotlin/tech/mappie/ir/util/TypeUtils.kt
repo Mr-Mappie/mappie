@@ -13,7 +13,6 @@ import tech.mappie.ir.MappieContext
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.allMappieClasses
 
-// TODO: other isNothing is the wrong way around.
 context(context: MappieContext)
 fun IrType.isSubtypeOf(other: IrType): Boolean {
     val current = if (isWithFlexibleNullability()) {
@@ -26,7 +25,7 @@ fun IrType.isSubtypeOf(other: IrType): Boolean {
     } else {
         other
     }
-    return other.isNothing() || current.isSubtypeOf(other, IrTypeSystemContextImpl(context.pluginContext.irBuiltIns))
+    return current.isSubtypeOf(other, IrTypeSystemContextImpl(context.pluginContext.irBuiltIns))
 }
 
 context(context: MappieContext)
@@ -39,7 +38,7 @@ fun IrClass.mappieSuperClassTypes(): Pair<IrType, IrType> {
 
 fun IrType.eraseFrom(definition: IrClass): IrType {
     return if (isTypeParameter()) {
-        this.upperBound // TODO: substitute type argument from super classes.
+        upperBound // TODO: substitute type argument from super classes.
     } else {
         this
     }

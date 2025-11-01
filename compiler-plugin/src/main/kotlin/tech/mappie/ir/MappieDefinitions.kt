@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.parents
-import tech.mappie.ir.generation.IrLazyGeneratedClass
+import tech.mappie.ir.generation.IrMappieGeneratedClass
 import tech.mappie.ir.util.*
 
 class MappieDefinitionCollection(
@@ -28,7 +28,7 @@ class MappieDefinitionCollection(
     fun matching(source: IrType, target: IrType, parent: IrClass? = null): Sequence<MappieDefinition> =
         definitions.filter { mappie ->
             val isSubtype = source.upperBound.isSubtypeOf(mappie.source.upperBound) && mappie.target.upperBound.isSubtypeOf(target.upperBound)
-            val isCorrectParent = parent?.let { mappie.clazz !is IrLazyGeneratedClass && (it == mappie.clazz || it in mappie.clazz.parents) } ?: true
+            val isCorrectParent = parent?.let { mappie.clazz !is IrMappieGeneratedClass && (it == mappie.clazz || it in mappie.clazz.parents) } ?: true
             isSubtype && isCorrectParent
         }
 

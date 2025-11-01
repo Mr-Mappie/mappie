@@ -61,7 +61,7 @@ fun IrBuilderWithScope.constructTransformation(
             if (definitions.size == 1) {
                 val definition = definitions.first().clazz
 
-                if (definition is IrLazyGeneratedClass) {
+                if (definition is IrMappieGeneratedClass) {
                     context.logger.log(internal("failed to reference generated mapper ${definition.name}."))
 
                     irCall(referenceFunctionError()).apply {
@@ -107,7 +107,7 @@ private fun IrClass.selectMappingFunction(value: IrExpression) =
 
 context(context: MappieContext)
 private fun IrBuilderWithScope.instance(origin: InternalMappieDefinition, source: IrExpression, target: ClassMappingTarget, clazz: IrClass): IrDeclarationReference =
-    if (clazz is IrLazyGeneratedClass) {
+    if (clazz is IrMappieGeneratedClass) {
         irCall(referenceFunctionError()).apply {
             arguments[0] = IrConstImpl.string(
                 SYNTHETIC_OFFSET,

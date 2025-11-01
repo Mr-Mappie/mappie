@@ -2,8 +2,12 @@ package tech.mappie.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.hasShape
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name.identifier
@@ -74,6 +78,18 @@ fun referenceFunctionRun() =
 context(context: MappieContext)
 fun referenceFunctionError() =
     context.pluginContext.referenceFunctions(CallableId(PACKAGE_KOTLIN, identifier("error"))).first()
+
+context(context: MappieContext)
+fun IrEnumEntry.referenceFunctionValueOf(): IrSimpleFunction =
+    parentAsClass.functions
+        .single {
+            it.name == identifier("valueOf") && it.hasShape(
+                dispatchReceiver = false,
+                extensionReceiver = false,
+                regularParameters = 1,
+                parameterTypes = listOf(context.pluginContext.irBuiltIns.stringType)
+            )
+        }
 
 context(context: MappieContext)
 fun shouldGenerateCode(clazz: IrClass) =

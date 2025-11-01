@@ -100,7 +100,6 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
                 context.logger.log(error)
                 null
             }
-            // TODO: which branch?
             !source.type.isPrimitive() && !target.type.isPrimitive() -> {
                 GeneratedViaMapperTransformation(source, target, origin.clazz)
             }

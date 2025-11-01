@@ -13,6 +13,9 @@ data class Problem(
     companion object {
         private const val ISSUES_URL = "https://github.com/Mr-Mappie/mappie/issues"
 
+        fun exception(description: String): Exception =
+            IllegalStateException("Internal Mappie error: $description. Please report this bug at $ISSUES_URL.")
+
         fun internal(description: String) =
             Problem("Internal Mappie error: $description", Severity.ERROR, listOf("Please report this bug at $ISSUES_URL."), null)
 
