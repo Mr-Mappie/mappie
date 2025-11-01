@@ -26,7 +26,7 @@ class ClassResolver(
                 .apply {
                     val mapping = findMappingStatements(function?.body).singleOrNull()?.arguments?.getOrNull(1) as? IrFunctionExpression
                     mapping?.function?.body?.statements?.forEach { statement ->
-                        statement.accept(ClassMappingStatementCollector(), context)
+                        statement.accept(ClassMappingStatementCollector(origin), context)
                             ?.let { explicit(it) }
                     }
                 }

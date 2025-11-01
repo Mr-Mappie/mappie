@@ -48,6 +48,8 @@ val ALL_MAPPING_FUNCTIONS = listOf(
     IDENTIFIER_VIA,
 )
 
+val IDENTIFIER_IDENTITY_MAPPER = Name.identifier("IdentityMapper")
+
 val PACKAGE_KOTLIN = FqName("kotlin")
 
 val PACKAGE_TECH_MAPPIE_API = FqName("tech.mappie.api")

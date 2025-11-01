@@ -86,7 +86,7 @@ fun IrBuilderWithScope.constructTransformation(
                         SYNTHETIC_OFFSET,
                         SYNTHETIC_OFFSET,
                         context.pluginContext.irBuiltIns.stringType,
-                        "Failed to reference generated mapper}"
+                        "Failed to reference generated mapper"
                     )
                 }
             }
@@ -113,7 +113,7 @@ private fun IrBuilderWithScope.instance(origin: InternalMappieDefinition, source
                 SYNTHETIC_OFFSET,
                 SYNTHETIC_OFFSET,
                 context.pluginContext.irBuiltIns.stringType,
-                "Failed to reference generated mapper}"
+                "Failed to reference generated mapper"
             )
         }
     } else if (clazz.isObject) {

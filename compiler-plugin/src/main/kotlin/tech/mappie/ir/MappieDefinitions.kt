@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.parents
 import tech.mappie.ir.generation.IrMappieGeneratedClass
 import tech.mappie.ir.util.*
+import tech.mappie.util.IDENTIFIER_IDENTITY_MAPPER
 
 class MappieDefinitionCollection(
     val internal: MutableList<InternalMappieDefinition> = mutableListOf(),
@@ -26,12 +27,15 @@ class MappieDefinitionCollection(
 
     context (context: MappieContext)
     fun matching(source: IrType, target: IrType, parent: IrClass? = null): Sequence<MappieDefinition> =
-        definitions.filter { mappie ->
-            val isSubtype = source.upperBound.isSubtypeOf(mappie.source.upperBound) && mappie.target.upperBound.isSubtypeOf(target.upperBound)
-            val isCorrectParent = parent?.let { mappie.clazz !is IrMappieGeneratedClass && (it == mappie.clazz || it in mappie.clazz.parents) } ?: true
-            isSubtype && isCorrectParent
+        if (source == target) {
+             context.definitions.definitions.filter { it.clazz.name == IDENTIFIER_IDENTITY_MAPPER }
+        } else {
+            definitions.filter { mappie ->
+                val isSubtype = source.upperBound.isSubtypeOf(mappie.source.upperBound) && mappie.target.upperBound.isSubtypeOf(target.upperBound)
+                val isCorrectParent = parent?.let { mappie.clazz !is IrMappieGeneratedClass && (it == mappie.clazz || it in mappie.clazz.parents) } ?: true
+                isSubtype && isCorrectParent
+            }
         }
-
 }
 
 class PrioritizationMap private constructor(private val entries: Map<Priority, List<MappieDefinition>>) {

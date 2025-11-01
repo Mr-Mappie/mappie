@@ -23,7 +23,7 @@ class SetMappersTest : MappieTestCase() {
 
                 class Mapper : ObjectMappie<ListInput, SetOutput>() {
                     override fun map(from: ListInput) = mapping {
-                        from::value fromProperty to::value
+                        to::value fromProperty from::value
                     }
                 }
                 """

@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.Name.identifier
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.util.BaseVisitor
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
@@ -16,10 +17,12 @@ import tech.mappie.ir.util.isMappieMapFunction
 import tech.mappie.ir.util.location
 import tech.mappie.util.*
 
-class ClassMappingStatementCollector : BaseVisitor<Pair<Name, ExplicitClassMappingSource>?, MappieContext>() {
+class ClassMappingStatementCollector(private val origin: InternalMappieDefinition)
+    : BaseVisitor<Pair<Name, ExplicitClassMappingSource>?, MappieContext>() {
+
     override fun visitCall(expression: IrCall, data: MappieContext) = when (expression.symbol.owner.name) {
         IDENTIFIER_FROM_PROPERTY, IDENTIFIER_FROM_PROPERTY_NOT_NULL -> {
-            val target = expression.arguments[1]!!.accept(TargetNameCollector(), data)
+            val target = expression.arguments[1]!!.accept(TargetNameCollector(origin), data)
             target to ExplicitPropertyMappingSource(
                 expression.arguments[2]!! as IrPropertyReference,
                 null,
@@ -27,32 +30,15 @@ class ClassMappingStatementCollector : BaseVisitor<Pair<Name, ExplicitClassMappi
             )
         }
         IDENTIFIER_FROM_VALUE -> {
-            val target = expression.arguments[1]!!.accept(TargetNameCollector(), data)
+            val target = expression.arguments[1]!!.accept(TargetNameCollector(origin), data)
             target to ValueMappingSource(expression.arguments[2]!!)
         }
         IDENTIFIER_FROM_EXPRESSION -> {
-            val target = expression.arguments[1]!!.accept(TargetNameCollector(), data)
+            val target = expression.arguments[1]!!.accept(TargetNameCollector(origin), data)
             target to ExpressionMappingSource(expression.arguments[2]!!)
         }
         IDENTIFIER_VIA -> {
             expression.dispatchReceiver!!.accept(data)!!.let { (name, source) ->
-//                val constructorCall = expression.arguments[1]!! as IrConstructorCall
-//                val mapperClass = constructorCall.type.classOrFail
-//                val typeArguments = if (constructorCall.typeArguments.isNotEmpty()) {
-//                    listOf(constructorCall.typeArguments.last()!!)
-//                } else {
-//                    emptyList()
-//                }
-//
-//                val target = mapperClass.functions
-//                    .map { it.owner }
-//                    .first { it.isMappieMapFunction() }
-//                    .returnType
-//                    .classOrFail
-//                    .typeWith(typeArguments)
-
-//                val target = expression.arguments[1]!!.accept(ClassMappingTargetTypeResolver(), Unit)
-
                 name to (source as ExplicitPropertyMappingSource).copy(
                     transformation = expression.arguments[1]!!.accept(MapperReferenceCollector(), data)
                 )
@@ -122,7 +108,8 @@ private class MapperReferenceCollector : BaseVisitor<PropertyMappingViaMapperTra
     }
 }
 
-private class TargetNameCollector : BaseVisitor<Name, MappieContext>() {
+private class TargetNameCollector(private val origin: InternalMappieDefinition)
+    : BaseVisitor<Name, MappieContext>() {
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: MappieContext): Name {
         return expression.symbol.owner.name
@@ -133,12 +120,12 @@ private class TargetNameCollector : BaseVisitor<Name, MappieContext>() {
             IDENTIFIER_TO -> {
                 val value = expression.arguments[1]!!
                 return if (value.isConstantLike && value is IrConst) {
-                    Name.identifier(value.value as String)
+                    identifier(value.value as String)
                 } else {
                     data.fail(
                         "Identifier must be a compile-time constant",
                         expression,
-                        location(TODO(), expression)
+                        location(origin.clazz.fileEntry, expression)
                     )
                 }
             }

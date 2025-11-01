@@ -40,7 +40,7 @@ class ClassMappieCodeGenerationModelFactory {
     }
 
     context(context: MappieContext)
-    fun generate(source: IrType, origin: InternalMappieDefinition, target: IrType): Pair<GeneratedMappieDefinition, CodeGenerationModel>? {
+    fun generate(origin: InternalMappieDefinition, source: IrType, target: IrType): Pair<GeneratedMappieDefinition, CodeGenerationModel>? {
         val definition = GeneratedMappieDefinition(
             origin,
             IrMappieGeneratedClass.named(source, target),
@@ -99,7 +99,7 @@ class ClassMappieCodeGenerationModelFactory {
                         if (transformation.target.arguments.isNotEmpty() && source.source.type.arguments.isNotEmpty()) {
                             val (source, target) = source.source.arguments.first().typeOrFail to transformation.target.arguments.first().typeOrFail
                             if (isUnique(source, target) && context.definitions.matching(source, target).firstOrNull() == null) {
-                                generate(source, origin, target)?.also {
+                                generate(origin, source, target)?.also {
                                     acc[it.first] = it.second
                                 }
                             }
@@ -108,7 +108,7 @@ class ClassMappieCodeGenerationModelFactory {
                     is GeneratedViaMapperTransformation -> {
                         val (source, target) = transformation.source.type to target.type
                         if (isUnique(source, target)) {
-                            generate(source, origin, target)?.also {
+                            generate(origin, source, target)?.also {
                                 acc[it.first] = it.second
                             }
                         }
