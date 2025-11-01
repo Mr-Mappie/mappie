@@ -18,7 +18,6 @@ import tech.mappie.ir.referenceEnumMappieClass
 import tech.mappie.ir.referenceObjectMappieClass
 import tech.mappie.ir.GeneratedMappieDefinition
 import tech.mappie.util.IDENTIFIER_MAP
-import tech.mappie.util.IDENTIFIER_MAP_NULLABLE
 
 class GeneratedMappieClassConstructor {
 
@@ -45,26 +44,24 @@ class GeneratedMappieClassConstructor {
                 true
             )
 
-            base.functions.forEach {function ->
-                if (function.owner.name in listOf(IDENTIFIER_MAP, IDENTIFIER_MAP_NULLABLE)) {
-                    clazz.addFunction {
-                        name = function.owner.name
-                        returnType = function.owner.returnType
-                        updateFrom(function.owner)
-                    }.apply {
-                        overriddenSymbols = listOf(function)
-                        isFakeOverride = function.owner.name != IDENTIFIER_MAP
+            base.functions.single { it.owner.name == IDENTIFIER_MAP }.let { function ->
+                clazz.addFunction {
+                    name = function.owner.name
+                    returnType = function.owner.returnType
+                    updateFrom(function.owner)
+                }.apply {
+                    overriddenSymbols = listOf(function)
+                    isFakeOverride = false
 
-                        parameters += buildReceiverParameter {
-                            kind = IrParameterKind.DispatchReceiver
-                            type = function.owner.dispatchReceiverParameter!!.type
-                        }
+                    parameters += buildReceiverParameter {
+                        kind = IrParameterKind.DispatchReceiver
+                        type = function.owner.dispatchReceiverParameter!!.type
+                    }
 
-                        function.owner.parameters.filter { it.kind == IrParameterKind.Regular }.forEach { parameter ->
-                            addValueParameter {
-                                name = parameter.name
-                                type = parameter.type
-                            }
+                    function.owner.parameters.filter { it.kind == IrParameterKind.Regular }.forEach { parameter ->
+                        addValueParameter {
+                            name = parameter.name
+                            type = parameter.type
                         }
                     }
                 }
