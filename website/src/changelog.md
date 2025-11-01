@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "tbd"
+    title: "tbd"
+    items:
+      - "JVM implementation for mapArray (similar to mapList and mapSet)."
   - date: "2025-10-24"
     title: "v2.2.21-1.6.1"
     items:
