@@ -3,9 +3,11 @@ title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
   - date: "tbd"
-    title: "tbd"
+    title: "v2.2.21-1.7.0"
     items:
-      - "JVM implementation for mapArray (similar to mapList and mapSet)."
+      - "Internal refactoring simplifying the Mappie type system and mapper generation."
+      - "Removed forList and forSet in favour of `IterableToListMapper` and `IterableToSetMapper`."
+      - "JVM implementation for mapArray (similar to mapList and mapSet) - by @ErwinOlie."
   - date: "2025-10-24"
     title: "v2.2.21-1.6.1"
     items:
