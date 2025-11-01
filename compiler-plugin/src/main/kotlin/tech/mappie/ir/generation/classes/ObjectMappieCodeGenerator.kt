@@ -140,9 +140,10 @@ class ObjectMappieCodeGenerator(private val model: ClassMappieCodeGenerationMode
                 } ?: getter
             }
             is FunctionMappingSource -> {
-                irCall(source.function.symbol).apply {
+                val call = irCall(source.function.symbol).apply {
                     dispatchReceiver = irGet(parameters.first { it.name == source.parameter })
                 }
+                source.transformation?.let { constructTransformation(this@ObjectMappieCodeGenerator.context, it, call) } ?: call
             }
             is ParameterValueMappingSource -> {
                 val getter = irGet(parameters.first { it.name == source.parameter })
