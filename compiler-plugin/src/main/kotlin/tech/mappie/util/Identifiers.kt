@@ -10,14 +10,6 @@ val IDENTIFIER_MAP = Name.identifier("map")
 
 val IDENTIFIER_MAP_NULLABLE = Name.identifier("mapNullable")
 
-val IDENTIFIER_MAP_NULLABLE_LIST = Name.identifier("mapNullableList")
-
-val IDENTIFIER_MAP_LIST = Name.identifier("mapList")
-
-val IDENTIFIER_MAP_NULLABLE_SET = Name.identifier("mapNullableSet")
-
-val IDENTIFIER_MAP_SET = Name.identifier("mapSet")
-
 val IDENTIFIER_FROM_ENUM_ENTRY = Name.identifier("fromEnumEntry")
 
 val IDENTIFIER_THROWN_BY_ENUM_ENTRY = Name.identifier("thrownByEnumEntry")
@@ -53,8 +45,6 @@ val IDENTIFIER_IDENTITY_MAPPER = Name.identifier("IdentityMapper")
 val PACKAGE_KOTLIN = FqName("kotlin")
 
 val PACKAGE_TECH_MAPPIE_API = FqName("tech.mappie.api")
-
-val PACKAGE_TECH_MAPPIE_API_BUILTIN = FqName("tech.mappie.api.builtin")
 
 val PACKAGE_TECH_MAPPIE_API_CONFIG = FqName("tech.mappie.api.config")
 
