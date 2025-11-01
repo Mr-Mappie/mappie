@@ -70,7 +70,7 @@ class ListPropertyToNullableListPropertyTest : MappieTestCase() {
 
     @Test
     fun `map nested non-nullable list to nullable list implicit should succeed`() {
-        compile(verbose = true) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie

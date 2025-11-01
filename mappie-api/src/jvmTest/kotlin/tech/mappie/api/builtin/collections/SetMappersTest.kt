@@ -13,7 +13,7 @@ class SetMappersTest : MappieTestCase() {
 
     @Test
     fun `map List to Set explicit should succeed`() {
-        compile(verbose = true) {
+        compile {
             file(
                 "Test.kt",
                 """
@@ -41,7 +41,7 @@ class SetMappersTest : MappieTestCase() {
 
     @Test
     fun `map Set to Set implicit should succeed`() {
-        compile(verbose = true) {
+        compile {
             file(
                 "Test.kt",
                 """
