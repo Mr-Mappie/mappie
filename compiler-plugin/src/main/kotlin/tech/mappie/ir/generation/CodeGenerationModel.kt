@@ -12,11 +12,6 @@ import tech.mappie.ir.resolving.enums.EnumMappingTarget
 
 sealed interface CodeGenerationModel {
     val definition: MappieDefinition
-
-    fun clone(definition: MappieDefinition): CodeGenerationModel = when(this) {
-        is ClassMappieCodeGenerationModel -> this.copy(definition = definition)
-        is EnumMappieCodeGenerationModel -> this.copy(definition = definition)
-    }
 }
 
 data class EnumMappieCodeGenerationModel(

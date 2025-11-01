@@ -7,11 +7,11 @@ class MapperCanBeDeclaredTwiceWithoutAnyCollisions : MappieTestCase() {
 
     data class FirstInput(val nested: NestedInput)
     data class SecondInput(val nested: NestedInput)
-    @Suppress("unused") enum class NestedInput { A, B, C }
+    enum class NestedInput { A, B, C }
 
     data class FirstOutput(val nested: NestedOutput)
     data class SecondOutput(val nested: NestedOutput)
-    @Suppress("unused") enum class NestedOutput { A, B, C }
+    enum class NestedOutput { A, B, C }
 
     @Test
     fun `two mappers generating the same mapper should succeed`() {

@@ -22,7 +22,7 @@ object CodeGenerationStage {
                 }
             }
 
-            definition.clazz.transform(MappieTranformer(context, model), null)
+            definition.clazz.transform(MappieTransformer(context, model), null)
         }
 
         return CodeGenerationResult(elements.filterIsInstance<IrClass>())

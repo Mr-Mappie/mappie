@@ -6,10 +6,10 @@ import tech.mappie.testing.MappieTestCase
 
 class ObjectWithNullableEnumToObjectWithNullableEnumWithSameEntriesTest : MappieTestCase() {
     data class Input(val text: InnerEnum?)
-    @Suppress("unused") enum class InnerEnum { A, B, C; }
+    enum class InnerEnum { A, B, C; }
 
     data class Output(val text: OuterEnum?)
-    @Suppress("unused") enum class OuterEnum { A, B, C; }
+    enum class OuterEnum { A, B, C; }
 
     @Test
     fun `map object with nested non-null enum with generated mapper should succeed`() {

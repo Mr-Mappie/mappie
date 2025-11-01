@@ -13,12 +13,12 @@ import tech.mappie.ir.generation.enums.EnumMappieCodeGenerator
 import tech.mappie.ir.util.isMappieMapFunction
 import tech.mappie.util.IDENTIFIER_MAPPING
 
-class MappieTranformer(private val context: MappieContext, private val model: CodeGenerationModel)
+class MappieTransformer(private val context: MappieContext, private val model: CodeGenerationModel)
     : IrElementTransformerVoidWithContext() {
 
     override fun visitClassNew(declaration: IrClass): IrStatement = declaration.apply {
         declaration.declarations.filterIsInstance<IrSimpleFunction>().first { it.isMappieMapFunction() }.apply {
-            transform(MappieTranformer(context, model), null)
+            transform(MappieTransformer(context, model), null)
             isFakeOverride = false
         }
     }

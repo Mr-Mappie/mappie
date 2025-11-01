@@ -39,7 +39,7 @@ fun IrClass.mappieSuperClassTypes(): Pair<IrType, IrType> {
 
 fun IrType.eraseFrom(definition: IrClass): IrType {
     return if (isTypeParameter()) {
-        this.upperBound // TODO: substitute type argument from super classes. (question kotlinlang slack)
+        this.upperBound // TODO: substitute type argument from super classes.
     } else {
         this
     }

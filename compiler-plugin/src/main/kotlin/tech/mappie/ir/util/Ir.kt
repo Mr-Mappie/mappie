@@ -30,9 +30,6 @@ fun IrClass.isSubclassOf(clazz: IrClassSymbol) =
 fun IrClass.allSuperTypes(): List<IrType> =
     superTypes + superTypes.flatMap { it.erasedUpperBound.allSuperTypes() }
 
-fun getterName(name: String) =
-    Name.special("<get-$name>")
-
 fun IrSimpleFunction.isMappieMapFunction() =
     name == IDENTIFIER_MAP && overriddenSymbols.isNotEmpty()
 

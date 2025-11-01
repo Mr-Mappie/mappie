@@ -7,10 +7,10 @@ import tech.mappie.testing.MappieTestCase
 class ObjectWithEnumToObjectWithEnumWithSameEntriesTest : MappieTestCase() {
 
     data class Input(val text: InnerInput)
-    @Suppress("unused") enum class InnerInput { A, B, C; }
+    enum class InnerInput { A, B, C; }
 
     data class Output(val text: InnerOutput)
-    @Suppress("unused") enum class InnerOutput(val value: String) { A("A"), B("B"), C("C"); }
+    enum class InnerOutput(val value: String) { A("A"), B("B"), C("C"); }
 
     @Test
     fun `map object with nested enum with generated mapper should succeed`() {

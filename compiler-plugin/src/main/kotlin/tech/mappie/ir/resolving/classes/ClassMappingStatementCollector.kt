@@ -1,7 +1,6 @@
 package tech.mappie.ir.resolving.classes
 
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.typeWith

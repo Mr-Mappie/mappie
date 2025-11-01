@@ -1,8 +1,5 @@
 package tech.mappie.ir.analysis.problems.classes
 
-import org.jetbrains.kotlin.backend.jvm.ir.upperBound
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.resolving.ClassMappingRequest
