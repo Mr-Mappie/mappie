@@ -40,7 +40,7 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
             useDefaultArguments = configuration.get(ARGUMENT_USE_DEFAULT_ARGUMENTS, true),
             strictEnums = configuration.get(ARGUMENT_STRICTNESS_ENUMS, true),
             strictplatformTypeNullability = configuration.get(ARGUMENT_STRICTNESS_JAVA_NULLABILITY, true),
-            strictVisiblity = configuration.get(ARGUMENT_STRICTNESS_VISIBILITY, false),
+            strictVisibility = configuration.get(ARGUMENT_STRICTNESS_VISIBILITY, false),
             reportEnabled = configuration.get(ARGUMENT_REPORT_ENABLED, false),
             reportDir = configuration.get(ARGUMENT_REPORT_DIR, ""),
         )

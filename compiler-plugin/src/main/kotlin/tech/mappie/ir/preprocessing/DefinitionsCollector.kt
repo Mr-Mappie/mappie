@@ -20,7 +20,7 @@ import tech.mappie.ir.util.isSubclassOf
 import tech.mappie.ir.util.mappieSuperType
 import tech.mappie.ir.util.mappieType
 
-// TODO: we should collect al publicly visible, and add those during resolving that are visible from the current scope.
+// TODO: we should collect all publicly visible, and add those during resolving that are visible from the current scope.
 class DefinitionsCollector(val context: MappieContext) {
     fun collect(module: IrModuleFragment): RequestResolverContext {
         val builtin = BuiltinMappieDefinitionsCollector(context).collect()

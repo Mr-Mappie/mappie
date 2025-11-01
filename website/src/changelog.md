@@ -74,7 +74,7 @@ changelog:
   - date: "2025-03-31"
     title: "v2.1.20-1.2.0"
     items:
-      - "Changed versioning methodology. See [Compability](/getting-started/compatibility) for more information."
+      - "Changed versioning methodology. See [Compatibility](/getting-started/compatibility) for more information."
       - "[#179](https://github.com/Mr-Mappie/mappie/issues/179) made all mapping functions open."
   - date: "2025-02-28"
     title: "v1.1.1"
@@ -91,7 +91,7 @@ changelog:
     items:
       - "Migrated multiple checks from the compiler back-end to the FIR compiler front-end."
       - "[#148](https://github.com/Mr-Mappie/mappie/issues/148) the `mappie-api` dependency is now applied automatically."
-      - "Fixed a bug where the constructor of a generated target class is not selected property."
+      - "Fixed a bug where the constructor of a generated target class is not selected properly."
   - date: "2024-12-15"
     title: "v0.10.0"
     items:

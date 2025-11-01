@@ -93,7 +93,7 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
     /** Do not check presence of 'actual' modifier in multi-platform projects */
     var noCheckActual: Boolean = false
 
-    /** Enable usages of API that requires opt-in with an opt-in requirement marker with the given fully qualified name */
+    /** Enable usages of APIs that requires opt-in with an opt-in requirement marker with the given fully qualified name */
     var optIn: List<String>? = null
 
     /** Additional string arguments to the Kotlin compiler */
