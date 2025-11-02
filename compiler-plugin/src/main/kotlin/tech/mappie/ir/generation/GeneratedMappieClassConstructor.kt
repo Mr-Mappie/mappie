@@ -49,7 +49,7 @@ class GeneratedMappieClassConstructor {
             base.functions.single { it.owner.name == IDENTIFIER_MAP }.let { function ->
                 clazz.addFunction {
                     name = function.owner.name
-                    returnType = function.owner.returnType
+                    returnType = clazz.superTypes.first().arguments.last().typeOrFail
                     updateFrom(function.owner)
                 }.apply {
                     overriddenSymbols = listOf(function)
