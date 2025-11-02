@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.types.typeWithParameters
 import org.jetbrains.kotlin.ir.util.addChild
@@ -17,6 +18,7 @@ import tech.mappie.ir.MappieContext
 import tech.mappie.ir.referenceEnumMappieClass
 import tech.mappie.ir.referenceObjectMappieClass
 import tech.mappie.ir.GeneratedMappieDefinition
+import tech.mappie.ir.util.arguments
 import tech.mappie.util.IDENTIFIER_MAP
 
 class GeneratedMappieClassConstructor {
@@ -61,7 +63,7 @@ class GeneratedMappieClassConstructor {
                     function.owner.parameters.filter { it.kind == IrParameterKind.Regular }.forEach { parameter ->
                         addValueParameter {
                             name = parameter.name
-                            type = parameter.type
+                            type = clazz.superTypes.first().arguments.first().typeOrFail
                         }
                     }
                 }
