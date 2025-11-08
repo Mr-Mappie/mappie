@@ -7,7 +7,8 @@ changelog:
     items:
       - "Internal refactoring simplifying the Mappie type system and mapper generation."
       - "Removed forList and forSet in favour of `IterableToListMapper` and `IterableToSetMapper`."
-      - "JVM implementation for mapArray (similar to mapList and mapSet) - by @ErwinOlie."
+      - "Added config option to allow unsafe mapping of platform types to non-nullable target."
+      - "JVM implementation for mapArray (similar to mapList and mapSet)."
   - date: "2025-10-24"
     title: "v2.2.21-1.6.1"
     items:
@@ -20,10 +21,10 @@ changelog:
       - "Fixed check of runtime usage of of mapping DSL for multiple object mappie."
       - "[#264](https://github.com/Mr-Mappie/mappie/issues/264) Fix compilation error with ObjectMappie5."
       - "[#262](https://github.com/Mr-Mappie/mappie/issues/262) Fixed compilation error when mapper inherits from more than a Mappie subclass."
-      - "Minor performance enhancements - by @ErwinOlie."
-      - "Fix for missing reporting when both a mapper and its generated mapper have issues - by @ErwinOlie."
-      - "Improved reporting of type parameters - by @ErwinOlie."
-      - "`AbstractList` and `AbstractMutableList` are now supported as source type for mapping to `List` - by @ErwinOlie."
+      - "Minor performance enhancements."
+      - "Fix for missing reporting when both a mapper and its generated mapper have issues."
+      - "Improved reporting of type parameters."
+      - "`AbstractList` and `AbstractMutableList` are now supported as source type for mapping to `List`."
   - date: "2025-09-10"
     title: "v2.2.20-1.5.0"
     items:
