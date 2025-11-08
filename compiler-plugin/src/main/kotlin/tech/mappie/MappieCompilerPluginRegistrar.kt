@@ -21,6 +21,7 @@ import tech.mappie.config.MappieConfiguration
 import tech.mappie.config.MappieModule
 import tech.mappie.fir.MappieFirRegistrar
 import tech.mappie.ir.MappieIrRegistrar
+import java.util.EnumSet
 import kotlin.text.Regex
 
 @OptIn(ExperimentalCompilerApi::class)
@@ -30,7 +31,7 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val config = MappieConfiguration(
-            modules = buildList {
+            modules = EnumSet.noneOf(MappieModule::class.java).apply {
                 if (configuration.isStartedWithDependency(MODULE_KOTLINX_DATETIME_REGEX)) {
                     add(MappieModule.KOTLINX_DATETIME)
                 }

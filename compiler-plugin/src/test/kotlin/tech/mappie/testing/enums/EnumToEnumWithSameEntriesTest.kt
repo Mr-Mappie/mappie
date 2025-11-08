@@ -7,7 +7,13 @@ import kotlin.test.Test
 class EnumToEnumWithSameEntriesTest : MappieTestCase() {
 
     enum class Input { SOME, OTHER }
-    enum class Output { SOME, OTHER }
+    enum class Output {
+        SOME,
+        OTHER;
+
+        @Suppress("unused")
+        fun valueOf(int: Int) = if (int == 0) SOME else OTHER
+    }
 
     @Test
     fun `map identical enums should succeed`() {

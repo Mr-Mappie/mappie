@@ -1,10 +1,7 @@
 package tech.mappie.testing.objects
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
 import tech.mappie.testing.MappieTestCase
-import tech.mappie.testing.compilation.compile
-import java.io.File
 
 class GeneratedClassFailMultipleTest : MappieTestCase() {
     data class Input(val a: InnerInputA, val b: InnerInputB)

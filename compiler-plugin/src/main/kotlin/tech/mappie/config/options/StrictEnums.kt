@@ -7,16 +7,19 @@ import org.jetbrains.kotlin.ir.util.getValueArgument
 import org.jetbrains.kotlin.ir.util.isTrueConst
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
-import tech.mappie.MappieContext
+import tech.mappie.ir.MappieContext
 import tech.mappie.util.CLASS_ID_USE_STRICT_ENUMS
 
-fun MappieContext.useStrictEnumsClassSymbol() =
-    pluginContext.referenceClass(CLASS_ID_USE_STRICT_ENUMS)
+context(context: MappieContext)
+fun useStrictEnumsClassSymbol() =
+    context.pluginContext.referenceClass(CLASS_ID_USE_STRICT_ENUMS)
 
-fun MappieContext.getUseStrictEnumsAnnotation(function: IrFunction): IrConstructorCall? =
+context(context: MappieContext)
+fun getUseStrictEnumsAnnotation(function: IrFunction): IrConstructorCall? =
     function.parentAsClass.annotations.firstOrNull { it.type.classOrFail == useStrictEnumsClassSymbol() }
 
-fun MappieContext.useStrictEnums(function: IrFunction): Boolean =
+context(context: MappieContext)
+fun useStrictEnums(function: IrFunction): Boolean =
     getUseStrictEnumsAnnotation(function)
         ?.let { it.getValueArgument(Name.identifier("value"))?.isTrueConst() ?: true }
-        ?: configuration.strictEnums
+        ?: context.configuration.strictEnums

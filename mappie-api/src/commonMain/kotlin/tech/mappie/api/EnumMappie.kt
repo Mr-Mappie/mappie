@@ -17,15 +17,7 @@ package tech.mappie.api
  * @param FROM the source type to map from.
  * @param TO the target type to map to.
  */
-public abstract class EnumMappie<FROM: Enum<*>, TO> : Mappie<TO> {
-
-    /**
-     * Map [from] to an instance of [TO].
-     *
-     * @param from the source value.
-     * @return [from] mapped to an instance of [TO].
-     */
-    public open fun map(from: FROM): TO = generated()
+public abstract class EnumMappie<FROM: Enum<*>, TO> : Mappie1<FROM, TO> {
 
     /**
      * Map nullable [from] to an instance of [TO].

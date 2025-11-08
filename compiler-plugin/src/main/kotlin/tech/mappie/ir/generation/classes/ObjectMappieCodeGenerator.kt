@@ -13,46 +13,50 @@ import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.getKFunctionType
+import tech.mappie.ir.MappieContext
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.generation.ClassMappieCodeGenerationModel
-import tech.mappie.ir.generation.CodeGenerationContext
 import tech.mappie.ir.generation.constructTransformation
 import tech.mappie.ir.reporting.pretty
-import tech.mappie.referenceFunctionLet
-import tech.mappie.referenceFunctionRequireNotNull
+import tech.mappie.ir.referenceFunctionLet
+import tech.mappie.ir.referenceFunctionRequireNotNull
 import tech.mappie.ir.resolving.classes.sources.*
+import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.resolving.classes.targets.FunctionCallTarget
 import tech.mappie.ir.resolving.classes.targets.SetterTarget
 import tech.mappie.ir.resolving.classes.targets.ValueParameterTarget
 import tech.mappie.ir.util.blockBody
 import tech.mappie.ir.util.irLambda
-import tech.mappie.referenceFunctionRun
+import tech.mappie.ir.referenceFunctionRun
 
-class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, private val model: ClassMappieCodeGenerationModel) {
+class ObjectMappieCodeGenerator(private val model: ClassMappieCodeGenerationModel) {
 
+    context(context: MappieContext)
     fun lambda(scope: Scope): IrCall =
         with(context.pluginContext.irBuiltIns.createIrBuilder(scope.scopeOwnerSymbol)) {
-            irCall(this@ObjectMappieCodeGenerator.context.referenceFunctionRun()).apply {
-                arguments[0] = irLambda(model.declaration.returnType, model.declaration.returnType) {
+            irCall(referenceFunctionRun()).apply {
+                arguments[0] = irLambda(model.definition.referenceMapFunction().returnType, model.definition.referenceMapFunction().returnType) {
                     content()
                 }
             }
         }
 
+    context(context: MappieContext)
     fun body(scope: Scope): IrBlockBody =
         context.pluginContext.blockBody(scope) {
             content()
         }
 
+    context(context: MappieContext)
     private fun IrBlockBodyBuilder.content() {
         val constructor = model.constructor.symbol
-        val regularParameters = model.declaration.parameters.filter { it.kind == IrParameterKind.Regular }
-        val typeArguments = (model.declaration.returnType.type as IrSimpleType).arguments.map { it.typeOrNull ?: context.irBuiltIns.anyType }
+        val regularParameters = model.definition.referenceMapFunction().parameters.filter { it.kind == IrParameterKind.Regular }
+        val typeArguments = (model.definition.referenceMapFunction().returnType.type as IrSimpleType).arguments.map { it.typeOrNull ?: context.pluginContext.irBuiltIns.anyType }
 
         val call = irCallConstructor(constructor, typeArguments).apply {
             model.mappings.forEach { (target, source) ->
                 if (target is ValueParameterTarget) {
-                    constructArgument(source, regularParameters)?.let { argument ->
+                    constructArgument(source, target, regularParameters)?.let { argument ->
                         arguments[target.value.indexInParameters] = argument
                     }
                 }
@@ -66,18 +70,17 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
                 is SetterTarget -> {
                     +irCall(target.value.setter!!).apply {
                         dispatchReceiver = irGet(variable)
-                        arguments[1] = constructArgument(source, regularParameters)
+                        arguments[1] = constructArgument(source, target, regularParameters)
                     }
                 }
-
                 is FunctionCallTarget -> {
                     +irCall(target.value).apply {
                         dispatchReceiver = irGet(variable)
-                        arguments[1] = constructArgument(source, regularParameters)
+                        arguments[1] = constructArgument(source, target, regularParameters)
                     }
                 }
-
-                else -> { /* Applied as a constructor call argument */
+                else -> {
+                    /* Applied as a constructor call argument */
                 }
             }
         }
@@ -85,14 +88,16 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
         +irReturn(irGet(variable))
     }
 
+    context(context: MappieContext)
     fun construct(builder: DeclarationIrBuilder): IrCall {
-            return builder.irCall(context.referenceFunctionRun()).apply {
-                arguments[0] = builder.irLambda(model.declaration.returnType, model.declaration.returnType) {
+            return builder.irCall(referenceFunctionRun()).apply {
+                arguments[0] = builder.irLambda(model.definition.referenceMapFunction().returnType, model.definition.referenceMapFunction().returnType) {
                 }
             }
     }
 
-    private fun IrBuilderWithScope.constructArgument(source: ClassMappingSource, parameters: List<IrValueParameter>): IrExpression? =
+    context(context: MappieContext)
+    private fun IrBuilderWithScope.constructArgument(source: ClassMappingSource, target: ClassMappingTarget, parameters: List<IrValueParameter>): IrExpression? =
         when (source) {
             is ExplicitPropertyMappingSource -> {
                 val receiver = source.reference.dispatchReceiver
@@ -100,11 +105,11 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
                             ?: panic("Could not determine value parameter for property reference.", source.reference))
 
                 val getter = if (source.forceNonNull) {
-                    irCall(this@ObjectMappieCodeGenerator.context.referenceFunctionRequireNotNull(), source.reference.getter!!.owner.returnType.makeNotNull()).apply {
+                    irCall(referenceFunctionRequireNotNull(), source.reference.getter!!.owner.returnType.makeNotNull()).apply {
                         arguments[0] = irCall(source.reference.getter!!).apply {
                             dispatchReceiver = receiver
-                        };
-                        arguments[1] = this@constructArgument.irLambda(context.irBuiltIns.anyType, context.irBuiltIns.getKFunctionType(context.irBuiltIns.stringType, emptyList())) {
+                        }
+                        arguments[1] = this@constructArgument.irLambda(context.pluginContext.irBuiltIns.anyType, context.pluginContext.irBuiltIns.getKFunctionType(context.pluginContext.irBuiltIns.stringType, emptyList())) {
                             +irReturn(irString("Reference ${source.reference.pretty()} must be non-null."))
                         }
                     }
@@ -113,10 +118,12 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
                         dispatchReceiver = receiver
                     }
                 }
-                source.transformation?.let { constructTransformation(this@ObjectMappieCodeGenerator.context, it, getter) } ?: getter
+                source.transformation?.let {
+                    constructTransformation(model.origin, it, getter, target)
+                } ?: getter
             }
             is ExpressionMappingSource -> {
-                irCall(this@ObjectMappieCodeGenerator.context.referenceFunctionLet()).apply {
+                irCall(referenceFunctionLet()).apply {
                     arguments[0] = irGet(parameters.single())
                     arguments[1] = source.expression
                 }
@@ -128,18 +135,23 @@ class ObjectMappieCodeGenerator(private val context: CodeGenerationContext, priv
                 val getter = irCall(source.property.getter!!).apply {
                     dispatchReceiver = irGet(parameters.first { it.name == source.parameter })
                 }
-                source.transformation?.let { constructTransformation(this@ObjectMappieCodeGenerator.context, it, getter) } ?: getter
+                source.transformation?.let {
+                    constructTransformation(model.origin, it, getter, target)
+                } ?: getter
             }
             is FunctionMappingSource -> {
                 val call = irCall(source.function.symbol).apply {
                     dispatchReceiver = irGet(parameters.first { it.name == source.parameter })
                 }
-                source.transformation?.let { constructTransformation(this@ObjectMappieCodeGenerator.context, it, call) } ?: call
+                source.transformation?.let {
+                    constructTransformation(model.origin, it, call, target)
+                } ?: call
             }
             is ParameterValueMappingSource -> {
                 val getter = irGet(parameters.first { it.name == source.parameter })
-                source.transformation?.let { constructTransformation(this@ObjectMappieCodeGenerator.context, it, getter) }
-                    ?: getter
+                source.transformation?.let {
+                    constructTransformation(model.origin, it, getter, target)
+                } ?: getter
             }
             is ParameterDefaultValueMappingSource -> {
                 null

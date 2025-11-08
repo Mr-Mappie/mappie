@@ -8,11 +8,11 @@ class DoubleNestedObjectWithEnumToDoubleNestedObjectWithEnumWithSameEntriesTest 
 
     data class Input(val nested: NestedInput)
     data class NestedInput(val nested: NestedNestedEnumInput)
-    @Suppress("unused") enum class NestedNestedEnumInput { A, B, C }
+    enum class NestedNestedEnumInput { A, B, C }
 
     data class Output(val nested: NestedOutput)
     data class NestedOutput(val nested: NestedNestedEnumOutput)
-    @Suppress("unused") enum class NestedNestedEnumOutput { A, B, C }
+    enum class NestedNestedEnumOutput { A, B, C }
 
     @Test
     fun `map object with both mappers generated should succeed`() {

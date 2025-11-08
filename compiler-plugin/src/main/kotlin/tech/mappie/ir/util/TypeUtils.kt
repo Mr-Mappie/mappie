@@ -1,43 +1,48 @@
 package tech.mappie.ir.util
 
+import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
+import org.jetbrains.kotlin.backend.jvm.ir.upperBound
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOf
 
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
+import tech.mappie.ir.MappieContext
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
-import tech.mappie.ir.MappieIrRegistrar.Companion.context
+import tech.mappie.ir.allMappieClasses
 
-fun IrType.isMappableFrom(other: IrType): Boolean = when {
-    (isList() && other.isList()) || (isSet() && other.isSet()) ->
-        (this as IrSimpleType).arguments.first().typeOrFail.isMappableFrom((other as IrSimpleType).arguments.first().typeOrFail)
-    (isList() xor other.isList()) || (isSet() xor other.isSet()) ->
-        false
-    else ->
-        isSubtypeOf(other, IrTypeSystemContextImpl(context.irBuiltIns))
+context(context: MappieContext)
+fun IrType.isSubtypeOf(other: IrType): Boolean {
+    val current = if (isWithFlexibleNullability()) {
+        makeNotNull()
+    } else {
+        this
+    }
+    val other = if (other.isWithFlexibleNullability()) {
+        other.makeNotNull()
+    } else {
+        other
+    }
+    return current.isSubtypeOf(other, IrTypeSystemContextImpl(context.pluginContext.irBuiltIns))
 }
 
-fun IrType.mappieType() = when {
-    isList() || isSet() -> (this as IrSimpleType).arguments.first().typeOrFail
-    isNullable() -> this.makeNotNull()
-    else -> this
+context(context: MappieContext)
+fun IrClass.mappieSuperClassTypes(): Pair<IrType, IrType> {
+    val type = allSuperTypes().single { it.classOrNull in allMappieClasses() } as IrSimpleType
+    val source = type.arguments.first().typeOrFail.eraseFrom(this)
+    val target = type.arguments.last().typeOrFail.eraseFrom(this)
+    return source to target
 }
 
-fun IrType.isList() =
-    classOrNull?.owner?.fqNameWhenAvailable?.asString() in listOf(
-        "kotlin.collections.AbstractList",
-        "kotlin.collections.AbstractMutableList",
-        "kotlin.collections.List",
-        "kotlin.collections.MutableList",
-    )
-
-fun IrType.isSet() =
-    classOrNull?.owner?.fqNameWhenAvailable?.asString() in listOf(
-        "kotlin.collections.Set",
-        "kotlin.collections.MutableSet",
-    )
+fun IrType.eraseFrom(definition: IrClass): IrType {
+    return if (isTypeParameter()) {
+        upperBound // TODO: substitute type argument from super classes.
+    } else {
+        this
+    }
+}
 
 fun IrType.hasFlexibleNullabilityAnnotation(): Boolean =
     annotations.any { it.symbol.owner.parentAsClass.classId == FlexibleNullability }
@@ -52,4 +57,10 @@ fun IrType.substituteTypeVariable(container: IrTypeParametersContainer, argument
         mapping[classifierOrNull!!.owner]?.typeOrNull ?: panic("Could not resolve generic type", container)
     } else {
         this
+    }
+
+val IrType.arguments: List<IrTypeArgument>
+    get() = when (this) {
+        is IrSimpleType -> this.arguments
+        else -> emptyList()
     }

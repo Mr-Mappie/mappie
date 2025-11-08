@@ -46,11 +46,12 @@ class NullableListPropertyToListPropertyTest : MappieTestCase() {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
+                import tech.mappie.api.builtin.collections.*
                 import tech.mappie.testing.lists.NullableListPropertyToListPropertyTest.*
 
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input) = mapping {
-                        to::text fromPropertyNotNull from::text via InnerMapper.forList
+                        to::text fromPropertyNotNull from::text via IterableToListMapper(InnerMapper)
                     }
                 }
 
@@ -133,7 +134,7 @@ class NullableListPropertyToListPropertyTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(4, "Target Output::text automatically resolved from Input::text but cannot assign source type List<InnerOutput>? to target type List<InnerOutput>")
+            hasErrorMessage(4, "Target Output::text automatically resolved from Input::text via IterableToListMapper but cannot assign source type List<InnerOutput>? to target type List<InnerOutput>")
         }
     }
 }

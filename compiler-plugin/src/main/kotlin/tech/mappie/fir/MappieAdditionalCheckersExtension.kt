@@ -25,6 +25,7 @@ class MappieAdditionalCheckersExtension(session: FirSession) : FirAdditionalChec
     }
 
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
+
         override val anonymousObjectCheckers: Set<FirAnonymousObjectChecker> = setOf(
             AnonymousMappieObjectChecker()
         )

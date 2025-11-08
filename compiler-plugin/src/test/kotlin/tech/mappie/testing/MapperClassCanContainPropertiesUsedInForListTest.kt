@@ -17,11 +17,12 @@ class MapperClassCanContainPropertiesUsedInForListTest : MappieTestCase() {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
+                import tech.mappie.api.builtin.collections.*
                 import tech.mappie.testing.MapperClassCanContainPropertiesUsedInForListTest.*
 
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input) = mapping {
-                        Output::text fromProperty from::text via InnerMapper(10).forList
+                        Output::text fromProperty from::text via IterableToListMapper(InnerMapper(10))
                     }
                 }
                 

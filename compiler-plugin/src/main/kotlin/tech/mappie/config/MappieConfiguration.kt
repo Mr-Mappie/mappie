@@ -1,7 +1,9 @@
 package tech.mappie.config
 
+import java.util.EnumSet
+
 data class MappieConfiguration(
-    val modules: List<MappieModule>,
+    val modules: EnumSet<MappieModule>,
     val isMappieDebugMode: Boolean,
     val warningsAsErrors: Boolean,
     val useDefaultArguments: Boolean,

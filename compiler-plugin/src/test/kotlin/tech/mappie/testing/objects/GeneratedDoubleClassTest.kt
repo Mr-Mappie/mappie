@@ -11,7 +11,7 @@ class GeneratedDoubleClassTest : MappieTestCase() {
     data class InnerOutput(val value: String)
 
     @Test
-    fun `map object with nested class without declaring mapping should succeed`() {
+    fun `map object with nested class twice without declaring mapping should succeed`() {
         compile {
             file("Test.kt",
                 """

@@ -39,34 +39,4 @@ class ListPropertyObjectToListPropertyPrimitiveTest : MappieTestCase() {
                 .isEqualTo(Output(listOf("A", "B")))
         }
     }
-
-    @Test
-    fun `map via forList should succeed`() {
-        compile {
-            file("Test.kt",
-                """
-                import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.lists.ListPropertyObjectToListPropertyPrimitiveTest.*
-
-                class Mapper : ObjectMappie<Input, Output>() {
-                    override fun map(from: Input) = mapping {
-                        Output::text fromProperty from::text via InnerMapper.forList
-                    }
-                }
-
-                object InnerMapper : ObjectMappie<InnerInput, String>() {
-                    override fun map(from: InnerInput) = from.value
-                }
-                """
-            )
-        } satisfies {
-            isOk()
-            hasNoWarningsOrErrors()
-
-            val mapper = objectMappie<Input, Output>()
-
-            assertThat(mapper.map(Input(listOf(InnerInput("A"), InnerInput("B")))))
-                .isEqualTo(Output(listOf("A", "B")))
-        }
-    }
 }

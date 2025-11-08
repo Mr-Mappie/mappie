@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.name.Name
 
 sealed interface ClassMappingTarget {
@@ -13,19 +14,22 @@ sealed interface ClassMappingTarget {
 }
 
 data class SetterTarget(val value: IrProperty, override val type: IrType) : ClassMappingTarget {
-
-    init { value.setter != null }
-
     override val name = value.name
     override val required = false
+
+    override fun toString() = "${name}: ${type.dumpKotlinLike()}"
 }
 
 data class FunctionCallTarget(val value: IrSimpleFunctionSymbol, override val type: IrType) : ClassMappingTarget {
     override val name = Name.identifier(value.owner.name.asString().removePrefix("set").replaceFirstChar { it.lowercaseChar() })
     override val required = false
+
+    override fun toString() = "${name}: ${type.dumpKotlinLike()}"
 }
 
 data class ValueParameterTarget(val value: IrValueParameter, override val type: IrType) : ClassMappingTarget {
     override val name = value.name
     override val required = true
+
+    override fun toString() = "$name: ${type.dumpKotlinLike()}"
 }

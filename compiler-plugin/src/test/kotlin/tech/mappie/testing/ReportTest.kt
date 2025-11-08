@@ -149,7 +149,7 @@ class ReportTest : MappieTestCase() {
                 |        return tmp
                 |    }
                 |    public object InnerInputToInnerOutputMapper: ObjectMappie<InnerInput, InnerOutput>() {
-                |        override fun map(from: InnerInput): TO {
+                |        override fun map(from: InnerInput): InnerOutput {
                 |            val tmp: InnerOutput = InnerOutput(int = from.int)
                 |            return tmp
                 |        }

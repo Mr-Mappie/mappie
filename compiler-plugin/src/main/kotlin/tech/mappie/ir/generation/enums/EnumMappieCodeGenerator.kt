@@ -5,36 +5,39 @@ import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import tech.mappie.ir.generation.CodeGenerationContext
+import tech.mappie.ir.MappieContext
 import tech.mappie.ir.generation.EnumMappieCodeGenerationModel
-import tech.mappie.ir.generation.referenceFunctionValueOf
 import tech.mappie.ir.resolving.enums.ExplicitEnumMappingTarget
 import tech.mappie.ir.resolving.enums.ResolvedEnumMappingTarget
 import tech.mappie.ir.resolving.enums.ThrowingEnumMappingTarget
 import tech.mappie.ir.util.blockBody
 import tech.mappie.ir.util.irLambda
-import tech.mappie.referenceFunctionRun
+import tech.mappie.ir.referenceFunctionRun
+import tech.mappie.ir.referenceFunctionValueOf
 
-class EnumMappieCodeGenerator(private val context: CodeGenerationContext, private val model: EnumMappieCodeGenerationModel) {
+class EnumMappieCodeGenerator(private val model: EnumMappieCodeGenerationModel) {
 
+    context(context: MappieContext)
     fun lambda(scope: Scope): IrCall =
         with(context.pluginContext.irBuiltIns.createIrBuilder(scope.scopeOwnerSymbol)) {
-            irCall(this@EnumMappieCodeGenerator.context.referenceFunctionRun()).apply {
-                arguments[0] = irLambda(model.declaration.returnType, model.declaration.returnType) {
+            irCall(referenceFunctionRun()).apply {
+                arguments[0] = irLambda(model.definition.referenceMapFunction().returnType, model.definition.referenceMapFunction().returnType) {
                     content()
                 }
             }
         }
 
+    context(context: MappieContext)
     fun body(scope: Scope): IrBlockBody =
         context.pluginContext.blockBody(scope) {
             content()
         }
 
+    context(context: MappieContext)
     private fun IrBlockBodyBuilder.content() {
         +irReturn(irWhen(model.target, buildList {
             model.mappings.forEach { (source, target) ->
-                val lhs = irGet(model.declaration.parameters[1])
+                val lhs = irGet(model.definition.referenceMapFunction().parameters[1])
                 val rhs = irCall(source.referenceFunctionValueOf()).apply {
                     arguments[0] = irString(source.name.asString())
                 }
@@ -48,13 +51,14 @@ class EnumMappieCodeGenerator(private val context: CodeGenerationContext, privat
                     )
                 )
             }
-            add(irElseBranch(irCall(context.irBuiltIns.noWhenBranchMatchedExceptionSymbol)))
+            add(irElseBranch(irCall(context.pluginContext.irBuiltIns.noWhenBranchMatchedExceptionSymbol)))
         }))
     }
 
     private fun construct(target: ExplicitEnumMappingTarget) =
         target.target
 
+    context(context: MappieContext)
     private fun IrBlockBodyBuilder.construct(target: ResolvedEnumMappingTarget) =
         irCall(target.target.referenceFunctionValueOf()).apply {
             arguments[0] = irString(target.target.name.asString())

@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.constructedClass
+import tech.mappie.ir.util.arguments
 import tech.mappie.ir.util.substituteTypeVariable
 
 class MappieTargetsCollector(
@@ -16,7 +17,7 @@ class MappieTargetsCollector(
 
     private val parameters: List<ClassMappingTarget> = run {
         val parameters = constructor.constructedClass.typeParameters
-        val arguments = (function?.returnType as? IrSimpleType)?.arguments?.map { it.typeOrFail } ?: emptyList()
+        val arguments = function?.returnType?.arguments?.map { it.typeOrFail } ?: emptyList()
         constructor.parameters.filter { it.kind == IrParameterKind.Regular }.map {
             ValueParameterTarget(it, it.type.substitute(parameters, arguments))
         }

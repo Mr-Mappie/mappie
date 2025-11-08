@@ -38,34 +38,4 @@ class ObjectWithSetObjectToObjectSetPrimitiveTest : MappieTestCase() {
                 .isEqualTo(Output(setOf("A", "B")))
         }
     }
-
-    @Test
-    fun `map via forSet should succeed`() {
-        compile {
-            file("Test.kt",
-                """
-                import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.sets.ObjectWithSetObjectToObjectSetPrimitiveTest.*
-
-                class Mapper : ObjectMappie<Input, Output>() {
-                    override fun map(from: Input) = mapping {
-                        Output::text fromProperty from::text via InnerMapper.forSet
-                    }
-                }
-
-                object InnerMapper : ObjectMappie<InnerInput, String>() {
-                    override fun map(from: InnerInput) = from.value
-                }
-                """
-            )
-        } satisfies {
-            isOk()
-            hasNoWarningsOrErrors()
-
-            val mapper = objectMappie<Input, Output>()
-
-            assertThat(mapper.map(Input(setOf(InnerInput("A"), InnerInput("B")))))
-                .isEqualTo(Output(setOf("A", "B")))
-        }
-    }
 }

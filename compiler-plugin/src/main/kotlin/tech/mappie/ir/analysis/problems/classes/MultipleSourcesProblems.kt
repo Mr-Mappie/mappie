@@ -6,19 +6,23 @@ import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.ClassMappingSource
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.analysis.Problem
+import tech.mappie.ir.analysis.Problem.Companion.error
+import tech.mappie.ir.util.location
 
 class MultipleSourcesProblems(
+    private val mapping: ClassMappingRequest,
     private val targetType: IrType,
     private val mappings: Map<ClassMappingTarget, List<ClassMappingSource>>
 ) {
 
     fun all(): List<Problem> = mappings.map { (target, sources) ->
-        Problem.error("Target ${targetType.dumpKotlinLike()}::${target.name.asString()} has ${if (sources.isEmpty()) "no source defined" else "multiple sources defined"}")
+        error("Target ${targetType.dumpKotlinLike()}::${target.name.asString()} has ${if (sources.isEmpty()) "no source defined" else "multiple sources defined"}", location(mapping.origin.referenceMapFunction()))
     }
 
     companion object {
         fun of(mapping: ClassMappingRequest): MultipleSourcesProblems =
             MultipleSourcesProblems(
+                mapping,
                 mapping.target,
                 mapping.mappings
                     .filter { (target, _) -> target.required }

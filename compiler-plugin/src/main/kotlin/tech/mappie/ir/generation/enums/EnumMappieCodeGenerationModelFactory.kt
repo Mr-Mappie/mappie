@@ -1,19 +1,18 @@
 package tech.mappie.ir.generation.enums
 
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import tech.mappie.ir.generation.CodeGenerationModelFactory
 import tech.mappie.ir.generation.EnumMappieCodeGenerationModel
 import tech.mappie.ir.resolving.EnumMappingRequest
+import tech.mappie.ir.MappieDefinition
 import tech.mappie.ir.resolving.enums.EnumMappingTarget
 import tech.mappie.ir.resolving.enums.ResolvedEnumMappingTarget
 
-class EnumMappieCodeGenerationModelFactory(private val request: EnumMappingRequest) : CodeGenerationModelFactory {
+class EnumMappieCodeGenerationModelFactory() {
 
     @Suppress("UNCHECKED_CAST")
-    override fun construct(function: IrFunction): EnumMappieCodeGenerationModel =
+    fun construct(request: EnumMappingRequest, definition: MappieDefinition): EnumMappieCodeGenerationModel =
         EnumMappieCodeGenerationModel(
-            function,
+            definition,
             request.source,
             request.target,
             request.mappings
