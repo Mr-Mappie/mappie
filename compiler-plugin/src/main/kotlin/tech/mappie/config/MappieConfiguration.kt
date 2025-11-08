@@ -6,6 +6,7 @@ data class MappieConfiguration(
     val warningsAsErrors: Boolean,
     val useDefaultArguments: Boolean,
     val strictEnums: Boolean,
+    val strictplatformTypeNullability: Boolean,
     val strictVisibility: Boolean,
     val reportEnabled: Boolean,
     val reportDir: String,
