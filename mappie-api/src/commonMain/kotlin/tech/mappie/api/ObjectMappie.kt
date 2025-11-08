@@ -92,4 +92,3 @@ public abstract class ObjectMappie<FROM, out TO> : Mappie<TO> {
      */
     protected fun mapping(builder: ObjectMappingConstructor<FROM, TO>.() -> Unit = { }): TO = generated()
 }
-
