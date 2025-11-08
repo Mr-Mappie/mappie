@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.ir.util.getValueArgument
 import org.jetbrains.kotlin.ir.util.isTrueConst
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
-import tech.mappie.MappieContext
+import tech.mappie.ir.MappieContext
 import tech.mappie.util.CLASS_ID_USE_STRICT_JAVA_NULLABILITY
 
 fun MappieContext.useStrictPlatformTypeNullabilityValidationClassSymbol() =

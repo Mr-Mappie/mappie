@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fileEntry
 import tech.mappie.config.options.useStrictPlatformTypeNullabilityValidation
+import tech.mappie.ir.MappieContext
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.*
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
@@ -19,8 +20,9 @@ class UnsafePlatformTypeAssignmentProblems(
     private val mappings: Map<ClassMappingTarget, ClassMappingSource>,
 ) {
 
+    context (context: MappieContext)
     fun all(): List<Problem> =
-        if (context.useStrictPlatformTypeNullabilityValidation(context.function)) {
+        if (context.useStrictPlatformTypeNullabilityValidation(mapping.origin.referenceMapFunction())) {
             mappings.mapNotNull { validate(it.key, it.value) }
         } else {
             emptyList()
