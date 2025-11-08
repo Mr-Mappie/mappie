@@ -28,7 +28,7 @@ class AllSourcesMappedProblems(
 
         context(context: MappieContext)
         fun of(mapping: EnumMappingRequest): AllSourcesMappedProblems {
-            return if (context.useStrictEnums(mapping.origin.referenceMapFunction())) {
+            return if (useStrictEnums(mapping.origin.referenceMapFunction())) {
                 AllSourcesMappedProblems(
                     mapping,
                     mapping.mappings.filter { (_, targets) ->

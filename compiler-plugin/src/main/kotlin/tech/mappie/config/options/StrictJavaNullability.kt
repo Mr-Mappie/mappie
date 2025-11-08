@@ -10,13 +10,16 @@ import org.jetbrains.kotlin.name.Name
 import tech.mappie.ir.MappieContext
 import tech.mappie.util.CLASS_ID_USE_STRICT_JAVA_NULLABILITY
 
-fun MappieContext.useStrictPlatformTypeNullabilityValidationClassSymbol() =
-    pluginContext.referenceClass(CLASS_ID_USE_STRICT_JAVA_NULLABILITY)
+context(context: MappieContext)
+fun useStrictPlatformTypeNullabilityValidationClassSymbol() =
+    context.pluginContext.referenceClass(CLASS_ID_USE_STRICT_JAVA_NULLABILITY)
 
-fun MappieContext.getUseStrictPlatformTypeNullabilityValidationAnnotation(origin: IrFunction): IrConstructorCall? =
+context(context: MappieContext)
+fun getUseStrictPlatformTypeNullabilityValidationAnnotation(origin: IrFunction): IrConstructorCall? =
     origin.parentAsClass.annotations.firstOrNull { it.type.classOrFail == useStrictPlatformTypeNullabilityValidationClassSymbol() }
 
-fun MappieContext.useStrictPlatformTypeNullabilityValidation(origin: IrFunction): Boolean =
+context(context: MappieContext)
+fun useStrictPlatformTypeNullabilityValidation(origin: IrFunction): Boolean =
     getUseStrictPlatformTypeNullabilityValidationAnnotation(origin)
         ?.let { it.getValueArgument(Name.identifier("value"))?.isTrueConst() ?: true }
-        ?: configuration.strictplatformTypeNullability
+        ?: context.configuration.strictplatformTypeNullability

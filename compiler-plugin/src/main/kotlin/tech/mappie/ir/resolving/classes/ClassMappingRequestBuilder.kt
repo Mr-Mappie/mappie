@@ -37,7 +37,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
 
     context(context: MappieContext)
     fun construct(origin: InternalMappieDefinition): ClassMappingRequest {
-        val useDefaultArguments = context.useDefaultArguments(origin.referenceMapFunction())
+        val useDefaultArguments = useDefaultArguments(origin.referenceMapFunction())
 
         val mappings = targets.associateWith { target ->
             explicit(origin, target) ?: implicit(origin, target, useDefaultArguments)

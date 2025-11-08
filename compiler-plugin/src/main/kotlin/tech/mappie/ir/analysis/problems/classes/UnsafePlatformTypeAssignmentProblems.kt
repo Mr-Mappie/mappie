@@ -22,7 +22,7 @@ class UnsafePlatformTypeAssignmentProblems(
 
     context (context: MappieContext)
     fun all(): List<Problem> =
-        if (context.useStrictPlatformTypeNullabilityValidation(mapping.origin.referenceMapFunction())) {
+        if (useStrictPlatformTypeNullabilityValidation(mapping.origin.referenceMapFunction())) {
             mappings.mapNotNull { validate(it.key, it.value) }
         } else {
             emptyList()

@@ -15,7 +15,7 @@ class VisibilityProblems(private val mapping: ClassMappingRequest) {
 
     context (context: MappieContext)
     fun all(): List<Problem> =
-        if (!constructor.visibility.isPublicAPI && context.useStrictVisibility(mapping.origin.referenceMapFunction())) {
+        if (!constructor.visibility.isPublicAPI && useStrictVisibility(mapping.origin.referenceMapFunction())) {
             val constructor = constructor.parameters.filter { it.kind == IrParameterKind.Regular }.joinToString(prefix = "${constructor.constructedClass.name.asString()}(", postfix = ")") {
                 it.name.asString() + ": " + it.type.dumpKotlinLike()
             }

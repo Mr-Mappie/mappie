@@ -10,13 +10,16 @@ import org.jetbrains.kotlin.name.Name
 import tech.mappie.ir.MappieContext
 import tech.mappie.util.CLASS_ID_USE_STRICT_VISIBILITY
 
-fun MappieContext.useStrictVisibilityClassSymbol() =
-    pluginContext.referenceClass(CLASS_ID_USE_STRICT_VISIBILITY)
+context(context: MappieContext)
+fun useStrictVisibilityClassSymbol() =
+    context.pluginContext.referenceClass(CLASS_ID_USE_STRICT_VISIBILITY)
 
-fun MappieContext.getUseStrictVisibilityAnnotation(origin: IrFunction): IrConstructorCall? =
+context(context: MappieContext)
+fun getUseStrictVisibilityAnnotation(origin: IrFunction): IrConstructorCall? =
     origin.parentAsClass.annotations.firstOrNull { it.type.classOrFail == useStrictVisibilityClassSymbol() }
 
-fun MappieContext.useStrictVisibility(origin: IrFunction): Boolean =
+context(context: MappieContext)
+fun useStrictVisibility(origin: IrFunction): Boolean =
     getUseStrictVisibilityAnnotation(origin)
         ?.let { it.getValueArgument(Name.identifier("value"))?.isTrueConst() ?: true }
-        ?: configuration.strictVisibility
+        ?: context.configuration.strictVisibility
