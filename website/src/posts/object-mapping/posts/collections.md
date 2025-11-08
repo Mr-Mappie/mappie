@@ -7,16 +7,24 @@ eleventyNavigation:
   order: 10
 ---
 
-All mappers of Mappie define mapper variants for collections. Specifically, for `List` and `Set`. When we want to map a 
-property of such a type, we do not want to copy the collection itself, but the elements contained in such a type. 
+Mappie has extensive support for collection types. 
 
-Mappie automatically detects if the property is a (nullable) collection, and will automatically select the correct mapping 
-function to be used. 
+An `ObjectMappie` defines the functions `mapList`, `mapSet`, 
+`mapArray` (JVM only), and nullable variants `mapNullableList`, `mapNullableSet` to map collections directly.
 
-We can also explicitly reference a mapper using the getters `forList` and `forSet` defined 
-in each mapper. 
+For example, we can use `mapList` to automatically map a `List`
+```kotlin
+object PersonMapper : ObjectMappie<Person, PersonDto>()
 
-For example, suppose we have the data class `Book` containing a list of `Page`
+val persons: List<Person> = listOf(Person("Sjon"), Person("Piet"))
+val personDtos: List<PersonDto> = PersonMapper.mapList(persons)
+```
+
+Mappie also defines several built-in mappers to map collections, most notable for `List` and `Set`. These built-in 
+mappers are used to automatically map collection types. When defining a mapping manually, these mappers can be 
+referenced explicitly; they are defined in the package `mappie.api.builtin.collections`.
+
+For example, suppose we have the data class `Book` containing a list of `Page`:
 ```kotlin
 data class Book(val pages: List<Page>)
 
@@ -28,7 +36,7 @@ data class BookDto(val pages: List<String>)
 ```
 
 We can define a mapping between `Book` and `BookDto` by defining two mappers: a mapper for `Page` to `String`, which simply
-gets the `text` property, and mapper between `Book` and `BookDto` using the inner `forList` mapper of the `PageMapper`
+gets the `text` property, and a mapper between `Book` and `BookDto` which uses the built-in mapper `IterableToListMapper`:
 ```kotlin
 object PageMapper : ObjectMappie<Page, String>() {
     override fun map(from: Page): String = from.text
@@ -36,11 +44,19 @@ object PageMapper : ObjectMappie<Page, String>() {
 
 object BookMapper : ObjectMappie<Book, BookDto>() {
     override fun map(from: Book): BookDto = mapping {
-        BookDto::pages fromProperty Book::pages via PageMapper.forList
+        BookDto::pages fromProperty Book::pages via IterableToListMapper(PageMapper)
     }
 }
 ```
-Note that `BookMapper` is superfluous and is equivalent to 
+Note that in this case `BookMapper` is superfluous and is equivalent to 
+```kotlin
+object BookMapper : ObjectMappie<Book, BookDto>() {
+    override fun map(from: Book): BookDto = mapping {
+        BookDto::pages fromProperty Book::pages
+    }
+}
+```
+or even 
 ```kotlin
 object BookMapper : ObjectMappie<Book, BookDto>()
 ```
