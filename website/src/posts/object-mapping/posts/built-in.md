@@ -13,6 +13,9 @@ can be applied explicitly, or implicitly.
 The types below that are in *cursive* are not available on all platforms. For example, `BigInteger` is only available
 on the JVM platform.
 
+## Collection Mappers
+There is support for mapping any `Iterable` of type `T` to any of `List`, `Set`, `MutableList`, and `MutableSet` of type `R`.
+
 ## Numeric Mappers
 The following integer mappers are built-in
 
@@ -54,6 +57,9 @@ The following UUID mappers are built-in
 |        | *UUID* | String |
 |--------|--------|--------|
 | *UUID* | -      | X      |
+
+## The identity Mapper
+The identity mapper named `IdentityMapper` maps any `T` to any `T`.
 
 ## kotlinx-datetime Mappers
 The following kotlinx-datetime mappers can be included via the dependency `tech.mappie.api:module-kotlinx-datetime`.
