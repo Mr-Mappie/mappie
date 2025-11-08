@@ -109,9 +109,15 @@ class IrMappieGeneratedClass(override var name: Name) : IrClass() {
 
     companion object {
         fun named(source: IrType, target: IrType): IrClass {
-            val source = source.makeNotNull().dumpKotlinLike()
-            val target  = target.makeNotNull().dumpKotlinLike()
+            val source = source.identifier()
+            val target  = target.identifier()
             return IrMappieGeneratedClass(identifier(source + "To" + target + "Mapper"))
         }
+
+        private fun IrType.identifier() =
+            makeNotNull()
+                .dumpKotlinLike()
+                .replace("<", "")
+                .replace(">", "")
     }
 }
