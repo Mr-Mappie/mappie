@@ -4,6 +4,8 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
     }
+
+    includeBuild("build-logic")
 }
 
 dependencyResolutionManagement {
@@ -12,11 +14,11 @@ dependencyResolutionManagement {
     }
 }
 
-include(
-    ":mappie-api",
-    ":modules:kotlinx-datetime",
-    ":compiler-plugin",
-    ":gradle-plugin",
-    ":maven-plugin",
-    ":testutil"
-)
+include(":compiler-plugin")
+include(":gradle-plugin")
+include(":mappie-api")
+include(":maven-plugin")
+include(":modules:kotlinx-datetime")
+include(":testutil")
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

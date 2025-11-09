@@ -1,6 +1,8 @@
+package tech.mappie.buildlogic
+
 import org.gradle.api.publish.maven.MavenPublication
 
-fun MavenPublication.mappiePom(name: String) =
+fun MavenPublication.mappiePom(name: String) {
     pom {
         this.name.set(name)
         description.set("Kotlin Compiler Plugin for generating object mappers")
@@ -31,3 +33,4 @@ fun MavenPublication.mappiePom(name: String) =
             url.set("https://github.com/Mr-Mappie/mappie/issues")
         }
     }
+}
