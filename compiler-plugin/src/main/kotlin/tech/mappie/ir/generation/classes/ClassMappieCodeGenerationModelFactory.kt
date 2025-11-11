@@ -1,6 +1,7 @@
 package tech.mappie.ir.generation.classes
 
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import tech.mappie.ir.MappieContext
@@ -91,7 +92,7 @@ class ClassMappieCodeGenerationModelFactory {
     private fun generated(origin: InternalMappieDefinition, mappings: Map<ClassMappingTarget, ClassMappingSource>): Map<GeneratedMappieDefinition, CodeGenerationModel> =
         mappings.entries.fold(mutableMapOf<GeneratedMappieDefinition, CodeGenerationModel>()) { acc, (target, source) ->
             acc.apply {
-                fun isUnique(source: IrType, target: IrType) = acc.entries.none { it.key.target == target && it.key.source == source }
+                fun isUnique(source: IrType, target: IrType) = acc.entries.none { it.key.target.makeNullable() == target.makeNullable() && it.key.source.makeNullable() == source.makeNullable() }
 
                 val source = source as? TransformableClassMappingSource
                 when (val transformation = source?.transformation) {
