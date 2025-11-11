@@ -63,14 +63,14 @@ fun IrBuilderWithScope.constructTransformation(
                 val definition = definitions.first().clazz
 
                 if (definition is IrMappieGeneratedClass) {
-                    context.logger.log(internal("failed to reference generated mapper ${definition.name}."))
+                    context.logger.log(internal("failed to reference generated mapper ${definition.name} in ${origin.clazz.name}."))
 
                     irCall(referenceFunctionError()).apply {
                         arguments[0] = IrConstImpl.string(
                             SYNTHETIC_OFFSET,
                             SYNTHETIC_OFFSET,
                             context.pluginContext.irBuiltIns.stringType,
-                            "Failed to reference generated mapper ${definition.name}"
+                            "Failed to reference generated mapper ${definition.name} in ${origin.clazz.name}"
                         )
                     }
                 } else {
@@ -80,7 +80,7 @@ fun IrBuilderWithScope.constructTransformation(
                     }
                 }
             } else {
-                context.logger.log(internal("failed to reference generated mapper."))
+                context.logger.log(internal("failed to reference an unique generated mapper in ${origin.clazz.name}. Possible options: " + definitions.joinToString(prefix = "'", postfix = "'") { it.clazz.name.asString() }))
 
                 irCall(referenceFunctionError()).apply {
                     arguments[0] = IrConstImpl.string(

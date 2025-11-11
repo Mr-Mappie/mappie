@@ -87,7 +87,6 @@ interface MappieDefinition {
     val target: IrType
 
     fun referenceMapFunction() = clazz.functions.first { it.isMappieMapFunction() }
-    fun referenceMapNullableFunction() = clazz.functions.first { it.isMappieMapNullableFunction() }
 }
 
 data class InternalMappieDefinition(

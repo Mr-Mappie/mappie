@@ -4,19 +4,19 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import tech.mappie.testing.MappieTestCase
 
-class GeneratedClassNullToNullTest : MappieTestCase() {
+class GeneratedDoubleNestedClassTest : MappieTestCase() {
     data class Input(val a: InnerInput, val b: InnerInput?)
-    @Suppress("unused") enum class InnerInput { FIRST, SECOND }
+    data class InnerInput(val value: InnerInput?)
     data class Output(val a: InnerOutput, val b: InnerOutput?)
-    @Suppress("unused") enum class InnerOutput { FIRST, SECOND }
+    data class InnerOutput(val value: InnerOutput?)
 
     @Test
-    fun `map object with nested nullable to nullable without declaring mapping should succeed`() {
+    fun `map object with nested class without declaring mapping should succeed`() {
         compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.objects.GeneratedClassNullToNullTest.*
+                import tech.mappie.testing.objects.GeneratedDoubleNestedClassTest.*
 
                 class Mapper : ObjectMappie<Input, Output>()
                 """
@@ -27,11 +27,8 @@ class GeneratedClassNullToNullTest : MappieTestCase() {
 
             val mapper = objectMappie<Input, Output>()
 
-            assertThat(mapper.map(Input(InnerInput.SECOND,InnerInput.FIRST)))
-                .isEqualTo(Output(InnerOutput.SECOND, InnerOutput.FIRST))
-
-            assertThat(mapper.map(Input(InnerInput.FIRST, null)))
-                .isEqualTo(Output(InnerOutput.FIRST, null))
+            assertThat(mapper.map(Input(InnerInput(InnerInput(null)), null)))
+                .isEqualTo(Output(InnerOutput(InnerOutput(null)), null))
         }
     }
 }
