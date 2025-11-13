@@ -1,7 +1,14 @@
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.bundling.Jar
+import tech.mappie.buildlogic.mappiePom
+
 plugins {
-    id("mappie-api-convention")
-    id("maven-publish")
+    alias(libs.plugins.convention.mappie.api)
+    `maven-publish`
 }
+
+val javadocJar = tasks.named<Jar>("javadocJar")
+val emptyJar = tasks.named<Jar>("emptyJar")
 
 kotlin {
     explicitApi()
@@ -14,7 +21,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":mappie-api"))
+            implementation(projects.mappieApi)
         }
 
         jvmMain.dependencies {
@@ -22,25 +29,22 @@ kotlin {
         }
 
         jvmTest.dependencies {
+            implementation(projects.testutil)
             implementation(kotlin("test"))
-            implementation(project(":mappie-api"))
-            implementation(project(":testutil"))
             implementation(libs.assertj.core)
         }
     }
 }
 
 publishing {
-    publications.configureEach {
-        if (this is MavenPublication) {
-            artifactId = artifactId.replace("kotlinx-datetime", "module-kotlinx-datetime")
-            artifact(tasks["javadocJar"])
-            // jreleaser workaround
-            if (name != "jvm" && name != "kotlinMultiplatform") {
-                artifact(tasks["emptyJar"])
-            }
-            mappiePom(name = "tech.mappie:module-kotlinx-datetime")
+    publications.withType(MavenPublication::class.java).configureEach {
+        artifactId = artifactId.replace("kotlinx-datetime", "module-kotlinx-datetime")
+        artifact(javadocJar)
+        // jreleaser workaround
+        if (name != "jvm" && name != "kotlinMultiplatform") {
+            artifact(emptyJar)
         }
+        mappiePom(name = "tech.mappie:module-kotlinx-datetime")
     }
 
     if (System.getenv("RELEASE_MODULE_KOTLINX_DATETIME").toBoolean()) {
