@@ -1,11 +1,15 @@
 package tech.mappie.ir
 
-import org.jetbrains.kotlin.backend.jvm.ir.upperBound
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.types.typeOrFail
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.parents
 import tech.mappie.ir.generation.IrMappieGeneratedClass
 import tech.mappie.ir.util.*
@@ -28,14 +32,22 @@ class MappieDefinitionCollection(
     context (context: MappieContext)
     fun matching(source: IrType, target: IrType, parent: IrClass? = null): Sequence<MappieDefinition> =
         if (source == target) {
-             context.definitions.definitions.filter { it.clazz.name == IDENTIFIER_IDENTITY_MAPPER }
+             sequenceOf(context.definitions.definitions.first { it.clazz.name == IDENTIFIER_IDENTITY_MAPPER })
         } else {
             definitions.filter { mappie ->
-                val isSubtype = source.upperBound.isSubtypeOf(mappie.source.upperBound) && mappie.target.upperBound.isSubtypeOf(target.upperBound)
-                val isCorrectParent = parent?.let { mappie.clazz !is IrMappieGeneratedClass && (it == mappie.clazz || it in mappie.clazz.parents) } ?: true
-                isSubtype && isCorrectParent
+                val isSubtype = source.makeNotNull().isSubtypeOf(mappie.source.erased(source)) && mappie.target.erased(target.makeNotNull()).isSubtypeOf(target)
+                val isCorrectDefinitionScope = parent?.let { mappie.clazz !is IrMappieGeneratedClass && (it == mappie.clazz || it in mappie.clazz.parents) } ?: true
+                isSubtype && isCorrectDefinitionScope
             }
         }
+
+    private fun IrType.erased(container: IrType): IrType {
+        return if (arguments.any { it.typeOrFail.isTypeParameter() }) {
+            classOrFail.owner.typeWith(container.arguments.map { it.typeOrFail })
+        } else {
+            this
+        }
+    }
 }
 
 class PrioritizationMap private constructor(private val entries: Map<Priority, List<MappieDefinition>>) {
