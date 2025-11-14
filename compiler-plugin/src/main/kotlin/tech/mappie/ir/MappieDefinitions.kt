@@ -59,14 +59,18 @@ class PrioritizationMap private constructor(private val entries: Map<Priority, L
         fun Sequence<MappieDefinition>.prioritize(source: IrType, target: IrType): PrioritizationMap =
             PrioritizationMap(groupBy { priority(it, source, target) })
 
-        // TODO: should account for nullability (?)
         private fun priority(definition: MappieDefinition, source: IrType, target: IrType): Priority {
-            val sourceMatch = definition.source.classifierOrFail == source.type.classifierOrFail
-            val targetMatch = definition.target.classifierOrFail == target.type.classifierOrFail
+            val sourceExactMatch = definition.source == source
+            val targetExactMatch = definition.target == target
+
+            if (sourceExactMatch && targetExactMatch) {
+                return Priority.EXACT_MATCH
+            }
             return when {
-                sourceMatch && targetMatch -> Priority.EXACT_MATCH
-                targetMatch -> Priority.TARGET_MATCH
-                sourceMatch -> Priority.SOURCE_MATCH
+                targetExactMatch -> Priority.TARGET_MATCH
+                sourceExactMatch -> Priority.SOURCE_MATCH
+                definition.target.classifierOrFail == target.classifierOrFail -> Priority.TARGET_MATCH
+                definition.source.classifierOrFail == source.classifierOrFail -> Priority.SOURCE_MATCH
                 else -> Priority.NO_MATCH
             }
         }
