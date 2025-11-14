@@ -60,27 +60,31 @@ class PrioritizationMap private constructor(private val entries: Map<Priority, L
             PrioritizationMap(groupBy { priority(it, source, target) })
 
         private fun priority(definition: MappieDefinition, source: IrType, target: IrType): Priority {
-            val sourceExactMatch = definition.source == source
-            val targetExactMatch = definition.target == target
+            val sourceTypeMatch = definition.source == source
+            val targetTypeMatch = definition.target == target
+            val sourceClassifierMatch = definition.source.classifierOrFail == source.type.classifierOrFail
+            val targetClassifierMatch = definition.target.classifierOrFail == target.type.classifierOrFail
 
-            if (sourceExactMatch && targetExactMatch) {
-                return Priority.EXACT_MATCH
-            }
             return when {
-                targetExactMatch -> Priority.TARGET_MATCH
-                sourceExactMatch -> Priority.SOURCE_MATCH
-                definition.target.classifierOrFail == target.classifierOrFail -> Priority.TARGET_MATCH
-                definition.source.classifierOrFail == source.classifierOrFail -> Priority.SOURCE_MATCH
+                sourceTypeMatch && targetTypeMatch -> Priority.EXACT_TYPE_MATCH
+                sourceClassifierMatch && targetClassifierMatch -> Priority.EXACT_CLASSIFIER_MATCH
+                targetTypeMatch -> Priority.TARGET_TYPE_MATCH
+                sourceClassifierMatch -> Priority.TARGET_CLASSIFIER_MATCH
+                sourceTypeMatch -> Priority.SOURCE_TYPE_MATCH
+                targetClassifierMatch -> Priority.SOURCE_CLASSIFIER_MATCH
                 else -> Priority.NO_MATCH
             }
         }
     }
 
     enum class Priority(value: Int) {
-        EXACT_MATCH(1),
-        TARGET_MATCH(2),
-        SOURCE_MATCH(3),
-        NO_MATCH(4),
+        EXACT_TYPE_MATCH(1),
+        EXACT_CLASSIFIER_MATCH(2),
+        TARGET_TYPE_MATCH(3),
+        TARGET_CLASSIFIER_MATCH(4),
+        SOURCE_TYPE_MATCH(5),
+        SOURCE_CLASSIFIER_MATCH(6),
+        NO_MATCH(7),
     }
 }
 
