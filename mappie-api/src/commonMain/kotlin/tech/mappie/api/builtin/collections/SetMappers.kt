@@ -8,12 +8,12 @@ public class IterableToSetMapper<FROM, TO>(private val inner: Mappie1<FROM, TO> 
     : ObjectMappie<Iterable<FROM>, Set<TO>>() {
 
     override fun map(from: Iterable<FROM>): Set<TO> =
-        from.map( inner::map).toSet()
+        from.mapTo(mutableSetOf(), inner::map)
 }
 
 public class IterableToMutableSetMapper<FROM, TO>(private val inner: Mappie1<FROM, TO> = generated())
     : ObjectMappie<Iterable<FROM>, MutableSet<TO>>() {
 
     override fun map(from: Iterable<FROM>): MutableSet<TO> =
-        from.map( inner::map).toMutableSet()
+        from.mapTo(mutableSetOf(), inner::map)
 }
