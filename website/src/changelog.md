@@ -3,10 +3,10 @@ title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
   - date: "tbd"
-    title: "v2.2.21-1.7.0"
+    title: "v2.2.21-2.0.0"
     items:
+      - "Breaking change: removed forList and forSet in favour of `IterableToListMapper` and `IterableToSetMapper`."
       - "Internal refactoring simplifying the Mappie type system and mapper generation."
-      - "Removed forList and forSet in favour of `IterableToListMapper` and `IterableToSetMapper`."
       - "Added config option to allow unsafe mapping of platform types to non-nullable target."
       - "JVM implementation for mapArray (similar to mapList and mapSet)."
   - date: "2025-10-24"
