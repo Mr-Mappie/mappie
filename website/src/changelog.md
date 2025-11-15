@@ -9,6 +9,7 @@ changelog:
       - "Removed forList and forSet in favour of `IterableToListMapper` and `IterableToSetMapper`."
       - "Added config option to allow unsafe mapping of platform types to non-nullable target."
       - "JVM implementation for mapArray (similar to mapList and mapSet)."
+      - "Prioritize exact inner mapper over nullable alterative."
   - date: "2025-10-24"
     title: "v2.2.21-1.6.1"
     items:
