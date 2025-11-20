@@ -13,7 +13,6 @@ abstract class MappieExtension(private val project: Project) {
     /**
      * Whether to report all warnings as errors.
      */
-    @Deprecated(message = "Deprecated in favour of the standard Kotlin compiler options")
     abstract val warningsAsErrors: Property<Boolean>
 
     /**
