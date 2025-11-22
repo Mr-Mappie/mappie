@@ -1,9 +1,10 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import tech.mappie.buildlogic.mappiePom
 
 plugins {
-    id("mappie-jvm-convention")
+    alias(libs.plugins.convention.mappie.jvm)
     alias(libs.plugins.com.github.gmazzo.buildconfig)
-    id("maven-publish")
+    `maven-publish`
 }
 
 dependencies {
@@ -11,7 +12,7 @@ dependencies {
     compileOnly(libs.maven.core)
     compileOnly(libs.kotlin.maven.plugin)
 
-    runtimeOnly(project(":compiler-plugin"))
+    runtimeOnly(projects.compilerPlugin)
 
     testImplementation(kotlin("test"))
     testImplementation(libs.assertj.core)

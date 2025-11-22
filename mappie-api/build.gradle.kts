@@ -1,7 +1,14 @@
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.bundling.Jar
+import tech.mappie.buildlogic.mappiePom
+
 plugins {
-    id("mappie-api-convention")
-    id("maven-publish")
+    alias(libs.plugins.convention.mappie.api)
+    `maven-publish`
 }
+
+val javadocJar = tasks.named<Jar>("javadocJar")
+val emptyJar = tasks.named<Jar>("emptyJar")
 
 kotlin {
     explicitApi()
@@ -45,22 +52,20 @@ kotlin {
     sourceSets {
         jvmTest.dependencies {
             implementation(kotlin("test"))
-            implementation(project(":testutil"))
+            implementation(projects.testutil)
             implementation(libs.assertj.core)
         }
     }
 }
 
 publishing {
-    publications.configureEach {
-        if (this is MavenPublication) {
-            artifact(tasks["javadocJar"])
-            // jreleaser workaround
-            if (name != "jvm" && name != "kotlinMultiplatform") {
-                artifact(tasks["emptyJar"])
-            }
-            mappiePom(name = "tech.mappie:mappie-api")
+    publications.withType(MavenPublication::class.java).configureEach {
+        artifact(javadocJar)
+        // jreleaser workaround
+        if (name != "jvm" && name != "kotlinMultiplatform") {
+            artifact(emptyJar)
         }
+        mappiePom(name = "tech.mappie:mappie-api")
     }
 
     if (System.getenv("RELEASE_API").toBoolean()) {

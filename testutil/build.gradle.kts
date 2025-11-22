@@ -2,14 +2,16 @@ import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("mappie-jvm-convention")
+    alias(libs.plugins.convention.mappie.jvm)
 }
 
 dependencies {
-    implementation(project(":mappie-api"))
-    implementation(project(":compiler-plugin"))
+    implementation(projects.mappie.mappieApi)
+    implementation(projects.compilerPlugin)
+
     implementation(kotlin("test"))
     implementation(kotlin("reflect"))
+    
     implementation(libs.kotlin.compiler.embeddable)
     implementation(libs.classgraph)
     implementation(libs.okio)
