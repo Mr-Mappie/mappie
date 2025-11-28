@@ -7,9 +7,6 @@ plugins {
     `maven-publish`
 }
 
-val javadocJar = tasks.named<Jar>("javadocJar")
-val emptyJar = tasks.named<Jar>("emptyJar")
-
 kotlin {
     explicitApi()
     withSourcesJar(publish = true)
@@ -39,10 +36,10 @@ kotlin {
 publishing {
     publications.withType(MavenPublication::class.java).configureEach {
         artifactId = artifactId.replace("kotlinx-datetime", "module-kotlinx-datetime")
-        artifact(javadocJar)
+        artifact(tasks.named("javadocJar"))
         // jreleaser workaround
         if (name != "jvm" && name != "kotlinMultiplatform") {
-            artifact(emptyJar)
+            artifact(tasks.named("emptyJar"))
         }
         mappiePom(name = "tech.mappie:module-kotlinx-datetime")
     }
