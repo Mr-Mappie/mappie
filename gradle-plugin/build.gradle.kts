@@ -2,7 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
-    id("mappie-jvm-convention")
+    alias(libs.plugins.convention.mappie.jvm)
     `java-test-fixtures`
     alias(libs.plugins.gradle.plugin.publish)
     alias(libs.plugins.com.github.gmazzo.buildconfig)
@@ -57,6 +57,4 @@ tasks.test {
         showCauses = true
         exceptionFormat = TestExceptionFormat.FULL
     }
-
-    maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
 }

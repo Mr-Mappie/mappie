@@ -1,9 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import tech.mappie.buildlogic.mappiePom
 
 plugins {
-    id("mappie-jvm-convention")
+    alias(libs.plugins.convention.mappie.jvm)
     alias(libs.plugins.com.github.gmazzo.buildconfig)
-    id("maven-publish")
+    `maven-publish`
 }
 
 kotlin {
@@ -13,11 +14,11 @@ kotlin {
 dependencies {
     compileOnly(libs.kotlin.compiler.embeddable)
 
-    compileOnly(project(":mappie-api"))
-    compileOnly(project(":modules:kotlinx-datetime"))
+    compileOnly(projects.mappieApi)
+    compileOnly(projects.modules.kotlinxDatetime)
 
-    testImplementation(project(":mappie-api"))
-    testImplementation(project(":testutil"))
+    testImplementation(projects.mappieApi)
+    testImplementation(projects.testutil)
     testImplementation(kotlin("reflect"))
     testImplementation(kotlin("test"))
     testImplementation(libs.assertj.core)

@@ -5,6 +5,10 @@ build/
 !**/src/test/**/build/
 **/*.hprof
 
+# Local machine overrides
+local.properties
+**/local.properties
+
 #Kotlin
 .kotlin
 

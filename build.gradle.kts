@@ -1,7 +1,7 @@
 import org.jreleaser.model.Signing
 
 plugins {
-    id("mappie-convention")
+    alias(libs.plugins.convention.mappie)
     java
     alias(libs.plugins.jreleaser)
 }
