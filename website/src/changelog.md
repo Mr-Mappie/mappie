@@ -2,7 +2,7 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-  - date: "tbd"
+  - date: "2025-11-28"
     title: "v2.2.21-2.0.0"
     items:
       - "Breaking change: removed forList and forSet in favour of `IterableToListMapper` and `IterableToSetMapper`."
