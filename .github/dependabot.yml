@@ -16,6 +16,9 @@ updates:
           - "*"
     ignore:
       - dependency-name: "org.jreleaser"
+      - dependency-name: "org.jetbrains.kotlinx:kotlinx-datetime"
+        versions:
+          - "*compat*"
     labels:
       - "dependencies"
   - package-ecosystem: "npm"
