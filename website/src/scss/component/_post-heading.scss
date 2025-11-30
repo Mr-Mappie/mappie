@@ -18,6 +18,12 @@
     max-inline-size: 20ch;
   }
 
+  &__since {
+    font-family: config('font-family-heading', $typography);
+    margin-block-start: spacer('xs');
+    font-style: italic;
+  }
+
   &__description {
     font-size: config('font-size-lead', $typography);
     max-inline-size: 60ch;

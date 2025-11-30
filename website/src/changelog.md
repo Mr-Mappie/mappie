@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "tbd"
+    title: "v2.2.21-2.1.0"
+    items:
+      - "Added support for re-using functionality of a base EnumMappie in other child mappers."
   - date: "2025-11-28"
     title: "v2.2.21-2.0.0"
     items:

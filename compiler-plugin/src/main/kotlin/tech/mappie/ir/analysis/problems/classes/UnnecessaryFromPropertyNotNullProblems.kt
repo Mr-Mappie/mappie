@@ -8,6 +8,7 @@ import tech.mappie.ir.resolving.classes.sources.ExplicitPropertyMappingSource
 import tech.mappie.util.filterSingle
 import tech.mappie.ir.util.location
 import tech.mappie.ir.analysis.Problem
+import tech.mappie.ir.resolving.TargetSourcesClassMappings
 
 class UnnecessaryFromPropertyNotNullProblems(
     private val mapping: ClassMappingRequest,
@@ -26,7 +27,8 @@ class UnnecessaryFromPropertyNotNullProblems(
         fun of(mapping: ClassMappingRequest): UnnecessaryFromPropertyNotNullProblems =
             UnnecessaryFromPropertyNotNullProblems(
                 mapping,
-                mapping.mappings.values
+                (mapping.mappings as TargetSourcesClassMappings)
+                    .values
                     .filterSingle()
                     .filterIsInstance<ExplicitPropertyMappingSource>()
                     .filter { it.forceNonNull && !it.source.isNullable() }

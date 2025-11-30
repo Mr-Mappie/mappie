@@ -1573,6 +1573,11 @@ strong {
   margin-block-start: 0.5rem;
   max-inline-size: 20ch;
 }
+.post-heading__since {
+  font-family: var(--spruce-font-family-heading);
+  margin-block-start: 0.5rem;
+  font-style: italic;
+}
 .post-heading__description {
   font-size: var(--spruce-font-size-lead);
   max-inline-size: 60ch;

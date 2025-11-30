@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.statements
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.InternalMappieDefinition
+import tech.mappie.ir.resolving.MappingPriority
 import tech.mappie.ir.resolving.MappingResolver
 import tech.mappie.ir.resolving.findMappingStatements
 
@@ -24,7 +25,7 @@ class EnumResolver(
                 val mapping = findMappingStatements(function?.body).singleOrNull()?.arguments?.getOrNull(1) as? IrFunctionExpression
                 mapping?.function?.body?.statements?.forEach { statement ->
                     statement.accept(EnumMappingStatementCollector, Unit)
-                        ?.let { explicit(it) }
+                        ?.let { (source, target) -> explicit(source, target, MappingPriority.HIGH) }
                 }
             }
             .construct(origin)

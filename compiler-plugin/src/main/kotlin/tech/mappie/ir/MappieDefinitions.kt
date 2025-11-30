@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.parents
+import org.jetbrains.kotlin.ir.util.superClass
 import tech.mappie.ir.generation.IrMappieGeneratedClass
 import tech.mappie.ir.util.*
 import tech.mappie.util.IDENTIFIER_IDENTITY_MAPPER
@@ -105,6 +106,7 @@ data class InternalMappieDefinition(
     override val clazz: IrClass,
     override val source: IrType,
     override val target: IrType,
+    val parent: MappieDefinition?,
 ) : MappieDefinition {
 
     override val origin = this
@@ -115,7 +117,15 @@ data class InternalMappieDefinition(
         context (context: MappieContext)
         fun of(clazz: IrClass): InternalMappieDefinition {
             val (source, target) = clazz.mappieSuperClassTypes()
-            return InternalMappieDefinition(clazz, source, target)
+            val parent = clazz.superClass?.let { parent ->
+                if (allMappieClasses().any { parent.isSubclassOf(it) }) {
+                    of(parent)
+                } else {
+                    null
+                }
+            }
+
+            return InternalMappieDefinition(clazz, source, target, parent)
         }
     }
 }

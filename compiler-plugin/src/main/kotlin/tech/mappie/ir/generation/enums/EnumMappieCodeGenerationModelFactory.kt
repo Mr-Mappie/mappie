@@ -4,6 +4,8 @@ import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import tech.mappie.ir.generation.EnumMappieCodeGenerationModel
 import tech.mappie.ir.resolving.EnumMappingRequest
 import tech.mappie.ir.MappieDefinition
+import tech.mappie.ir.resolving.SourcesTargetEnumMappings
+import tech.mappie.ir.resolving.SuperCallEnumMappings
 import tech.mappie.ir.resolving.enums.EnumMappingTarget
 import tech.mappie.ir.resolving.enums.ResolvedEnumMappingTarget
 
@@ -15,12 +17,20 @@ class EnumMappieCodeGenerationModelFactory() {
             definition,
             request.source,
             request.target,
-            request.mappings
-                .mapValues { (_, targets) -> select(targets) }
-                .filterValues { it != null } as Map<IrEnumEntry, EnumMappingTarget>
+            when (request.mappings) {
+                is SuperCallEnumMappings -> request.mappings
+                is SourcesTargetEnumMappings -> {
+                    request.mappings
+                        .mapValues { (_, targets) -> select(targets) }
+                        .filterValues { it != null }
+                        .let {
+                            SourcesTargetEnumMappings(it as Map<IrEnumEntry, List<EnumMappingTarget>>)
+                        }
+                }
+            }
         )
 
-    private fun select(targets: List<EnumMappingTarget>): EnumMappingTarget? =
-        targets.firstOrNull { it !is ResolvedEnumMappingTarget }
-            ?: targets.firstOrNull { it is ResolvedEnumMappingTarget }
+    private fun select(targets: List<EnumMappingTarget>): List<EnumMappingTarget>? =
+        targets.firstOrNull { it !is ResolvedEnumMappingTarget }?.let { listOf(it) }
+            ?: targets.firstOrNull { it is ResolvedEnumMappingTarget }?.let { listOf(it) }
 }

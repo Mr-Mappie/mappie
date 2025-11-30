@@ -23,9 +23,7 @@ class InternalDefinitionsCollector(val context: MappieContext) : BaseVisitor<Lis
     override fun visitClass(declaration: IrClass, data: Unit) =
         buildList {
             context(context) {
-                if (declaration.isSubclassOf(with(context) {
-                        referenceMappieClass()
-                    }) && declaration.modality != Modality.ABSTRACT) {
+                if (declaration.isSubclassOf(referenceMappieClass()) && declaration.modality != Modality.ABSTRACT) {
                     add(InternalMappieDefinition.of(declaration))
                 }
             }

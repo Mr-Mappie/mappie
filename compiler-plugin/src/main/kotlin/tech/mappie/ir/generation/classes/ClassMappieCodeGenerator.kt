@@ -1,11 +1,9 @@
 package tech.mappie.ir.generation.classes
 
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -16,6 +14,7 @@ import org.jetbrains.kotlin.ir.util.getKFunctionType
 import tech.mappie.ir.MappieContext
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.generation.ClassMappieCodeGenerationModel
+import tech.mappie.ir.generation.MappieCodeGenerator
 import tech.mappie.ir.generation.constructTransformation
 import tech.mappie.ir.reporting.pretty
 import tech.mappie.ir.referenceFunctionLet
@@ -25,38 +24,25 @@ import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.resolving.classes.targets.FunctionCallTarget
 import tech.mappie.ir.resolving.classes.targets.SetterTarget
 import tech.mappie.ir.resolving.classes.targets.ValueParameterTarget
-import tech.mappie.ir.util.blockBody
 import tech.mappie.ir.util.irLambda
 import tech.mappie.ir.referenceFunctionRun
+import tech.mappie.ir.resolving.TargetSourcesClassMappings
 
-class ObjectMappieCodeGenerator(private val model: ClassMappieCodeGenerationModel) {
-
-    context(context: MappieContext)
-    fun lambda(scope: Scope): IrCall =
-        with(context.pluginContext.irBuiltIns.createIrBuilder(scope.scopeOwnerSymbol)) {
-            irCall(referenceFunctionRun()).apply {
-                arguments[0] = irLambda(model.definition.referenceMapFunction().returnType, model.definition.referenceMapFunction().returnType) {
-                    content()
-                }
-            }
-        }
+class ClassMappieCodeGenerator(
+    override val model: ClassMappieCodeGenerationModel
+) : MappieCodeGenerator(model) {
 
     context(context: MappieContext)
-    fun body(scope: Scope): IrBlockBody =
-        context.pluginContext.blockBody(scope) {
-            content()
-        }
-
-    context(context: MappieContext)
-    private fun IrBlockBodyBuilder.content() {
+    override fun IrBlockBodyBuilder.content() {
         val constructor = model.constructor.symbol
         val regularParameters = model.definition.referenceMapFunction().parameters.filter { it.kind == IrParameterKind.Regular }
         val typeArguments = (model.definition.referenceMapFunction().returnType.type as IrSimpleType).arguments.map { it.typeOrNull ?: context.pluginContext.irBuiltIns.anyType }
+        val mappings  = model.mappings as TargetSourcesClassMappings
 
         val call = irCallConstructor(constructor, typeArguments).apply {
-            model.mappings.forEach { (target, source) ->
+            mappings.forEach { (target, source) ->
                 if (target is ValueParameterTarget) {
-                    constructArgument(source, target, regularParameters)?.let { argument ->
+                    constructArgument(source.single(), target, regularParameters)?.let { argument ->
                         arguments[target.value.indexInParameters] = argument
                     }
                 }
@@ -65,18 +51,18 @@ class ObjectMappieCodeGenerator(private val model: ClassMappieCodeGenerationMode
 
         val variable = createTmpVariable(call)
 
-        model.mappings.forEach { (target, source) ->
+        mappings.forEach { (target, source) ->
             when (target) {
                 is SetterTarget -> {
                     +irCall(target.value.setter!!).apply {
                         dispatchReceiver = irGet(variable)
-                        arguments[1] = constructArgument(source, target, regularParameters)
+                        arguments[1] = constructArgument(source.single(), target, regularParameters)
                     }
                 }
                 is FunctionCallTarget -> {
                     +irCall(target.value).apply {
                         dispatchReceiver = irGet(variable)
-                        arguments[1] = constructArgument(source, target, regularParameters)
+                        arguments[1] = constructArgument(source.single(), target, regularParameters)
                     }
                 }
                 else -> {
