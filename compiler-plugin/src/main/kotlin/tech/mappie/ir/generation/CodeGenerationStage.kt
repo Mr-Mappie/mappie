@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import tech.mappie.ir.GeneratedMappieDefinition
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.MappieDefinition
+import tech.mappie.ir.resolving.TargetSourcesClassMappings
 import tech.mappie.ir.resolving.classes.sources.PropertyMappingViaMapperTransformation
 import tech.mappie.ir.resolving.classes.sources.TransformableClassMappingSource
 
@@ -31,26 +32,30 @@ object CodeGenerationStage {
     fun CodeGenerationModel.substitute(original: IrMappieGeneratedClass, concrete: GeneratedMappieDefinition): CodeGenerationModel {
         return when (this) {
             is ClassMappieCodeGenerationModel -> {
-                ClassMappieCodeGenerationModel(
-                    origin,
-                    concrete,
-                    constructor,
-                    mappings.mapValues { (_, source) ->
+                val mappings = (mappings as TargetSourcesClassMappings)
+                    .mapValues { (_, source) ->
+                        val source = source.single()
                         if (source is TransformableClassMappingSource) {
                             val transformation = source.transformation
                             if (transformation is PropertyMappingViaMapperTransformation) {
                                 if (transformation.mapper.clazz == original) {
-                                    source.clone(transformation = transformation.copy(mapper = concrete))
+                                    listOf(source.clone(transformation = transformation.copy(mapper = concrete)))
                                 } else {
-                                    source
+                                    listOf(source)
                                 }
                             } else {
-                                source
+                                listOf(source)
                             }
                         } else {
-                            source
+                            listOf(source)
                         }
-                    },
+                    }
+
+                ClassMappieCodeGenerationModel(
+                    origin,
+                    concrete,
+                    constructor,
+                    TargetSourcesClassMappings(mappings),
                     generated,
                 )
             }

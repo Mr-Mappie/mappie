@@ -9,6 +9,7 @@ import tech.mappie.util.filterSingle
 import tech.mappie.ir.util.location
 import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.reporting.pretty
+import tech.mappie.ir.resolving.TargetSourcesClassMappings
 import tech.mappie.ir.util.isSubtypeOf
 
 class UnsafeTypeAssignmentProblems(
@@ -61,7 +62,7 @@ class UnsafeTypeAssignmentProblems(
     companion object {
         context(context: MappieContext)
         fun of(mapping: ClassMappingRequest): UnsafeTypeAssignmentProblems {
-            val mappings = mapping.mappings
+            val mappings = (mapping.mappings as TargetSourcesClassMappings)
                 .filterSingle()
                 .filter { (target, source) ->
                     !source.type.isSubtypeOf(target.type)

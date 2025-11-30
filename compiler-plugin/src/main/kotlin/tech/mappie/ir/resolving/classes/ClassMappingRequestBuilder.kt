@@ -43,7 +43,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
             explicit(origin, target) ?: implicit(origin, target, useDefaultArguments)
         }
 
-        return ClassMappingRequest(origin, sources.map { it.value }, constructor, mappings)
+        return ClassMappingRequest(origin, sources.map { it.value }, constructor, TargetSourcesClassMappings(mappings))
     }
 
     context(context: MappieContext)

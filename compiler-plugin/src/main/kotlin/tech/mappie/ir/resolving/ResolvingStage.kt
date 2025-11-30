@@ -19,8 +19,8 @@ object ResolvingStage {
     }
 
     context(context: MappieContext)
-    fun execute(origin: InternalMappieDefinition, definition: GeneratedMappieDefinition): ResolvingResult {
-        val requests = MappingResolver.of(definition.source, definition.target).resolve(origin, null)
+    fun execute(definition: GeneratedMappieDefinition): ResolvingResult {
+        val requests = MappingResolverSelector.select(definition).resolve(definition.origin, null)
         return ResolvingResult(mapOf(definition to requests))
     }
 }

@@ -14,6 +14,7 @@ import tech.mappie.ir.util.hasFlexibleNullabilityAnnotation
 import tech.mappie.ir.util.location
 import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.reporting.pretty
+import tech.mappie.ir.resolving.TargetSourcesClassMappings
 
 class UnsafePlatformTypeAssignmentProblems(
     private val mapping: ClassMappingRequest,
@@ -67,7 +68,7 @@ class UnsafePlatformTypeAssignmentProblems(
 
     companion object {
         fun of(mapping: ClassMappingRequest): UnsafePlatformTypeAssignmentProblems {
-            val mappings = mapping.mappings
+            val mappings = (mapping.mappings as TargetSourcesClassMappings)
                 .filterSingle()
                 .filter { (target, source) ->
                     source.type.hasFlexibleNullabilityAnnotation() && !target.type.isNullable()

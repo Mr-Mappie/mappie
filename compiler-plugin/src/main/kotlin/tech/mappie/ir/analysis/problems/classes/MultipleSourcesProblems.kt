@@ -7,6 +7,7 @@ import tech.mappie.ir.resolving.classes.sources.ClassMappingSource
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.analysis.Problem.Companion.error
+import tech.mappie.ir.resolving.TargetSourcesClassMappings
 import tech.mappie.ir.util.location
 
 class MultipleSourcesProblems(
@@ -24,7 +25,7 @@ class MultipleSourcesProblems(
             MultipleSourcesProblems(
                 mapping,
                 mapping.target,
-                mapping.mappings
+                (mapping.mappings as TargetSourcesClassMappings)
                     .filter { (target, _) -> target.required }
                     .filter { (_, sources) -> sources.size != 1 }
             )

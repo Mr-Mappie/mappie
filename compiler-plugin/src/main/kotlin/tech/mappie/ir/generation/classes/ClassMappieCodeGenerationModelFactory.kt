@@ -14,6 +14,7 @@ import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.GeneratedMappieDefinition
 import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.MappieDefinition
+import tech.mappie.ir.resolving.TargetSourcesClassMappings
 import tech.mappie.ir.resolving.ResolvingStage
 import tech.mappie.ir.resolving.classes.sources.ClassMappingSource
 import tech.mappie.ir.resolving.classes.sources.ExplicitClassMappingSource
@@ -33,11 +34,17 @@ class ClassMappieCodeGenerationModelFactory {
     @Suppress("UNCHECKED_CAST")
     context (context: MappieContext)
     fun construct(request: ClassMappingRequest, definition: MappieDefinition): ClassMappieCodeGenerationModel {
-        val mappings = request.mappings
+        val mappings = (request.mappings as TargetSourcesClassMappings)
             .mapValues { (target, sources) -> select(target, sources) }
             .filter { it.value != null } as Map<ClassMappingTarget, ClassMappingSource>
 
-        return ClassMappieCodeGenerationModel(definition.origin, definition, request.constructor, mappings, generated(request.origin, mappings))
+        return ClassMappieCodeGenerationModel(
+            definition.origin,
+            definition,
+            request.constructor,
+            TargetSourcesClassMappings(mappings.mapValues { listOf(it.value) }),
+            generated(request.origin, mappings)
+        )
     }
 
     context(context: MappieContext)
@@ -51,7 +58,7 @@ class ClassMappieCodeGenerationModelFactory {
 
         context.definitions.generated.add(definition)
 
-        val resolved = ResolvingStage.execute(origin, definition)
+        val resolved = ResolvingStage.execute(definition)
         val selected = SelectionStage.execute(resolved.requests)
 
         selected.mappings.filter { !it.value.validation.isValid }.forEach { (_, request) ->

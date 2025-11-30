@@ -9,6 +9,8 @@ import tech.mappie.ir.resolving.enums.EnumMappingTarget
 import tech.mappie.ir.resolving.enums.ExplicitEnumMappingTarget
 import tech.mappie.ir.resolving.enums.ThrowingEnumMappingTarget
 import tech.mappie.ir.analysis.Problem
+import tech.mappie.ir.resolving.SourcesTargetEnumMappings
+import tech.mappie.ir.resolving.SuperCallEnumMappings
 import tech.mappie.ir.util.location
 
 class AllSourcesMappedProblems(
@@ -28,13 +30,20 @@ class AllSourcesMappedProblems(
 
         context(context: MappieContext)
         fun of(mapping: EnumMappingRequest): AllSourcesMappedProblems {
+            val mappings = mapping.mappings
+
             return if (useStrictEnums(mapping.origin.referenceMapFunction())) {
-                AllSourcesMappedProblems(
-                    mapping,
-                    mapping.mappings.filter { (_, targets) ->
-                        targets.isEmpty() || targets.count { it is ExplicitEnumMappingTarget || it is ThrowingEnumMappingTarget } > 1
+                return when (mappings) {
+                    is SuperCallEnumMappings -> AllSourcesMappedProblems(mapping, emptyMap())
+                    is SourcesTargetEnumMappings -> {
+                        AllSourcesMappedProblems(
+                            mapping,
+                            mappings.filter { (_, targets) ->
+                                targets.isEmpty() || targets.count { it is ExplicitEnumMappingTarget || it is ThrowingEnumMappingTarget } > 1
+                            }
+                        )
                     }
-                )
+                }
             } else {
                 AllSourcesMappedProblems(mapping, emptyMap())
             }

@@ -6,6 +6,7 @@ import tech.mappie.ir.resolving.EnumMappingRequest
 import tech.mappie.ir.resolving.MappingRequest
 import tech.mappie.ir.resolving.classes.sources.ExplicitClassMappingSource
 import tech.mappie.ir.analysis.ValidationResult
+import tech.mappie.ir.resolving.TargetSourcesClassMappings
 
 interface MappingSelector {
 
@@ -25,7 +26,11 @@ interface MappingSelector {
             options.entries.toList().run {
                 val valids = filter { it.value.isValid }
                 if (valids.isNotEmpty()) {
-                    valids.maxBy { it.key.mappings.values.count { it.single() is ExplicitClassMappingSource } }.toPair()
+                    valids.maxBy { (request, _) ->
+                        when (request.mappings) {
+                            is TargetSourcesClassMappings -> request.mappings.values.count { it.single() is ExplicitClassMappingSource }
+                        }
+                    }.toPair()
                 } else {
                     minByOrNull { it.value.problems.size }
                         ?.let { (_, validation) -> null to validation }

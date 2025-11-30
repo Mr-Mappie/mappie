@@ -8,8 +8,11 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import tech.mappie.ir.MappieContext
-import tech.mappie.ir.generation.classes.ObjectMappieCodeGenerator
+import tech.mappie.ir.generation.classes.ClassMappieCodeGenerator
 import tech.mappie.ir.generation.enums.EnumMappieCodeGenerator
+import tech.mappie.ir.generation.enums.SuperCallEnumMappieCodeGenerator
+import tech.mappie.ir.resolving.SourcesTargetEnumMappings
+import tech.mappie.ir.resolving.SuperCallEnumMappings
 import tech.mappie.ir.util.isMappieMapFunction
 import tech.mappie.util.IDENTIFIER_MAPPING
 
@@ -26,12 +29,7 @@ class MappieTransformer(private val context: MappieContext, private val model: C
     override fun visitFunctionNew(declaration: IrFunction) = declaration.apply {
         body = with(createScope(declaration)) {
             if (body == null) {
-                context(context) {
-                    when (model) {
-                        is EnumMappieCodeGenerationModel -> EnumMappieCodeGenerator(model).body(scope)
-                        is ClassMappieCodeGenerationModel -> ObjectMappieCodeGenerator(model).body(scope)
-                    }
-                }
+                context(context) { generator(model).body(scope) }
             } else {
                 declaration.body!!.transform(FunctionBodyTransformer(scope, model), context)
             }
@@ -43,18 +41,27 @@ class MappieTransformer(private val context: MappieContext, private val model: C
         override fun visitCall(expression: IrCall, data: MappieContext): IrExpression {
             return when (expression.symbol.owner.name) {
                 IDENTIFIER_MAPPING -> {
-                    context(data) {
-                        when (model) {
-                            is EnumMappieCodeGenerationModel -> EnumMappieCodeGenerator(model).lambda(scope)
-                            is ClassMappieCodeGenerationModel -> ObjectMappieCodeGenerator(model).lambda(scope)
-                        }
-                    }
+                    context(data) { generator(model).lambda(scope) }
                 }
                 else -> {
                     expression.arguments.forEachIndexed { index, argument ->
                         expression.arguments[index] = argument?.transform(this, data)
                     }
                     expression
+                }
+            }
+        }
+    }
+
+    companion object {
+        private fun generator(model: CodeGenerationModel) = when (model) {
+            is ClassMappieCodeGenerationModel -> {
+                ClassMappieCodeGenerator(model)
+            }
+            is EnumMappieCodeGenerationModel -> {
+                when (model.mappings) {
+                    is SourcesTargetEnumMappings -> EnumMappieCodeGenerator(model)
+                    is SuperCallEnumMappings -> SuperCallEnumMappieCodeGenerator(model)
                 }
             }
         }

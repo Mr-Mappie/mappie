@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.types.IrType
 import tech.mappie.ir.resolving.EnumMappingRequest
 import tech.mappie.ir.InternalMappieDefinition
+import tech.mappie.ir.resolving.SourcesTargetEnumMappings
 
 class EnumMappingRequestBuilder(val source: IrType, val target: IrType) {
 
@@ -20,7 +21,7 @@ class EnumMappingRequestBuilder(val source: IrType, val target: IrType) {
                 addAll(targets.filter { target -> target.name == source.name }.map { ResolvedEnumMappingTarget(it) })
             }
         }
-        return EnumMappingRequest(origin, source, target, mappings)
+        return EnumMappingRequest(origin, source, target, SourcesTargetEnumMappings(mappings))
     }
 
     fun explicit(entry: Pair<IrEnumEntry, EnumMappingTarget>) =
