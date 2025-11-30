@@ -10,6 +10,11 @@
             {{ title }}
         </h1>
     {% endif %}
+    {% if since %}
+    <p class="post-heading__since">
+        Since version {{ since }}
+    </p>
+    {% endif %}
     {% if summary and displaySummary %}
         <p class="post-heading__description">
             {{ summary }}
