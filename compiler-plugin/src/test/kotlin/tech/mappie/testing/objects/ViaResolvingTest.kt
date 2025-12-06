@@ -83,4 +83,30 @@ class ViaResolvingTest : MappieTestCase() {
             )
         }
     }
+
+    @Test
+    fun `mapper prioritizes exact inner mapper over nullable alternative`() {
+        compile {
+            file(
+                "Mapper.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.testing.objects.ViaResolvingTest.*
+
+                class Mapper : ObjectMappie<Input, Output>()
+
+                class ExactInnerMapper : ObjectMappie<InnerInput, InnerOutput>()
+                class NullableInnerMapper : ObjectMappie<InnerInput?, InnerOutput?>()
+                """.trimIndent(),
+            )
+        } satisfies {
+            isOk()
+            hasNoWarningsOrErrors()
+
+            val mapper = objectMappie<Input, Output>()
+
+            assertThat(mapper.map(Input(InnerInput("inner"), 10)))
+                .isEqualTo(Output(InnerOutput("inner"), 10))
+        }
+    }
 }
