@@ -14,6 +14,7 @@ changelog:
       - "Internal refactoring simplifying the Mappie type system and mapper generation."
       - "Added config option to allow unsafe mapping of platform types to non-nullable target."
       - "JVM implementation for mapArray (similar to mapList and mapSet)."
+      - "Prioritize exact inner mapper over nullable alterative."
   - date: "2025-10-24"
     title: "v2.2.21-1.6.1"
     items:
