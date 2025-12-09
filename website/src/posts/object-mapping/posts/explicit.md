@@ -117,6 +117,34 @@ object PersonMapper : ObjectMappie<Person, PersonDto>() {
 }
 ```
 
+## Using a Specific Constructor
+We can force Mappie to select a specific constructor using the different overloads of `mapping`. We can
+force a specific constructor by passing the types of the constructor parameters as type arguments to the call
+of `mapping` and passing a constructor reference. For example, suppose `PersonDto` is defined as
+```kotlin
+data class PersonDto(
+    val name: String, 
+    val age: Int, 
+    val description: String,
+) {
+    constructor(name: String, age: Int) : this(name, age, "description")
+}
+```
+we can reference the primary constructor via
+```kotlin
+object PersonMapper : ObjectMappie<Person, PersonDto>() {
+    override fun map(from: Person) = 
+        mapping<String, String, Int>(::PersonDto)
+}
+```
+and we can reference the secondary constructor via
+```kotlin
+object PersonMapper : ObjectMappie<Person, PersonDto>() {
+    override fun map(from: Person) = 
+        mapping<String, Int>(::PersonDto)
+}
+```
+
 ## The to Alias
 We can access the target properties via the target type of the mapper. This can clutter the mapping definition when
 many explicit mappings are defined. Mappie defines a special `to` property which can be used instead of the target type.
