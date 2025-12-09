@@ -51,7 +51,7 @@ class UnsafeTypeAssignmentProblems(
             }
             is ParameterValueMappingSource -> {
                 val description = "Target $targetString automatically resolved parameter ${source.parameter.asString()} but cannot assign source type $sourceTypeString to target type $targetTypeString"
-                Problem.warning(description, location(mapping.origin.referenceMapFunction()))
+                Problem.error(description, location(mapping.origin.referenceMapFunction()))
             }
             is ParameterDefaultValueMappingSource -> {
                 null

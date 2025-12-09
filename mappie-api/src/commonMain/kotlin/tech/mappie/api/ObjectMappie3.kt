@@ -20,7 +20,7 @@ package tech.mappie.api
  * @param FROM3 the third source type to map from.
  * @param TO the target type to map to.
  */
-public abstract class ObjectMappie3<in FROM1, in FROM2, in FROM3, out TO> : Mappie<TO> {
+public abstract class ObjectMappie3<in FROM1, in FROM2, in FROM3, TO> : Mappie<TO> {
 
     /**
      * Map [first], [second], and [third] to an instance of [TO].
@@ -47,7 +47,123 @@ public abstract class ObjectMappie3<in FROM1, in FROM2, in FROM3, out TO> : Mapp
      * Mapping function which instructs Mappie to generate code for this implementation.
      *
      * @param builder the configuration for the generation of this mapping.
-     * @return An instance of the mapped value at runtime.
+     * @return An instance of the mapped target value.
      */
     protected fun mapping(builder: MultipleObjectMappingConstructor<TO>.() -> Unit = { }): TO = generated()
+
+    /**
+     * Mapping function which instructs Mappie to generate code for this implementation.
+     *
+     * @param builder the configuration for the generation of this mapping.
+     * @return An instance of the mapped target value.
+     */
+    protected fun mapping(constructor: () -> TO, builder: MultipleObjectMappingConstructor<TO>.() -> Unit = { }): TO = generated()
+
+    /**
+     * Mapping function which instructs Mappie to generate code for this implementation.
+     *
+     * @param P1 The type of the first constructor parameter.
+     * @param constructor The specific constructor to call, e.g `::TargetClass`.
+     * @param builder the configuration for the generation of this mapping.
+     * @return An instance of the mapped target value.
+     */
+    protected fun <P1> mapping(constructor: (P1) -> TO, builder: MultipleObjectMappingConstructor<TO>.() -> Unit = { }): TO = generated()
+
+    /**
+     * Mapping function which instructs Mappie to generate code for this implementation.
+     *
+     * @param P1 The type of the first constructor parameter.
+     * @param P2 The type of the second constructor parameter.
+     * @param constructor The specific constructor to call, e.g `::TargetClass`.
+     * @param builder the configuration for the generation of this mapping.
+     * @return An instance of the mapped target value.
+     */
+    protected fun <P1, P2> mapping(constructor: (P1, P2) -> TO, builder: MultipleObjectMappingConstructor<TO>.() -> Unit = { }): TO = generated()
+
+    /**
+     * Mapping function which instructs Mappie to generate code for this implementation.
+     *
+     * @param P1 The type of the first constructor parameter.
+     * @param P2 The type of the second constructor parameter.
+     * @param P3 The type of the third constructor parameter.
+     * @param constructor The specific constructor to call, e.g `::TargetClass`.
+     * @param builder the configuration for the generation of this mapping.
+     * @return An instance of the mapped target value.
+     */
+    protected fun <P1, P2, P3> mapping(constructor: (P1, P2, P3) -> TO, builder: MultipleObjectMappingConstructor<TO>.() -> Unit = { }): TO = generated()
+
+    /**
+     * Mapping function which instructs Mappie to generate code for this implementation.
+     *
+     * @param P1 The type of the first constructor parameter.
+     * @param P2 The type of the second constructor parameter.
+     * @param P3 The type of the third constructor parameter.
+     * @param P4 The type of the fourth constructor parameter.
+     * @param constructor The specific constructor to call, e.g `::TargetClass`.
+     * @param builder the configuration for the generation of this mapping.
+     * @return An instance of the mapped target value.
+     */
+    protected fun <P1, P2, P3, P4> mapping(constructor: (P1, P2, P3, P4) -> TO, builder: MultipleObjectMappingConstructor<TO>.() -> Unit = { }): TO = generated()
+
+    /**
+     * Mapping function which instructs Mappie to generate code for this implementation.
+     *
+     * @param P1 The type of the first constructor parameter.
+     * @param P2 The type of the second constructor parameter.
+     * @param P3 The type of the third constructor parameter.
+     * @param P4 The type of the fourth constructor parameter.
+     * @param P5 The type of the fifth constructor parameter.
+     * @param constructor The specific constructor to call, e.g `::TargetClass`.
+     * @param builder the configuration for the generation of this mapping.
+     * @return An instance of the mapped target value.
+     */
+    protected fun <P1, P2, P3, P4, P5> mapping(constructor: (P1, P2, P3, P4, P5) -> TO, builder: MultipleObjectMappingConstructor<TO>.() -> Unit = { }): TO = generated()
+
+    /**
+     * Mapping function which instructs Mappie to generate code for this implementation.
+     *
+     * @param P1 The type of the first constructor parameter.
+     * @param P2 The type of the second constructor parameter.
+     * @param P3 The type of the third constructor parameter.
+     * @param P4 The type of the fourth constructor parameter.
+     * @param P5 The type of the fifth constructor parameter.
+     * @param P6 The type of the sixth constructor parameter.
+     * @param constructor The specific constructor to call, e.g `::TargetClass`.
+     * @param builder the configuration for the generation of this mapping.
+     * @return An instance of the mapped target value.
+     */
+    protected fun <P1, P2, P3, P4, P5, P6> mapping(constructor: (P1, P2, P3, P4, P5, P6) -> TO, builder: MultipleObjectMappingConstructor<TO>.() -> Unit = { }): TO = generated()
+
+    /**
+     * Mapping function which instructs Mappie to generate code for this implementation.
+     *
+     * @param P1 The type of the first constructor parameter.
+     * @param P2 The type of the second constructor parameter.
+     * @param P3 The type of the third constructor parameter.
+     * @param P4 The type of the fourth constructor parameter.
+     * @param P5 The type of the fifth constructor parameter.
+     * @param P6 The type of the sixth constructor parameter.
+     * @param P7 The type of the seventh constructor parameter.
+     * @param constructor The specific constructor to call, e.g `::TargetClass`.
+     * @param builder the configuration for the generation of this mapping.
+     * @return An instance of the mapped target value.
+     */
+    protected fun <P1, P2, P3, P4, P5, P6, P7> mapping(constructor: (P1, P2, P3, P4, P5, P6, P7) -> TO, builder: MultipleObjectMappingConstructor<TO>.() -> Unit = { }): TO = generated()
+
+    /**
+     * Mapping function which instructs Mappie to generate code for this implementation.
+     *
+     * @param P1 The type of the first constructor parameter.
+     * @param P2 The type of the second constructor parameter.
+     * @param P3 The type of the third constructor parameter.
+     * @param P4 The type of the fourth constructor parameter.
+     * @param P5 The type of the fifth constructor parameter.
+     * @param P6 The type of the sixth constructor parameter.
+     * @param P7 The type of the seventh constructor parameter.
+     * @param P8 The type of the eighth constructor parameter.
+     * @param constructor The specific constructor to call, e.g `::TargetClass`.
+     * @param builder the configuration for the generation of this mapping.
+     * @return An instance of the mapped target value.
+     */
+    protected fun <P1, P2, P3, P4, P5, P6, P7, P8> mapping(constructor: (P1, P2, P3, P4, P5, P6, P7, P8) -> TO, builder: MultipleObjectMappingConstructor<TO>.() -> Unit = { }): TO = generated()
 }
