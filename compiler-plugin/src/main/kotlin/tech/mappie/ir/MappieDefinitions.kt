@@ -72,24 +72,32 @@ class PrioritizationMap private constructor(private val entries: Map<Priority, L
         fun Sequence<MappieDefinition>.prioritize(source: IrType, target: IrType): PrioritizationMap =
             PrioritizationMap(groupBy { priority(it, source, target) })
 
-        // TODO: should account for nullability (?)
         private fun priority(definition: MappieDefinition, source: IrType, target: IrType): Priority {
-            val sourceMatch = definition.source.classifierOrFail == source.type.classifierOrFail
-            val targetMatch = definition.target.classifierOrFail == target.type.classifierOrFail
+            val sourceTypeMatch = definition.source == source
+            val targetTypeMatch = definition.target == target
+            val sourceClassifierMatch = definition.source.classifierOrFail == source.type.classifierOrFail
+            val targetClassifierMatch = definition.target.classifierOrFail == target.type.classifierOrFail
+
             return when {
-                sourceMatch && targetMatch -> Priority.EXACT_MATCH
-                targetMatch -> Priority.TARGET_MATCH
-                sourceMatch -> Priority.SOURCE_MATCH
+                sourceTypeMatch && targetTypeMatch -> Priority.EXACT_TYPE_MATCH
+                sourceClassifierMatch && targetClassifierMatch -> Priority.EXACT_CLASSIFIER_MATCH
+                targetTypeMatch -> Priority.TARGET_TYPE_MATCH
+                sourceClassifierMatch -> Priority.TARGET_CLASSIFIER_MATCH
+                sourceTypeMatch -> Priority.SOURCE_TYPE_MATCH
+                targetClassifierMatch -> Priority.SOURCE_CLASSIFIER_MATCH
                 else -> Priority.NO_MATCH
             }
         }
     }
 
     enum class Priority(value: Int) {
-        EXACT_MATCH(1),
-        TARGET_MATCH(2),
-        SOURCE_MATCH(3),
-        NO_MATCH(4),
+        EXACT_TYPE_MATCH(1),
+        EXACT_CLASSIFIER_MATCH(2),
+        TARGET_TYPE_MATCH(3),
+        TARGET_CLASSIFIER_MATCH(4),
+        SOURCE_TYPE_MATCH(5),
+        SOURCE_CLASSIFIER_MATCH(6),
+        NO_MATCH(7),
     }
 }
 
