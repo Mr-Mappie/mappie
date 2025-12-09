@@ -7,6 +7,7 @@ changelog:
     items:
       - "[#320](https://github.com/Mr-Mappie/mappie/issues/320) Fixed a compilation error when referencing a mapper defined as a variable in an explicit via call."
       - "Added support for re-using functionality of a base EnumMappie in other child mappers."
+      - "Prioritize exact inner mapper over nullable alterative."
   - date: "2025-11-28"
     title: "v2.2.21-2.0.0"
     items:
@@ -14,7 +15,6 @@ changelog:
       - "Internal refactoring simplifying the Mappie type system and mapper generation."
       - "Added config option to allow unsafe mapping of platform types to non-nullable target."
       - "JVM implementation for mapArray (similar to mapList and mapSet)."
-      - "Prioritize exact inner mapper over nullable alterative."
   - date: "2025-10-24"
     title: "v2.2.21-1.6.1"
     items:
