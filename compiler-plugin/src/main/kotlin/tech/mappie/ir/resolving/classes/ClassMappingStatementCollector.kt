@@ -75,7 +75,21 @@ class ClassMappingStatementCollector(private val origin: InternalMappieDefinitio
 private class MapperReferenceCollector : BaseVisitor<PropertyMappingViaMapperTransformation, MappieContext>() {
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: MappieContext): PropertyMappingViaMapperTransformation {
-        val mapper = data.pluginContext.referenceClass(expression.symbol.owner.classId!!)!!.owner
+        val mapper = expression.symbol.owner
+
+        val target = mapper.functions
+            .first { it.isMappieMapFunction() }
+            .returnType
+            .classOrFail
+            .typeWith(emptyList())
+
+        return context(data) {
+            PropertyMappingViaMapperTransformation(InternalMappieDefinition.of(mapper), expression, target)
+        }
+    }
+
+    override fun visitCall(expression: IrCall, data: MappieContext): PropertyMappingViaMapperTransformation {
+        val mapper = expression.type.classOrFail.owner
 
         val target = mapper.functions
             .first { it.isMappieMapFunction() }

@@ -5,6 +5,7 @@ changelog:
   - date: "tbd"
     title: "v2.2.21-2.1.0"
     items:
+      - "[#320](https://github.com/Mr-Mappie/mappie/issues/320) Fixed a compilation error when referencing a mapper defined as a variable in an explicit via call."
       - "Added support for re-using functionality of a base EnumMappie in other child mappers."
   - date: "2025-11-28"
     title: "v2.2.21-2.0.0"
