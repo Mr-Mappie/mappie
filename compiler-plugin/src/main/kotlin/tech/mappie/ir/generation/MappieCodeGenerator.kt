@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.util.getKFunctionType
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.referenceFunctionRun
 import tech.mappie.ir.util.blockBody
@@ -16,10 +17,11 @@ abstract class MappieCodeGenerator(protected open val model: CodeGenerationModel
     context(context: MappieContext)
     fun lambda(scope: Scope): IrCall =
         with(context.pluginContext.irBuiltIns.createIrBuilder(scope.scopeOwnerSymbol)) {
+            val target = model.definition.referenceMapFunction().returnType
             irCall(referenceFunctionRun()).apply {
                 arguments[0] = irLambda(
-                    model.definition.referenceMapFunction().returnType,
-                    model.definition.referenceMapFunction().returnType
+                    target,
+                    context.pluginContext.irBuiltIns.getKFunctionType(target, emptyList())
                 ) {
                     content()
                 }
