@@ -2,7 +2,11 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-  - date: "tbd"
+  - date: "2025-12-10"
+    title: "v2.2.21-2.1.1"
+    items:
+      - "[#324](https://github.com/Mr-Mappie/mappie/issues/324) Fixed multiplatform code generation bug."
+  - date: "2025-12-09"
     title: "v2.2.21-2.1.0"
     items:
       - "[#320](https://github.com/Mr-Mappie/mappie/issues/320) Fixed a compilation error when referencing a mapper defined as a variable in an explicit via call."

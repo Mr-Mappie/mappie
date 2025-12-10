@@ -9,7 +9,7 @@ class MingwX64CompatibilityTest : TestBase() {
     override val platform = KotlinPlatform.MULTIPLATFORM
 
     @Test
-    fun `test compatibility with mingwX64`() {
+    fun `test compatibility of implicit mapper with mingwX64`() {
         kotlin("src/mingwX64Main/kotlin/NativeMapper.kt",
             """
             import tech.mappie.api.ObjectMappie
@@ -26,7 +26,44 @@ class MingwX64CompatibilityTest : TestBase() {
             import kotlin.test.*
 
             class NativeMapperTest {
-            
+
+                @Test
+                fun `map NativeInput to NativeOutput`() {
+                    assertEquals(
+                        NativeOutput("value"),
+                        NativeMapper.map(NativeInput("value")),
+                    )
+                }
+            }
+            """.trimIndent()
+        )
+
+        runner.withArguments("build").build()
+    }
+
+    @Test
+    fun `test compatibility of explicit mapper with mingwX64`() {
+        kotlin("src/mingwX64Main/kotlin/NativeMapper.kt",
+            """
+            import tech.mappie.api.ObjectMappie
+
+            data class NativeInput(val string: String)
+            data class NativeOutput(val string: String)
+
+            object NativeMapper : ObjectMappie<NativeInput, NativeOutput>() {
+                override fun map(from: NativeInput) = mapping {
+                    to::string fromProperty from::string
+                }
+            }
+            """.trimIndent()
+        )
+
+        kotlin("src/mingwX64Test/kotlin/NativeMapperTest.kt",
+            """
+            import kotlin.test.*
+
+            class NativeMapperTest {
+
                 @Test
                 fun `map NativeInput to NativeOutput`() {
                     assertEquals(
