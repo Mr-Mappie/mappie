@@ -1,11 +1,14 @@
 package tech.mappie.ir
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.types.typeOrFail
+import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.functions
@@ -42,9 +45,15 @@ class MappieDefinitionCollection(
             }
         }
 
+    context (context: MappieContext)
     private fun IrType.erased(container: IrType): IrType {
-        return if (arguments.any { it.typeOrFail.isTypeParameter() }) {
-            classOrFail.owner.typeWith(container.arguments.map { it.typeOrFail })
+        return if (arguments.any { it is IrTypeProjection && it.typeOrNull?.isTypeParameter() == true }) {
+            classOrFail.owner.typeWith(container.arguments.map {
+                when (it) {
+                    is IrTypeProjection -> it.typeOrNull ?: context.pluginContext.irBuiltIns.anyType
+                    else -> context.pluginContext.irBuiltIns.anyType
+                }
+            })
         } else {
             this
         }
