@@ -2,13 +2,14 @@ package tech.mappie.ir.preprocessing
 
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import tech.mappie.ir.MappieContext
 import tech.mappie.api.PredefinedMappieProvider
 import tech.mappie.api.builtin.BuiltInMappieProvider
+import tech.mappie.api.kotlinx.collections.immutable.KotlinxCollectionsImmutableMappieProvider
 import tech.mappie.api.kotlinx.datetime.KotlinxDateTimeMappieProvider
 import tech.mappie.config.MappieModule
 import tech.mappie.exceptions.MappiePanicException
 import tech.mappie.ir.ExternalMappieDefinition
+import tech.mappie.ir.MappieContext
 
 class ExternalDefinitionsCollector(val context: MappieContext) {
 
@@ -27,6 +28,9 @@ class ExternalDefinitionsCollector(val context: MappieContext) {
             add(BuiltInMappieProvider())
             if (MappieModule.KOTLINX_DATETIME in context.configuration.modules) {
                 add(KotlinxDateTimeMappieProvider())
+            }
+            if (MappieModule.KOTLINX_COLLECTIONS_IMMUTABLE in context.configuration.modules) {
+                add(KotlinxCollectionsImmutableMappieProvider())
             }
         }
     }

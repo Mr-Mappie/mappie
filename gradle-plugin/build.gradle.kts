@@ -52,6 +52,7 @@ tasks.test {
     dependsOn(":compiler-plugin:publishToMavenLocal")
     dependsOn(":mappie-api:publishToMavenLocal")
     dependsOn(":modules:kotlinx-datetime:publishToMavenLocal")
+    dependsOn(":modules:kotlinx-collections-immutable:publishToMavenLocal")
 
     testLogging {
         showCauses = true

@@ -1,6 +1,6 @@
 package tech.mappie.config
 
-import java.util.EnumSet
+import java.util.*
 
 data class MappieConfiguration(
     val modules: EnumSet<MappieModule>,
@@ -14,4 +14,4 @@ data class MappieConfiguration(
     val reportDir: String,
 )
 
-enum class MappieModule { KOTLINX_DATETIME }
+enum class MappieModule { KOTLINX_DATETIME, KOTLINX_COLLECTIONS_IMMUTABLE }
