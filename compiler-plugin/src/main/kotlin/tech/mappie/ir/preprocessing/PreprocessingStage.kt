@@ -14,6 +14,16 @@ object PreprocessingStage {
     fun execute(input: IrModuleFragment): PreprocessingResult {
         val definitions = DefinitionsCollector(context).collect(input)
         context.definitions.load(definitions)
+
+        // Collect local conversion methods for each internal definition
+        val localConversionCollector = LocalConversionMethodCollector(context)
+        definitions.internal.forEach { definition ->
+            val localConversions = localConversionCollector.collect(definition.clazz)
+            if (localConversions.isNotEmpty()) {
+                context.localConversions[definition.clazz] = localConversions
+            }
+        }
+
         return PreprocessingResult(definitions.apply {
             internal.removeAll { definition ->
                 val body = definition.referenceMapFunction().body
