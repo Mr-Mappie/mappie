@@ -8,6 +8,20 @@ pluginManagement {
     includeBuild("build-logic")
 }
 
+plugins {
+    id("org.gradle.toolchains.foojay-resolver") version "1.0.0"
+}
+
+toolchainManagement {
+    jvm {
+        javaRepositories {
+            repository("foojay") {
+                resolverClass = org.gradle.toolchains.foojay.FoojayToolchainResolver::class.java
+            }
+        }
+    }
+}
+
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
