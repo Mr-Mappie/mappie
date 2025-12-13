@@ -19,6 +19,7 @@ include(":gradle-plugin")
 include(":mappie-api")
 include(":maven-plugin")
 include(":modules:kotlinx-datetime")
+include(":modules:kotlinx-collections-immutable")
 include(":testutil")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
