@@ -85,8 +85,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
     context(context: MappieContext)
     private fun transformation(origin: InternalMappieDefinition, source: ClassMappingSource, target: ClassMappingTarget): PropertyMappingTransformation? {
         // 1. Check local conversion methods first (highest priority)
-        val localMethods = context.localConversions[origin.clazz]?.matching(source.type, target.type)
-        val localMethod = localMethods?.firstOrNull()
+        val localMethod = origin.localConversions.matching(source.type, target.type).firstOrNull()
         if (localMethod != null) {
             return PropertyMappingViaLocalMethodTransformation(localMethod, target.type)
         }

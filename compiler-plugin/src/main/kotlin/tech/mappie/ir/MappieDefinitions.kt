@@ -115,6 +115,7 @@ data class InternalMappieDefinition(
     override val source: IrType,
     override val target: IrType,
     val parent: MappieDefinition?,
+    val localConversions: LocalConversionMethodCollection = LocalConversionMethodCollection(),
 ) : MappieDefinition {
 
     override val origin = this

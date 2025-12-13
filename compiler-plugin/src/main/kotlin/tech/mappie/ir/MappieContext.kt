@@ -19,7 +19,6 @@ interface MappieContext {
     val logger: MappieLogger
     val configuration: MappieConfiguration
     val definitions: MappieDefinitionCollection
-    val localConversions: MutableMap<IrClass, LocalConversionMethodCollection>
 }
 
 context(context: MappieContext)

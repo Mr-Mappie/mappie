@@ -44,6 +44,5 @@ class MappieIrRegistrar(
         override val configuration = this@MappieIrRegistrar.configuration
         override val logger = MappieLogger(configuration.warningsAsErrors, messageCollector)
         override val definitions = MappieDefinitionCollection()
-        override val localConversions = mutableMapOf<org.jetbrains.kotlin.ir.declarations.IrClass, LocalConversionMethodCollection>()
     }
 }
