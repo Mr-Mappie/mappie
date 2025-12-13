@@ -3,6 +3,12 @@ plugins {
     `java-gradle-plugin`
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 dependencies {
     implementation(libs.kotlin.multiplatform.gradle.plugin)
     implementation(libs.kotlin.jvm.gradle.plugin)
