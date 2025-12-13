@@ -18,6 +18,7 @@ import tech.mappie.ir.resolving.classes.sources.ImplicitClassMappingSource
 import tech.mappie.ir.resolving.classes.sources.ImplicitPropertyMappingSource
 import tech.mappie.ir.resolving.classes.sources.ParameterDefaultValueMappingSource
 import tech.mappie.ir.resolving.classes.sources.ParameterValueMappingSource
+import tech.mappie.ir.resolving.classes.sources.PropertyMappingViaLocalMethodTransformation
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.resolving.classes.targets.ValueParameterTarget
 import tech.mappie.ir.analysis.Problem
@@ -83,6 +84,13 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
 
     context(context: MappieContext)
     private fun transformation(origin: InternalMappieDefinition, source: ClassMappingSource, target: ClassMappingTarget): PropertyMappingTransformation? {
+        // 1. Check local conversion methods first (highest priority)
+        val localMethod = origin.localConversions.matching(source.type, target.type).firstOrNull()
+        if (localMethod != null) {
+            return PropertyMappingViaLocalMethodTransformation(localMethod, target.type)
+        }
+
+        // 2. Fall back to existing mapper lookup
         val mappers = context.definitions.matching(source.type, target.type)
         val prioritized = mappers.prioritize(source.type, target.type)
         val selected = prioritized.select()

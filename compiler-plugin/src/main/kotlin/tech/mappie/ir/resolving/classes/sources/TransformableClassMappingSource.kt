@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.addAnnotations
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.isNullable
+import tech.mappie.ir.LocalConversionMethod
 import tech.mappie.ir.MappieDefinition
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 
@@ -17,7 +18,7 @@ sealed interface TransformableClassMappingSource : ClassMappingSource {
 
     fun type(original: IrType): IrType =
         when (transformation) {
-            is PropertyMappingViaMapperTransformation, is GeneratedViaMapperTransformation -> {
+            is PropertyMappingViaMapperTransformation, is GeneratedViaMapperTransformation, is PropertyMappingViaLocalMethodTransformation -> {
                 if (original.isNullable()) {
                     transformation!!.type.makeNullable().addAnnotations(original.annotations)
                 } else {
@@ -65,3 +66,12 @@ data class GeneratedViaMapperTransformation(
 ) : PropertyMappingTransformation {
     override val type = target.type
 }
+
+/**
+ * Transformation that uses a local conversion method defined in the ObjectMappie class
+ * or one of its implemented interfaces.
+ */
+data class PropertyMappingViaLocalMethodTransformation(
+    val method: LocalConversionMethod,
+    override val type: IrType
+) : PropertyMappingTransformation
