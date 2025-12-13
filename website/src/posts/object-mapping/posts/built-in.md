@@ -62,7 +62,7 @@ The following UUID mappers are built-in
 The identity mapper named `IdentityMapper` maps any `T` to any `T`.
 
 ## kotlinx-datetime Mappers
-The following kotlinx-datetime mappers can be included via the dependency `tech.mappie.api:module-kotlinx-datetime`.
+The following kotlinx-datetime mappers can be included via the dependency `tech.mappie:module-kotlinx-datetime`.
 
 The following Period mappers are available
 
