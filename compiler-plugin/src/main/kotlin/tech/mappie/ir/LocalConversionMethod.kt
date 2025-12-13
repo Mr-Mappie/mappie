@@ -4,12 +4,8 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.types.typeOrFail
-import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.isTypeParameter
-import tech.mappie.ir.util.arguments
+import tech.mappie.ir.util.erased
 import tech.mappie.ir.util.isSubtypeOf
 
 /**
@@ -75,16 +71,4 @@ class LocalConversionMethodCollection(
     fun isEmpty() = methods.isEmpty()
 
     fun isNotEmpty() = methods.isNotEmpty()
-}
-
-/**
- * Erases type parameters by substituting them with concrete type arguments from the container type.
- * This is used for matching generic conversion methods.
- */
-private fun IrType.erased(container: IrType): IrType {
-    return if (arguments.any { it.typeOrFail.isTypeParameter() }) {
-        classOrFail.owner.typeWith(container.arguments.map { it.typeOrFail })
-    } else {
-        this
-    }
 }

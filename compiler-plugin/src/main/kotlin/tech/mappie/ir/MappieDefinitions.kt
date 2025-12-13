@@ -2,14 +2,10 @@ package tech.mappie.ir
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.types.typeOrFail
-import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.ir.util.superClass
 import tech.mappie.ir.generation.IrMappieGeneratedClass
@@ -41,14 +37,6 @@ class MappieDefinitionCollection(
                 isSubtype && isCorrectDefinitionScope
             }
         }
-
-    private fun IrType.erased(container: IrType): IrType {
-        return if (arguments.any { it.typeOrFail.isTypeParameter() }) {
-            classOrFail.owner.typeWith(container.arguments.map { it.typeOrFail })
-        } else {
-            this
-        }
-    }
 }
 
 class PrioritizationMap private constructor(private val entries: Map<Priority, List<MappieDefinition>>) {
