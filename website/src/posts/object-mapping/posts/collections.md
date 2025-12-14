@@ -4,7 +4,7 @@ summary: "Resolving source- and target properties."
 eleventyNavigation:
   key: Lists & Sets
   parent: Object Mapping
-  order: 10
+  order: 11
 ---
 
 Mappie has extensive support for collection types. 

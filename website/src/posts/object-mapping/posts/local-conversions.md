@@ -78,6 +78,30 @@ object Mapper : ObjectMappie<Input, Output>() {
 }
 ```
 
+## Excluding Methods
+
+If you have a method that matches the conversion method signature but should not be used for automatic conversion,
+annotate it with `@ExcludeFromMapping`:
+```kotlin
+import tech.mappie.api.config.ExcludeFromMapping
+
+object PersonMapper : ObjectMappie<Person, PersonDto>() {
+
+    @ExcludeFromMapping
+    fun validateWrapper(wrapper: StringWrapper): String {
+        require(wrapper.value.isNotBlank())
+        return wrapper.value
+    }
+
+    override fun map(from: Person) = mapping {
+        PersonDto::name fromProperty Person::name transform { it.value }
+    }
+}
+```
+
+This is useful when you have utility methods that happen to take one parameter and return a different type, but should
+not be used as automatic conversion methods.
+
 ## Priority
 
 When multiple conversion options are available, Mappie uses the following priority order:

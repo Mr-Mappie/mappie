@@ -4,7 +4,7 @@ summary: "Built-in Mappers."
 eleventyNavigation:
   key: Built-in Mappers
   parent: Object Mapping
-  order: 12
+  order: 13
 ---
 
 Mappie comes with several safe built-in mappers. These mappers are defined in the package `tech.mappie.api.builtin` and

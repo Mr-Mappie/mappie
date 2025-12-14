@@ -276,4 +276,62 @@ class LocalConversionMethodTest : MappieTestCase() {
             hasNoWarningsOrErrors()
         }
     }
+
+    @Test
+    fun `method annotated with ExcludeFromMapping is not auto-discovered`() {
+        compile {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.api.config.ExcludeFromMapping
+                import tech.mappie.testing.objects.LocalConversionMethodTest.*
+
+                class Mapper : ObjectMappie<Input, Output>() {
+                    @ExcludeFromMapping
+                    fun unwrap(wrapper: StringWrapper): String = wrapper.value
+
+                    override fun map(from: Input) = mapping {
+                        Output::name fromProperty Input::name transform { it.value }
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoWarningsOrErrors()
+
+            val mapper = objectMappie<Input, Output>()
+            assertThat(mapper.map(Input(StringWrapper("test")))).isEqualTo(Output("test"))
+        }
+    }
+
+    @Test
+    fun `interface method annotated with ExcludeFromMapping is not auto-discovered`() {
+        compile {
+            file("Test.kt",
+                """
+                import tech.mappie.api.ObjectMappie
+                import tech.mappie.api.config.ExcludeFromMapping
+                import tech.mappie.testing.objects.LocalConversionMethodTest.*
+
+                interface CommonConverters {
+                    @ExcludeFromMapping
+                    fun unwrap(wrapper: StringWrapper): String = wrapper.value
+                }
+
+                class Mapper : ObjectMappie<Input, Output>(), CommonConverters {
+                    override fun map(from: Input) = mapping {
+                        Output::name fromProperty Input::name transform { it.value }
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isOk()
+            hasNoWarningsOrErrors()
+
+            val mapper = objectMappie<Input, Output>()
+            assertThat(mapper.map(Input(StringWrapper("from-interface")))).isEqualTo(Output("from-interface"))
+        }
+    }
 }

@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.functions
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.name.Name
 import tech.mappie.ir.LocalConversionMethod
 import tech.mappie.ir.LocalConversionMethodCollection
 import tech.mappie.ir.MappieContext
+import tech.mappie.util.CLASS_ID_EXCLUDE_FROM_MAPPING
 import tech.mappie.util.IDENTIFIER_MAP
 import tech.mappie.util.IDENTIFIER_MAP_NULLABLE
 
@@ -28,6 +30,7 @@ private val EXCLUDED_METHOD_NAMES: Set<Name> = setOf(
     Name.identifier("mapNullableSet"),
     Name.identifier("mapArray"),
     Name.identifier("mapping"),
+    Name.identifier("equals"),
 )
 
 /**
@@ -125,6 +128,9 @@ class LocalConversionMethodCollector(private val context: MappieContext) {
         // Must not be a fake override (compiler-generated override)
         if (origin == IrDeclarationOrigin.FAKE_OVERRIDE) return false
 
+        // Must not be annotated with @ExcludeFromMapping
+        if (hasExcludeFromMappingAnnotation()) return false
+
         // Must have exactly one regular parameter
         val param = regularParameter() ?: return false
 
@@ -134,6 +140,14 @@ class LocalConversionMethodCollector(private val context: MappieContext) {
         if (paramClass == returnClass) return false
 
         return true
+    }
+
+    /**
+     * Checks if the function has the @ExcludeFromMapping annotation.
+     */
+    private fun IrSimpleFunction.hasExcludeFromMappingAnnotation(): Boolean {
+        val excludeFromMappingSymbol = context.pluginContext.referenceClass(CLASS_ID_EXCLUDE_FROM_MAPPING)
+        return annotations.any { it.type.classOrFail == excludeFromMappingSymbol }
     }
 
     /**
