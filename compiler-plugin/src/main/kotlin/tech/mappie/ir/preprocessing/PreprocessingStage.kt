@@ -13,8 +13,27 @@ object PreprocessingStage {
     context(context: MappieContext)
     fun execute(input: IrModuleFragment): PreprocessingResult {
         val definitions = DefinitionsCollector(context).collect(input)
-        context.definitions.load(definitions)
-        return PreprocessingResult(definitions.apply {
+
+        // Collect local conversion methods for each internal definition
+        val localConversionCollector = LocalConversionMethodCollector(context)
+        val updatedInternal = definitions.internal.map { definition ->
+            val localConversions = localConversionCollector.collect(definition.clazz)
+            if (localConversions.isNotEmpty()) {
+                definition.copy(localConversions = localConversions)
+            } else {
+                definition
+            }
+        }
+
+        val updatedDefinitions = MappieDefinitionCollection(
+            internal = updatedInternal.toMutableList(),
+            external = definitions.external,
+            generated = definitions.generated,
+        )
+
+        context.definitions.load(updatedDefinitions)
+
+        return PreprocessingResult(updatedDefinitions.apply {
             internal.removeAll { definition ->
                 val body = definition.referenceMapFunction().body
                 body != null && findMappingStatements(body).isEmpty()

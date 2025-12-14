@@ -11,3 +11,6 @@ public annotation class UseStrictPlatformTypeNullabilityValidation(val value: Bo
 
 @Target(AnnotationTarget.CLASS)
 public annotation class UseStrictVisibility(val value: Boolean = true)
+
+@Target(AnnotationTarget.FUNCTION)
+public annotation class ExcludeFromMapping

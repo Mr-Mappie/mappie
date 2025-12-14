@@ -4,7 +4,7 @@ summary: "Compatibility with Java."
 eleventyNavigation:
   key: Java Compatibility
   parent: Object Mapping
-  order: 11
+  order: 12
 ---
 
 Java classes are different from those of Kotlin. The main difference for Mappie is that Java does not have the concept

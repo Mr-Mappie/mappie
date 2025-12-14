@@ -23,6 +23,7 @@ import tech.mappie.ir.referenceMappieClass
 import tech.mappie.ir.resolving.classes.sources.GeneratedViaMapperTransformation
 import tech.mappie.ir.resolving.classes.sources.PropertyMappingTransformTransformation
 import tech.mappie.ir.resolving.classes.sources.PropertyMappingTransformation
+import tech.mappie.ir.resolving.classes.sources.PropertyMappingViaLocalMethodTransformation
 import tech.mappie.ir.resolving.classes.sources.PropertyMappingViaMapperTransformation
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.util.allSuperTypes
@@ -42,6 +43,13 @@ fun IrBuilderWithScope.constructTransformation(
             irCall(referenceFunctionLet()).apply {
                 arguments[0] = source
                 arguments[1] = transformation.function
+            }
+        }
+
+        is PropertyMappingViaLocalMethodTransformation -> {
+            irCall(transformation.method.function.symbol).apply {
+                arguments[0] = irGet(origin.referenceMapFunction().dispatchReceiverParameter!!)
+                arguments[1] = source
             }
         }
 

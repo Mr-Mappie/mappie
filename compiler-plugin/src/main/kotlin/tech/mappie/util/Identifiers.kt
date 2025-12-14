@@ -76,4 +76,6 @@ val CLASS_ID_USE_STRICT_JAVA_NULLABILITY = ClassId(PACKAGE_TECH_MAPPIE_API_CONFI
 
 val CLASS_ID_USE_STRICT_VISIBILITY = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("UseStrictVisibility"))
 
+val CLASS_ID_EXCLUDE_FROM_MAPPING = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("ExcludeFromMapping"))
+
 val CLASS_ID_RECORD = ClassId(FqName("java.lang"), Name.identifier("Record"))

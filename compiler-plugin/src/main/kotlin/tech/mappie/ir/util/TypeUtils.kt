@@ -64,3 +64,15 @@ val IrType.arguments: List<IrTypeArgument>
         is IrSimpleType -> this.arguments
         else -> emptyList()
     }
+
+/**
+ * Erases type parameters by substituting them with concrete type arguments from the container type.
+ * This is used for matching generic mappers and conversion methods.
+ */
+fun IrType.erased(container: IrType): IrType {
+    return if (arguments.any { it.typeOrFail.isTypeParameter() }) {
+        classOrFail.owner.typeWith(container.arguments.map { it.typeOrFail })
+    } else {
+        this
+    }
+}
