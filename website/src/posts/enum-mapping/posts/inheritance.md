@@ -1,7 +1,7 @@
 ---
 title: "Inheriting Mappers"
 summary: "Re-using functionality using inheritance."
-since: 2.2.0
+since: 2.1.0
 eleventyNavigation:
   key: Inheriting Mappers
   parent: Enum Mapping

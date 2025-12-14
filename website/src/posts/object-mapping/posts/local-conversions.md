@@ -1,6 +1,7 @@
 ---
 title: "Local Conversion Methods"
 summary: "Defining reusable type conversion methods inside mappers."
+since: 2.2.0
 eleventyNavigation:
   key: Local Conversion Methods
   parent: Object Mapping

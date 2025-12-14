@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "tbd"
+    title: "v2.3.0-2.2.0"
+    items:
+      - "Added support for local conversion methods. See [Local Conversion Methods](/object-mapping/local-conversion-methods) for more information."
   - date: "2025-12-10"
     title: "v2.2.21-2.1.1"
     items:
