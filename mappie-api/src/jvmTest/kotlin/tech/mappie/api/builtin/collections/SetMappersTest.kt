@@ -28,7 +28,7 @@ class SetMappersTest : MappieTestCase() {
                 }
                 """
             )
-        } satisfies  {
+        } satisfies {
             isOk()
             hasNoWarningsOrErrors()
 
@@ -51,7 +51,7 @@ class SetMappersTest : MappieTestCase() {
                 class Mapper : ObjectMappie<SetInput, SetOutput>()
                 """
             )
-        } satisfies  {
+        } satisfies {
             isOk()
             hasNoWarningsOrErrors()
 
