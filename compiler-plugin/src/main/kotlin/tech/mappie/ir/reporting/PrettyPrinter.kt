@@ -222,7 +222,7 @@ private class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder
             string { if (declaration.isVar) "var " else "val " }
             string { declaration.name.pretty() }
             string { " by " }
-            declaration.delegate.initializer?.let {
+            declaration.delegate?.initializer?.let {
                 string { it.pretty() }
             }
         }

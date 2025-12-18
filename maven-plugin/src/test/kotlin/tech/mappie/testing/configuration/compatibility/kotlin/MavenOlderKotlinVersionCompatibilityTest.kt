@@ -37,10 +37,10 @@ class MavenOlderKotlinVersionCompatibilityTest : MavenTestBase() {
             """.trimIndent()
         )
 
-        val exptectedVersion = BuildConfig.VERSION.split('-').first()
+        val expectedVersion = BuildConfig.VERSION.split('-').first()
 
         assertThat(execute())
         assertThat(logs.lines())
-            .anyMatch { it.matches(Regex("\\[WARNING\\] Mappie unsupported Kotlin version $kotlinVersion, $exptectedVersion was expected. This is highly likely to lead to compilation failure.")) }
+            .anyMatch { it.matches(Regex("\\[WARNING\\] Mappie unsupported Kotlin version $kotlinVersion, $expectedVersion was expected. This is highly likely to lead to compilation failure.")) }
     }
 }
