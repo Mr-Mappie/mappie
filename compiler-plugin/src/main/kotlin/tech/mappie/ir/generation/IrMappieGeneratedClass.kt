@@ -29,82 +29,82 @@ import tech.mappie.ir.analysis.Problem.Companion.exception
 class IrMappieGeneratedClass(override var name: Name) : IrClass() {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
     override val symbol: IrClassSymbol
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
     override var kind: ClassKind
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var modality: Modality
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var isCompanion: Boolean
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var isInner: Boolean
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var isData: Boolean
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var isValue: Boolean
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var isExpect: Boolean
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var isFun: Boolean
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var hasEnumEntries: Boolean
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override val source: SourceElement
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
     override var superTypes: List<IrType>
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var thisReceiver: IrValueParameter?
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var valueClassRepresentation: ValueClassRepresentation<IrSimpleType>?
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var sealedSubclasses: List<IrClassSymbol>
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var startOffset: Int
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var endOffset: Int
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var attributeOwnerId: IrElement
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var origin: IrDeclarationOrigin
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override val factory: IrFactory
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
     override var annotations: List<IrConstructorCall>
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var isExternal: Boolean
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var visibility: DescriptorVisibility
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var typeParameters: List<IrTypeParameter>
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
 
     @UnsafeDuringIrConstructionAPI
     override val declarations: MutableList<IrDeclaration>
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
     override var metadata: MetadataSource?
-        get() = throw exception("Cannot access property of IrMappieGeneratedClass.")
+        get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
 
     companion object {
