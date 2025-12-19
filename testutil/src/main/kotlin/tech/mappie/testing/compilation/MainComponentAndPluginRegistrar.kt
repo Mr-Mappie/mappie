@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 @OptIn(ExperimentalCompilerApi::class)
 class MainComponentAndPluginRegistrar : CompilerPluginRegistrar() {
 
-    @ExperimentalCompilerApi
+    override val pluginId = "mappie-testutil"
+
     override val supportsK2: Boolean  = true
 
     // Handle unset parameters gracefully because this plugin may be accidentally called by other tools that

@@ -26,7 +26,7 @@ abstract class TestBase {
 
     protected open val gradleVersion: String? = null
 
-    protected open val kotlinVersion = "2.2.21"
+    protected open val kotlinVersion = "2.3.0"
 
     private lateinit var settings: SettingsGradleBuilder
 

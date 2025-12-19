@@ -18,6 +18,7 @@ class ExpressionsTest : MappieTestCase() {
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.bodies.ExpressionsTest.*
 
+                @Suppress("USELESS_CAST")
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input): Output =
                         mapping { to::name fromProperty from::name }
