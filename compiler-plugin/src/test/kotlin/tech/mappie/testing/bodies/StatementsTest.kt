@@ -22,7 +22,7 @@ class StatementsTest : MappieTestCase() {
                     override fun map(from: Input): Output {
                         var x = 1
                         y = x + 1
-                        return mapping { to::name fromValue y.toString()!! }
+                        return mapping { to::name fromValue y.toString() }
                     }
                 }
                 """
@@ -129,6 +129,7 @@ class StatementsTest : MappieTestCase() {
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.bodies.StatementsTest.*
 
+                @Suppress("USELESS_ELVIS")
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input): Output {
                         while (null != ("" ?: null)) {

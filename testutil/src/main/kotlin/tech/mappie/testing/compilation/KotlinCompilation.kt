@@ -112,12 +112,6 @@ class KotlinCompilation(workingDir: File) : AbstractKotlinCompilation<K2JVMCompi
 	 */
 	var supportCompatqualCheckerFrameworkAnnotations: String? = null
 
-
-	/** Allow to use '@JvmDefault' annotation for JVM default method support.
-	 * {disable|enable|compatibility}
-	 * */
-	var jvmDefault: String = "disable"
-
 	/** Generate metadata with strict version semantics (see kdoc on Metadata.extraInt) */
 	var strictMetadataVersionSemantics: Boolean = false
 
@@ -267,7 +261,6 @@ class KotlinCompilation(workingDir: File) : AbstractKotlinCompilation<K2JVMCompi
 		if (supportCompatqualCheckerFrameworkAnnotations != null)
 			args.supportCompatqualCheckerFrameworkAnnotations = supportCompatqualCheckerFrameworkAnnotations
 
-		args.jvmDefault = jvmDefault
 		args.strictMetadataVersionSemantics = strictMetadataVersionSemantics
 		args.sanitizeParentheses = sanitizeParentheses
 

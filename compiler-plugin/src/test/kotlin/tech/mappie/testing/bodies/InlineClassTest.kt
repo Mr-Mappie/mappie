@@ -79,6 +79,7 @@ class InlineClassTest : MappieTestCase() {
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.bodies.InlineClassTest.*
 
+                @Suppress("DEPRECATION")
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input): Output {
                         val nested = object {
