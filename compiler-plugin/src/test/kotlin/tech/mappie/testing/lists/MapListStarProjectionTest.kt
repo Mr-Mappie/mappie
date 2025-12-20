@@ -6,9 +6,9 @@ import tech.mappie.testing.MappieTestCase
 
 class MapListStarProjectionTest : MappieTestCase() {
 
-    data class Input(val value: List<String>)
+    data class StringList(val value: List<String>)
 
-    data class Output(val value: List<*>)
+    data class StarList(val value: List<*>)
 
     @Test
     fun `map list to list of star projection should succeed`() {
@@ -18,39 +18,39 @@ class MapListStarProjectionTest : MappieTestCase() {
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.lists.MapListStarProjectionTest.*
 
-                class Mapper : ObjectMappie<Input, Output>()
+                class Mapper : ObjectMappie<StringList, StarList>()
                 """
             )
         } satisfies {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = objectMappie<Input, Output>()
+            val mapper = objectMappie<StringList, StarList>()
 
-            assertThat(mapper.map(Input(listOf("a", "b"))))
-                .isEqualTo(Output(listOf("a", "b")))
+            assertThat(mapper.map(StringList(listOf("a", "b"))))
+                .isEqualTo(StarList(listOf("a", "b")))
         }
     }
 
     @Test
-    fun `map list of star projection to list of string should succeed`() {
+    fun `map list of star projection to list of string should fail`() {
         compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.testing.lists.MapListStarProjectionTest.*
 
-                class Mapper : ObjectMappie<Output, Input>()
+                class Mapper : ObjectMappie<StarList, StringList>()
                 """
             )
         } satisfies {
-            isOk()
-            hasNoWarningsOrErrors()
+            isCompilationError()
+            hasNoWarningsOrErrors() // TODO
 
-            val mapper = objectMappie<Output, Input>()
+            val mapper = objectMappie<StarList, StringList>()
 
-            assertThat(mapper.map(Output(listOf("a", "b"))))
-                .isEqualTo(Input(listOf("a", "b")))
+            assertThat(mapper.map(StarList(listOf("a", "b"))))
+                .isEqualTo(StringList(listOf("a", "b")))
         }
     }
 }
