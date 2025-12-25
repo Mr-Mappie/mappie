@@ -45,12 +45,7 @@ class MapListStarProjectionTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasNoWarningsOrErrors() // TODO
-
-            val mapper = objectMappie<StarList, StringList>()
-
-            assertThat(mapper.map(StarList(listOf("a", "b"))))
-                .isEqualTo(StringList(listOf("a", "b")))
+            hasErrorMessage(4, "No implicit mapping can be generated from Any? to String")
         }
     }
 }

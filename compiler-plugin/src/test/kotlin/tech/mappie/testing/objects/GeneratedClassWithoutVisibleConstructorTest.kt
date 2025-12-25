@@ -25,7 +25,7 @@ class GeneratedClassWithoutVisibleConstructorTest : MappieTestCase() {
         } satisfies {
             isCompilationError()
             hasErrorMessage(4, "No implicit mapping can be generated from LocalDate? to OffsetDateTime?",
-                listOf("Target class Output has no visible constructor")
+                listOf("Target class OffsetDateTime? has no visible constructor")
             )
         }
     }

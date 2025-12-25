@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.parents
@@ -113,7 +114,7 @@ data class InternalMappieDefinition(
     companion object {
         context (context: MappieContext)
         fun of(clazz: IrClass): InternalMappieDefinition {
-            val (source, target) = clazz.mappieSuperClassTypes()
+            val (source, target) = clazz.typeWith().mappieSourceAndTarget()
             val parent = clazz.superClass?.let { parent ->
                 if (allMappieClasses().any { parent.isSubclassOf(it) }) {
                     of(parent)
@@ -141,7 +142,7 @@ class ExternalMappieDefinition(
     companion object {
         context (context: MappieContext)
         fun of(clazz: IrClass): ExternalMappieDefinition {
-            val (source, target) = clazz.mappieSuperClassTypes()
+            val (source, target) = clazz.typeWith().mappieSourceAndTarget()
             return ExternalMappieDefinition(clazz, source, target)
         }
     }

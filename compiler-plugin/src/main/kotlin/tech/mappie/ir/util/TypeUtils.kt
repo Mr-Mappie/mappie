@@ -1,8 +1,6 @@
 package tech.mappie.ir.util
 
 import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
-import org.jetbrains.kotlin.backend.jvm.ir.upperBound
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -29,18 +27,17 @@ fun IrType.isSubtypeOf(other: IrType): Boolean {
 }
 
 context(context: MappieContext)
-fun IrClass.mappieSuperClassTypes(): Pair<IrType, IrType> {
-    val type = allSuperTypes().single { it.classOrNull in allMappieClasses() } as IrSimpleType
-    val source = type.arguments.first().typeOrFail.eraseFrom(this)
-    val target = type.arguments.last().typeOrFail.eraseFrom(this)
-    return source to target
-}
+fun IrType.mappieSourceAndTarget(): Pair<IrType, IrType> {
+    val parent = superTypes()
+        .single { !it.isInterface() }
+        .substitute(classOrFail.owner.typeParameters, arguments.map { it.typeOrFail })
 
-fun IrType.eraseFrom(definition: IrClass): IrType {
-    return if (isTypeParameter()) {
-        upperBound // TODO: substitute type argument from super classes.
+    return if (parent.classOrFail in allMappieClasses()) {
+        parent.let {
+            it.arguments.first().typeOrFail to it.arguments.last().typeOrFail
+        }
     } else {
-        this
+        parent.mappieSourceAndTarget()
     }
 }
 
@@ -69,9 +66,10 @@ val IrType.arguments: List<IrTypeArgument>
  * Erases type parameters by substituting them with concrete type arguments from the container type.
  * This is used for matching generic mappers and conversion methods.
  */
+context(context: MappieContext)
 fun IrType.erased(container: IrType): IrType {
-    return if (arguments.any { it.typeOrFail.isTypeParameter() }) {
-        classOrFail.owner.typeWith(container.arguments.map { it.typeOrFail })
+    return if (arguments.any { it.typeOrNull?.isTypeParameter() ?: false }) {
+        classOrFail.owner.typeWith(container.arguments.map { if (it is IrStarProjection) context.pluginContext.irBuiltIns.anyType.makeNullable() else it.typeOrFail })
     } else {
         this
     }

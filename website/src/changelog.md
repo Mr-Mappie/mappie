@@ -6,6 +6,7 @@ changelog:
     title: "v2.3.0-2.3.0"
     items:
       - "Improved error message when the target class has no visible constructor."
+      - "[#331](https://github.com/Mr-Mappie/mappie/issues/331) Fixed issue with star projections and generic super enum mappers."
   - date: "2025-12-19"
     title: "v2.3.0-2.2.0"
     items:

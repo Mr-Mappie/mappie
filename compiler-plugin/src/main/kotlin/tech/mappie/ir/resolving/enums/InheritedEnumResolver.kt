@@ -39,7 +39,7 @@ class InheritedEnumResolver(
                 .construct(origin)
                 .let { listOf(it) }
         } else {
-            listOf(EnumMappingRequest(origin, definition.source, definition.target, SuperCallEnumMappings()))
+            listOf(EnumMappingRequest(origin, definition.source, definition.target, SuperCallEnumMappings))
         }
     }
 

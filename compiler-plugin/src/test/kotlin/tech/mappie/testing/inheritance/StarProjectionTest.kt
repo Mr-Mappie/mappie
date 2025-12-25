@@ -4,7 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import tech.mappie.testing.MappieTestCase
 
-class StarProjectionTests : MappieTestCase() {
+class StarProjectionTest : MappieTestCase() {
 
     enum class InputEnum { FOO, BAR, FOO_BAR }
     data class InputWrapperSame(val id: String, val elements: Set<InputEnum>)
@@ -32,12 +32,12 @@ class StarProjectionTests : MappieTestCase() {
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.api.EnumMappie
-                import tech.mappie.testing.inheritance.StarProjectionTests.*
+                import tech.mappie.testing.inheritance.StarProjectionTest.*
                 import kotlin.enums.EnumEntries
 
                 class Mapper : ObjectMappie<InputWrapperSame, OutputWrapperSame>()
 
-                object TestEnumMapper: BaseEnumMapper<InputEnum, OutputEnum>(OutputEnum.entries)
+                class TestEnumMapper: BaseEnumMapper<InputEnum, OutputEnum>(OutputEnum.entries)
 
                 abstract class BaseEnumMapper<F: Enum<F>, T: Enum<T>>(
                     private val targetValues: EnumEntries<T>,
@@ -95,7 +95,7 @@ class StarProjectionTests : MappieTestCase() {
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.api.EnumMappie
-                import tech.mappie.testing.inheritance.StarProjectionTests.*
+                import tech.mappie.testing.inheritance.StarProjectionTest.*
                 import kotlin.enums.EnumEntries
 
                 class Mapper : ObjectMappie<InputWrapperDiff, OutputWrapperDiff>() {
@@ -163,7 +163,7 @@ class StarProjectionTests : MappieTestCase() {
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.api.EnumMappie
-                import tech.mappie.testing.inheritance.StarProjectionTests.*
+                import tech.mappie.testing.inheritance.StarProjectionTest.*
                 import kotlin.enums.EnumEntries
 
                 class Mapper : ObjectMappie<InputWrapperDiff, OutputWrapperDiff>() {
@@ -226,13 +226,12 @@ class StarProjectionTests : MappieTestCase() {
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.api.EnumMappie
-                import tech.mappie.testing.inheritance.StarProjectionTests.*
+                import tech.mappie.testing.inheritance.StarProjectionTest.*
                 import kotlin.enums.EnumEntries
-                import kotlinx.collections.immutable.toImmutableSet
 
                 class Mapper : ObjectMappie<InputWrapperDiff, OutputWrapperDiff>() {
                     override fun map(from: InputWrapperDiff): OutputWrapperDiff = mapping {
-                        to::outputElements fromExpression { from.inputElements.map { TestEnumMapper.map(it)}.toImmutableSet() }
+                        to::outputElements fromExpression { from.inputElements.map { TestEnumMapper.map(it) }.toSet() }
                     }
                 }
 
@@ -294,7 +293,7 @@ class StarProjectionTests : MappieTestCase() {
                 "Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.testing.inheritance.StarProjectionTests.*
+                import tech.mappie.testing.inheritance.StarProjectionTest.*
 
                 class Mapper : ObjectMappie<InputWrapperNested, OutputWrapperNested>()
                 """
