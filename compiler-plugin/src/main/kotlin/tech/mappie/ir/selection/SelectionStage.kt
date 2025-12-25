@@ -1,5 +1,6 @@
 package tech.mappie.ir.selection
 
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.analysis.Problem.Companion.error
 import tech.mappie.ir.analysis.RequestValidator
@@ -20,7 +21,7 @@ object SelectionStage {
             val selected = MappingSelector.of(validations).select()
 
             if (selected == null) {
-                definition to MappingRequestProblemDecorator(null, ValidationResult(listOf(error("Target class has no accessible constructor", location(definition.origin.clazz)))))
+                definition to MappingRequestProblemDecorator(null, ValidationResult(listOf(error("Target class ${definition.target.dumpKotlinLike()} has no visible constructor", location(definition.origin.clazz)))))
             } else {
                 definition to MappingRequestProblemDecorator(selected.first, selected.second)
             }

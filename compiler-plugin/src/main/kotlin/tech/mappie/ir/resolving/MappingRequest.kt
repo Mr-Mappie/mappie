@@ -34,7 +34,9 @@ class EnumMappingRequest(
 
 sealed interface Mappings
 
-sealed interface ClassMappings : Mappings
+sealed interface ClassMappings : Mappings {
+    fun isEmpty(): Boolean
+}
 
 class TargetSourcesClassMappings(mappings: Map<ClassMappingTarget, List<ClassMappingSource>>)
     : ClassMappings, Map<ClassMappingTarget, List<ClassMappingSource>> by mappings
@@ -44,4 +46,4 @@ sealed interface EnumMappings : Mappings
 class SourcesTargetEnumMappings(mappings: Map<IrEnumEntry, List<EnumMappingTarget>>)
     : EnumMappings, Map<IrEnumEntry, List<EnumMappingTarget>> by mappings
 
-class SuperCallEnumMappings : EnumMappings
+object SuperCallEnumMappings : EnumMappings

@@ -7,10 +7,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.generation.classes.ClassMappieCodeGenerator
 import tech.mappie.ir.generation.enums.EnumMappieCodeGenerator
-import tech.mappie.ir.generation.enums.SuperCallEnumMappieCodeGenerator
 import tech.mappie.ir.resolving.SourcesTargetEnumMappings
 import tech.mappie.ir.resolving.SuperCallEnumMappings
 import tech.mappie.ir.util.isMappieMapFunction
@@ -21,8 +21,10 @@ class MappieTransformer(private val context: MappieContext, private val model: C
 
     override fun visitClassNew(declaration: IrClass): IrStatement = declaration.apply {
         declaration.declarations.filterIsInstance<IrSimpleFunction>().first { it.isMappieMapFunction() }.apply {
-            transform(MappieTransformer(context, model), null)
-            isFakeOverride = false
+            if (model.mappings !is SuperCallEnumMappings) {
+                transform(MappieTransformer(context, model), null)
+                isFakeOverride = false
+            }
         }
     }
 
@@ -61,7 +63,7 @@ class MappieTransformer(private val context: MappieContext, private val model: C
             is EnumMappieCodeGenerationModel -> {
                 when (model.mappings) {
                     is SourcesTargetEnumMappings -> EnumMappieCodeGenerator(model)
-                    is SuperCallEnumMappings -> SuperCallEnumMappieCodeGenerator(model)
+                    is SuperCallEnumMappings -> panic("Super call should be handled earlier")
                 }
             }
         }

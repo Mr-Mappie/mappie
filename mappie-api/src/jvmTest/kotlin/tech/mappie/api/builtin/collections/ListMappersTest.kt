@@ -4,24 +4,22 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import tech.mappie.testing.MappieTestCase
 
-class SetMappersTest : MappieTestCase() {
+class ListMappersTest : MappieTestCase() {
 
     data class ListInput(val value: List<Int>)
-    data class SetInput(val value: Set<Int>)
-
-    data class SetOutput(val value: Set<Int>)
+    data class ListOutput(val value: List<Int>)
 
     @Test
-    fun `map List to Set explicit should succeed`() {
+    fun `map List to List explicit should succeed`() {
         compile {
             file(
                 "Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
                 import tech.mappie.api.builtin.collections.IterableToSetMapper
-                import tech.mappie.api.builtin.collections.SetMappersTest.*
+                import tech.mappie.api.builtin.collections.ListMappersTest.*
 
-                class Mapper : ObjectMappie<ListInput, SetOutput>() {
+                class Mapper : ObjectMappie<ListInput, ListOutput>() {
                     override fun map(from: ListInput) = mapping {
                         to::value fromProperty from::value
                     }
@@ -32,33 +30,33 @@ class SetMappersTest : MappieTestCase() {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = objectMappie<ListInput, SetOutput>()
+            val mapper = objectMappie<ListInput, ListOutput>()
 
             assertThat(mapper.map(ListInput(listOf(1, 2))))
-                .isEqualTo(SetOutput(setOf(1, 2)))
+                .isEqualTo(ListOutput(listOf(1, 2)))
         }
     }
 
     @Test
-    fun `map Set to Set implicit should succeed`() {
+    fun `map List to List implicit should succeed`() {
         compile {
             file(
                 "Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie
-                import tech.mappie.api.builtin.collections.SetMappersTest.*
+                import tech.mappie.api.builtin.collections.ListMappersTest.*
 
-                class Mapper : ObjectMappie<SetInput, SetOutput>()
+                class Mapper : ObjectMappie<ListInput, ListOutput>()
                 """
             )
         } satisfies {
             isOk()
             hasNoWarningsOrErrors()
 
-            val mapper = objectMappie<SetInput, SetOutput>()
+            val mapper = objectMappie<ListInput, ListOutput>()
 
-            assertThat(mapper.map(SetInput(setOf(1, 2))))
-                .isEqualTo(SetOutput(setOf(1, 2)))
+            assertThat(mapper.map(ListInput(listOf(1, 2))))
+                .isEqualTo(ListOutput(listOf(1, 2)))
         }
     }
 }

@@ -394,8 +394,10 @@ private class PrettyPrinter : IrVisitor<KotlinStringBuilder, KotlinStringBuilder
         return data.apply {
             when {
                 expression.symbol.owner.isPropertyAccessor -> {
-                    element(expression.arguments.first()!!)
-                    dot()
+                    expression.arguments.firstOrNull()?.let {
+                        element(it)
+                        dot()
+                    }
                     string { expression.symbol.owner.name.pretty().split("-").last() }
                 }
                 expression.symbol.owner.name.asString() == "CHECK_NOT_NULL" -> {

@@ -13,7 +13,7 @@ class MapLinkedHashSetTest : MappieTestCase() {
     data class InnerOutput(val value: String)
 
     @Test
-    fun `map LinkedHashSet implicit succeed`() {
+    fun `map LinkedHashSet implicit should fail`() {
         compile {
             file("Test.kt",
                 """
@@ -24,13 +24,8 @@ class MapLinkedHashSetTest : MappieTestCase() {
                 """
             )
         } satisfies {
-            isOk()
-            hasNoWarningsOrErrors()
-
-            val mapper = objectMappie<Input, Output>()
-
-            assertThat(mapper.map(Input(LinkedHashSet(listOf(InnerInput("element"))))))
-                .isEqualTo(Output(LinkedHashSet(emptyList())))
+            isCompilationError()
+            hasErrorMessage(4, "No implicit mapping can be generated from LinkedHashSet<InnerInput> to LinkedHashSet<InnerOutput>")
         }
     }
 

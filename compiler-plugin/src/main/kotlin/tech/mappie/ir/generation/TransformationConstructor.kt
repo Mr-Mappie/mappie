@@ -6,7 +6,9 @@ import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeOrFail
+import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isNullable
@@ -127,7 +129,7 @@ private fun IrBuilderWithScope.instance(origin: InternalMappieDefinition, source
     } else if (clazz.primaryConstructor != null && clazz.primaryConstructor!!.parameters.all { it.type.classOrNull?.owner?.allSuperTypes()?.any { it.classOrNull == referenceMappieClass() } ?: false }) {
         irCallConstructor(clazz.primaryConstructor!!.symbol, emptyList()).apply {
             clazz.primaryConstructor!!.parameters.forEach { parameter ->
-                val sourceType = source.type.arguments.first().typeOrFail
+                val sourceType = source.type.arguments.first().typeOrNull ?: context.pluginContext.irBuiltIns.anyType.makeNullable()
                 val targetType = target.type.arguments.first().typeOrFail
 
                 val inner = context.definitions.matching(sourceType, targetType).single()

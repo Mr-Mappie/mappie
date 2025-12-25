@@ -3,6 +3,7 @@ package tech.mappie.ir.generation.classes
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeOrFail
+import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.analysis.Problem.Companion.error
@@ -61,7 +62,9 @@ class ClassMappieCodeGenerationModelFactory {
         val resolved = ResolvingStage.execute(definition)
         val selected = SelectionStage.execute(resolved.requests)
 
-        selected.mappings.filter { !it.value.validation.isValid }.forEach { (_, request) ->
+        selected.mappings
+            .filter { !it.value.validation.isValid || (it.value.request as? ClassMappingRequest)?.mappings?.isEmpty() ?: false }
+            .forEach { (_, request) ->
             context.logger.log(
                 error(
                     "No implicit mapping can be generated from ${source.dumpKotlinLike()} to ${target.dumpKotlinLike()}",
@@ -105,7 +108,9 @@ class ClassMappieCodeGenerationModelFactory {
                 when (val transformation = source?.transformation) {
                     is PropertyMappingViaMapperTransformation -> {
                         if (transformation.target.arguments.isNotEmpty() && source.source.type.arguments.isNotEmpty()) {
-                            val (source, target) = source.source.arguments.first().typeOrFail to transformation.target.arguments.first().typeOrFail
+                            val source = source.source.arguments.first().typeOrNull ?: context.pluginContext.irBuiltIns.anyType.makeNullable()
+                            val target = transformation.target.arguments.first().typeOrFail
+
                             if (isUnique(source, target) && context.definitions.matching(source, target).firstOrNull() == null) {
                                 generate(origin, source, target)?.also {
                                     acc[it.first] = it.second
