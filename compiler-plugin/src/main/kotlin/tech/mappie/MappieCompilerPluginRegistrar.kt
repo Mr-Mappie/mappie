@@ -2,6 +2,7 @@ package tech.mappie
 
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_STRICTNESS_ENUMS
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_STRICTNESS_VISIBILITY
+import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_CASE_INSENSITIVE_MATCHING
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector.Companion.NONE
 import org.jetbrains.kotlin.cli.common.moduleChunk
@@ -41,6 +42,7 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
             isMappieDebugMode = configuration.isStartedWithDependency(TESTUTIL_REGEX),
             warningsAsErrors = configuration.get(ARGUMENT_WARNINGS_AS_ERRORS, false),
             useDefaultArguments = configuration.get(ARGUMENT_USE_DEFAULT_ARGUMENTS, true),
+            useCaseInsensitiveMatching = configuration.get(ARGUMENT_CASE_INSENSITIVE_MATCHING, false),
             strictEnums = configuration.get(ARGUMENT_STRICTNESS_ENUMS, true),
             strictplatformTypeNullability = configuration.get(ARGUMENT_STRICTNESS_JAVA_NULLABILITY, true),
             strictVisibility = configuration.get(ARGUMENT_STRICTNESS_VISIBILITY, false),

@@ -14,3 +14,6 @@ public annotation class UseStrictVisibility(val value: Boolean = true)
 
 @Target(AnnotationTarget.FUNCTION)
 public annotation class ExcludeFromMapping
+
+@Target(AnnotationTarget.CLASS)
+public annotation class UseCaseInsensitiveMatching(val value: Boolean = true)

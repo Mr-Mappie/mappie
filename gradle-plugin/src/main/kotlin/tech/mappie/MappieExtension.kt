@@ -20,6 +20,11 @@ abstract class MappieExtension(private val project: Project) {
      */
     abstract val useDefaultArguments: Property<Boolean>
 
+    /**
+     * Enable case-insensitive property matching (e.g., user_name matches userName).
+     */
+    abstract val useCaseInsensitiveMatching: Property<Boolean>
+
     internal val strictness: MappieStrictnessExtension get() =
         extensions.getOrPut(MappieStrictnessExtension.NAME) {
             project.objects.newInstance(MappieStrictnessExtension::class.java)

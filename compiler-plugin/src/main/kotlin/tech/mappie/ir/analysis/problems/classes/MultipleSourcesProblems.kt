@@ -3,6 +3,9 @@ package tech.mappie.ir.analysis.problems.classes
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.ClassMappingSource
+import tech.mappie.ir.resolving.classes.sources.FunctionMappingSource
+import tech.mappie.ir.resolving.classes.sources.ImplicitPropertyMappingSource
+import tech.mappie.ir.resolving.classes.sources.ParameterValueMappingSource
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.analysis.Problem.Companion.error
@@ -15,7 +18,26 @@ class MultipleSourcesProblems(
 ) {
 
     fun all(): List<Problem> = mappings.map { (target, sources) ->
-        error("Target ${mapping.target.dumpKotlinLike()}::${target.name.asString()} has ${if (sources.isEmpty()) "no source defined" else "multiple sources defined"}", location(mapping.origin.referenceMapFunction()))
+        val description = when {
+            sources.isEmpty() -> "Target ${mapping.target.dumpKotlinLike()}::${target.name.asString()} has no source defined"
+            else -> {
+                val sourceNames = sources.mapNotNull { source ->
+                    when (source) {
+                        is ImplicitPropertyMappingSource -> source.property.name.asString()
+                        is FunctionMappingSource -> source.function.name.asString()
+                        is ParameterValueMappingSource -> source.parameter.asString()
+                        else -> null
+                    }
+                }.distinct()
+
+                if (sourceNames.isNotEmpty()) {
+                    "Target ${mapping.target.dumpKotlinLike()}::${target.name.asString()} has multiple sources defined: ${sourceNames.joinToString(", ")}"
+                } else {
+                    "Target ${mapping.target.dumpKotlinLike()}::${target.name.asString()} has multiple sources defined"
+                }
+            }
+        }
+        error(description, location(mapping.origin.referenceMapFunction()))
     }
 
     companion object {
