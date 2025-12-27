@@ -33,7 +33,7 @@ mappie {
 ```
 
 ## Using Default Arguments
-By default, default arguments are used in implicit mappings. If this is unwanted, this can be disabled 
+By default, default arguments are used in implicit mappings. If this is unwanted, this can be disabled
 locally adding `@UseDefaultArguments(false)` to the mapper, or globally by adding
 the following configuration tot the Gradle build file
 ```kotlin
@@ -41,3 +41,24 @@ mappie {
     useDefaultArguments = false // Disable using default arguments in implicit mappings
 }
 ```
+
+## Case-Insensitive Property Matching
+By default, Mappie requires exact property name matches. For cases where source and target use different
+naming conventions (e.g., snake_case vs camelCase), case-insensitive matching can be enabled.
+
+When enabled, property names are normalized by converting to lowercase and removing separators (`_` and `-`).
+For example:
+- `user_name` matches `userName`
+- `first-name` matches `firstName`
+- `UserName` matches `username`
+
+This can be enabled locally by adding `@UseCaseInsensitiveMatching` to the mapper, or globally by adding
+the following configuration to the Gradle build file
+```kotlin
+mappie {
+    useCaseInsensitiveMatching = true // Enable case-insensitive property matching
+}
+```
+
+Note: If multiple source properties normalize to the same name as a target property, a compilation error
+will be reported listing the conflicting sources. Use explicit mappings to resolve such conflicts.

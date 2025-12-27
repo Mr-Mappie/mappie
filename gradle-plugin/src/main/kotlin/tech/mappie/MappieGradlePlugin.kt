@@ -27,6 +27,9 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
                     extension.useDefaultArguments.orNull?.apply {
                         add(SubpluginOption("use-default-arguments", this.toString()))
                     }
+                    extension.useCaseInsensitiveMatching.orNull?.apply {
+                        add(SubpluginOption("case-insensitive-matching", this.toString()))
+                    }
                     extension.strictness.enums.orNull?.apply {
                         add(SubpluginOption("strict-enums", this.toString()))
                     }
