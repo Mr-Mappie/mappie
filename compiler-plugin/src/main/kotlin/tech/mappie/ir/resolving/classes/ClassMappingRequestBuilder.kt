@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.ifEmpty
 import tech.mappie.ir.MappieContext
+import tech.mappie.config.options.useCaseInsensitiveMatching
 import tech.mappie.config.options.useDefaultArguments
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.InternalMappieDefinition
@@ -25,6 +26,7 @@ import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.util.isPrimitive
 import tech.mappie.ir.util.isSubtypeOf
 import tech.mappie.ir.util.location
+import tech.mappie.util.normalize
 
 class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
 
@@ -39,13 +41,21 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
     context(context: MappieContext)
     fun construct(origin: InternalMappieDefinition): ClassMappingRequest {
         val useDefaultArguments = useDefaultArguments(origin.referenceMapFunction())
+        val useCaseInsensitiveMatching = useCaseInsensitiveMatching(origin.referenceMapFunction())
+
+        val normalizedImplicit = if (useCaseInsensitiveMatching) buildNormalizedLookup() else null
 
         val mappings = targets.associateWith { target ->
-            explicit(origin, target) ?: implicit(origin, target, useDefaultArguments)
+            explicit(origin, target) ?: implicit(origin, target, useDefaultArguments, normalizedImplicit)
         }
 
         return ClassMappingRequest(origin, sources.map { it.value }, constructor, TargetSourcesClassMappings(mappings))
     }
+
+    private fun buildNormalizedLookup(): Map<String, List<ImplicitClassMappingSource>> =
+        implicit.flatMap { (name, sources) ->
+            sources.map { source -> name.normalize() to source }
+        }.groupBy({ it.first }, { it.second })
 
     context(context: MappieContext)
     private fun explicit(origin: InternalMappieDefinition, target: ClassMappingTarget): List<ExplicitClassMappingSource>? =
@@ -60,27 +70,43 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
         }
 
     context(context: MappieContext)
-    private fun implicit(origin: InternalMappieDefinition, target: ClassMappingTarget, useDefaultArguments: Boolean): List<ImplicitClassMappingSource> =
-        implicit.getOrDefault(target.name, emptyList()).let { sources ->
-            sources.map { source ->
-                if (source.type.isSubtypeOf(target.type)) {
-                    source
-                } else {
-                    when (source) {
-                        is ImplicitPropertyMappingSource -> source.copy(transformation = transformation(origin, source, target))
-                        is FunctionMappingSource -> source.copy(transformation = transformation(origin, source, target))
-                        is ParameterValueMappingSource -> source.copy(transformation = transformation(origin, source, target))
-                        is ParameterDefaultValueMappingSource -> panic("ParameterDefaultValueMappingSource should not occur when resolving a transformation.")
-                    }
-                }
-            }.ifEmpty {
-                if (target is ValueParameterTarget && target.value.hasDefaultValue() && useDefaultArguments) {
-                    listOf(ParameterDefaultValueMappingSource(target.value))
-                } else {
-                    emptyList()
+    private fun implicit(
+        origin: InternalMappieDefinition,
+        target: ClassMappingTarget,
+        useDefaultArguments: Boolean,
+        normalizedImplicit: Map<String, List<ImplicitClassMappingSource>>?
+    ): List<ImplicitClassMappingSource> {
+        // First try exact match
+        val exactMatch = implicit.getOrDefault(target.name, emptyList())
+
+        // If exact match found or case-insensitive matching disabled, use exact match
+        val sources = if (exactMatch.isNotEmpty() || normalizedImplicit == null) {
+            exactMatch
+        } else {
+            // Try case-insensitive matching
+            val normalizedTarget = target.name.normalize()
+            normalizedImplicit.getOrDefault(normalizedTarget, emptyList())
+        }
+
+        return sources.map { source ->
+            if (source.type.isSubtypeOf(target.type)) {
+                source
+            } else {
+                when (source) {
+                    is ImplicitPropertyMappingSource -> source.copy(transformation = transformation(origin, source, target))
+                    is FunctionMappingSource -> source.copy(transformation = transformation(origin, source, target))
+                    is ParameterValueMappingSource -> source.copy(transformation = transformation(origin, source, target))
+                    is ParameterDefaultValueMappingSource -> panic("ParameterDefaultValueMappingSource should not occur when resolving a transformation.")
                 }
             }
+        }.ifEmpty {
+            if (target is ValueParameterTarget && target.value.hasDefaultValue() && useDefaultArguments) {
+                listOf(ParameterDefaultValueMappingSource(target.value))
+            } else {
+                emptyList()
+            }
         }
+    }
 
     context(context: MappieContext)
     private fun transformation(origin: InternalMappieDefinition, source: ClassMappingSource, target: ClassMappingTarget): PropertyMappingTransformation? {
