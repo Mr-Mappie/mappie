@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.utils.ifEmpty
 import tech.mappie.ir.MappieContext
 import tech.mappie.config.options.useDefaultArguments
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
+import tech.mappie.ir.GeneratedMappieDefinition
 import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.PrioritizationMap.Companion.prioritize
 import tech.mappie.ir.resolving.*
@@ -91,7 +92,8 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
         }
 
         // 2. Fall back to existing mapper lookup
-        val mappers = context.definitions.matching(source.type, target.type)
+        val mappers = context.definitions.matching(source.type, target.type, origin)
+
         val prioritized = mappers.prioritize(source.type, target.type)
         val selected = prioritized.select()
 
@@ -109,7 +111,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
                 null
             }
             !source.type.isPrimitive() && !target.type.isPrimitive() -> {
-                GeneratedViaMapperTransformation(source, target, origin.clazz)
+                GeneratedViaMapperTransformation(source, target, origin)
             }
             else -> {
                 null

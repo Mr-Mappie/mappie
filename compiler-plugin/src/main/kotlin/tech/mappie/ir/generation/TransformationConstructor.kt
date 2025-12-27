@@ -66,7 +66,7 @@ fun IrBuilderWithScope.constructTransformation(
             val definitions = context.definitions.matching(
                 transformation.source.type,
                 transformation.target.type,
-                transformation.lookupScope
+                origin
             ).toList()
 
             if (definitions.size == 1) {
