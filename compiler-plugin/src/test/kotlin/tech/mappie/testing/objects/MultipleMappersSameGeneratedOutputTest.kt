@@ -17,7 +17,7 @@ class MultipleMappersSameGeneratedOutputTest : MappieTestCase() {
 
     @Test
     fun `multiple mappers same generated output should succeed`() {
-        compile(verbose = true) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.ObjectMappie

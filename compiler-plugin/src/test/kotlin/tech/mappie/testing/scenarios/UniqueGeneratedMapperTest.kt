@@ -79,14 +79,6 @@ class UniqueGeneratedMapperTest : MappieTestCase() {
         val email: String,
     )
 
-    /*
-        This test fails because the compilation fails.
-        IllegalStateException: Internal Mappie error: Cannot access property of
-         IrMappieGeneratedClass "GetProjectResultInnerAddressToAddressInfoMapper".
-
-        All data classes have the same property names, and their types should be compatible. The error message
-        is confusing.
-    */
     @Test
     fun `two implicit mappie objects`() {
         compile {
@@ -104,10 +96,6 @@ class UniqueGeneratedMapperTest : MappieTestCase() {
         }
     }
 
-    /*
-        This test compiles successfully after defining the object mappies explicitly, which is pretty weird.
-        It only succeeds when defining both mappings, though.
-    */
     @Test
     fun `two mappie objects with helper mappie`() {
         compile {

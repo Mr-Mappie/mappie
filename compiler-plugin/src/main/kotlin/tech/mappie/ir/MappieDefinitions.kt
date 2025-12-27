@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.superClass
+import org.jetbrains.kotlin.name.Name
 import tech.mappie.ir.util.*
 import tech.mappie.util.IDENTIFIER_IDENTITY_MAPPER
 
@@ -38,8 +39,11 @@ class MappieDefinitionCollection(
             }
         }
 
+    fun named(name: Name, origin: InternalMappieDefinition): MappieDefinition =
+        generated.single { it.clazz.name == name && it.isGeneratedWithin(origin) }
+
     private fun MappieDefinition.isGeneratedWithin(origin: InternalMappieDefinition): Boolean =
-        this !is GeneratedMappieDefinition || origin.origin == origin
+        this !is GeneratedMappieDefinition || this.origin == origin
 }
 
 class PrioritizationMap private constructor(private val entries: Map<Priority, List<MappieDefinition>>) {

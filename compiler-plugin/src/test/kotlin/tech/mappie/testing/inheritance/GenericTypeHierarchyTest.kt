@@ -11,7 +11,7 @@ class GenericTypeHierarchyTest : MappieTestCase() {
 
     @Test
     fun `multiple generics in class hierarchy`() {
-        compile(verbose = true) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.EnumMappie
