@@ -25,8 +25,8 @@ class MappieDefinitionCollection(
         generated.addAll(other.generated)
     }
 
-    context (context: MappieContext)
-    fun matching(source: IrType, target: IrType, parent: InternalMappieDefinition? = null): Sequence<MappieDefinition> =
+    context(context: MappieContext)
+    fun matching(origin: InternalMappieDefinition, source: IrType, target: IrType): Sequence<MappieDefinition> =
         if (source == target) {
              sequenceOf(all.first { it.clazz.name == IDENTIFIER_IDENTITY_MAPPER })
         } else {
@@ -34,12 +34,12 @@ class MappieDefinitionCollection(
                 val isSubtype = source.makeNotNull().isSubtypeOf(mappie.source.erased(source))
                         && mappie.target.erased(target.makeNotNull()).isSubtypeOf(target)
 
-                isSubtype && mappie.isGeneratedWithin(parent)
+                isSubtype && mappie.isGeneratedWithin(origin)
             }
         }
 
-    private fun MappieDefinition.isGeneratedWithin(parent: InternalMappieDefinition?): Boolean =
-        parent?.let { this !is GeneratedMappieDefinition || it.origin == origin } ?: true
+    private fun MappieDefinition.isGeneratedWithin(origin: InternalMappieDefinition): Boolean =
+        this !is GeneratedMappieDefinition || origin.origin == origin
 }
 
 class PrioritizationMap private constructor(private val entries: Map<Priority, List<MappieDefinition>>) {

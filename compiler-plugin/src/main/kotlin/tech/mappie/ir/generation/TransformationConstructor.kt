@@ -64,9 +64,9 @@ fun IrBuilderWithScope.constructTransformation(
 
         is GeneratedViaMapperTransformation -> {
             val definitions = context.definitions.matching(
+                origin,
                 transformation.source.type,
-                transformation.target.type,
-                origin
+                transformation.target.type
             ).toList()
 
             if (definitions.size == 1) {
@@ -132,7 +132,7 @@ private fun IrBuilderWithScope.instance(origin: InternalMappieDefinition, source
                 val sourceType = source.type.arguments.first().typeOrNull ?: context.pluginContext.irBuiltIns.anyType.makeNullable()
                 val targetType = target.type.arguments.first().typeOrFail
 
-                val inner = context.definitions.matching(sourceType, targetType).single()
+                val inner = context.definitions.matching(origin, sourceType, targetType).single()
                 // TODO: should collect inner source and target.
                 val instance = instance(origin, source, target, inner.clazz)
                 this.arguments[parameter.indexInParameters] = instance
