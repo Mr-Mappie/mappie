@@ -50,7 +50,7 @@ class InheritedEnumMapperTest : MappieTestCase() {
 
     @Test
     fun `multiple concrete mappers implement two layered abstract mapper`() {
-        compile(verbose = true) {
+        compile {
             file("Test.kt",
                 """
                 import tech.mappie.api.EnumMappie

@@ -7,9 +7,8 @@ import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.ir.util.superClass
-import tech.mappie.ir.generation.IrMappieGeneratedClass
+import org.jetbrains.kotlin.name.Name
 import tech.mappie.ir.util.*
 import tech.mappie.util.IDENTIFIER_IDENTITY_MAPPER
 
@@ -18,7 +17,7 @@ class MappieDefinitionCollection(
     val external: MutableList<ExternalMappieDefinition> = mutableListOf(),
     val generated: MutableList<GeneratedMappieDefinition> = mutableListOf(),
 ) {
-    val definitions: Sequence<MappieDefinition>
+    val all: Sequence<MappieDefinition>
         get() = internal.asSequence() + generated.asSequence() + external.asSequence()
 
     fun load(other: MappieDefinitionCollection) {
@@ -27,17 +26,24 @@ class MappieDefinitionCollection(
         generated.addAll(other.generated)
     }
 
-    context (context: MappieContext)
-    fun matching(source: IrType, target: IrType, parent: IrClass? = null): Sequence<MappieDefinition> =
+    context(context: MappieContext)
+    fun matching(origin: InternalMappieDefinition, source: IrType, target: IrType): Sequence<MappieDefinition> =
         if (source == target) {
-             sequenceOf(context.definitions.definitions.first { it.clazz.name == IDENTIFIER_IDENTITY_MAPPER })
+             sequenceOf(all.first { it.clazz.name == IDENTIFIER_IDENTITY_MAPPER })
         } else {
-            definitions.filter { mappie ->
-                val isSubtype = source.makeNotNull().isSubtypeOf(mappie.source.erased(source)) && mappie.target.erased(target.makeNotNull()).isSubtypeOf(target)
-                val isCorrectDefinitionScope = parent?.let { mappie.clazz !is IrMappieGeneratedClass && (it == mappie.clazz || it in mappie.clazz.parents) } ?: true
-                isSubtype && isCorrectDefinitionScope
+            all.filter { mappie ->
+                val isSubtype = source.makeNotNull().isSubtypeOf(mappie.source.erased(source))
+                        && mappie.target.erased(target.makeNotNull()).isSubtypeOf(target)
+
+                isSubtype && mappie.isGeneratedWithin(origin)
             }
         }
+
+    fun named(name: Name, origin: InternalMappieDefinition): MappieDefinition =
+        generated.single { it.clazz.name == name && it.isGeneratedWithin(origin) }
+
+    private fun MappieDefinition.isGeneratedWithin(origin: InternalMappieDefinition): Boolean =
+        this !is GeneratedMappieDefinition || this.origin == origin
 }
 
 class PrioritizationMap private constructor(private val entries: Map<Priority, List<MappieDefinition>>) {
@@ -79,14 +85,14 @@ class PrioritizationMap private constructor(private val entries: Map<Priority, L
         }
     }
 
-    enum class Priority(value: Int) {
-        EXACT_TYPE_MATCH(1),
-        EXACT_CLASSIFIER_MATCH(2),
-        TARGET_TYPE_MATCH(3),
-        TARGET_CLASSIFIER_MATCH(4),
-        SOURCE_TYPE_MATCH(5),
-        SOURCE_CLASSIFIER_MATCH(6),
-        NO_MATCH(7),
+    enum class Priority() {
+        EXACT_TYPE_MATCH,
+        EXACT_CLASSIFIER_MATCH,
+        TARGET_TYPE_MATCH,
+        TARGET_CLASSIFIER_MATCH,
+        SOURCE_TYPE_MATCH,
+        SOURCE_CLASSIFIER_MATCH,
+        NO_MATCH,
     }
 }
 

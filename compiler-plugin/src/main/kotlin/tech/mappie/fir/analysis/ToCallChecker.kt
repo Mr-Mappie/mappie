@@ -70,5 +70,5 @@ class ToCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
     context (context: CheckerContext)
     private fun FirFunctionCall.getTargetRegularClassSymbol() =
-        dispatchReceiver?.resolvedType?.typeArguments?.last()?.type?.toRegularClassSymbol(context.session)
+        dispatchReceiver?.resolvedType?.typeArguments?.last()?.type?.toRegularClassSymbol()
 }

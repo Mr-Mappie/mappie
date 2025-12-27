@@ -111,7 +111,7 @@ class ClassMappieCodeGenerationModelFactory {
                             val source = source.source.arguments.first().typeOrNull ?: context.pluginContext.irBuiltIns.anyType.makeNullable()
                             val target = transformation.target.arguments.first().typeOrFail
 
-                            if (isUnique(source, target) && context.definitions.matching(source, target).firstOrNull() == null) {
+                            if (isUnique(source, target) && context.definitions.matching(origin, source, target).firstOrNull() == null) {
                                 generate(origin, source, target)?.also {
                                     acc[it.first] = it.second
                                 }

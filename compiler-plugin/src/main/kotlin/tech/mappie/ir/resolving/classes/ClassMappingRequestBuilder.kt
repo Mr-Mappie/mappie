@@ -91,7 +91,8 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
         }
 
         // 2. Fall back to existing mapper lookup
-        val mappers = context.definitions.matching(source.type, target.type)
+        val mappers = context.definitions.matching(origin, source.type, target.type)
+
         val prioritized = mappers.prioritize(source.type, target.type)
         val selected = prioritized.select()
 
@@ -109,7 +110,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
                 null
             }
             !source.type.isPrimitive() && !target.type.isPrimitive() -> {
-                GeneratedViaMapperTransformation(source, target, origin.clazz)
+                GeneratedViaMapperTransformation(source, target)
             }
             else -> {
                 null
