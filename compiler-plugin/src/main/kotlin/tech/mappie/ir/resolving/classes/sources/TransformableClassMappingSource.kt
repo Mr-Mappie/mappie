@@ -62,7 +62,6 @@ data class PropertyMappingViaMapperTransformation(
 data class GeneratedViaMapperTransformation(
     val source: ClassMappingSource,
     val target: ClassMappingTarget,
-    val lookupScope: MappieDefinition?
 ) : PropertyMappingTransformation {
     override val type = target.type
 }
