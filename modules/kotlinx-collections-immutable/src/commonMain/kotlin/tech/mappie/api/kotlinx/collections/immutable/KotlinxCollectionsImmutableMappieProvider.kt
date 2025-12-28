@@ -6,7 +6,9 @@ public class KotlinxCollectionsImmutableMappieProvider : PredefinedMappieProvide
     override val common: List<String> = listOf(
         "tech/mappie/api/kotlinx/collections/immutable/IterableToImmutableListMapper",
         "tech/mappie/api/kotlinx/collections/immutable/IterableToImmutableSetMapper",
+        "tech/mappie/api/kotlinx/collections/immutable/IterableToPersistentListMapper",
+        "tech/mappie/api/kotlinx/collections/immutable/IterableToPersistentSetMapper",
     )
-    
+
     public override val jvm: List<String> = emptyList()
 }
