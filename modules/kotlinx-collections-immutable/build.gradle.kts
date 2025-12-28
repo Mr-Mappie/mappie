@@ -49,6 +49,12 @@ kotlin {
             implementation(projects.mappieApi)
             implementation(libs.kotlinx.collections.immutable)
         }
+
+        jvmTest.dependencies {
+            implementation(projects.testutil)
+            implementation(kotlin("test"))
+            implementation(libs.assertj.core)
+        }
     }
 }
 
