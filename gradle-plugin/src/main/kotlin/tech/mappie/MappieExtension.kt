@@ -6,6 +6,16 @@ import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 
+/**
+ * Mode for normalizing property names during implicit matching.
+ */
+enum class NamingConvention {
+    /** No normalization - property names must match exactly. */
+    STRICT,
+    /** Normalize names by lowercasing and removing separators (_ and -). */
+    LENIENT,
+}
+
 abstract class MappieExtension(private val project: Project) {
 
     private val extensions = mutableMapOf<String, Any>()
@@ -21,9 +31,11 @@ abstract class MappieExtension(private val project: Project) {
     abstract val useDefaultArguments: Property<Boolean>
 
     /**
-     * Enable case-insensitive property matching (e.g., user_name matches userName).
+     * Naming convention for property matching.
+     * STRICT: exact match required (default).
+     * LENIENT: case-insensitive matching, ignores _ and - separators.
      */
-    abstract val useCaseInsensitiveMatching: Property<Boolean>
+    abstract val namingConvention: Property<NamingConvention>
 
     internal val strictness: MappieStrictnessExtension get() =
         extensions.getOrPut(MappieStrictnessExtension.NAME) {

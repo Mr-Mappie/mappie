@@ -44,9 +44,9 @@ class MappieCommandLineProcessor : CommandLineProcessor {
             required = false,
         ),
         CliOption(
-            optionName = OPTION_CASE_INSENSITIVE_MATCHING,
-            valueDescription = "boolean",
-            description = "allow case-insensitive property matching (e.g., user_name matches userName)",
+            optionName = OPTION_NAMING_CONVENTION,
+            valueDescription = "STRICT|LENIENT",
+            description = "naming convention for property matching: STRICT (exact match) or LENIENT (case-insensitive, ignores _ and -)",
             required = false,
         ),
         CliOption(
@@ -70,7 +70,7 @@ class MappieCommandLineProcessor : CommandLineProcessor {
             OPTION_STRICTNESS_ENUMS -> configuration.put(ARGUMENT_STRICTNESS_ENUMS, value.toBooleanStrict())
             OPTION_STRICTNESS_JAVA_NULLABILITY -> configuration.put(ARGUMENT_STRICTNESS_JAVA_NULLABILITY, value.toBooleanStrict())
             OPTION_STRICTNESS_VISIBILITY -> configuration.put(ARGUMENT_STRICTNESS_VISIBILITY, value.toBooleanStrict())
-            OPTION_CASE_INSENSITIVE_MATCHING -> configuration.put(ARGUMENT_CASE_INSENSITIVE_MATCHING, value.toBooleanStrict())
+            OPTION_NAMING_CONVENTION -> configuration.put(ARGUMENT_NAMING_CONVENTION, value)
             OPTION_REPORT_ENABLED -> configuration.put(ARGUMENT_REPORT_ENABLED, value.toBooleanStrict())
             OPTION_REPORT_DIR -> configuration.put(ARGUMENT_REPORT_DIR, value)
             else -> throw IllegalArgumentException("Unknown option ${option.optionName}")
@@ -83,7 +83,7 @@ class MappieCommandLineProcessor : CommandLineProcessor {
         const val OPTION_STRICTNESS_ENUMS = "strict-enums"
         const val OPTION_STRICTNESS_JAVA_NULLABILITY = "strict-platform-type-nullability"
         const val OPTION_STRICTNESS_VISIBILITY = "strict-visibility"
-        const val OPTION_CASE_INSENSITIVE_MATCHING = "case-insensitive-matching"
+        const val OPTION_NAMING_CONVENTION = "naming-convention"
         const val OPTION_REPORT_ENABLED = "report-enabled"
         const val OPTION_REPORT_DIR = "report-dir"
 
@@ -92,7 +92,7 @@ class MappieCommandLineProcessor : CommandLineProcessor {
         val ARGUMENT_STRICTNESS_ENUMS = CompilerConfigurationKey<Boolean>(OPTION_STRICTNESS_ENUMS)
         val ARGUMENT_STRICTNESS_JAVA_NULLABILITY = CompilerConfigurationKey<Boolean>(OPTION_STRICTNESS_JAVA_NULLABILITY)
         val ARGUMENT_STRICTNESS_VISIBILITY = CompilerConfigurationKey<Boolean>(OPTION_STRICTNESS_VISIBILITY)
-        val ARGUMENT_CASE_INSENSITIVE_MATCHING = CompilerConfigurationKey<Boolean>(OPTION_CASE_INSENSITIVE_MATCHING)
+        val ARGUMENT_NAMING_CONVENTION = CompilerConfigurationKey<String>(OPTION_NAMING_CONVENTION)
         val ARGUMENT_REPORT_ENABLED = CompilerConfigurationKey<Boolean>(OPTION_REPORT_ENABLED)
         val ARGUMENT_REPORT_DIR = CompilerConfigurationKey<String>(OPTION_REPORT_DIR)
     }

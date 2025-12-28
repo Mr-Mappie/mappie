@@ -4,10 +4,10 @@ import tech.mappie.testing.TestBase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class CaseInsensitiveMatchingTest : TestBase() {
+class NamingConventionTest : TestBase() {
 
     @Test
-    fun `case-insensitive matching is disabled by default`() {
+    fun `naming convention is STRICT by default`() {
         kotlin("src/main/kotlin/Mapper.kt",
             """
             import tech.mappie.api.ObjectMappie
@@ -26,11 +26,11 @@ class CaseInsensitiveMatchingTest : TestBase() {
     }
 
     @Test
-    fun `case-insensitive matching works when enabled globally`() {
+    fun `LENIENT naming convention works when enabled globally`() {
         kotlin("build.gradle.kts",
             """
             mappie {
-                useCaseInsensitiveMatching = true
+                namingConvention = tech.mappie.NamingConvention.LENIENT
             }
             """.trimIndent()
         )
@@ -50,16 +50,17 @@ class CaseInsensitiveMatchingTest : TestBase() {
     }
 
     @Test
-    fun `case-insensitive matching works with annotation`() {
+    fun `LENIENT naming convention works with annotation`() {
         kotlin("src/main/kotlin/Mapper.kt",
             """
             import tech.mappie.api.ObjectMappie
-            import tech.mappie.api.config.UseCaseInsensitiveMatching
+            import tech.mappie.api.config.UseNamingConvention
+            import tech.mappie.api.config.NamingConvention
 
             data class Input(val user_name: String)
             data class Output(val userName: String)
 
-            @UseCaseInsensitiveMatching
+            @UseNamingConvention(NamingConvention.LENIENT)
             object Mapper : ObjectMappie<Input, Output>()
             """.trimIndent()
         )
@@ -68,11 +69,11 @@ class CaseInsensitiveMatchingTest : TestBase() {
     }
 
     @Test
-    fun `case-insensitive matching can be disabled locally when enabled globally`() {
+    fun `STRICT can override LENIENT globally`() {
         kotlin("build.gradle.kts",
             """
             mappie {
-                useCaseInsensitiveMatching = true
+                namingConvention = tech.mappie.NamingConvention.LENIENT
             }
             """.trimIndent()
         )
@@ -80,12 +81,13 @@ class CaseInsensitiveMatchingTest : TestBase() {
         kotlin("src/main/kotlin/Mapper.kt",
             """
             import tech.mappie.api.ObjectMappie
-            import tech.mappie.api.config.UseCaseInsensitiveMatching
+            import tech.mappie.api.config.UseNamingConvention
+            import tech.mappie.api.config.NamingConvention
 
             data class Input(val user_name: String)
             data class Output(val userName: String)
 
-            @UseCaseInsensitiveMatching(false)
+            @UseNamingConvention(NamingConvention.STRICT)
             object Mapper : ObjectMappie<Input, Output>()
             """.trimIndent()
         )
@@ -97,11 +99,11 @@ class CaseInsensitiveMatchingTest : TestBase() {
     }
 
     @Test
-    fun `exact match takes priority over case-insensitive match`() {
+    fun `exact match takes priority over LENIENT match`() {
         kotlin("build.gradle.kts",
             """
             mappie {
-                useCaseInsensitiveMatching = true
+                namingConvention = tech.mappie.NamingConvention.LENIENT
             }
             """.trimIndent()
         )
@@ -125,7 +127,7 @@ class CaseInsensitiveMatchingTest : TestBase() {
         kotlin("build.gradle.kts",
             """
             mappie {
-                useCaseInsensitiveMatching = true
+                namingConvention = tech.mappie.NamingConvention.LENIENT
             }
             """.trimIndent()
         )
@@ -148,11 +150,11 @@ class CaseInsensitiveMatchingTest : TestBase() {
     }
 
     @Test
-    fun `kebab-case to camelCase matching works`() {
+    fun `kebab-case to camelCase matching works with LENIENT`() {
         kotlin("build.gradle.kts",
             """
             mappie {
-                useCaseInsensitiveMatching = true
+                namingConvention = tech.mappie.NamingConvention.LENIENT
             }
             """.trimIndent()
         )

@@ -1,13 +1,14 @@
 package tech.mappie.config
 
-import java.util.*
+import tech.mappie.config.options.NamingConventionMode
+import java.util.EnumSet
 
 data class MappieConfiguration(
     val modules: EnumSet<MappieModule>,
     val isMappieDebugMode: Boolean,
     val warningsAsErrors: Boolean,
     val useDefaultArguments: Boolean,
-    val useCaseInsensitiveMatching: Boolean,
+    val namingConvention: NamingConventionMode,
     val strictEnums: Boolean,
     val strictplatformTypeNullability: Boolean,
     val strictVisibility: Boolean,

@@ -7,7 +7,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.ifEmpty
 import tech.mappie.ir.MappieContext
-import tech.mappie.config.options.useCaseInsensitiveMatching
+import tech.mappie.config.options.NamingConventionMode
+import tech.mappie.config.options.namingConvention
 import tech.mappie.config.options.useDefaultArguments
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.InternalMappieDefinition
@@ -41,9 +42,9 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
     context(context: MappieContext)
     fun construct(origin: InternalMappieDefinition): ClassMappingRequest {
         val useDefaultArguments = useDefaultArguments(origin.referenceMapFunction())
-        val useCaseInsensitiveMatching = useCaseInsensitiveMatching(origin.referenceMapFunction())
+        val namingConvention = namingConvention(origin.referenceMapFunction())
 
-        val normalizedImplicit = if (useCaseInsensitiveMatching) buildNormalizedLookup() else null
+        val normalizedImplicit = if (namingConvention == NamingConventionMode.LENIENT) buildNormalizedLookup() else null
 
         val mappings = targets.associateWith { target ->
             explicit(origin, target) ?: implicit(origin, target, useDefaultArguments, normalizedImplicit)

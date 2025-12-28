@@ -78,6 +78,8 @@ val CLASS_ID_USE_STRICT_VISIBILITY = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Nam
 
 val CLASS_ID_EXCLUDE_FROM_MAPPING = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("ExcludeFromMapping"))
 
-val CLASS_ID_USE_CASE_INSENSITIVE_MATCHING = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("UseCaseInsensitiveMatching"))
+val CLASS_ID_USE_NAMING_CONVENTION = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("UseNamingConvention"))
+
+val CLASS_ID_NAMING_CONVENTION = ClassId(PACKAGE_TECH_MAPPIE_API_CONFIG, Name.identifier("NamingConvention"))
 
 val CLASS_ID_RECORD = ClassId(FqName("java.lang"), Name.identifier("Record"))
