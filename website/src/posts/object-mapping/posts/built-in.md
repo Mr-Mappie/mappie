@@ -131,6 +131,6 @@ The following kotlinx-collections-immutable mappers can be included via the depe
 |----------------|---------------|----------------|--------------|---------------|----------|
 | ImmutableList  | -             |                |              |               |          |
 | PersistentList |               | -              |              |               |          |
-| PersistentSet  |               |                | -            |               |          |
+| ImmutableSet   |               |                | -            |               |          |
 | PersistentSet  |               |                |              | -             |          |
 | Iterable       | X             | X              | X            | X             | -        |
