@@ -16,6 +16,7 @@ maven-core = { module = "org.apache.maven:maven-core", version = "3.9.11" }
 maven-invoker = { module = "org.apache.maven.shared:maven-invoker", version = "3.3.0" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version = "6.0.1" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.7.1" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version = "0.4.0" }
 
 [plugins]
 gradle-plugin-publish = { id = "com.gradle.plugin-publish", version = "2.0.0" }
