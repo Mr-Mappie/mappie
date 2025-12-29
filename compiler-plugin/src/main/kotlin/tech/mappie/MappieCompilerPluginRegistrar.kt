@@ -23,7 +23,7 @@ import tech.mappie.config.MappieModule
 import tech.mappie.config.options.NamingConventionMode
 import tech.mappie.fir.MappieFirRegistrar
 import tech.mappie.ir.MappieIrRegistrar
-import java.util.*
+import java.util.EnumSet
 
 @OptIn(ExperimentalCompilerApi::class)
 class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
@@ -77,6 +77,5 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
         private val TESTUTIL_REGEX = Regex(
             ".*testutil-${BuildConfig.VERSION}.*\\.jar"
         )
-
     }
 }
