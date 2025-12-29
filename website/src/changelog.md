@@ -6,6 +6,7 @@ changelog:
     title: "v2.3.0-2.3.0"
     items:
       - "Improved error message when the target class has no visible constructor."
+      - "Added support for lenient property matching. See [Naming Convention](/object-mapping/object-mapping-configuration/#naming-convention) for more information"
       - "[#323](https://github.com/Mr-Mappie/mappie/issues/323) Added support for kotlinx-collections-immutable mappers, which can be imported via a separate dependency."
       - "[#331](https://github.com/Mr-Mappie/mappie/issues/331) Fixed issue with star projections and generic super enum mappers."
       - "[#334](https://github.com/Mr-Mappie/mappie/issues/334) Fixed compilation error when deeply nested generated mappers get re-used."
