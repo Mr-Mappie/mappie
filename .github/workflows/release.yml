@@ -11,6 +11,10 @@ on:
         type: boolean
         default: true
         description: Release module kotlinx-datetime project
+      release_module_kotlinx_collections_immutable:
+        type: boolean
+        default: true
+        description: Release module kotlinx-collections-immutable project
       release_compiler_plugin:
         type: boolean
         default: true
@@ -31,7 +35,7 @@ jobs:
       contents: write
     runs-on: macos-latest
     env:
-      PUBLISH_MAVEN: ${{inputs.release_api || inputs.release_module_kotlinx_datetime || inputs.release_compiler_plugin || inputs.release_maven_plugin }}
+      PUBLISH_MAVEN: ${{inputs.release_api || inputs.release_module_kotlinx_datetime || inputs.release_module_kotlinx_collections_immutable || inputs.release_compiler_plugin || inputs.release_maven_plugin }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -59,6 +63,7 @@ jobs:
         env:
           RELEASE_API: ${{ inputs.release_api }}
           RELEASE_MODULE_KOTLINX_DATETIME: ${{ inputs.release_module_kotlinx_datetime }}
+          RELEASE_MODULE_KOTLINX_COLLECTIONS_IMMUTABLE: ${{ inputs.release_module_kotlinx_collections_immutable }}
           RELEASE_COMPILER_PLUGIN: ${{ inputs.release_compiler_plugin }}
           RELEASE_MAVEN_PLUGIN: ${{ inputs.release_maven_plugin }}
 
