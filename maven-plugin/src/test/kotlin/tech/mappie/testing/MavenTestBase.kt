@@ -16,7 +16,7 @@ import java.io.ByteArrayInputStream
 import java.io.File
 import java.lang.System.lineSeparator
 
-enum class MappieModules { MODULE_KOTLINX_DATETIME }
+enum class MappieModules { MODULE_KOTLINX_DATETIME, MODULE_KOTLINX_COLLECTIONS_IMMUTABLE }
 
 abstract class MavenTestBase {
 
@@ -142,6 +142,24 @@ abstract class MavenTestBase {
                     } else {
                     ""
                     } 
+                    }
+                    ${
+                    if (MappieModules.MODULE_KOTLINX_COLLECTIONS_IMMUTABLE in modules) {
+                        """
+                        <dependency>
+                            <groupId>tech.mappie</groupId>
+                            <artifactId>module-kotlinx-collections-immutable-jvm</artifactId>
+                            <version>$VERSION</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.jetbrains.kotlinx</groupId>
+                            <artifactId>kotlinx-collections-immutable-jvm</artifactId>
+                            <version>RELEASE</version>
+                        </dependency>
+                        """
+                    } else {
+                        ""
+                    }
                     }
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>

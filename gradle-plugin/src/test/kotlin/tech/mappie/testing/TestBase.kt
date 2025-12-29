@@ -11,7 +11,7 @@ import java.io.File
 
 enum class KotlinPlatform { JVM, MULTIPLATFORM }
 
-enum class MappieModules { MODULE_KOTLINX_DATETIME }
+enum class MappieModules { MODULE_KOTLINX_DATETIME, MODULE_KOTLINX_COLLECTIONS_IMMUTABLE }
 
 abstract class TestBase {
 
@@ -89,16 +89,22 @@ abstract class TestBase {
             }
 
             dependencies {
-                ${
-                    if (MappieModules.MODULE_KOTLINX_DATETIME in modules) {
-                        """
-                        implementation("tech.mappie:module-kotlinx-datetime:$VERSION")
-                        implementation("org.jetbrains.kotlinx:kotlinx-datetime:+")
-                        """.trimIndent()
-                    } else {
-                        ""
-                    }
-                }
+                ${if (MappieModules.MODULE_KOTLINX_DATETIME in modules) {
+                """
+                implementation("tech.mappie:module-kotlinx-datetime:$VERSION")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:+")
+                """.trimIndent()
+                } else {
+                ""
+                }}
+                ${if (MappieModules.MODULE_KOTLINX_COLLECTIONS_IMMUTABLE in modules) {
+                """
+                implementation("tech.mappie:module-kotlinx-collections-immutable:$VERSION")
+                implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:+")
+                """.trimIndent()
+                } else {
+                ""
+                }}
 
                 testImplementation(kotlin("test"))
             }
@@ -143,17 +149,27 @@ abstract class TestBase {
                     commonTest.dependencies {
                         implementation(kotlin("test"))
                     }
-                    ${
-                    if (MappieModules.MODULE_KOTLINX_DATETIME in modules) {
+                    
+                    commonMain.dependencies {
+                    ${if (MappieModules.MODULE_KOTLINX_COLLECTIONS_IMMUTABLE in modules) {
                     """
-                    jvmMain.dependencies {
-                        implementation("tech.mappie:module-kotlinx-datetime:$VERSION")
-                        implementation("org.jetbrains.kotlinx:kotlinx-datetime:+")
-                    }
+                        implementation("tech.mappie:module-kotlinx-collections-immutable:$VERSION")
+                        implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:+")
                     """.trimIndent()
                     } else {
-                        ""
+                    ""
                     }}
+                    }
+                    jvmMain.dependencies {
+                    ${if (MappieModules.MODULE_KOTLINX_DATETIME in modules) {
+                    """
+                        implementation("tech.mappie:module-kotlinx-datetime:$VERSION")
+                        implementation("org.jetbrains.kotlinx:kotlinx-datetime:+")
+                    """.trimIndent()
+                    } else {
+                    ""
+                    }}
+                    }
                 }
             }
             """.trimIndent()
