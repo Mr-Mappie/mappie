@@ -27,6 +27,9 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
                     extension.useDefaultArguments.orNull?.apply {
                         add(SubpluginOption("use-default-arguments", this.toString()))
                     }
+                    extension.namingConvention.orNull?.apply {
+                        add(SubpluginOption("naming-convention", this.name))
+                    }
                     extension.strictness.enums.orNull?.apply {
                         add(SubpluginOption("strict-enums", this.toString()))
                     }
