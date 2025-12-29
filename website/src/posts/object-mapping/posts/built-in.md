@@ -122,3 +122,15 @@ The following timezone mappers are available
 | UtcOffset           |          |                     | -         |          | X            |
 | *ZoneId*            | X        | -                   |           | -        |              |
 | *ZoneOffset*        | X        | X                   | X         |          | -            |
+
+## kotlinx-collections-immutable Mappers
+The following kotlinx-collections-immutable mappers can be included via the dependency
+`tech.mappie:module-kotlinx-collections-immutable`.
+
+|                | ImmutableList | PersistentList | ImmutableSet | PersistentSet | Iterable |
+|----------------|---------------|----------------|--------------|---------------|----------|
+| ImmutableList  | -             |                |              |               |          |
+| PersistentList |               | -              |              |               |          |
+| PersistentSet  |               |                | -            |               |          |
+| PersistentSet  |               |                |              | -             |          |
+| Iterable       | X             | X              | X            | X             | -        |
