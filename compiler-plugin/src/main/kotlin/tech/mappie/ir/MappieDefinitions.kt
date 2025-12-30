@@ -33,7 +33,7 @@ class MappieDefinitionCollection(
         } else {
             all.filter { mappie ->
                 val isSubtype = source.makeNotNull().isSubtypeOf(mappie.source.erased(source))
-                        && mappie.target.erased(target.makeNotNull()).isSubtypeOf(target)
+                        && mappie.target.makeNotNull().erased(target).isSubtypeOf(target)
 
                 isSubtype && mappie.isGeneratedWithin(origin)
             }
