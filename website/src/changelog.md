@@ -2,7 +2,7 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-  - date: "tbd"
+  - date: "2025-12-30"
     title: "v2.3.0-2.3.0"
     items:
       - "Improved error message when the target class has no visible constructor."
