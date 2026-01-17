@@ -3,6 +3,10 @@ title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
   - date: "2025-12-30"
+    title: "v2.3.0-2.3.1"
+    items:
+      - "[#345](https://github.com/Mr-Mappie/mappie/issues/345) Fixed issue with generated Java class mappers."
+  - date: "2025-12-30"
     title: "v2.3.0-2.3.0"
     items:
       - "Improved error message when the target class has no visible constructor."
