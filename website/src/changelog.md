@@ -2,7 +2,7 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-  - date: "2025-12-30"
+  - date: "2026-01-17"
     title: "v2.3.0-2.3.1"
     items:
       - "[#345](https://github.com/Mr-Mappie/mappie/issues/345) Fixed issue with generated Java class mappers."
