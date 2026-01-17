@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.Name.identifier
@@ -116,6 +117,7 @@ class IrMappieGeneratedClass(override var name: Name) : IrClass() {
 
         private fun IrType.identifier() =
             makeNotNull()
+                .removeAnnotations()
                 .dumpKotlinLike()
                 .replace("<", "")
                 .replace(">", "")
