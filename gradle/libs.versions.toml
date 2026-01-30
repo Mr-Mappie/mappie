@@ -10,12 +10,12 @@ kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin" }
 dokka-gradle-plugin = { module = "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin", version = "2.1.0" }
 classgraph = { module = "io.github.classgraph:classgraph", version = "4.8.184" }
 okio = { module = "com.squareup.okio:okio", version = "3.16.4" }
-assertj-core = { module = "org.assertj:assertj-core", version = "3.27.6" }
+assertj-core = { module = "org.assertj:assertj-core", version = "3.27.7" }
 maven-project = { module = "org.apache.maven:maven-project", version = "2.2.1" }
 maven-core = { module = "org.apache.maven:maven-core", version = "3.9.12" }
 maven-invoker = { module = "org.apache.maven.shared:maven-invoker", version = "3.3.0" }
-junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version = "6.0.1" }
-kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.7.1" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version = "6.0.2" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.7.1-0.6.x-compat" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version = "0.4.0" }
 
 [plugins]
