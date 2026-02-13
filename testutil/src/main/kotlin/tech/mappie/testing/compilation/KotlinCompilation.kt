@@ -27,12 +27,6 @@ import java.io.*
 import java.net.URLClassLoader
 import java.nio.file.Path
 
-data class PluginOption(val pluginId: PluginId, val optionName: OptionName, val optionValue: OptionValue)
-
-typealias PluginId = String
-typealias OptionName = String
-typealias OptionValue = String
-
 fun compile(directory: File, verbose: Boolean = false, dsl: CompilationDsl.() -> Unit): CompilationAssertionDsl =
 	KotlinCompilation(directory).let {
 		it.verbose = verbose

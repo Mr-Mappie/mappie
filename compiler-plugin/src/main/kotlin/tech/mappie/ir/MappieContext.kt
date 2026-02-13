@@ -11,15 +11,17 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name.identifier
+import tech.mappie.MappiePersistentState
 import tech.mappie.config.MappieConfiguration
 import tech.mappie.util.*
 
-interface MappieContext {
-    val pluginContext: IrPluginContext
-    val logger: MappieLogger
-    val configuration: MappieConfiguration
-    val definitions: MappieDefinitionCollection
-}
+data class MappieContext(
+    val pluginContext: IrPluginContext,
+    val logger: MappieLogger,
+    val configuration: MappieConfiguration,
+    val definitions: MappieDefinitionCollection,
+    val persistent: MappiePersistentState,
+)
 
 context(context: MappieContext)
 fun allMappieClasses(): Set<IrClassSymbol> = setOf(

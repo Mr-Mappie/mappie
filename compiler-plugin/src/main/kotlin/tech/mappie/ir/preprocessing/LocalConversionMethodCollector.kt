@@ -41,12 +41,13 @@ private val EXCLUDED_METHOD_NAMES: Set<Name> = setOf(
  * - Return a type different from the parameter type
  * - Are not mappie's own methods (map, mapNullable, etc.)
  */
-class LocalConversionMethodCollector(private val context: MappieContext) {
+object LocalConversionMethodCollector {
 
     /**
      * Collects all local conversion methods from the given ObjectMappie class.
      * This includes methods defined in the class itself and default methods from implemented interfaces.
      */
+    context (context: MappieContext)
     fun collect(clazz: IrClass): LocalConversionMethodCollection {
         val collection = LocalConversionMethodCollection()
 
@@ -88,6 +89,7 @@ class LocalConversionMethodCollector(private val context: MappieContext) {
      * Collects conversion methods from an interface.
      * Only methods with default implementations (body != null) are collected.
      */
+    context (context: MappieContext)
     private fun collectFromInterface(interfaceClass: IrClass): List<LocalConversionMethod> {
         val methods = mutableListOf<LocalConversionMethod>()
 
@@ -121,6 +123,7 @@ class LocalConversionMethodCollector(private val context: MappieContext) {
      * Checks if a function is a valid conversion method.
      * A conversion method has exactly one regular parameter and returns a different type.
      */
+    context (context: MappieContext)
     private fun IrSimpleFunction.isConversionMethod(): Boolean {
         // Must not be excluded method
         if (name in EXCLUDED_METHOD_NAMES) return false
@@ -145,6 +148,7 @@ class LocalConversionMethodCollector(private val context: MappieContext) {
     /**
      * Checks if the function has the @ExcludeFromMapping annotation.
      */
+    context (context: MappieContext)
     private fun IrSimpleFunction.hasExcludeFromMappingAnnotation(): Boolean {
         val excludeFromMappingSymbol = context.pluginContext.referenceClass(CLASS_ID_EXCLUDE_FROM_MAPPING)
         return annotations.any { it.type.classOrFail == excludeFromMappingSymbol }

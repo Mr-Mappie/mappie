@@ -9,22 +9,25 @@ import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.name.Name
+import tech.mappie.ir.preprocessing.LocalConversionMethodCollector
 import tech.mappie.ir.util.*
 import tech.mappie.util.IDENTIFIER_IDENTITY_MAPPER
 
-class MappieDefinitionCollection(
-    val internal: MutableList<InternalMappieDefinition> = mutableListOf(),
-    val external: MutableList<ExternalMappieDefinition> = mutableListOf(),
-    val generated: MutableList<GeneratedMappieDefinition> = mutableListOf(),
+data class MappieDefinitionCollection(
+    val internal: List<InternalMappieDefinition>,
+    val internalNonGenerated: List<InternalMappieDefinition>,
+    val internalIncremental: List<InternalMappieDefinition>,
+    val external: List<ExternalMappieDefinition>,
+    val generated: MutableList<GeneratedMappieDefinition>,
 ) {
     val all: Sequence<MappieDefinition>
-        get() = internal.asSequence() + generated.asSequence() + external.asSequence()
+        get() = internal.asSequence() +
+                internalNonGenerated.asSequence() +
+                internalIncremental.asSequence() +
+                generated.asSequence() +
+                external.asSequence()
 
-    fun load(other: MappieDefinitionCollection) {
-        internal.addAll(other.internal)
-        external.addAll(other.external)
-        generated.addAll(other.generated)
-    }
+    constructor() : this(listOf(), listOf(), listOf(), listOf(), mutableListOf())
 
     context(context: MappieContext)
     fun matching(origin: InternalMappieDefinition, source: IrType, target: IrType): Sequence<MappieDefinition> =
@@ -85,7 +88,7 @@ class PrioritizationMap private constructor(private val entries: Map<Priority, L
         }
     }
 
-    enum class Priority() {
+    enum class Priority {
         EXACT_TYPE_MATCH,
         EXACT_CLASSIFIER_MATCH,
         TARGET_TYPE_MATCH,
@@ -110,7 +113,7 @@ data class InternalMappieDefinition(
     override val source: IrType,
     override val target: IrType,
     val parent: MappieDefinition?,
-    val localConversions: LocalConversionMethodCollection = LocalConversionMethodCollection(),
+    val localConversions: LocalConversionMethodCollection,
 ) : MappieDefinition {
 
     override val origin = this
@@ -129,7 +132,13 @@ data class InternalMappieDefinition(
                 }
             }
 
-            return InternalMappieDefinition(clazz, source, target, parent)
+            return InternalMappieDefinition(
+                clazz,
+                source,
+                target,
+                parent,
+                LocalConversionMethodCollector.collect(clazz),
+            )
         }
     }
 }

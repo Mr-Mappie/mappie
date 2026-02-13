@@ -47,6 +47,8 @@ abstract class TestBase {
         text("gradle.properties",
             """
             org.gradle.jvmargs=-Xmx1024M -XX:MaxMetaspaceSize=512m
+            # For debugging purposes uncomment
+            # kotlin.compiler.execution.strategy=in-process
             """.trimIndent()
         )
 
@@ -56,6 +58,10 @@ abstract class TestBase {
             KotlinPlatform.JVM -> jvm()
             KotlinPlatform.MULTIPLATFORM -> multiplatform()
         }
+    }
+
+    protected fun delete(file: String) {
+        directory.resolve(file).delete()
     }
 
     protected fun text(file: String, code: String) {

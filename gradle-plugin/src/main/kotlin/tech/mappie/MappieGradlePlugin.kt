@@ -45,6 +45,7 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
                     extension.reporting.directory.convention(layout.buildDirectory.map { it.dir("mappie") }).get().apply {
                         add(SubpluginOption("report-dir", asFile.absolutePath))
                     }
+                    add(SubpluginOption("output-dir", kotlinCompilation.project.buildDir.absolutePath))
                 }
             }
         }
