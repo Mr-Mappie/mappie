@@ -13,6 +13,7 @@ data class MappieConfiguration(
     val strictplatformTypeNullability: Boolean,
     val strictVisibility: Boolean,
     val reportEnabled: Boolean,
+    val outputDir: String?,
     val reportDir: String,
 )
 

@@ -99,9 +99,6 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
     /** Additional string arguments to the Kotlin compiler */
     var kotlincArguments: List<String> = emptyList()
 
-    /** Options to be passed to compiler plugins: -P plugin:<pluginId>:<optionName>=<value>*/
-    var pluginOptions: List<PluginOption> = emptyList()
-
     /**
      * Path to the kotlin-stdlib-common.jar
      * If none is given, it will be searched for in the host
@@ -158,26 +155,6 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
         args.commonSources = sourcesWithPath.filter { it.isCommonSource }.map { it.path.toString() }.toTypedArray()
 
         configuration(args)
-
-//        /**
-//         * It's not possible to pass dynamic [CommandLineProcessor] instances directly to the [K2JSCompiler]
-//         * because the compiler discovers them on the classpath through a service locator, so we need to apply
-//         * the same trick as with [ComponentRegistrar]s: We put our own static [CommandLineProcessor] on the
-//         * classpath which in turn calls the user's dynamic [CommandLineProcessor] instances.
-//         */
-//        MainCommandLineProcessor.threadLocalParameters.set(
-//            MainCommandLineProcessor.ThreadLocalParameters(commandLineProcessors)
-//        )
-
-//        /**
-//         * Our [MainCommandLineProcessor] only has access to the CLI options that belong to its own plugin ID.
-//         * So in order to be able to access CLI options that are meant for other [CommandLineProcessor]s we
-//         * wrap these CLI options, send them to our own plugin ID and later unwrap them again to forward them
-//         * to the correct [CommandLineProcessor].
-//         */
-//        args.pluginOptions = pluginOptions.map { (pluginId, optionName, optionValue) ->
-//            "plugin:${MainCommandLineProcessor.pluginId}:${MainCommandLineProcessor.encodeForeignOptionName(pluginId, optionName)}=$optionValue"
-//        }.toTypedArray()
 
         /* Parse extra CLI arguments that are given as strings so users can specify arguments that are not yet
         implemented here as well-typed properties. */

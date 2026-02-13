@@ -4,11 +4,12 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import tech.mappie.MappieContextFileManager
 import tech.mappie.config.MappieConfiguration
 import tech.mappie.ir.generation.CodeGenerationStage
 import tech.mappie.ir.generation.CodeModelGenerationStage
+import tech.mappie.ir.postprocessing.PostProcessingStage
 import tech.mappie.ir.preprocessing.PreprocessingStage
-import tech.mappie.ir.reporting.ReportGenerator
 import tech.mappie.ir.resolving.ResolvingStage
 import tech.mappie.ir.selection.SelectionStage
 
@@ -20,8 +21,11 @@ class MappieIrRegistrar(
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         val context = createMappieContext(pluginContext)
 
-        context(context) {
-            val preprocessed = PreprocessingStage.execute(moduleFragment)
+        val preprocessed = context(context) {
+            PreprocessingStage.execute(moduleFragment)
+        }
+
+        context(context.copy(definitions = preprocessed.definitions)) {
             val resolved = ResolvingStage.execute(preprocessed.definitions.internal)
             val selected = SelectionStage.execute(resolved.requests)
 
@@ -35,14 +39,16 @@ class MappieIrRegistrar(
 
             val models = CodeModelGenerationStage.execute(requests)
             val generated = CodeGenerationStage.execute(models.models)
-            ReportGenerator().report(generated.classes)
+
+            PostProcessingStage.execute(generated)
         }
     }
 
-    private fun createMappieContext(pluginContext: IrPluginContext) = object : MappieContext {
-        override val pluginContext = pluginContext
-        override val configuration = this@MappieIrRegistrar.configuration
-        override val logger = MappieLogger(configuration.warningsAsErrors, messageCollector)
-        override val definitions = MappieDefinitionCollection()
-    }
+    private fun createMappieContext(pluginContext: IrPluginContext) = MappieContext(
+        pluginContext,
+        MappieLogger(configuration.warningsAsErrors, messageCollector),
+        this@MappieIrRegistrar.configuration,
+        MappieDefinitionCollection(),
+        MappieContextFileManager.load(configuration.outputDir),
+    )
 }

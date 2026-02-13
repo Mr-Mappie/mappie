@@ -23,11 +23,17 @@ class MappieMavenPlugin : KotlinMavenPluginExtension {
         logger.debug("Loaded Maven plugin " + javaClass.name)
         return listOf(
             PluginOption(
-                "mappie",
-                "mappie",
+                PLUGIN_ID,
+                PLUGIN_ID,
                 "report-dir",
                 File(project.basedir, "target/mappie").absolutePath,
-            )
+            ),
+            PluginOption(
+                PLUGIN_ID,
+                PLUGIN_ID,
+                "output-dir",
+                File(project.basedir, "target").absolutePath,
+            ),
         )
     }
 

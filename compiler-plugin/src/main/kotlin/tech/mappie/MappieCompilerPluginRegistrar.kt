@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.konan.file.File
+import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_OUTPUT_DIR
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_REPORT_DIR
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_REPORT_ENABLED
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_STRICTNESS_JAVA_NULLABILITY
@@ -50,6 +51,7 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
             strictplatformTypeNullability = configuration.get(ARGUMENT_STRICTNESS_JAVA_NULLABILITY, true),
             strictVisibility = configuration.get(ARGUMENT_STRICTNESS_VISIBILITY, false),
             reportEnabled = configuration.get(ARGUMENT_REPORT_ENABLED, false),
+            outputDir = configuration.get(ARGUMENT_OUTPUT_DIR, "").ifEmpty { null },
             reportDir = configuration.get(ARGUMENT_REPORT_DIR, ""),
         )
         FirExtensionRegistrarAdapter.registerExtension(MappieFirRegistrar())
