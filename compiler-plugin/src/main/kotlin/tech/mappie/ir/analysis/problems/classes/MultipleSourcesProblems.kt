@@ -23,8 +23,8 @@ class MultipleSourcesProblems(
             else -> {
                 val sourceNames = sources.mapNotNull { source ->
                     when (source) {
-                        is ImplicitPropertyMappingSource -> source.property.name.asString()
-                        is FunctionMappingSource -> source.function.name.asString()
+                        is ImplicitPropertyMappingSource -> "${source.parameter}::${source.property.name}"
+                        is FunctionMappingSource -> "${source.parameter}::${source.function.name} "
                         is ParameterValueMappingSource -> source.parameter.asString()
                         else -> null
                     }

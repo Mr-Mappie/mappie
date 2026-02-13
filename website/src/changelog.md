@@ -6,6 +6,7 @@ changelog:
     title: "v2.3.10-2.4.0"
     items:
       - "[#240](https://github.com/Mr-Mappie/mappie/issues/240) Fixed issue with incremental compilation where mappers cannot be found."
+      - "[#355](https://github.com/Mr-Mappie/mappie/issues/355) Improved source selection priority. When a source is an exact subtype, this is not prioritized over a source which can be transformed."
   - date: "2026-02-07"
     title: "v2.3.10-2.3.1"
     items:

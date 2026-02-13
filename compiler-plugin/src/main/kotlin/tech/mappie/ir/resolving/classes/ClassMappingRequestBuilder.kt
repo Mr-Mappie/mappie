@@ -89,24 +89,27 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
             normalizedImplicit.getOrDefault(normalizedTarget, emptyList())
         }
 
-        return sources.map { source ->
-            if (source.type.isSubtypeOf(target.type)) {
-                source
-            } else {
-                when (source) {
-                    is ImplicitPropertyMappingSource -> source.copy(transformation = transformation(origin, source, target))
-                    is FunctionMappingSource -> source.copy(transformation = transformation(origin, source, target))
-                    is ParameterValueMappingSource -> source.copy(transformation = transformation(origin, source, target))
-                    is ParameterDefaultValueMappingSource -> panic("ParameterDefaultValueMappingSource should not occur when resolving a transformation.")
+        // Try exact subtype
+        return sources.filter { it.type.isSubtypeOf(target.type) }
+            // Try current sources with transformation
+            .ifEmpty {
+                sources.map { source ->
+                    when (source) {
+                        is ImplicitPropertyMappingSource -> source.copy(transformation = transformation(origin, source, target))
+                        is FunctionMappingSource -> source.copy(transformation = transformation(origin, source, target))
+                        is ParameterValueMappingSource -> source.copy(transformation = transformation(origin, source, target))
+                        is ParameterDefaultValueMappingSource -> panic("ParameterDefaultValueMappingSource should not occur when resolving a transformation.")
+                    }
                 }
             }
-        }.ifEmpty {
-            if (target is ValueParameterTarget && target.value.hasDefaultValue() && useDefaultArguments) {
-                listOf(ParameterDefaultValueMappingSource(target.value))
-            } else {
-                emptyList()
+            // Try default arguments, if there are no sources
+            .ifEmpty {
+                if (target is ValueParameterTarget && target.value.hasDefaultValue() && useDefaultArguments) {
+                    listOf(ParameterDefaultValueMappingSource(target.value))
+                } else {
+                    emptyList()
+                }
             }
-        }
     }
 
     context(context: MappieContext)
