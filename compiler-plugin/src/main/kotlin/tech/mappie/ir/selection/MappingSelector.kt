@@ -53,18 +53,5 @@ interface MappingSelector {
                 options.keys.all { it is EnumMappingRequest } -> EnumMappingSelector(options as Map<EnumMappingRequest, ValidationResult>)
                 else -> panic("Not all mappings are of the same type")
             }
-
-//        @Suppress("UNCHECKED_CAST")
-//        fun of(options: List<MappingRequest>): MappingSelector =
-//            when {
-//                options.all { it is ClassMappingRequest } -> ConstructorMappingSelector(
-//                    options.associateWith { MappingValidation.valid() } as Map<ClassMappingRequest, MappingValidation>
-//                )
-//                options.all { it is EnumMappingRequest } -> EnumMappingSelector(
-//                    options.associateWith { MappingValidation.valid() } as Map<EnumMappingRequest, MappingValidation>
-//                )
-//                else -> panic("Not all mappings are of the same type")
-//            }
-
     }
 }
