@@ -200,6 +200,10 @@ abstract class MavenTestBase {
             .`as` { logs.lines().joinToString(separator = lineSeparator()) }
             .isNotEqualTo(0)
 
+    protected fun delete(file: String) {
+        directory.resolve(file).delete()
+    }
+
     protected fun xml(file: String, @Language("XML") code: String): File {
         return directory.resolve(file).apply {
             appendText(code)
