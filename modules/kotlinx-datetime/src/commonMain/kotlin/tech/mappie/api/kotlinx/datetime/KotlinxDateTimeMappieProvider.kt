@@ -10,8 +10,6 @@ public class KotlinxDateTimeMappieProvider : PredefinedMappieProvider {
         "tech/mappie/api/kotlinx/datetime/JavaPeriodToKotlinDatePeriodMapper",
         "tech/mappie/api/kotlinx/datetime/KotlinDayOfWeekToJavaDayOfWeekMapper",
         "tech/mappie/api/kotlinx/datetime/JavaDayOfWeekToKotlinDayOfWeekMapper",
-        "tech/mappie/api/kotlinx/datetime/KotlinInstantToJavaInstantMapper",
-        "tech/mappie/api/kotlinx/datetime/JavaInstantToKotlinInstantMapper",
         "tech/mappie/api/kotlinx/datetime/KotlinLocalDateToJavaLocalDateMapper",
         "tech/mappie/api/kotlinx/datetime/JavaLocalDateToKotlinLocalDateMapper",
         "tech/mappie/api/kotlinx/datetime/KotlinLocalDateTimeToJavaLocalDateTimeMapper",

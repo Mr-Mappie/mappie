@@ -28,6 +28,8 @@ public class BuiltInMappieProvider : PredefinedMappieProvider {
     public override val jvm: List<String> = listOf(
         "tech/mappie/api/builtin/LocalDateTimeToLocalTimeMapper",
         "tech/mappie/api/builtin/LocalDateTimeToLocalDateMapper",
+        "tech/mappie/api/builtin/JavaInstantToKotlinInstantMapper",
+        "tech/mappie/api/builtin/KotlinInstantToJavaInstantMapper",
         "tech/mappie/api/builtin/ByteToBigIntegerMapper",
         "tech/mappie/api/builtin/ByteToBigDecimalMapper",
         "tech/mappie/api/builtin/ShortToBigIntegerMapper",

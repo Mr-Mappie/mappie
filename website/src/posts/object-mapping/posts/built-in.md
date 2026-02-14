@@ -44,12 +44,19 @@ The following char mappers are built-in
 |--------|------|--------|
 | Char   | -    | X      | 
 
-## LocalDate Mappers
-The following numeric mappers are built-in
+## Temporal Mappers
+The following LocalDate(Time) mappers are built-in
 
 |                 | *LocalDateTime* | *LocalTime* | *LocalDate* |
 |-----------------|-----------------|-------------|-------------|
 | *LocalDateTime* | -               |  X          | X           |
+
+The following Instant mappers are built-in
+
+|           | Instant | *Instant* |
+|-----------|---------|-----------|
+| Instant   | -       | X         |
+| *Instant* | X       | -         |
 
 ## UUID Mappers
 The following UUID mappers are built-in
@@ -77,13 +84,6 @@ The following DayOfWeek mappers are available
 |-------------|-----------|-------------|
 | DayOfWeek   | -         | X           |
 | *DayOfWeek* | X         | -           |
-
-The following Instant mappers are available
-
-|           | Instant | *Instant* |
-|-----------|---------|-----------|
-| Instant   | -       | X         |
-| *Instant* | X       | -         |
 
 The following LocalDate mappers are available
 
