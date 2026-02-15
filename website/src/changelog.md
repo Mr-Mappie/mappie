@@ -2,7 +2,7 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-  - date: "tbd"
+  - date: "2026-02-15"
     title: "v2.3.10-2.4.0"
     items:
       - "[#240](https://github.com/Mr-Mappie/mappie/issues/240) Fixed issue with incremental compilation where mappers cannot be found."
