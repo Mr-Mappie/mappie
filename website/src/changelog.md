@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "tbd"
+    title: "v2.3.10-2.5.0"
+    items:
+      - "Improved error message on some null pointer exceptions."
   - date: "2026-02-15"
     title: "v2.3.10-2.4.0"
     items:

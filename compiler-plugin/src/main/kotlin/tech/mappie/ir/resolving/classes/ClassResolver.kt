@@ -10,12 +10,15 @@ import tech.mappie.ir.resolving.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import tech.mappie.exceptions.MappieProblemException.Companion.fail
 import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.resolving.classes.targets.MappieTargetsCollector
+import tech.mappie.ir.util.location
 
 class ClassResolver(
     private val sources: List<Pair<Name, IrType>>,
@@ -25,7 +28,7 @@ class ClassResolver(
     context(context: MappieContext)
     override fun resolve(origin: InternalMappieDefinition, function: IrFunction?): List<ClassMappingRequest> {
         val mapping = findMappingStatements(function?.body).singleOrNull()
-        return constructors(mapping).map { constructor ->
+        return constructors(origin, mapping).map { constructor ->
             ClassMappingRequestBuilder(constructor)
                 .targets(MappieTargetsCollector(target, function, constructor).collect())
                 .sources(sources)
@@ -39,9 +42,11 @@ class ClassResolver(
         }.toList()
     }
 
-    private fun constructors(call: IrCall?): Sequence<IrConstructor> {
+    context(context: MappieContext)
+    private fun constructors(origin: InternalMappieDefinition, call: IrCall?): Sequence<IrConstructor> {
         return if (call == null || call.arguments.size == 2) {
-            target.getClass()!!.constructors
+            target.getClass()?.constructors
+                ?: context.fail("Failed to resolve class for target type ${target.dumpKotlinLike()}", location(origin.clazz))
         } else {
             sequenceOf(((call.arguments[1] as IrFunctionReference).symbol as IrConstructorSymbol).owner)
         }

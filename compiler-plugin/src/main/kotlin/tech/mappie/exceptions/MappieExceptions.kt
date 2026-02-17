@@ -19,6 +19,11 @@ class MappieProblemException private constructor(message: String, val origin: Ir
     : Exception(message) {
 
     companion object {
+        fun MappieContext.fail(message: String, location: CompilerMessageLocation?): Nothing {
+            logger.log(Problem.error(message, location))
+            throw MappieProblemException(message)
+        }
+
         fun MappieContext.fail(message: String, element: IrElement, location: CompilerMessageLocation?): Nothing {
             logger.log(Problem.error(message, location))
             throw MappieProblemException(message, element)
