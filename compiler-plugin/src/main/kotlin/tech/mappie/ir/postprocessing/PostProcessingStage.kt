@@ -14,7 +14,7 @@ object PostProcessingStage {
             val definitions = internal + internalNonGenerated + internalIncremental
 
             definitions.map { it.origin.clazz }.toSet().map {
-                (it.packageFqName?.asString() ?: "") + it.name.asString()
+                (it.packageFqName?.asString()?.let { "$it." } ?: "") + it.name.asString()
             }
         }
 

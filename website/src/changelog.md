@@ -2,6 +2,11 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "2026-02-23"
+    title: "v2.3.10-2.4.1"
+    items:
+      - "Fixed issue with incremental compilation."
+      - "Improved `NullPointerException` to explicit error message."
   - date: "2026-02-15"
     title: "v2.3.10-2.4.0"
     items:
