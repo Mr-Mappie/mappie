@@ -1,5 +1,6 @@
 package tech.mappie
 
+import org.jetbrains.kotlin.name.ClassId
 import org.w3c.dom.Element
 import tech.mappie.ir.MappieContext
 import java.io.File
@@ -43,7 +44,7 @@ object MappieContextFileManager {
         val incrementalElement: Element = docFactory.createElement("incremental")
         for (item in incremental) {
             val itemElement = docFactory.createElement("item")
-            itemElement.textContent = item
+            itemElement.textContent = item.asString()
             incrementalElement.appendChild(itemElement)
         }
         rootElement.appendChild(incrementalElement)
@@ -68,12 +69,12 @@ object MappieContextFileManager {
         for (i in 0 until incrementalNodes.length) {
             list += incrementalNodes.item(i).textContent
         }
-        return MappiePersistentState(list)
+        return MappiePersistentState(list.map(ClassId::fromString))
     }
 }
 
 data class MappiePersistentState(
-    val incremental: List<String>
+    val incremental: List<ClassId>
 ) {
     constructor() : this(emptyList())
 }

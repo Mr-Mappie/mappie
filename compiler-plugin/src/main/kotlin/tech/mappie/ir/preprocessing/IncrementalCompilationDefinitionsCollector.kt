@@ -9,8 +9,8 @@ class IncrementalCompilationDefinitionsCollector {
 
     context(context: MappieContext)
     fun collect(internal: List<InternalMappieDefinition>): List<InternalMappieDefinition> {
-        return context.persistent.incremental.mapNotNull { className ->
-            context.pluginContext.referenceClass(ClassId.fromString(className))?.owner?.let { clazz ->
+        return context.persistent.incremental.mapNotNull { classId ->
+            context.pluginContext.referenceClass(classId)?.owner?.let { clazz ->
                 if (internal.none { it.clazz.classId == clazz.classId }) {
                     clazz.let {
                         InternalMappieDefinition.of(clazz)

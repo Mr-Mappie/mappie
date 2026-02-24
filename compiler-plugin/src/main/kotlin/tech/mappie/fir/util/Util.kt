@@ -51,6 +51,10 @@ context(context: CheckerContext)
 internal fun FirClassSymbol<*>.isSubclassOfAnMappie() =
     isSubclassOfAnObjectMappie() || isSubclassOfEnumMappie()
 
+fun FirJavaMethod.isJavaSetter(): Boolean {
+    return name.asString().startsWith("set") && valueParameters.size == 1
+}
+
 fun FirJavaMethod.isJavaGetter(): Boolean {
     return name.asString().startsWith("get") && valueParameters.isEmpty()
 }

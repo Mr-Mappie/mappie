@@ -71,7 +71,7 @@ class IncrementalCompilationTest : TestBase() {
 
         runner.withArguments("build").build()
     }
-    
+
     @Test
     fun `incremental compilation with all mappers updated`() {
         kotlin(
@@ -144,6 +144,83 @@ class IncrementalCompilationTest : TestBase() {
         kotlin(
             "src/main/kotlin/RangeMappers.kt",
             """
+            import tech.mappie.api.ObjectMappie
+            
+            object RangeToResource : ObjectMappie<Range, RangeResource>()
+            object ResourceToRange : ObjectMappie<RangeResource, Range>() {
+                private val x = 1
+            }
+            """.trimIndent()
+        )
+
+        runner.withArguments("build").build()
+    }
+
+    @Test
+    fun `incremental compilation with a single mapper in a package updated`() {
+        kotlin(
+            "src/main/kotlin/Range.kt",
+            """
+            package test
+
+            import java.time.LocalDate
+            
+            class Range(
+                val startsOn: LocalDate,
+                val endsOn: LocalDate,
+            )
+            """.trimIndent()
+        )
+
+        kotlin(
+            "src/main/kotlin/RangeResource.kt",
+            """
+            package test
+
+            class RangeResource(
+                val startsOn: Long,
+                val endsOn: Long,
+            )
+            """.trimIndent()
+        )
+
+        kotlin("src/main/kotlin/TimeMappers.kt",
+            """
+            package test
+
+            import tech.mappie.api.ObjectMappie
+            import java.time.LocalDate
+            
+            object LocalToLocalDateTimeMapper : ObjectMappie<LocalDate, Long>() {
+                override fun map(from: LocalDate): Long = from.toEpochDay()
+            }
+            
+            object LocalDateTimeToLocalDateMapper : ObjectMappie<Long, LocalDate>() {
+                override fun map(from: Long): LocalDate = LocalDate.ofEpochDay(from)
+            }
+            """.trimIndent())
+
+        kotlin(
+            "src/main/kotlin/RangeMappers.kt",
+            """
+            package test
+
+            import tech.mappie.api.ObjectMappie
+            
+            object RangeToResource : ObjectMappie<Range, RangeResource>()
+            object ResourceToRange : ObjectMappie<RangeResource, Range>()
+            """.trimIndent()
+        )
+
+        runner.withArguments("build").build()
+
+        delete("src/main/kotlin/RangeMappers.kt")
+
+        kotlin(
+            "src/main/kotlin/RangeMappers.kt",
+            """
+            package test
+
             import tech.mappie.api.ObjectMappie
             
             object RangeToResource : ObjectMappie<Range, RangeResource>()

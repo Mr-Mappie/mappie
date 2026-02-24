@@ -2,10 +2,12 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-  - date: "tbd"
-    title: "v2.3.10-2.5.0"
+  - date: "2026-02-24"
+    title: "v2.3.10-2.4.1"
     items:
-      - "Improved error message on some null pointer exceptions."
+      - "Fixed issue with incremental compilation."
+      - "Fixes issue where a non-existing Java setter used in `to("name")` call is not reported on."
+      - "Improved `NullPointerException` to explicit error message."
   - date: "2026-02-15"
     title: "v2.3.10-2.4.0"
     items:
