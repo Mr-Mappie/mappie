@@ -21,7 +21,7 @@ import tech.mappie.fir.analysis.MappieErrors.NON_CONSTANT_ERROR
 import tech.mappie.fir.analysis.MappieErrors.UNKNOWN_NAME_ERROR
 import tech.mappie.fir.util.toConstant
 import tech.mappie.fir.util.hasCallableId
-import tech.mappie.fir.util.isJavaGetter
+import tech.mappie.fir.util.isJavaSetter
 import tech.mappie.util.CLASS_ID_MULTIPLE_OBJECT_MAPPING_CONSTRUCTOR
 import tech.mappie.util.CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR
 import tech.mappie.util.IDENTIFIER_TO
@@ -46,8 +46,8 @@ class ToCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
                                 is FirConstructor -> addAll((declaration.fir as FirConstructor).valueParameters.map { it.name })
                                 is FirJavaMethod -> {
                                     val method = declaration.fir as FirJavaMethod
-                                    if (method.isJavaGetter()) {
-                                        val name = method.name.asString().removePrefix("get").replaceFirstChar { it.lowercaseChar() }
+                                    if (method.isJavaSetter()) {
+                                        val name = method.name.asString().removePrefix("set").replaceFirstChar { it.lowercaseChar() }
                                         add(Name.identifier(name))
                                     }
                                 }
