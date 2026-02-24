@@ -6,7 +6,7 @@ changelog:
     title: "v2.3.10-2.4.1"
     items:
       - "Fixed issue with incremental compilation."
-      - "Fixes issue where a non-existing Java setter used in `to("name")` call is not reported on."
+      - "Fixes issue where a non-existing Java setter used in `to` call is not reported on."
       - "Improved `NullPointerException` to explicit error message."
   - date: "2026-02-15"
     title: "v2.3.10-2.4.0"
