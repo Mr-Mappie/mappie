@@ -2,7 +2,7 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-  - date: "2026-02-23"
+  - date: "2026-02-24"
     title: "v2.3.10-2.4.1"
     items:
       - "Fixed issue with incremental compilation."
