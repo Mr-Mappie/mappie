@@ -73,7 +73,7 @@ public class EnumMappingConstructor<FROM, TO> {
      *
      * For example
      * ```kotlin
-     * IllegalStateException() fromEnumEntry Color.ORANGE
+     * IllegalStateException() thrownByEnumEntry Color.ORANGE
      * ```
      * will generate an explicit mapping, mapping `Colour.ORANGE` to an [IllegalStateException] being thrown.
      */
