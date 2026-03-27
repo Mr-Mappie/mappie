@@ -22,7 +22,10 @@ class MapListDifferentTypeTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(4, "No implicit mapping can be generated from String to Int")
+            hasErrorMessage(4,
+                "No implicit mapping can be generated from String to Int",
+                listOf("Target class Int has no visible constructor")
+            )
         }
     }
 
