@@ -54,7 +54,7 @@ class ViaResolvingTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(
+            hasSingleErrorMessage(
                 6,
                 "Multiple mappers resolved to be used in an implicit via"
             )
@@ -77,7 +77,7 @@ class ViaResolvingTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(
+            hasSingleErrorMessage(
                 4,
                 "Multiple mappers resolved to be used in an implicit via"
             )

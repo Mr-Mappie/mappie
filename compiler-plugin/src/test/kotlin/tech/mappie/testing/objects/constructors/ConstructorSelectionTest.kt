@@ -52,8 +52,8 @@ class ConstructorSelectionTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(5, "Target Output::first has no source defined")
-            hasErrorMessage(5, "Target Output::second has no source defined")
+            hasSingleErrorMessage(5, "Target Output::first has no source defined")
+            hasSingleErrorMessage(5, "Target Output::second has no source defined")
         }
     }
 
@@ -156,7 +156,7 @@ class ConstructorSelectionTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(6, "Multiple calls of the function 'mapping' while only one is allowed")
+            hasSingleErrorMessage(6, "Multiple calls of the function 'mapping' while only one is allowed")
         }
     }
 }

@@ -23,7 +23,7 @@ class ObjectMappieInsteadOfEnumMappieTest : MappieTestCase() {
             )
         } satisfies  {
             isCompilationError()
-            hasErrorMessage(4, "Target type Output cannot be an enum class", listOf("Override EnumMappie instead of ObjectMappie"))
+            hasSingleErrorMessage(4, "Target type Output cannot be an enum class", listOf("Override EnumMappie instead of ObjectMappie"))
         }
     }
 
@@ -59,7 +59,7 @@ class ObjectMappieInsteadOfEnumMappieTest : MappieTestCase() {
             )
         } satisfies  {
             isCompilationError()
-            hasErrorMessage(4, "Target type Output cannot be an enum class", listOf("Override EnumMappie instead of ObjectMappie"))
+            hasSingleErrorMessage(4, "Target type Output cannot be an enum class", listOf("Override EnumMappie instead of ObjectMappie"))
         }
     }
 }

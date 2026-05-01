@@ -79,7 +79,7 @@ class EnumToEnumWithFewerEntriesTest : MappieTestCase() {
             )
         } satisfies  {
             isCompilationError()
-            hasErrorMessage(4, "Source Input.THIRD has no target defined")
+            hasSingleErrorMessage(4, "Source Input.THIRD has no target defined")
         }
     }
 
@@ -98,7 +98,7 @@ class EnumToEnumWithFewerEntriesTest : MappieTestCase() {
             )
         } satisfies  {
             isCompilationError()
-            hasErrorMessage(5, "Source Input.THIRD has no target defined")
+            hasSingleErrorMessage(5, "Source Input.THIRD has no target defined")
         }
     }
 

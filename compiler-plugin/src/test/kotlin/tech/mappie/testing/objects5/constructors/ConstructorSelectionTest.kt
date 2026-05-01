@@ -53,7 +53,7 @@ class ConstructorSelectionTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(5, "Target Output::first automatically resolved parameter first but cannot assign source type Input to target type String")
+            hasSingleErrorMessage(5, "Target Output::first automatically resolved parameter first but cannot assign source type Input to target type String")
         }
     }
 
@@ -156,7 +156,7 @@ class ConstructorSelectionTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(6, "Multiple calls of the function 'mapping' while only one is allowed")
+            hasSingleErrorMessage(6, "Multiple calls of the function 'mapping' while only one is allowed")
         }
     }
 }

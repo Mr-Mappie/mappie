@@ -25,15 +25,15 @@ class CompilationAssertionDsl(private val result: CompilationResult) {
 		assertThat(result.logs.errors).isEmpty()
 	}
 
-	fun hasErrorMessage(line: Int, message: String, suggestions: List<String> = emptyList()) {
-		assertThat(result.logs.errors).contains(Log(Log.Level.ERROR, line, message, suggestions))
+	fun hasSingleErrorMessage(line: Int, message: String, suggestions: List<String> = emptyList()) {
+		assertThat(result.logs.errors).containsExactly(Log(Log.Level.ERROR, line, message, suggestions))
 	}
 
-	fun hasWarningMessage(line: Int, message: String, suggestions: List<String> = emptyList()) {
-		assertThat(result.logs.warnings).contains(Log(Log.Level.WARNING, line, message, suggestions))
+	fun hasSingleWarningMessage(line: Int, message: String, suggestions: List<String> = emptyList()) {
+		assertThat(result.logs.warnings).containsExactly(Log(Log.Level.WARNING, line, message, suggestions))
 	}
 
-	fun hasOutputLines(message: String) {
+	fun assertHasLogMessage(message: String) {
 		assertThat(result.logs.complete.lines().map { it.trimEnd() })
 			.containsAll(message.lines().map { it.trimEnd() })
 	}

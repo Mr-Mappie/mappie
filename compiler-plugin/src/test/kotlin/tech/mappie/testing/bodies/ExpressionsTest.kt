@@ -127,7 +127,7 @@ class ExpressionsTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(6,
+            hasSingleErrorMessage(6,
                 "Multiple calls of the function 'mapping' while only one is allowed"
             )
         }

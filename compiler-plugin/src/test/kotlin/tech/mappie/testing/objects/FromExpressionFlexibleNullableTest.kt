@@ -28,7 +28,7 @@ class FromExpressionFlexibleNullableTest : MappieTestCase() {
             )
         } satisfies {
             isOk()
-            hasWarningMessage(
+            hasSingleWarningMessage(
                 7,
                 "Target Output::value of type Output is unsafe to be assigned from expression of platform type LocalDateTime?"
             )
