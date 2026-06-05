@@ -94,9 +94,6 @@ class KotlinCompilation(workingDir: File) : AbstractKotlinCompilation<K2JVMCompi
 	/** Script resolver environment in key-value pairs (the value could be quoted and escaped) */
 	var scriptResolverEnvironment: MutableMap<String, String> = mutableMapOf()
 
-	/** Java compiler arguments */
-	var javacArguments: MutableList<String> = mutableListOf()
-
 	/** Package prefix for Java files */
 	var javaPackagePrefix: String? = null
 
@@ -248,9 +245,6 @@ class KotlinCompilation(workingDir: File) : AbstractKotlinCompilation<K2JVMCompi
 
 		args.inheritMultifileParts = inheritMultifileParts
 		args.useTypeTable = useTypeTable
-
-		if (javacArguments.isNotEmpty())
-			args.javacArguments = javacArguments.toTypedArray()
 
 		if (supportCompatqualCheckerFrameworkAnnotations != null)
 			args.supportCompatqualCheckerFrameworkAnnotations = supportCompatqualCheckerFrameworkAnnotations

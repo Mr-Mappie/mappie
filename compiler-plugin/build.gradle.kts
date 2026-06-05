@@ -7,10 +7,6 @@ plugins {
     `maven-publish`
 }
 
-kotlin {
-    compilerOptions.freeCompilerArgs.add("-Xcontext-parameters")
-}
-
 dependencies {
     compileOnly(libs.kotlin.compiler.embeddable)
 
