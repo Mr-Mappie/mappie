@@ -23,6 +23,8 @@ updates:
     schedule:
       interval: "weekly"
       day: "friday"
+    cooldown:
+      default-days: 3
     groups:
       npm:
         patterns:
