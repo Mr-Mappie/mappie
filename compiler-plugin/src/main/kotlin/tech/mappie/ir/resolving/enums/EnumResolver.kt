@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.statements
-import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.exceptions.MappieProblemException.Companion.fail
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.InternalMappieDefinition
