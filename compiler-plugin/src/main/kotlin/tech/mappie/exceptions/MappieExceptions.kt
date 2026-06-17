@@ -9,7 +9,7 @@ class MappiePanicException private constructor(message: String, val origin: IrEl
     : Exception(message, cause) {
 
     companion object {
-        fun panic(message: String, element: IrElement? = null, cause: Throwable?): Nothing {
+        fun panic(message: String, element: IrElement? = null, cause: Throwable? = null): Nothing {
             throw MappiePanicException(message, element, cause)
         }
     }

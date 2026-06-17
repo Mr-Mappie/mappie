@@ -130,9 +130,9 @@ private fun IrBuilderWithScope.instance(origin: InternalMappieDefinition, source
         irCallConstructor(clazz.primaryConstructor!!.symbol, emptyList()).apply {
             clazz.primaryConstructor!!.parameters.forEach { parameter ->
                 val sourceType = runCatching { source.type.arguments.first().typeOrNull ?: context.pluginContext.irBuiltIns.anyType.makeNullable() }
-                    .getOrElse { panic("Failed to determine type of source argument for parameter ${parameter.name} in ${clazz.name} originating in ${origin.clazz.name}.") }
+                    .getOrElse { panic("Failed to determine type of source argument for parameter ${parameter.name} in ${clazz.name} originating in ${origin.clazz.name}.", cause = it) }
                 val targetType = runCatching { target.type.arguments.first().typeOrFail }
-                    .getOrElse { panic("Failed determine type of target argument for parameter ${parameter.name} in ${clazz.name} originating in ${origin.clazz.name}.") }
+                    .getOrElse { panic("Failed determine type of target argument for parameter ${parameter.name} in ${clazz.name} originating in ${origin.clazz.name}.", cause = it) }
 
                 val inner = context.definitions.matching(origin, sourceType, targetType).single()
                 // TODO: should collect inner source and target.
