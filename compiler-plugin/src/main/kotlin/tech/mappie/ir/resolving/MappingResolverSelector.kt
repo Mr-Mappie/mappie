@@ -8,6 +8,7 @@ import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.referenceEnumMappieClass
 import tech.mappie.ir.resolving.classes.ClassResolver
+import tech.mappie.ir.resolving.classes.InverseClassMappingRequestBuilder
 import tech.mappie.ir.resolving.enums.EnumResolver
 import tech.mappie.ir.resolving.enums.InheritedEnumResolver
 import tech.mappie.ir.util.isSubclassOf

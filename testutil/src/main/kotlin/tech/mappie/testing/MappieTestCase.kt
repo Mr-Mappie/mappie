@@ -6,6 +6,7 @@ import tech.mappie.api.ObjectMappie
 import tech.mappie.api.ObjectMappie2
 import tech.mappie.api.ObjectMappie3
 import tech.mappie.api.ObjectMappie5
+import tech.mappie.api.TwoWayObjectMappie
 import tech.mappie.testing.compilation.compile
 import tech.mappie.testing.compilation.CompilationDsl
 import java.io.File
@@ -20,6 +21,12 @@ abstract class MappieTestCase {
 
     protected fun <FROM : Enum<*>, TO> CompilationAssertionDsl.enumMappie(name: String = "Mapper", vararg args: Any?): EnumMappie<FROM, TO> =
         classLoader.loadEnumMappieClass<FROM, TO>(name)
+            .constructors
+            .first()
+            .call(*args)
+
+    protected fun <FROM, TO> CompilationAssertionDsl.twoWayObjectMappie(name: String = "Mapper", vararg args: Any?): TwoWayObjectMappie<FROM, TO> =
+        classLoader.loadTwoWayObjectMappieClass<FROM, TO>(name)
             .constructors
             .first()
             .call(*args)

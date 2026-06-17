@@ -19,6 +19,18 @@ class ClassMappingRequest(
     val sources: List<IrType>,
     val constructor: IrConstructor,
     val mappings: ClassMappings,
+    val inverse: List<InverseMappingRequest>,
+) : MappingRequest {
+    override val source get() = sources.single()
+    override val target = constructor.returnType
+}
+
+class InverseMappingRequest(
+    override val origin: InternalMappieDefinition,
+    val primary: ClassMappingRequest,
+    val sources: List<IrType>,
+    val constructor: IrConstructor,
+    val mappings: ClassMappings,
 ) : MappingRequest {
     override val source get() = sources.single()
     override val target = constructor.returnType

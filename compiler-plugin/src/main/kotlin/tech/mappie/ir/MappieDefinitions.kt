@@ -120,6 +120,9 @@ data class InternalMappieDefinition(
 
     override fun toString() = "${clazz.name} ${source.dumpKotlinLike()} to ${target.dumpKotlinLike()}"
 
+    context(context: MappieContext)
+    fun requiresInverse() = clazz.isSubclassOf(referenceTwoWayObjectMappieClass())
+
     companion object {
         context (context: MappieContext)
         fun of(clazz: IrClass): InternalMappieDefinition {

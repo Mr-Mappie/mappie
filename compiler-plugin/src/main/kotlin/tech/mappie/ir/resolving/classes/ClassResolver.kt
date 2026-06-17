@@ -29,8 +29,10 @@ class ClassResolver(
     override fun resolve(origin: InternalMappieDefinition, function: IrFunction?): List<ClassMappingRequest> {
         val mapping = findMappingStatements(function?.body).singleOrNull()
         return constructors(origin, mapping).map { constructor ->
+            val targets = MappieTargetsCollector(target, function, constructor).collect()
+
             ClassMappingRequestBuilder(constructor)
-                .targets(MappieTargetsCollector(target, function, constructor).collect())
+                .targets(targets)
                 .sources(sources)
                 .apply {
                     mapping?.arguments?.firstIsInstanceOrNull<IrFunctionExpression>()?.function?.body?.statements?.forEach { statement ->

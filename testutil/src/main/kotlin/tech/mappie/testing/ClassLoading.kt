@@ -9,6 +9,9 @@ import kotlin.reflect.KClass
 fun <FROM : Enum<*>, TO> URLClassLoader.loadEnumMappieClass(name: String) =
     loadClass(name).kotlin as KClass<EnumMappie<FROM, TO>>
 
+fun <FROM, TO> URLClassLoader.loadTwoWayObjectMappieClass(name: String) =
+    loadClass(name).kotlin as KClass<TwoWayObjectMappie<FROM, TO>>
+
 fun <FROM, TO> URLClassLoader.loadObjectMappieClass(name: String) =
     loadClass(name).kotlin as KClass<ObjectMappie<FROM, TO>>
 

@@ -58,6 +58,8 @@ val CLASS_ID_MAPPIE = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("Mappie")
 
 val CLASS_ID_ENUM_MAPPIE = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("EnumMappie"))
 
+val CLASS_ID_TWO_WAY_OBJECT_MAPPIE = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("TwoWayObjectMappie"))
+
 val CLASS_ID_OBJECT_MAPPIE = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("ObjectMappie"))
 
 val CLASS_ID_OBJECT_MAPPIE2 = ClassId(PACKAGE_TECH_MAPPIE_API, Name.identifier("ObjectMappie2"))

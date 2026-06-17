@@ -29,15 +29,15 @@ import tech.mappie.ir.util.isSubtypeOf
 import tech.mappie.ir.util.location
 import tech.mappie.util.normalize
 
-class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
+open class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
 
-    private val targets = mutableListOf<ClassMappingTarget>()
+    protected val targets = mutableListOf<ClassMappingTarget>()
 
-    private val sources = mutableMapOf<Name, IrType>()
+    protected val sources = mutableMapOf<Name, IrType>()
 
-    private val implicit = mutableMapOf<Name, List<ImplicitClassMappingSource>>()
+    protected val implicit = mutableMapOf<Name, List<ImplicitClassMappingSource>>()
 
-    private val explicit = mutableMapOf<Name, List<ExplicitClassMappingSource>>()
+    protected val explicit = mutableMapOf<Name, List<ExplicitClassMappingSource>>()
 
     context(context: MappieContext)
     fun construct(origin: InternalMappieDefinition): ClassMappingRequest {
@@ -50,7 +50,13 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
             explicit(origin, target) ?: implicit(origin, target, useDefaultArguments, normalizedImplicit)
         }
 
-        return ClassMappingRequest(origin, sources.map { it.value }, constructor, TargetSourcesClassMappings(mappings))
+        return ClassMappingRequest(
+            origin,
+            sources.map { it.value },
+            constructor,
+            TargetSourcesClassMappings(mappings),
+            emptyList(),
+        )
     }
 
     private fun buildNormalizedLookup(): Map<String, List<ImplicitClassMappingSource>> =
