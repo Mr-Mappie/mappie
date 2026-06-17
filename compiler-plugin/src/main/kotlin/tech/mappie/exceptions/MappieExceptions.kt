@@ -5,12 +5,12 @@ import org.jetbrains.kotlin.ir.IrElement
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.analysis.Problem
 
-class MappiePanicException private constructor(message: String, val origin: IrElement? = null)
-    : Exception(message) {
+class MappiePanicException private constructor(message: String, val origin: IrElement? = null, cause: Throwable? = null)
+    : Exception(message, cause) {
 
     companion object {
-        fun panic(message: String, element: IrElement? = null): Nothing {
-            throw MappiePanicException(message, element)
+        fun panic(message: String, element: IrElement? = null, cause: Throwable?): Nothing {
+            throw MappiePanicException(message, element, cause)
         }
     }
 }

@@ -7,7 +7,7 @@ import tech.mappie.api.builtin.BuiltInMappieProvider
 import tech.mappie.api.kotlinx.collections.immutable.KotlinxCollectionsImmutableMappieProvider
 import tech.mappie.api.kotlinx.datetime.KotlinxDateTimeMappieProvider
 import tech.mappie.config.MappieModule
-import tech.mappie.exceptions.MappiePanicException
+import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.ExternalMappieDefinition
 import tech.mappie.ir.MappieContext
 
@@ -37,8 +37,8 @@ class ExternalDefinitionsCollector(val context: MappieContext) {
 
     context(context: MappieContext)
     private fun load(name: String) =
-        context.pluginContext.referenceClass(ClassId.fromString(name))
+        context.pluginContext.finderForBuiltins().findClass(ClassId.fromString(name))
             ?.owner
             ?.let { ExternalMappieDefinition.of(it) }
-            ?: MappiePanicException.panic("Could not find registered mapper $name on classpath.")
+            ?: panic("Could not find registered mapper $name on classpath.")
 }
