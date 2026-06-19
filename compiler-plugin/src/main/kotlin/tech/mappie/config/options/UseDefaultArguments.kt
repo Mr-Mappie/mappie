@@ -12,7 +12,7 @@ import tech.mappie.util.CLASS_ID_USE_DEFAULT_ARGUMENTS
 
 context(context: MappieContext)
 fun useDefaultArgumentsClassSymbol() =
-    context.pluginContext.referenceClass(CLASS_ID_USE_DEFAULT_ARGUMENTS)
+    context.pluginContext.finderForBuiltins().findClass(CLASS_ID_USE_DEFAULT_ARGUMENTS)
 
 context(context: MappieContext)
 fun getUseDefaultArgumentsAnnotation(origin: IrFunction): IrConstructorCall? =

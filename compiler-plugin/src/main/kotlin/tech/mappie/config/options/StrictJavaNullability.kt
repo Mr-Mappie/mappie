@@ -12,7 +12,7 @@ import tech.mappie.util.CLASS_ID_USE_STRICT_JAVA_NULLABILITY
 
 context(context: MappieContext)
 fun useStrictPlatformTypeNullabilityValidationClassSymbol() =
-    context.pluginContext.referenceClass(CLASS_ID_USE_STRICT_JAVA_NULLABILITY)
+    context.pluginContext.finderForBuiltins().findClass(CLASS_ID_USE_STRICT_JAVA_NULLABILITY)
 
 context(context: MappieContext)
 fun getUseStrictPlatformTypeNullabilityValidationAnnotation(origin: IrFunction): IrConstructorCall? =

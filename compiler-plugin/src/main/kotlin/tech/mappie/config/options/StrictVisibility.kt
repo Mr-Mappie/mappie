@@ -12,7 +12,7 @@ import tech.mappie.util.CLASS_ID_USE_STRICT_VISIBILITY
 
 context(context: MappieContext)
 fun useStrictVisibilityClassSymbol() =
-    context.pluginContext.referenceClass(CLASS_ID_USE_STRICT_VISIBILITY)
+    context.pluginContext.finderForBuiltins().findClass(CLASS_ID_USE_STRICT_VISIBILITY)
 
 context(context: MappieContext)
 fun getUseStrictVisibilityAnnotation(origin: IrFunction): IrConstructorCall? =
