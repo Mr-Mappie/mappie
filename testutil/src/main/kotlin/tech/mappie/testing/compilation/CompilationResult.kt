@@ -33,7 +33,7 @@ data class Logs(val complete: String) {
     val errors: List<Log> get() = logs[Log.Level.ERROR] ?: emptyList()
 }
 
-data class Log(val level: Level, val line: Int?, val message: String, val suggestions: List<String>) {
+data class Log(val level: Level, val line: Int?, val message: String, val suggestions: List<String> = emptyList()) {
 
     enum class Level { ERROR, WARNING, INFO, UNKNOWN }
 

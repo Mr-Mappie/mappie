@@ -25,6 +25,20 @@ class CompilationAssertionDsl(private val result: CompilationResult) {
 		assertThat(result.logs.errors).isEmpty()
 	}
 
+	fun hasErrorMessages(vararg logs: Pair<Int, String>) {
+		assertThat(result.logs.errors).containsExactlyInAnyOrder(*logs
+			.map { Log(Log.Level.ERROR, it.first, it.second, emptyList()) }
+			.toTypedArray()
+		)
+	}
+
+	fun hasErrorMessages(vararg logs: Triple<Int, String, List<String>>) {
+		assertThat(result.logs.errors).containsExactlyInAnyOrder(*logs
+			.map { Log(Log.Level.ERROR, it.first, it.second, it.third) }
+			.toTypedArray()
+		)
+	}
+
 	fun hasSingleErrorMessage(line: Int, message: String, suggestions: List<String> = emptyList()) {
 		assertThat(result.logs.errors).containsExactly(Log(Log.Level.ERROR, line, message, suggestions))
 	}

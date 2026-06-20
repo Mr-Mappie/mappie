@@ -52,8 +52,10 @@ class ConstructorSelectionTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasSingleErrorMessage(5, "Target Output::first has no source defined")
-            hasSingleErrorMessage(5, "Target Output::second has no source defined")
+            hasErrorMessages(
+                5 to "Target Output::first has no source defined",
+                5 to "Target Output::second has no source defined",
+            )
         }
     }
 
@@ -147,7 +149,7 @@ class ConstructorSelectionTest : MappieTestCase() {
 
                 class Mapper : ObjectMappie<Input, Output>() {
                     override fun map(from: Input): Output {
-                        val x = mapping<Int, Int>()
+                        val x = mapping<Int, Int>(::Output)
                         val y = mapping<String, String>(::Output)
                         return y
                     }

@@ -52,7 +52,10 @@ class MapListDifferentTypeTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasSingleErrorMessage(7, "Argument type mismatch: actual type is 'IterableToListMapper<String, String>', but 'Mappie<List<Int>>' was expected.")
+            hasErrorMessages(
+                7 to "Argument type mismatch: actual type is 'IterableToListMapper<String, String>', but 'Mappie<List<Int>>' was expected.",
+                7 to "Cannot infer type for type parameter 'M'. Specify it explicitly.",
+                )
         }
     }
 }

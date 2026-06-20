@@ -147,7 +147,7 @@ class ConstructorSelectionTest : MappieTestCase() {
 
                 class Mapper : ObjectMappie5<Input, Int, Int, Int, Int, Output>() {
                     override fun map(first: Input, second: Int, third: Int, fourth: Int, fifth: Int): Output {
-                        val x = mapping<Int, Int>()
+                        val x = mapping<Int, Int>(::Output)
                         val y = mapping<String, String>(::Output)
                         return y
                     }

@@ -141,8 +141,10 @@ class ObjectWithDifferentValuesTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasSingleErrorMessage(6, "Inapplicable candidate(s): fun toString(): String")
-            hasSingleErrorMessage(7, "Inapplicable candidate(s): fun toInt(): Int")
+            hasErrorMessages(
+                6 to "Inapplicable candidate(s): fun toString(): String",
+                7 to "Inapplicable candidate(s): fun toInt(): Int",
+            )
         }
     }
 }
