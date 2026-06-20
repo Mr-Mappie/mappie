@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.util.ServiceLoaderLite
 import tech.mappie.MappieCommandLineProcessor
 import tech.mappie.MappieCompilerPluginRegistrar
@@ -94,7 +93,7 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
     var noCheckActual: Boolean = false
 
     /** Enable usages of APIs that requires opt-in with an opt-in requirement marker with the given fully qualified name */
-    var optIn: List<String>? = null
+    var optIn: MutableList<String> = mutableListOf()
 
     /** Additional string arguments to the Kotlin compiler */
     var kotlincArguments: List<String> = emptyList()
@@ -123,17 +122,6 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
         }
     }
 
-    protected inline fun <reified T> CommonCompilerArguments.trySetDeprecatedOption(optionSimpleName: String, value: T) {
-        try {
-            this.javaClass.getMethod(JvmAbi.setterName(optionSimpleName), T::class.java).invoke(this, value)
-        } catch (e: ReflectiveOperationException) {
-            throw IllegalArgumentException(
-                "The deprecated option $optionSimpleName is no longer available in the kotlin version you are using",
-                e
-            )
-        }
-    }
-
     protected fun commonArguments(args: A, configuration: (args: A) -> Unit): A {
         args.pluginClasspaths = pluginClasspaths.map(File::getAbsolutePath).toTypedArray()
 
@@ -146,7 +134,7 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
         args.useK2 = useK2
         args.multiPlatform = multiplatform
         args.noCheckActual = noCheckActual
-        args.optIn = optIn?.toTypedArray()
+        args.optIn = optIn.toTypedArray()
 
         if (languageVersion != null) {
             args.languageVersion = this.languageVersion
@@ -178,8 +166,11 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
 
         val args = arguments.also { args ->
             args.freeArgs = sources.map(Path::absolutePathString).distinct()
-            args.pluginClasspaths = (args.pluginClasspaths ?: emptyArray()) +
-                if (compilerPluginRegistrars.union(commandLineProcessors).isNotEmpty()) arrayOf(getResourcesPath()) else emptyArray()
+            args.pluginClasspaths += if (compilerPluginRegistrars.union(commandLineProcessors).isNotEmpty()) {
+                arrayOf(getResourcesPath())
+            } else {
+                emptyArray()
+            }
         }
 
         val compilerMessageCollector = PrintingMessageCollector(
@@ -261,8 +252,6 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
     protected fun warn(s: String) = internalMessageStream.println("warning: $s")
 
     protected fun error(s: String) = internalMessageStream.println("error: $s")
-
-    internal val internalMessageStreamAccess: PrintStream get() = internalMessageStream
 
     internal val resourceName = "META-INF/services/org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar"
 }

@@ -2,6 +2,18 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "2026-06-17"
+    title: "v2.4.0-2.4.2"
+    items:
+      - "[#393](https://github.com/Mr-Mappie/mappie/issues/393) Improved error message when a NoSuchElementException occurs."
+  - date: "2026-06-05"
+    title: "v2.4.0-2.4.1"
+    items:
+      - "Bumped Kotlin to version 2.4.0."
+  - date: "2026-05-01"
+    title: "v2.3.21-2.4.1"
+    items:
+      - "Bumped Kotlin to version 2.3.21."
   - date: "2026-03-17"
     title: "v2.3.20-2.4.1"
     items:

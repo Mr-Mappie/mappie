@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -88,7 +88,7 @@ class IrMappieGeneratedClass(override var name: Name) : IrClass() {
         set(value) {}
     override val factory: IrFactory
         get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
-    override var annotations: List<IrConstructorCall>
+    override var annotations: List<IrAnnotation>
         get() = throw exception("Cannot access property of IrMappieGeneratedClass \"$name\"")
         set(value) {}
     override var isExternal: Boolean
