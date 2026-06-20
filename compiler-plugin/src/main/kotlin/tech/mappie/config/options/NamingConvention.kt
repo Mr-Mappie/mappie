@@ -20,7 +20,7 @@ enum class NamingConventionMode {
 
 context(context: MappieContext)
 fun useNamingConventionClassSymbol() =
-    context.pluginContext.referenceClass(CLASS_ID_USE_NAMING_CONVENTION)
+    context.pluginContext.finderForBuiltins().findClass(CLASS_ID_USE_NAMING_CONVENTION)
 
 context(context: MappieContext)
 fun getNamingConventionAnnotation(origin: IrFunction): IrConstructorCall? =

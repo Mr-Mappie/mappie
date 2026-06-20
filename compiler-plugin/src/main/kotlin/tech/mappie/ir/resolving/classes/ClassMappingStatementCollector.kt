@@ -51,6 +51,7 @@ class ClassMappingStatementCollector(private val origin: InternalMappieDefinitio
                         when (it) {
                             is IrFunctionExpression -> PropertyMappingTransformTransformation(it)
                             is IrFunctionReference -> PropertyMappingTransformTransformation(it)
+                            is IrPropertyReference -> PropertyReferenceMappingTransformTransformation(it)
                             else -> panic("Unexpected expression type: ${expression.dumpKotlinLike()}", expression)
                         }
                     }

@@ -12,7 +12,7 @@ import tech.mappie.util.CLASS_ID_USE_STRICT_ENUMS
 
 context(context: MappieContext)
 fun useStrictEnumsClassSymbol() =
-    context.pluginContext.referenceClass(CLASS_ID_USE_STRICT_ENUMS)
+    context.pluginContext.finderForBuiltins().findClass(CLASS_ID_USE_STRICT_ENUMS)
 
 context(context: MappieContext)
 fun getUseStrictEnumsAnnotation(function: IrFunction): IrConstructorCall? =
