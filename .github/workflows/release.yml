@@ -38,7 +38,7 @@ jobs:
       PUBLISH_MAVEN: ${{inputs.release_api || inputs.release_module_kotlinx_datetime || inputs.release_module_kotlinx_collections_immutable || inputs.release_compiler_plugin || inputs.release_maven_plugin }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
