@@ -150,7 +150,7 @@ object LocalConversionMethodCollector {
      */
     context (context: MappieContext)
     private fun IrSimpleFunction.hasExcludeFromMappingAnnotation(): Boolean {
-        val excludeFromMappingSymbol = context.pluginContext.referenceClass(CLASS_ID_EXCLUDE_FROM_MAPPING)
+        val excludeFromMappingSymbol = context.pluginContext.finderForBuiltins().findClass(CLASS_ID_EXCLUDE_FROM_MAPPING)
         return annotations.any { it.type.classOrFail == excludeFromMappingSymbol }
     }
 

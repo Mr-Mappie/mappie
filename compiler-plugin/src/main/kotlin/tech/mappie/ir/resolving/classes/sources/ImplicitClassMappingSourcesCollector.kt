@@ -40,7 +40,7 @@ class ImplicitClassMappingSourcesCollector(private val context: MappieContext)
 
     private fun IrFunction.isJavaGetter(): Boolean {
         if (isFromJava()) {
-            if (context.pluginContext.referenceClass(CLASS_ID_RECORD)?.let {  parentAsClass.isSubclassOf(it) } ?: false) {
+            if (context.pluginContext.finderForBuiltins().findClass(CLASS_ID_RECORD)?.let {  parentAsClass.isSubclassOf(it) } ?: false) {
                 return parentAsClass.primaryConstructor!!.parameters.any { it.name == name }
             }
         }
