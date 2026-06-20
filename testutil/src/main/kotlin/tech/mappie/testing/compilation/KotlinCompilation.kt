@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.config.JvmTarget
 import tech.mappie.testing.CompilationAssertionDsl
 import tech.mappie.testing.compilation.SourceFile.Companion.kotlin
 import java.io.*
-import java.net.URLClassLoader
 import java.nio.file.Path
 
 fun compile(directory: File, verbose: Boolean = false, dsl: CompilationDsl.() -> Unit): CompilationAssertionDsl =
@@ -166,37 +165,8 @@ class KotlinCompilation(workingDir: File) : AbstractKotlinCompilation<K2JVMCompi
 	// compilation will land here
 	val classesDir get() = workingDir.resolve("classes")
 
-	/** ExitCode of the entire Kotlin compilation process */
 	enum class ExitCode {
 		OK, INTERNAL_ERROR, COMPILATION_ERROR, SCRIPT_EXECUTION_ERROR
-	}
-
-	/** Result of the compilation */
-	inner class Result(
-		/** The exit code of the compilation */
-		val exitCode: ExitCode,
-		/** Messages that were printed by the compilation */
-		val messages: String
-	) {
-		/** class loader to load the compile classes */
-		val classLoader = URLClassLoader(
-			// Include the original classpaths and the output directory to be able to load classes from dependencies.
-			classpaths.plus(outputDirectory).map { it.toURI().toURL() }.toTypedArray(),
-			this::class.java.classLoader
-		)
-
-		/** The directory where only the final output class and resources files will be */
-		val outputDirectory: File get() = classesDir
-
-		/**
-		 * Compiled class and resource files that are the final result of the compilation.
-		 */
-		val compiledClassAndResourceFiles: List<File> = outputDirectory.listFilesRecursively()
-
-		/**
-		 * The class, resource and intermediate source files generated during the compilation.
-		 */
-		val generatedFiles: Collection<File> = compiledClassAndResourceFiles
 	}
 
 
@@ -270,7 +240,7 @@ class KotlinCompilation(workingDir: File) : AbstractKotlinCompilation<K2JVMCompi
 	}
 
 	/** Runs the compilation task */
-	fun compile(function: Result.() -> Unit = { }): Result {
+	fun compile(function: CompilationResult.() -> Unit = { }): CompilationResult {
 		// make sure all needed directories exist
 		sourcesDir.mkdirs()
 		classesDir.mkdirs()
@@ -287,13 +257,14 @@ class KotlinCompilation(workingDir: File) : AbstractKotlinCompilation<K2JVMCompi
 		}.also(function)
 	}
 
-	private fun makeResult(exitCode: ExitCode): Result {
+	private fun makeResult(exitCode: ExitCode): CompilationResult {
 		val messages = internalMessageBuffer.readUtf8()
 
-		if (exitCode != ExitCode.OK)
+		if (exitCode != ExitCode.OK) {
 			searchSystemOutForKnownErrors(messages)
+		}
 
-		return Result(exitCode, messages)
+		return CompilationResult(this, exitCode, messages)
 	}
 
 	private fun commonClasspaths() = mutableListOf<File>().apply {

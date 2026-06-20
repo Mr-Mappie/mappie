@@ -53,7 +53,7 @@ class ConstructorSelectionTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(5, "Target Output::first automatically resolved parameter first but cannot assign source type Input to target type String")
+            hasSingleErrorMessage(5, "Target Output::first automatically resolved parameter first but cannot assign source type Input to target type String")
         }
     }
 
@@ -147,7 +147,7 @@ class ConstructorSelectionTest : MappieTestCase() {
 
                 class Mapper : ObjectMappie5<Input, Int, Int, Int, Int, Output>() {
                     override fun map(first: Input, second: Int, third: Int, fourth: Int, fifth: Int): Output {
-                        val x = mapping<Int, Int>()
+                        val x = mapping<Int, Int>(::Output)
                         val y = mapping<String, String>(::Output)
                         return y
                     }
@@ -156,7 +156,7 @@ class ConstructorSelectionTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(6, "Multiple calls of the function 'mapping' while only one is allowed")
+            hasSingleErrorMessage(6, "Multiple calls of the function 'mapping' while only one is allowed")
         }
     }
 }

@@ -22,7 +22,7 @@ class GeneratedClassFailTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(
+            hasSingleErrorMessage(
                 4,
                 "No implicit mapping can be generated from InnerInput to InnerOutput",
                 listOf(

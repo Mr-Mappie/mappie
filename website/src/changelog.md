@@ -5,6 +5,7 @@ changelog:
   - date: "tbd"
     title: "v2.4.0-2.5.0"
     items:
+      - "Fixed several duplicate error messages."
       - "[#395](https://github.com/Mr-Mappie/mappie/issues/395) Fixed exception when transforming using a property reference."
   - date: "2026-06-17"
     title: "v2.4.0-2.4.2"

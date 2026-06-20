@@ -75,7 +75,7 @@ class DefaultValueTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(5, "Target Output::age has no source defined")
+            hasSingleErrorMessage(5, "Target Output::age has no source defined")
         }
     }
 

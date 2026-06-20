@@ -70,7 +70,7 @@ class ReportTest : MappieTestCase() {
         } satisfies {
             isOk()
 
-            hasOutputLines(
+            assertHasLogMessage(
                 $$"""
                 |public class Mapper public constructor(internal var a: String, private val b: Int = 1): ObjectMappie<Input, Output>() {
                 |    public val field: Int = 10

@@ -75,7 +75,7 @@ class FromExpressionTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(6, "Target Output::value of type String cannot be assigned from expression of type Int")
+            hasSingleErrorMessage(6, "Target Output::value of type String cannot be assigned from expression of type Int")
         }
     }
 }

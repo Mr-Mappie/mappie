@@ -82,7 +82,7 @@ class NestedNonNullToNullPropertyTest : MappieTestCase() {
             )
         } satisfies {
             isOk()
-            hasWarningMessage(6, "Unnecessary fromPropertyNotNull for non-nullable type InnerInput",
+            hasSingleWarningMessage(6, "Unnecessary fromPropertyNotNull for non-nullable type InnerInput",
                 listOf("Use fromProperty instead of fromPropertyNotNull")
             )
 

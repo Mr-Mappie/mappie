@@ -22,8 +22,7 @@ class NullablePropertyObjectToNonNullablePropertyTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            // TODO: error message also contains `No implicit mapping can be generated from BigDecimal? to BigDecimal` which should not happen.
-            hasErrorMessage(4, "Target Output::value automatically resolved from Input::value but cannot assign source type BigDecimal? to target type BigDecimal")
+            hasSingleErrorMessage(4, "Target Output::value automatically resolved from Input::value but cannot assign source type BigDecimal? to target type BigDecimal")
         }
     }
 }

@@ -80,8 +80,6 @@ fun IrBuilderWithScope.constructTransformation(
                 val definition = definitions.first().clazz
 
                 if (definition is IrMappieGeneratedClass) {
-                    context.logger.log(internal("failed to reference generated mapper ${definition.name} in ${origin.clazz.name}."))
-
                     irCall(referenceFunctionError()).apply {
                         arguments[0] = IrConstImpl.string(
                             SYNTHETIC_OFFSET,

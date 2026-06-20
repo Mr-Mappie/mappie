@@ -22,7 +22,7 @@ class AnonymousMappieObjectTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(5, "Anonymous Mappie objects are not supported")
+            hasSingleErrorMessage(5, "Anonymous Mappie objects are not supported")
         }
     }
 }

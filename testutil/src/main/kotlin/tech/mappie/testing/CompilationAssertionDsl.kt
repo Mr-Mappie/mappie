@@ -1,10 +1,11 @@
 package tech.mappie.testing
 
 import org.assertj.core.api.Assertions.assertThat
+import tech.mappie.testing.compilation.CompilationResult
 import tech.mappie.testing.compilation.KotlinCompilation
-import java.util.regex.Pattern
+import tech.mappie.testing.compilation.Log
 
-class CompilationAssertionDsl(private val result: KotlinCompilation.Result) {
+class CompilationAssertionDsl(private val result: CompilationResult) {
 
 	val classLoader = result.classLoader
 
@@ -20,29 +21,34 @@ class CompilationAssertionDsl(private val result: KotlinCompilation.Result) {
 	}
 
 	fun hasNoWarningsOrErrors() {
-		assertThat(result.messages.lines())
-			.noneMatch { it.startsWith("w:") || it.startsWith("e:") }
+		assertThat(result.logs.warnings).isEmpty()
+		assertThat(result.logs.errors).isEmpty()
 	}
 
-	fun hasErrorMessage(line: Int, message: String, suggestions: List<String> = emptyList()) {
-		assertThat(result.messages).containsPattern(
-			Pattern.compile("e: file://.+\\.kt:${line}.+ ${Regex.escape(messageOf(message, suggestions))}")
+	fun hasErrorMessages(vararg logs: Pair<Int, String>) {
+		assertThat(result.logs.errors).containsExactlyInAnyOrder(*logs
+			.map { Log(Log.Level.ERROR, it.first, it.second, emptyList()) }
+			.toTypedArray()
 		)
 	}
 
-	fun hasWarningMessage(line: Int, message: String, suggestions: List<String> = emptyList()) {
-		assertThat(result.messages).containsPattern(
-			Pattern.compile("w: file://.+\\.kt:${line}:.+${Regex.escape(messageOf(message, suggestions))}")
+	fun hasErrorMessages(vararg logs: Triple<Int, String, List<String>>) {
+		assertThat(result.logs.errors).containsExactlyInAnyOrder(*logs
+			.map { Log(Log.Level.ERROR, it.first, it.second, it.third) }
+			.toTypedArray()
 		)
 	}
 
-	fun hasOutputLines(message: String) {
-		assertThat(result.messages.lines().map { it.trimEnd() })
+	fun hasSingleErrorMessage(line: Int, message: String, suggestions: List<String> = emptyList()) {
+		assertThat(result.logs.errors).containsExactly(Log(Log.Level.ERROR, line, message, suggestions))
+	}
+
+	fun hasSingleWarningMessage(line: Int, message: String, suggestions: List<String> = emptyList()) {
+		assertThat(result.logs.warnings).containsExactly(Log(Log.Level.WARNING, line, message, suggestions))
+	}
+
+	fun assertHasLogMessage(message: String) {
+		assertThat(result.logs.complete.lines().map { it.trimEnd() })
 			.containsAll(message.lines().map { it.trimEnd() })
 	}
-
-	private fun messageOf(message: String, suggestions: List<String>) =
-		message + System.lineSeparator() + suggestions
-			.mapIndexed { i, it -> i + 1 to it }
-			.joinToString(separator = "") { "    ${it.first}. ${it.second}" + System.lineSeparator() }
 }

@@ -22,7 +22,7 @@ class ObjectWithDifferentValuesTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(4, "Target Output::name has no source defined")
+            hasSingleErrorMessage(4, "Target Output::name has no source defined")
         }
     }
 
@@ -141,8 +141,10 @@ class ObjectWithDifferentValuesTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(6, "Inapplicable candidate(s): fun toString(): String")
-            hasErrorMessage(7, "Inapplicable candidate(s): fun toInt(): Int")
+            hasErrorMessages(
+                6 to "Inapplicable candidate(s): fun toString(): String",
+                7 to "Inapplicable candidate(s): fun toInt(): Int",
+            )
         }
     }
 }

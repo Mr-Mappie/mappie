@@ -45,7 +45,7 @@ class MapListStarProjectionTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(4, "No implicit mapping can be generated from Any? to String")
+            hasSingleErrorMessage(4, "No implicit mapping can be generated from Any? to String")
         }
     }
 }

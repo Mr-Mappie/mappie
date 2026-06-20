@@ -48,7 +48,7 @@ class ObjectWithSameValuesTest : MappieTestCase() {
             )
         } satisfies {
             isOk()
-            hasWarningMessage(6, "Unnecessary explicit mapping of target Output::value")
+            hasSingleWarningMessage(6, "Unnecessary explicit mapping of target Output::value")
 
             assertThat(objectMappie<Input, Output>().map(Input("value")))
                 .isEqualTo(Output("value"))

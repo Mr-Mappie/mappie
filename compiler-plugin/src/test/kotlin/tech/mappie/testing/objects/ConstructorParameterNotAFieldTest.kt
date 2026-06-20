@@ -32,7 +32,7 @@ class ConstructorParameterNotAFieldTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(6, "Identifier 'fake' does not occur as a setter or as a parameter in constructor")
+            hasSingleErrorMessage(6, "Identifier 'fake' does not occur as a setter or as a parameter in constructor")
         }
     }
 
@@ -53,7 +53,7 @@ class ConstructorParameterNotAFieldTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(6, "Argument must be a compile-time constant")
+            hasSingleErrorMessage(6, "Argument must be a compile-time constant")
         }
     }
 

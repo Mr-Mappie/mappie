@@ -124,7 +124,7 @@ class InlineClassTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(8,
+            hasSingleErrorMessage(8,
                 "Multiple calls of the function 'mapping' while only one is allowed"
             )
         }

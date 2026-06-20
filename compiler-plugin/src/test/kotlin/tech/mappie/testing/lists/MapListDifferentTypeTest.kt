@@ -22,7 +22,10 @@ class MapListDifferentTypeTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(4, "No implicit mapping can be generated from String to Int")
+            hasSingleErrorMessage(4,
+                "No implicit mapping can be generated from String to Int",
+                listOf("Target class Int has no visible constructor")
+            )
         }
     }
 
@@ -49,7 +52,10 @@ class MapListDifferentTypeTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessage(7, "Argument type mismatch: actual type is 'IterableToListMapper<String, String>', but 'Mappie<List<Int>>' was expected.")
+            hasErrorMessages(
+                7 to "Argument type mismatch: actual type is 'IterableToListMapper<String, String>', but 'Mappie<List<Int>>' was expected.",
+                7 to "Cannot infer type for type parameter 'M'. Specify it explicitly.",
+                )
         }
     }
 }
