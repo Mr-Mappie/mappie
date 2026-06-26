@@ -33,7 +33,7 @@ changelog:
     title: "v2.3.10-2.4.0"
     items:
       - "[#240](https://github.com/Mr-Mappie/mappie/issues/240) Fixed issue with incremental compilation where mappers cannot be found."
-      - "[#355](https://github.com/Mr-Mappie/mappie/issues/355) Improved source selection priority. When a source is an exact subtype, this is not prioritized over a source which can be transformed."
+      - "[#355](https://github.com/Mr-Mappie/mappie/issues/355) Improved source selection priority. When a source is an exact subtype, this is now prioritized over a source which can be transformed."
       - "[#280](https://github.com/Mr-Mappie/mappie/issues/280) Moved builtin mappers between Java- and Kotlin Instant from module kotlinx-datetime to the generic API."
   - date: "2026-02-07"
     title: "v2.3.10-2.3.1"
@@ -65,7 +65,7 @@ changelog:
     items:
       - "[#320](https://github.com/Mr-Mappie/mappie/issues/320) Fixed a compilation error when referencing a mapper defined as a variable in an explicit via call."
       - "Added support for re-using functionality of a base EnumMappie in other child mappers."
-      - "Prioritize exact inner mapper over nullable alterative."
+      - "Prioritize exact inner mapper over nullable alternative."
       - "Added support for forcing to select a specific target constructor to be called."
   - date: "2025-11-28"
     title: "v2.2.21-2.0.0"
@@ -83,7 +83,7 @@ changelog:
     items:
       - "Allow `mapping` to be used anywhere (at most once) in the body of the map function."
       - "Added support for kotlinx-datetime to JVM mappers, which can be imported via a separate dependency."
-      - "Fixed check of runtime usage of of mapping DSL for multiple object mappie."
+      - "Fixed check of runtime usage of mapping DSL for multiple object mappie."
       - "[#264](https://github.com/Mr-Mappie/mappie/issues/264) Fix compilation error with ObjectMappie5."
       - "[#262](https://github.com/Mr-Mappie/mappie/issues/262) Fixed compilation error when mapper inherits from more than a Mappie subclass."
       - "Minor performance enhancements."
