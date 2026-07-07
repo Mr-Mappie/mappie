@@ -4,7 +4,7 @@ summary: "Generating Mappie reports."
 eleventyNavigation:
   key: Reporting
   parent: Getting Started
-  order: 5
+  order: 6
 ---
 
 Mappie can generate reports containing Kotlin-like representations of the generated mappers.
