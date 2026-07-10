@@ -927,14 +927,14 @@ strong {
   inline-size: 100%;
 }
 
+.btn--primary:focus-visible {
+  outline: 2px solid var(--spruce-btn-color-primary-background);
+  outline-offset: 2px;
+}
 .btn--primary {
   background-color: var(--spruce-btn-color-primary-background);
   border-color: var(--spruce-btn-color-primary-background);
   color: var(--spruce-btn-color-primary-foreground);
-}
-.btn--primary:focus-visible {
-  outline: 2px solid var(--spruce-btn-color-primary-background);
-  outline-offset: 2px;
 }
 .btn--primary:hover {
   background-color: var(--spruce-btn-color-primary-background-hover);
@@ -945,14 +945,14 @@ strong {
   box-shadow: 0 0.55em 1em -0.2em var(--spruce-btn-color-primary-shadow), 0 0.15em 0.35em -0.185em var(--spruce-btn-color-primary-shadow);
 }
 
+.btn--secondary:focus-visible {
+  outline: 2px solid var(--spruce-btn-color-secondary-background);
+  outline-offset: 2px;
+}
 .btn--secondary {
   background-color: var(--spruce-btn-color-secondary-background);
   border-color: var(--spruce-btn-color-secondary-background);
   color: var(--spruce-btn-color-secondary-foreground);
-}
-.btn--secondary:focus-visible {
-  outline: 2px solid var(--spruce-btn-color-secondary-background);
-  outline-offset: 2px;
 }
 .btn--secondary:hover {
   background-color: var(--spruce-btn-color-secondary-background-hover);
@@ -963,14 +963,14 @@ strong {
   box-shadow: 0 0.55em 1em -0.2em var(--spruce-btn-color-secondary-shadow), 0 0.15em 0.35em -0.185em var(--spruce-btn-color-secondary-shadow);
 }
 
+.btn--outline-primary:focus-visible {
+  outline: 2px solid var(--spruce-btn-color-primary-background);
+  outline-offset: 2px;
+}
 .btn--outline-primary {
   background-color: transparent;
   border-color: var(--spruce-btn-color-primary-background);
   color: var(--spruce-btn-color-primary-background);
-}
-.btn--outline-primary:focus-visible {
-  outline: 2px solid var(--spruce-btn-color-primary-background);
-  outline-offset: 2px;
 }
 .btn--outline-primary:hover {
   background-color: var(--spruce-btn-color-primary-background);
@@ -978,14 +978,14 @@ strong {
   color: var(--spruce-btn-color-primary-foreground);
 }
 
+.btn--outline-secondary:focus-visible {
+  outline: 2px solid var(--spruce-btn-color-secondary-background);
+  outline-offset: 2px;
+}
 .btn--outline-secondary {
   background-color: transparent;
   border-color: var(--spruce-btn-color-secondary-background);
   color: var(--spruce-btn-color-secondary-background);
-}
-.btn--outline-secondary:focus-visible {
-  outline: 2px solid var(--spruce-btn-color-secondary-background);
-  outline-offset: 2px;
 }
 .btn--outline-secondary:hover {
   background-color: var(--spruce-btn-color-secondary-background);
@@ -1511,9 +1511,6 @@ strong {
 
 .open-search {
   position: relative;
-  align-items: center;
-  display: flex;
-  gap: 0.5rem;
 }
 .open-search__btn::before {
   content: "";
@@ -1521,6 +1518,11 @@ strong {
   position: absolute;
 }
 
+.open-search {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+}
 .open-search__icon {
   --dimension: 1rem;
   block-size: var(--dimension);
@@ -1719,14 +1721,6 @@ table th {
   display: flex;
   justify-content: space-between;
 }
-.sidebar__body {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  gap: 1.5rem;
-  max-block-size: calc(100vh - var(--dimension) - 1.5rem * 3);
-  overflow-y: auto;
-}
 .sidebar__body::-webkit-scrollbar {
   block-size: 0.5rem;
   inline-size: 0.5rem;
@@ -1741,6 +1735,14 @@ table th {
 .sidebar__body::-webkit-scrollbar-track {
   background: var(--spruce-scrollbar-color-track-background);
   border-radius: 0.05rem;
+}
+.sidebar__body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 1.5rem;
+  max-block-size: calc(100vh - var(--dimension) - 1.5rem * 3);
+  overflow-y: auto;
 }
 @media (min-width: 48em) {
   .sidebar__body {
@@ -1798,13 +1800,6 @@ table th {
   inline-size: var(--dimension);
 }
 
-.post-card {
-  position: relative;
-  background-color: var(--spruce-card-color-background);
-  border: 1px solid var(--spruce-base-color-border);
-  border-radius: var(--spruce-border-radius-sm);
-  padding: 3rem clamp(1.5rem, 5vw, 3rem);
-}
 .post-card > * {
   margin-block-end: 0;
   margin-block-start: 0;
@@ -1812,12 +1807,21 @@ table th {
 .post-card > * + * {
   margin-block-start: 1rem;
 }
+.post-card {
+  position: relative;
+}
 .card__link::before {
   content: "";
   inset: 0;
   position: absolute;
 }
 
+.post-card {
+  background-color: var(--spruce-card-color-background);
+  border: 1px solid var(--spruce-base-color-border);
+  border-radius: var(--spruce-border-radius-sm);
+  padding: 3rem clamp(1.5rem, 5vw, 3rem);
+}
 .post-card__serial-number {
   color: var(--spruce-base-color-primary);
   font-family: var(--spruce-font-family-heading);
@@ -2067,10 +2071,6 @@ textarea.pagefind-ui__search-input {
   position: absolute;
   text-transform: uppercase;
 }
-.pagefind-ui__drawer {
-  max-block-size: 20rem;
-  overflow-y: auto;
-}
 .pagefind-ui__drawer::-webkit-scrollbar {
   block-size: 0.5rem;
   inline-size: 0.5rem;
@@ -2086,11 +2086,14 @@ textarea.pagefind-ui__search-input {
   background: var(--spruce-scrollbar-color-track-background);
   border-radius: var(--spruce-border-radius-sm);
 }
+.pagefind-ui__drawer {
+  max-block-size: 20rem;
+  overflow-y: auto;
+}
 .pagefind-ui__results {
   list-style: none;
   margin: 0;
   padding: 0;
-  padding-inline-end: 1.5rem;
 }
 .pagefind-ui__results > * {
   margin-block-end: 0;
@@ -2098,6 +2101,9 @@ textarea.pagefind-ui__search-input {
 }
 .pagefind-ui__results > * + * {
   margin-block-start: 1rem;
+}
+.pagefind-ui__results {
+  padding-inline-end: 1.5rem;
 }
 .pagefind-ui__results:empty {
   display: none;
@@ -2178,16 +2184,16 @@ textarea.pagefind-ui__search-input {
 .accordion-card__toggle[aria-expanded=true] .vertical-line {
   display: none;
 }
-.accordion-card__content {
-  padding-block-end: 1.5rem;
-  padding-inline: 1.5rem;
-}
 .accordion-card__content > * {
   margin-block-end: 0;
   margin-block-start: 0;
 }
 .accordion-card__content > * + * {
   margin-block-start: 0.5rem;
+}
+.accordion-card__content {
+  padding-block-end: 1.5rem;
+  padding-inline: 1.5rem;
 }
 
 .changelog-item {
