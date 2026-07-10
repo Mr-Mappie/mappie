@@ -13,7 +13,7 @@
     "start": "npm-run-all --parallel eleventy:dev sass:dev"
   },
   "dependencies": {
-    "@11ty/eleventy": "^3.1.5",
+    "@11ty/eleventy": "^3.1.6",
     "@11ty/eleventy-img": "^6.0.4",
     "@11ty/eleventy-navigation": "^1.0.5",
     "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.2",
@@ -22,12 +22,12 @@
     "eleventy-plugin-toc": "^1.1.5",
     "himalaya": "^1.1.1",
     "html-minifier-terser": "^7.0.0",
-    "markdown-it-anchor": "^9.2.0",
-    "markdown-it-attrs": "^4.5.0",
+    "markdown-it-anchor": "^9.2.1",
+    "markdown-it-attrs": "^5.0.0",
     "moment": "^2.30.1",
     "npm-run-all": "^4.1.5",
     "pagefind": "^1.5.2",
-    "sass": "^1.100.0",
+    "sass": "^1.101.0",
     "sprucecss": "^2.3.5"
   },
   "engines": {
