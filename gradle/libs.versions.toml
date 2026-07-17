@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.4.0"
+kotlin = "2.4.10"
 
 [libraries]
 kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
@@ -14,7 +14,7 @@ assertj-core = { module = "org.assertj:assertj-core", version = "3.27.7" }
 maven-project = { module = "org.apache.maven:maven-project", version = "2.2.1" }
 maven-core = { module = "org.apache.maven:maven-core", version = "3.9.16" }
 maven-invoker = { module = "org.apache.maven.shared:maven-invoker", version = "3.3.0" }
-junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version = "6.1.1" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version = "6.1.2" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.8.0" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version = "0.5.1" }
 
