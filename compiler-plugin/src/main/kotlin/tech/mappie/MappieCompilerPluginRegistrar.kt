@@ -44,18 +44,18 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
                 }
             },
             isMappieDebugMode = configuration.isStartedWithDependency(TESTUTIL_REGEX),
-            warningsAsErrors = configuration.get(ARGUMENT_WARNINGS_AS_ERRORS, false),
-            useDefaultArguments = configuration.get(ARGUMENT_USE_DEFAULT_ARGUMENTS, true),
-            namingConvention = configuration.get(ARGUMENT_NAMING_CONVENTION)?.let { NamingConventionMode.valueOf(it) } ?: NamingConventionMode.STRICT,
-            strictEnums = configuration.get(ARGUMENT_STRICTNESS_ENUMS, true),
-            strictplatformTypeNullability = configuration.get(ARGUMENT_STRICTNESS_JAVA_NULLABILITY, true),
-            strictVisibility = configuration.get(ARGUMENT_STRICTNESS_VISIBILITY, false),
-            reportEnabled = configuration.get(ARGUMENT_REPORT_ENABLED, false),
-            outputDir = configuration.get(ARGUMENT_OUTPUT_DIR, "").ifEmpty { null },
-            reportDir = configuration.get(ARGUMENT_REPORT_DIR, ""),
+            warningsAsErrors = configuration[ARGUMENT_WARNINGS_AS_ERRORS, false],
+            useDefaultArguments = configuration[ARGUMENT_USE_DEFAULT_ARGUMENTS, true],
+            namingConvention = configuration[ARGUMENT_NAMING_CONVENTION]?.let { NamingConventionMode.valueOf(it) } ?: NamingConventionMode.STRICT,
+            strictEnums = configuration[ARGUMENT_STRICTNESS_ENUMS, true],
+            strictplatformTypeNullability = configuration[ARGUMENT_STRICTNESS_JAVA_NULLABILITY, true],
+            strictVisibility = configuration[ARGUMENT_STRICTNESS_VISIBILITY, false],
+            reportEnabled = configuration[ARGUMENT_REPORT_ENABLED, false],
+            outputDir = configuration[ARGUMENT_OUTPUT_DIR, ""].ifEmpty { null },
+            reportDir = configuration[ARGUMENT_REPORT_DIR, ""],
         )
         FirExtensionRegistrarAdapter.registerExtension(MappieFirRegistrar())
-        IrGenerationExtension.registerExtension(MappieIrRegistrar(configuration.get(MESSAGE_COLLECTOR_KEY, NONE), config))
+        IrGenerationExtension.registerExtension(MappieIrRegistrar(configuration[MESSAGE_COLLECTOR_KEY, NONE], config))
     }
 
     private fun CompilerConfiguration.isStartedWithDependency(pattern: Regex) =
