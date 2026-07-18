@@ -21,21 +21,38 @@ class MappieMavenPlugin : KotlinMavenPluginExtension {
 
     override fun getPluginOptions(project: MavenProject, execution: MojoExecution): List<PluginOption> {
         logger.debug("Loaded Maven plugin " + javaClass.name)
-        return listOf(
-            PluginOption(
-                PLUGIN_ID,
-                PLUGIN_ID,
-                "report-dir",
-                File(project.basedir, "target/mappie").absolutePath,
-            ),
-            PluginOption(
-                PLUGIN_ID,
-                PLUGIN_ID,
-                "output-dir",
-                File(project.basedir, "target").absolutePath,
-            ),
-        )
+        return buildList {
+            add(
+                PluginOption(
+                    PLUGIN_ID,
+                    PLUGIN_ID,
+                    "report-dir",
+                    File(project.basedir, "target/mappie").absolutePath,
+                )
+            )
+            add(
+                PluginOption(
+                    PLUGIN_ID,
+                    PLUGIN_ID,
+                    "output-dir",
+                    stateDirectoryOf(project, execution.goal).absolutePath,
+                )
+            )
+            if (execution.goal == GOAL_TEST_COMPILE) {
+                add(
+                    PluginOption(
+                        PLUGIN_ID,
+                        PLUGIN_ID,
+                        "input-dirs",
+                        stateDirectoryOf(project, GOAL_COMPILE).absolutePath,
+                    )
+                )
+            }
+        }
     }
+
+    private fun stateDirectoryOf(project: MavenProject, goal: String) =
+        File(project.basedir, "target/mappie/state/$goal")
 
     override fun isApplicable(project: MavenProject, execution: MojoExecution): Boolean {
         val version = project.buildPlugins
@@ -52,6 +69,8 @@ class MappieMavenPlugin : KotlinMavenPluginExtension {
 
     companion object {
         private const val PLUGIN_ID = BuildConfig.COMPILER_PLUGIN_ID
+        private const val GOAL_COMPILE = "compile"
+        private const val GOAL_TEST_COMPILE = "test-compile"
         private val EXPECTED_KOTLIN_VERSION = BuildConfig.VERSION.split('-').first()
     }
 }

@@ -6,6 +6,70 @@ import tech.mappie.testing.TestBase
 class IncrementalCompilationTest : TestBase() {
 
     @Test
+    fun `incremental compilation with missing persistent state and a dependent mapper updated`() {
+        kotlin(
+            "src/main/kotlin/Range.kt",
+            """
+            class Iso(val value: String)
+
+            class Range(
+                val startsOn: Iso,
+                val endsOn: Iso,
+            )
+            """.trimIndent()
+        )
+
+        kotlin(
+            "src/main/kotlin/RangeResource.kt",
+            """
+            import java.time.LocalDate
+
+            class RangeResource(
+                val startsOn: LocalDate,
+                val endsOn: LocalDate,
+            )
+            """.trimIndent()
+        )
+
+        kotlin("src/main/kotlin/TimeMappers.kt",
+            """
+            import tech.mappie.api.ObjectMappie
+            import java.time.LocalDate
+
+            object IsoToLocalDateMapper : ObjectMappie<Iso, LocalDate>() {
+                override fun map(from: Iso): LocalDate = LocalDate.parse(from.value)
+            }
+            """.trimIndent())
+
+        kotlin(
+            "src/main/kotlin/RangeMappers.kt",
+            """
+            import tech.mappie.api.ObjectMappie
+
+            object RangeToResource : ObjectMappie<Range, RangeResource>()
+            """.trimIndent()
+        )
+
+        runner.withArguments("build").build()
+
+        delete("build/mappie/state/main/context.xml")
+        delete("src/main/kotlin/RangeMappers.kt")
+
+        kotlin(
+            "src/main/kotlin/RangeMappers.kt",
+            """
+            import tech.mappie.api.ObjectMappie
+
+            object RangeToResource : ObjectMappie<Range, RangeResource>() {
+                private val x = 1
+            }
+            """.trimIndent()
+        )
+
+        runner.withArguments("build").build()
+    }
+
+    @Test
     fun `incremental compilation with a single mapper updated`() {
         kotlin(
             "src/main/kotlin/Range.kt",

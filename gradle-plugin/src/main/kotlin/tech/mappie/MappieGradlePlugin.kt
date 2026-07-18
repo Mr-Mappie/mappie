@@ -19,6 +19,15 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
             logger.info("Mappie plugin ${getPluginArtifact().version} applied")
 
             val extension = extensions.getByType(MappieExtension::class.java)
+
+            // Register the persistent state directory as a task output, such that it is restored from the
+            // build cache together with the compiled classes it was generated with. The state is stored
+            // per compilation to prevent compilations of the same project overwriting each others state.
+            val stateDirectory = stateDirectoryOf(kotlinCompilation)
+            kotlinCompilation.compileTaskProvider.configure { task ->
+                task.outputs.dir(stateDirectory).withPropertyName("mappieStateDirectory")
+            }
+
             return provider {
                 buildList {
                     extension.warningsAsErrors.orNull?.apply {
@@ -45,11 +54,17 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
                     extension.reporting.directory.convention(layout.buildDirectory.map { it.dir("mappie") }).get().apply {
                         add(SubpluginOption("report-dir", asFile.absolutePath))
                     }
-                    add(SubpluginOption("output-dir", kotlinCompilation.project.buildDir.absolutePath))
+                    add(SubpluginOption("output-dir", stateDirectory.get().asFile.absolutePath))
+                    kotlinCompilation.allAssociatedCompilations.forEach { compilation ->
+                        add(SubpluginOption("input-dirs", stateDirectoryOf(compilation).get().asFile.absolutePath))
+                    }
                 }
             }
         }
     }
+
+    private fun stateDirectoryOf(kotlinCompilation: KotlinCompilation<*>) =
+        kotlinCompilation.project.layout.buildDirectory.dir("mappie/state/${kotlinCompilation.defaultSourceSet.name}")
 
     override fun getCompilerPluginId(): String =
         BuildConfig.COMPILER_PLUGIN_ID
