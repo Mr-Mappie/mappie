@@ -14,6 +14,7 @@ data class MappieConfiguration(
     val strictVisibility: Boolean,
     val reportEnabled: Boolean,
     val outputDir: String?,
+    val inputDirs: List<String>,
     val reportDir: String,
 )
 

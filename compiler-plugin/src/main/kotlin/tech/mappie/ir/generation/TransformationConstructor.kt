@@ -95,7 +95,9 @@ fun IrBuilderWithScope.constructTransformation(
                     }
                 }
             } else {
-                context.logger.log(internal("failed to reference an unique generated mapper in ${origin.clazz.name}. Possible options: " + definitions.joinToString(prefix = "'", postfix = "'") { it.clazz.name.asString() }))
+                if (definitions.isNotEmpty()) {
+                    context.logger.log(internal("failed to reference an unique generated mapper in ${origin.clazz.name}. Possible options: " + definitions.joinToString(prefix = "'", postfix = "'") { it.clazz.name.asString() }))
+                }
 
                 irCall(referenceFunctionError()).apply {
                     arguments[0] = IrConstImpl.string(
@@ -139,9 +141,21 @@ private fun IrBuilderWithScope.instance(origin: InternalMappieDefinition, source
                 val targetType = runCatching { target.type.arguments.first().typeOrFail }
                     .getOrElse { panic("Failed determine type of target argument for parameter ${parameter.name} in ${clazz.name} originating in ${origin.clazz.name}.", cause = it) }
 
-                val inner = context.definitions.matching(origin, sourceType, targetType).single()
+                val inner = context.definitions.matching(origin, sourceType, targetType).singleOrNull()
                 // TODO: should collect inner source and target.
-                val instance = instance(origin, source, target, inner.clazz)
+                val instance = if (inner != null) {
+                    instance(origin, source, target, inner.clazz)
+                } else {
+                    // No mapper exists, as generating one failed. An error has already been reported.
+                    irCall(referenceFunctionError()).apply {
+                        arguments[0] = IrConstImpl.string(
+                            SYNTHETIC_OFFSET,
+                            SYNTHETIC_OFFSET,
+                            context.pluginContext.irBuiltIns.stringType,
+                            "Failed to reference generated mapper"
+                        )
+                    }
+                }
                 this.arguments[parameter.indexInParameters] = instance
             }
         }

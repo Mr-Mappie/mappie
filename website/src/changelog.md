@@ -7,6 +7,7 @@ changelog:
     items:
       - "Fixed several duplicate error messages."
       - "[#395](https://github.com/Mr-Mappie/mappie/issues/395) Fixed exception when transforming using a property reference."
+      - "[#240](https://github.com/Mr-Mappie/mappie/issues/240) Fixed incremental compilation state being inconsistent with the Gradle build cache, and compilations of the same project overwriting each others state."
   - date: "2026-06-17"
     title: "v2.4.0-2.4.2"
     items:
