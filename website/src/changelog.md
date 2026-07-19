@@ -2,8 +2,8 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-  - date: "tbd"
-    title: "v2.4.0-2.5.0"
+  - date: "2026-07-18"
+    title: "v2.4.10-2.4.3"
     items:
       - "Fixed several duplicate error messages."
       - "[#395](https://github.com/Mr-Mappie/mappie/issues/395) Fixed exception when transforming using a property reference."
