@@ -66,6 +66,13 @@ class MappieCommandLineProcessor : CommandLineProcessor {
             valueDescription = "string",
             description = "output directory",
             required = true,
+        ),
+        CliOption(
+            optionName = OPTION_INPUT_DIRS,
+            valueDescription = "string",
+            description = "output directories of associated compilations to load persistent state from",
+            required = false,
+            allowMultipleOccurrences = true,
         )
     )
 
@@ -80,6 +87,7 @@ class MappieCommandLineProcessor : CommandLineProcessor {
             OPTION_REPORT_ENABLED -> configuration.put(ARGUMENT_REPORT_ENABLED, value.toBooleanStrict())
             OPTION_REPORT_DIR -> configuration.put(ARGUMENT_REPORT_DIR, value)
             OPTION_OUTPUT_DIR -> configuration.put(ARGUMENT_OUTPUT_DIR, value)
+            OPTION_INPUT_DIRS -> configuration.appendList(ARGUMENT_INPUT_DIRS, value)
             else -> throw IllegalArgumentException("Unknown option ${option.optionName}")
         }
     }
@@ -94,6 +102,7 @@ class MappieCommandLineProcessor : CommandLineProcessor {
         const val OPTION_REPORT_ENABLED = "report-enabled"
         const val OPTION_REPORT_DIR = "report-dir"
         const val OPTION_OUTPUT_DIR = "output-dir"
+        const val OPTION_INPUT_DIRS = "input-dirs"
 
         val ARGUMENT_WARNINGS_AS_ERRORS = CompilerConfigurationKey<Boolean>(OPTION_WARNINGS_AS_ERRORS)
         val ARGUMENT_USE_DEFAULT_ARGUMENTS = CompilerConfigurationKey<Boolean>(OPTION_USE_DEFAULT_ARGUMENTS)
@@ -104,5 +113,6 @@ class MappieCommandLineProcessor : CommandLineProcessor {
         val ARGUMENT_REPORT_ENABLED = CompilerConfigurationKey<Boolean>(OPTION_REPORT_ENABLED)
         val ARGUMENT_REPORT_DIR = CompilerConfigurationKey<String>(OPTION_REPORT_DIR)
         val ARGUMENT_OUTPUT_DIR = CompilerConfigurationKey<String>(OPTION_OUTPUT_DIR)
+        val ARGUMENT_INPUT_DIRS = CompilerConfigurationKey<List<String>>(OPTION_INPUT_DIRS)
     }
 }

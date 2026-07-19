@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "tbd"
+    title: "v2.4.10-2.4.4"
+    items:
+      - "[#408](https://github.com/Mr-Mappie/mappie/issues/408) Fixed incremental compilation state being inconsistent with the Gradle build cache, and compilations of the same project overwriting each others state."
   - date: "2026-07-18"
     title: "v2.4.10-2.4.3"
     items:
