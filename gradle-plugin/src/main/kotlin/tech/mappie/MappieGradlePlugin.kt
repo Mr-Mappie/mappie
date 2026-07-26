@@ -55,9 +55,6 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
                         add(SubpluginOption("report-dir", asFile.absolutePath))
                     }
                     add(SubpluginOption("output-dir", stateDirectory.get().asFile.absolutePath))
-                    kotlinCompilation.allAssociatedCompilations.forEach { compilation ->
-                        add(SubpluginOption("input-dirs", stateDirectoryOf(compilation).get().asFile.absolutePath))
-                    }
                 }
             }
         }

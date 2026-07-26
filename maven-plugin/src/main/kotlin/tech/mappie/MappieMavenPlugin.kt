@@ -38,16 +38,6 @@ class MappieMavenPlugin : KotlinMavenPluginExtension {
                     stateDirectoryOf(project, execution.goal).absolutePath,
                 )
             )
-            if (execution.goal == GOAL_TEST_COMPILE) {
-                add(
-                    PluginOption(
-                        PLUGIN_ID,
-                        PLUGIN_ID,
-                        "input-dirs",
-                        stateDirectoryOf(project, GOAL_COMPILE).absolutePath,
-                    )
-                )
-            }
         }
     }
 
@@ -69,8 +59,6 @@ class MappieMavenPlugin : KotlinMavenPluginExtension {
 
     companion object {
         private const val PLUGIN_ID = BuildConfig.COMPILER_PLUGIN_ID
-        private const val GOAL_COMPILE = "compile"
-        private const val GOAL_TEST_COMPILE = "test-compile"
         private val EXPECTED_KOTLIN_VERSION = BuildConfig.VERSION.split('-').first()
     }
 }

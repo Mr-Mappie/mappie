@@ -49,6 +49,6 @@ class MappieIrRegistrar(
         MappieLogger(configuration.warningsAsErrors, messageCollector),
         this@MappieIrRegistrar.configuration,
         MappieDefinitionCollection(),
-        MappieContextFileManager.load(configuration.outputDir, configuration.inputDirs),
+        MappieContextFileManager.load(configuration.outputDir),
     )
 }

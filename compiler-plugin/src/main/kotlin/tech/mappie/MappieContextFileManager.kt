@@ -14,15 +14,13 @@ object MappieContextFileManager {
 
     private const val FILE = "context.xml"
 
-    fun load(dir: String?, inputDirs: List<String> = emptyList()): MappiePersistentState {
-        val own = if (dir != null) read(dir) else MappiePersistentState()
-        val inputs = inputDirs.map { read(it) }
-        return MappiePersistentState((own.incremental + inputs.flatMap { it.incremental }).distinct())
-    }
-
-    private fun read(dir: String): MappiePersistentState =
-        runCatching { xmlToMappiePersistentState(File(dir).resolve(FILE).readText()) }
-            .getOrElse { MappiePersistentState() }
+    fun load(dir: String?): MappiePersistentState =
+        if (dir != null) {
+            runCatching { xmlToMappiePersistentState(file(dir).readText()) }
+                .getOrElse { MappiePersistentState() }
+        } else {
+            MappiePersistentState()
+        }
 
     context(context: MappieContext)
     fun write(file: MappiePersistentState) {
