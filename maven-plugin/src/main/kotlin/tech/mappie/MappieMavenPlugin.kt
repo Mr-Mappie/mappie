@@ -21,21 +21,28 @@ class MappieMavenPlugin : KotlinMavenPluginExtension {
 
     override fun getPluginOptions(project: MavenProject, execution: MojoExecution): List<PluginOption> {
         logger.debug("Loaded Maven plugin " + javaClass.name)
-        return listOf(
-            PluginOption(
-                PLUGIN_ID,
-                PLUGIN_ID,
-                "report-dir",
-                File(project.basedir, "target/mappie").absolutePath,
-            ),
-            PluginOption(
-                PLUGIN_ID,
-                PLUGIN_ID,
-                "output-dir",
-                File(project.basedir, "target").absolutePath,
-            ),
-        )
+        return buildList {
+            add(
+                PluginOption(
+                    PLUGIN_ID,
+                    PLUGIN_ID,
+                    "report-dir",
+                    File(project.basedir, "target/mappie").absolutePath,
+                )
+            )
+            add(
+                PluginOption(
+                    PLUGIN_ID,
+                    PLUGIN_ID,
+                    "output-dir",
+                    stateDirectoryOf(project, execution.goal).absolutePath,
+                )
+            )
+        }
     }
+
+    private fun stateDirectoryOf(project: MavenProject, goal: String) =
+        File(project.basedir, "target/mappie/state/$goal")
 
     override fun isApplicable(project: MavenProject, execution: MojoExecution): Boolean {
         val version = project.buildPlugins

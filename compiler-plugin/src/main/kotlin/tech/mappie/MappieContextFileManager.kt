@@ -12,7 +12,7 @@ import javax.xml.transform.stream.StreamResult
 
 object MappieContextFileManager {
 
-    private const val FILE = "mappie/context.xml"
+    private const val FILE = "context.xml"
 
     fun load(dir: String?): MappiePersistentState =
         if (dir != null) {

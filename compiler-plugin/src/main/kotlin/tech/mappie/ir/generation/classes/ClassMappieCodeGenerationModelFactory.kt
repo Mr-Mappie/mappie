@@ -127,6 +127,9 @@ class ClassMappieCodeGenerationModelFactory {
             CodeModelGenerationStage.execute(requests).models.mapKeys { it.key as GeneratedMappieDefinition }.toList()
                 .single()
         } else {
+            // Generation failed, so remove the definition again to prevent dangling references to a
+            // mapper which will never exist, and duplicates on subsequent generation attempts.
+            context.definitions.generated.remove(definition)
             null
         }
     }
