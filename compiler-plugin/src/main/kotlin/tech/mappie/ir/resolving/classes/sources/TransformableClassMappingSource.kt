@@ -53,12 +53,12 @@ data class PropertyMappingTransformTransformation private constructor(
     constructor(functionReference: IrFunctionReference) : this(functionReference, functionReference.symbol.owner.returnType)
     constructor(functionExpression: IrFunctionExpression) : this(
         functionExpression,
-        (functionExpression.function.body as? IrBlockBody)
-            ?.statements
-            ?.filterIsInstance<IrReturn>()
-            ?.map { it.value.type }
+        (functionExpression.function.body as IrBlockBody)
+            .statements
+            .filterIsInstance<IrReturn>()
+            .map { it.value.type }
             // TODO: find the common supertype when having multiple different return types.
-            ?.distinct()?.singleOrNull()
+            .distinct().singleOrNull()
             ?: functionExpression.function.returnType
     )
 
