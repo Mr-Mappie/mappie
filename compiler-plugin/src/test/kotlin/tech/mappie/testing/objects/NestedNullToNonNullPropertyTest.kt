@@ -141,7 +141,6 @@ class NestedNullToNonNullPropertyTest : MappieTestCase() {
     }
 
     @Test
-    @Disabled("Explicit nullable mapping source in Mappie is not supported yet.")
     fun `map object with nested null to non-null with implicit null mapper should succeed`() {
         compile {
             file("Test.kt",
@@ -175,7 +174,6 @@ class NestedNullToNonNullPropertyTest : MappieTestCase() {
     }
 
     @Test
-    @Disabled("Explicit nullable mapping source in Mappie is not supported yet.")
     fun `map object with nested null to non-null with explicit null mapper should succeed`() {
         compile {
             file("Test.kt",

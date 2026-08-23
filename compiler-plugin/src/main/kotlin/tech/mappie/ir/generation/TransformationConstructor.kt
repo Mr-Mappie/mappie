@@ -112,7 +112,11 @@ fun IrBuilderWithScope.constructTransformation(
     }
 
 private fun PropertyMappingViaMapperTransformation.selectMappingFunction(value: IrExpression) =
-    mapper.clazz.selectMappingFunction(value)
+    if (value.type.isNullable() && mapper.source.isNullable()) {
+        mapper.referenceMapFunction()
+    } else {
+        mapper.clazz.selectMappingFunction(value)
+    }
 
 private fun IrClass.selectMappingFunction(value: IrExpression) =
     when {
