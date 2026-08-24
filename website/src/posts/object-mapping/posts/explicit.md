@@ -134,7 +134,7 @@ we can reference the primary constructor via
 ```kotlin
 object PersonMapper : ObjectMappie<Person, PersonDto>() {
     override fun map(from: Person) = 
-        mapping<String, String, Int>(::PersonDto)
+        mapping<String, Int, String>(::PersonDto)
 }
 ```
 and we can reference the secondary constructor via
