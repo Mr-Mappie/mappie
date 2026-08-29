@@ -17,19 +17,28 @@ sealed interface TransformableClassMappingSource : ClassMappingSource {
     val source: IrType
     val transformation: PropertyMappingTransformation?
 
-    fun type(original: IrType): IrType =
-        when (transformation) {
-            is PropertyMappingViaMapperTransformation, is GeneratedViaMapperTransformation, is PropertyMappingViaLocalMethodTransformation -> {
-                if (original.isNullable()) {
-                    transformation!!.type.makeNullable().addAnnotations(original.annotations)
-                } else {
-                    transformation!!.type
-                }
-            }
-            else -> {
-                transformation?.type ?: original.type
-            }
+    fun type(original: IrType): IrType {
+        val transformation = transformation ?: return original.type
+
+        val shouldMakeNullable = when (transformation) {
+            is PropertyMappingViaMapperTransformation ->
+                original.isNullable() && !transformation.mapper.source.isNullable()
+
+            is GeneratedViaMapperTransformation,
+            is PropertyMappingViaLocalMethodTransformation ->
+                original.isNullable()
+
+            is PropertyMappingTransformTransformation,
+            is PropertyReferenceMappingTransformTransformation ->
+                false
         }
+
+        return if (shouldMakeNullable) {
+            transformation.type.makeNullable().addAnnotations(original.annotations)
+        } else {
+            transformation.type
+        }
+    }
 
     fun clone(transformation: PropertyMappingTransformation?) = when (this) {
         is ExplicitPropertyMappingSource -> copy(transformation = transformation)
