@@ -102,7 +102,7 @@ class KotlinCompilation(workingDir: File) : AbstractKotlinCompilation<K2JVMCompi
 	 */
 	var supportCompatqualCheckerFrameworkAnnotations: String? = null
 
-	/** Generate metadata with strict version semantics (see kdoc on Metadata.extraInt) */
+	/** Generate metadata with strict version semantics (see KDoc on Metadata.extraInt) */
 	var strictMetadataVersionSemantics: Boolean = false
 
 	/**

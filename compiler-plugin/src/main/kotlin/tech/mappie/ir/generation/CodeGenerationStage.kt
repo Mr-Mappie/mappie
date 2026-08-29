@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import tech.mappie.ir.GeneratedMappieDefinition
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.MappieDefinition
-import tech.mappie.ir.resolving.ClassMappings
 import tech.mappie.ir.resolving.TargetSourcesClassMappings
 import tech.mappie.ir.resolving.classes.sources.PropertyMappingViaMapperTransformation
 import tech.mappie.ir.resolving.classes.sources.TransformableClassMappingSource
@@ -24,14 +23,14 @@ object CodeGenerationStage {
                 }
             }
 
-            definition.clazz.transform(MappieTransformer(context, model.replaceTranformationStubss()), null)
+            definition.clazz.transform(MappieTransformer(context, model.replaceTransformationStubs()), null)
         }
 
         return CodeGenerationResult(elements.filterIsInstance<IrClass>())
     }
 
     context(context: MappieContext)
-    private fun CodeGenerationModel.replaceTranformationStubss(): CodeGenerationModel {
+    private fun CodeGenerationModel.replaceTransformationStubs(): CodeGenerationModel {
         return if (this is ClassMappieCodeGenerationModel) {
             val mappings = TargetSourcesClassMappings(when (mappings) {
                 is TargetSourcesClassMappings -> {

@@ -134,7 +134,7 @@ private class TargetNameCollector(private val origin: InternalMappieDefinition)
         return when (expression.symbol.owner.name) {
             IDENTIFIER_TO -> {
                 val value = expression.arguments[1]!!
-                return if (value.isConstantLike && value is IrConst) {
+                if (value.isConstantLike && value is IrConst) {
                     identifier(value.value as String)
                 } else {
                     data.fail(

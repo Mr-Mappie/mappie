@@ -29,7 +29,7 @@ class InheritedEnumResolver(
         return if (findMappingStatements(parent.referenceMapFunction()).isNotEmpty()) {
             val source = definition.source
             val target = definition.target
-            return EnumMappingRequestBuilder(source, target)
+            EnumMappingRequestBuilder(source, target)
                 .sources(source.getClass()!!.accept(EnumEntriesCollector(), Unit))
                 .targets(target.getClass()!!.accept(EnumEntriesCollector(), Unit))
                 .apply {

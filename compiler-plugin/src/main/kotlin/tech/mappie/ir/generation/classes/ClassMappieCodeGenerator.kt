@@ -77,8 +77,10 @@ class ClassMappieCodeGenerator(
     context(context: MappieContext)
     fun construct(builder: DeclarationIrBuilder): IrCall {
         return builder.irCall(referenceFunctionRun()).apply {
-            arguments[0] = builder.irLambda(model.definition.referenceMapFunction().returnType, model.definition.referenceMapFunction().returnType) {
-            }
+            arguments[0] = builder.irLambda(
+                model.definition.referenceMapFunction().returnType,
+                model.definition.referenceMapFunction().returnType
+            ) { }
         }
     }
 

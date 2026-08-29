@@ -9,7 +9,7 @@ import tech.mappie.ir.resolving.SuperCallEnumMappings
 import tech.mappie.ir.resolving.enums.EnumMappingTarget
 import tech.mappie.ir.resolving.enums.ResolvedEnumMappingTarget
 
-class EnumMappieCodeGenerationModelFactory() {
+class EnumMappieCodeGenerationModelFactory {
 
     @Suppress("UNCHECKED_CAST")
     fun construct(request: EnumMappingRequest, definition: MappieDefinition): EnumMappieCodeGenerationModel =

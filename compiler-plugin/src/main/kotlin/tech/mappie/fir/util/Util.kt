@@ -55,10 +55,6 @@ fun FirJavaMethod.isJavaSetter(): Boolean {
     return name.asString().startsWith("set") && valueParameters.size == 1
 }
 
-fun FirJavaMethod.isJavaGetter(): Boolean {
-    return name.asString().startsWith("get") && valueParameters.isEmpty()
-}
-
 @OptIn(SymbolInternals::class)
 context (context: CheckerContext)
 fun FirExpression.toConstant(): FirLiteralExpression? =

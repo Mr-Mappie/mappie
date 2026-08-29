@@ -33,7 +33,7 @@ class AllSourcesMappedProblems(
             val mappings = mapping.mappings
 
             return if (useStrictEnums(mapping.origin.referenceMapFunction())) {
-                return when (mappings) {
+                when (mappings) {
                     is SuperCallEnumMappings -> AllSourcesMappedProblems(mapping, emptyMap())
                     is SourcesTargetEnumMappings -> {
                         AllSourcesMappedProblems(

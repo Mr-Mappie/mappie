@@ -1,5 +1,4 @@
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.bundling.Jar
 import tech.mappie.buildlogic.mappiePom
 
 plugins {
