@@ -2,7 +2,6 @@ package tech.mappie.testing.compatibility.multiplatform
 
 import org.junit.jupiter.api.Test
 import tech.mappie.testing.KotlinPlatform
-import tech.mappie.testing.MappieModules.MODULE_KOTLINX_DATETIME
 import tech.mappie.testing.TestBase
 
 class JVMCompatibilityTest : TestBase() {

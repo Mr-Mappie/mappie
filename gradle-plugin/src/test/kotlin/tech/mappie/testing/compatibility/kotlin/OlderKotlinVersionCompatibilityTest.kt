@@ -12,9 +12,9 @@ class OlderKotlinVersionCompatibilityTest : KotlinCompatibilityTestBase() {
     fun `test compatibility with kotlin 2_2_0`() {
         val result = runner.withArguments("build").run()
 
-        val exptectedVersion = BuildConfig.VERSION.split('-').first()
+        val expectedVersion = BuildConfig.VERSION.split('-').first()
 
         assertThat(result.output.lines())
-            .anyMatch { it == "Mappie unsupported Kotlin version $kotlinVersion, $exptectedVersion was expected. This is highly likely to lead to compilation failure." }
+            .anyMatch { it == "Mappie unsupported Kotlin version $kotlinVersion, $expectedVersion was expected. This is highly likely to lead to compilation failure." }
     }
 }

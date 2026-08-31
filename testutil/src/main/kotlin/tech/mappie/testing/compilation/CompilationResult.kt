@@ -8,7 +8,7 @@ import kotlin.collections.plus
 class CompilationResult(
     private val kotlinCompilation: KotlinCompilation,
     val exitCode: KotlinCompilation.ExitCode,
-    private val messages: String,
+    messages: String,
 ) {
     val logs = Logs(messages)
 

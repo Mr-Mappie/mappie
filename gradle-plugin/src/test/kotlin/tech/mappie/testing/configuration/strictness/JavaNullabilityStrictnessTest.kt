@@ -4,7 +4,7 @@ import tech.mappie.testing.TestBase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class platformTypeNullabilityStrictnessTest : TestBase() {
+class PlatformTypeNullabilityStrictnessTest : TestBase() {
 
     @Test
     fun `java nullability warning is emitted when enabled`() {

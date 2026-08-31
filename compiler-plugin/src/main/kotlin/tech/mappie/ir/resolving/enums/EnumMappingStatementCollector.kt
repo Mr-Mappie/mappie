@@ -13,12 +13,12 @@ object EnumMappingStatementCollector : BaseVisitor<Pair<IrEnumEntry, EnumMapping
             IDENTIFIER_FROM_ENUM_ENTRY -> {
                 val target = expression.arguments[1]!!
                 val source = (expression.arguments[2]!! as IrGetEnumValue).symbol.owner
-                return source to ExplicitEnumMappingTarget(target)
+                source to ExplicitEnumMappingTarget(target)
             }
             IDENTIFIER_THROWN_BY_ENUM_ENTRY -> {
                 val target = expression.arguments[1]!!
                 val source = (expression.arguments[2]!! as IrGetEnumValue).symbol.owner
-                return source to ThrowingEnumMappingTarget(target)
+                source to ThrowingEnumMappingTarget(target)
             }
             else -> {
                 super.visitCall(expression, data)

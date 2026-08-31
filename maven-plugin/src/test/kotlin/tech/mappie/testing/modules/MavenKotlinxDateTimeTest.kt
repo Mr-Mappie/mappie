@@ -4,7 +4,6 @@ import tech.mappie.testing.MavenTestBase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import tech.mappie.testing.MappieModules
-import java.io.File
 
 class MavenKotlinxDateTimeTest : MavenTestBase() {
 

@@ -140,9 +140,7 @@ object LocalConversionMethodCollector {
         // Return type must be different from parameter type
         val paramClass = param.type.erasedUpperBound
         val returnClass = returnType.erasedUpperBound
-        if (paramClass == returnClass) return false
-
-        return true
+        return paramClass != returnClass
     }
 
     /**

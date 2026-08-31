@@ -21,8 +21,8 @@ class StarProjectionTest : MappieTestCase() {
         This throws the star projection issue.
 
         With the star projection change:
-        This doesn't work although I would assume it should since the property names of the wrappers are
-        the same and there is an enum mappie defined for the enum but it can't find it.
+        This doesn't work, although I would assume it should since the property names of the wrappers are
+        the same and there is an enum mappie defined for the enum, but it can't find it.
     */
     @Test
     fun `map with implicit enum mapping same name`() {
@@ -84,7 +84,7 @@ class StarProjectionTest : MappieTestCase() {
         This throws the star projection issue.
 
         With the star projection change:
-        This doesn't work although I would assume it should. The property names of the wrappers are
+        This doesn't work, although I would assume it should. The property names of the wrappers are
         different, but there is a name mapping defined, it just doesn't use the enum mapper below it.
     */
     @Test

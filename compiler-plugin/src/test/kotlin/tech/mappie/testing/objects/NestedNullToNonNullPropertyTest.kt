@@ -2,7 +2,6 @@ package tech.mappie.testing.objects
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import tech.mappie.testing.MappieTestCase
 

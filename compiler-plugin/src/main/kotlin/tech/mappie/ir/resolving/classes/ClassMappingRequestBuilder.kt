@@ -155,7 +155,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
     context(context: MappieContext)
     fun sources(parameters: List<Pair<Name, IrType>>) = apply {
         sources.putAll(parameters)
-        parameters.map { (name, type) ->
+        parameters.forEach { (name, type) ->
             implicit.merge(name, listOf(ParameterValueMappingSource(name, type, null)), List<ImplicitClassMappingSource>::plus)
             type.upperBound.getClass()!!.accept(ImplicitClassMappingSourcesCollector(context), name to type).forEach { (name, source) ->
                 implicit.merge(name, listOf(source), List<ImplicitClassMappingSource>::plus)
