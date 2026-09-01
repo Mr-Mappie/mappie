@@ -3,13 +3,12 @@ package tech.mappie.ir.preprocessing
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import tech.mappie.api.PredefinedMappieProvider
-import tech.mappie.api.builtin.BuiltInMappieProvider
-import tech.mappie.api.kotlinx.collections.immutable.KotlinxCollectionsImmutableMappieProvider
-import tech.mappie.api.kotlinx.datetime.KotlinxDateTimeMappieProvider
-import tech.mappie.config.MappieModule
 import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.ExternalMappieDefinition
 import tech.mappie.ir.MappieContext
+import java.io.File
+import java.net.URLClassLoader
+import java.util.ServiceLoader
 
 class ExternalDefinitionsCollector(val context: MappieContext) {
 
@@ -23,17 +22,13 @@ class ExternalDefinitionsCollector(val context: MappieContext) {
         }
     }.map { load(it) }.toList()
 
-    fun providers(): List<PredefinedMappieProvider> {
-        return buildList {
-            add(BuiltInMappieProvider())
-            if (MappieModule.KOTLINX_DATETIME in context.configuration.modules) {
-                add(KotlinxDateTimeMappieProvider())
-            }
-            if (MappieModule.KOTLINX_COLLECTIONS_IMMUTABLE in context.configuration.modules) {
-                add(KotlinxCollectionsImmutableMappieProvider())
-            }
+    fun providers(): List<PredefinedMappieProvider> =
+        URLClassLoader(
+            context.configuration.classpath.map { File(it).toURI().toURL() }.toTypedArray(),
+            PredefinedMappieProvider::class.java.classLoader,
+        ).use { classLoader ->
+            ServiceLoader.load(PredefinedMappieProvider::class.java, classLoader).toList()
         }
-    }
 
     context(context: MappieContext)
     private fun load(name: String) =

@@ -1,10 +1,9 @@
 package tech.mappie.config
 
 import tech.mappie.config.options.NamingConventionMode
-import java.util.EnumSet
 
 data class MappieConfiguration(
-    val modules: EnumSet<MappieModule>,
+    val classpath: List<String>,
     val isMappieDebugMode: Boolean,
     val warningsAsErrors: Boolean,
     val useDefaultArguments: Boolean,
@@ -16,5 +15,3 @@ data class MappieConfiguration(
     val outputDir: String?,
     val reportDir: String,
 )
-
-enum class MappieModule { KOTLINX_DATETIME, KOTLINX_COLLECTIONS_IMMUTABLE }

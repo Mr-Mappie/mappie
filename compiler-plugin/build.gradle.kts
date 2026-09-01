@@ -11,8 +11,6 @@ dependencies {
     compileOnly(libs.kotlin.compiler.embeddable)
 
     compileOnly(projects.mappieApi)
-    compileOnly(projects.modules.kotlinxDatetime)
-    compileOnly(projects.modules.kotlinxCollectionsImmutable)
 
     testImplementation(projects.mappieApi)
     testImplementation(projects.testutil)
@@ -24,8 +22,6 @@ dependencies {
 
 tasks.jar {
     from(project(":mappie-api").sourceSets.named("jvmMain").map { it.output })
-    from(project(":modules:kotlinx-datetime").sourceSets.named("jvmMain").map { it.output })
-    from(project(":modules:kotlinx-collections-immutable").sourceSets.named("jvmMain").map { it.output })
 }
 
 java {
