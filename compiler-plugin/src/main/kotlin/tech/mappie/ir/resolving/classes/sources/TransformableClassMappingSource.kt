@@ -1,9 +1,11 @@
 package tech.mappie.ir.resolving.classes.sources
 
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
+import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.addAnnotations
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -58,7 +60,17 @@ data class PropertyMappingTransformTransformation private constructor(
     override val type: IrType,
 ) : PropertyMappingTransformation {
     constructor(functionReference: IrFunctionReference) : this(functionReference, functionReference.symbol.owner.returnType)
-    constructor(functionExpression: IrFunctionExpression) : this(functionExpression, functionExpression.function.returnType)
+    constructor(functionExpression: IrFunctionExpression) : this(
+        functionExpression,
+        (functionExpression.function.body as IrBlockBody)
+            .statements
+            .filterIsInstance<IrReturn>()
+            .map { it.value.type }
+            // TODO: find the common supertype when having multiple different return types.
+            .distinct().singleOrNull()
+            ?: functionExpression.function.returnType
+    )
+
 }
 
 data class PropertyReferenceMappingTransformTransformation(
