@@ -1,7 +1,6 @@
 package tech.mappie.testing.objects.generics
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import tech.mappie.testing.MappieTestCase
 
@@ -43,7 +42,6 @@ class GenericSetMethodTest : MappieTestCase() {
     }
 
     @Test
-    @Disabled
     fun `map object via generic setter explicitly with transform should succeed`() {
         compile {
             file("Test.kt",
