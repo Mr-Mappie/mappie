@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.konan.file.File
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_OUTPUT_DIR
@@ -33,6 +34,7 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
 
     override val supportsK2: Boolean = true
 
+    @MessageCollectorAccess
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val config = MappieConfiguration(
             modules = EnumSet.noneOf(MappieModule::class.java).apply {
