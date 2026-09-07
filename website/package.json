@@ -31,8 +31,8 @@
     "sprucecss": "^2.3.5"
   },
   "engines": {
-    "node": "^18.12",
-    "npm": "^9.2",
+    "node": "^24.20.0",
+    "npm": "^11.19.0",
     "yarn": "please-use-npm"
   }
 }
