@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import tech.mappie.MappieContextFileManager
 import tech.mappie.config.MappieConfiguration
+import tech.mappie.ir.analysis.report
 import tech.mappie.ir.generation.CodeGenerationStage
 import tech.mappie.ir.generation.CodeModelGenerationStage
 import tech.mappie.ir.postprocessing.PostProcessingStage
@@ -30,7 +31,11 @@ class MappieIrRegistrar(
             val selected = SelectionStage.execute(resolved.requests)
 
             selected.mappings.forEach { (_, request) ->
-                context.logger.logAll(request.validation.problems)
+                request.validation.problems.forEach { problem ->
+                    context
+                        .at(problem.location, problem.file)
+                        .report(problem)
+                }
             }
 
             val requests = selected.mappings
@@ -45,8 +50,8 @@ class MappieIrRegistrar(
     }
 
     private fun createMappieContext(pluginContext: IrPluginContext) = MappieContext(
+        messageCollector,
         pluginContext,
-        MappieLogger(configuration.warningsAsErrors, messageCollector),
         this@MappieIrRegistrar.configuration,
         MappieDefinitionCollection(),
         MappieContextFileManager.load(configuration.outputDir),

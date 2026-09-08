@@ -1,5 +1,6 @@
 package tech.mappie.ir.util
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.types.*
@@ -8,7 +9,6 @@ import org.jetbrains.kotlin.ir.util.isSubtypeOf
 
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
 import tech.mappie.ir.MappieContext
-import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.allMappieClasses
 
 context(context: MappieContext)
@@ -51,7 +51,7 @@ fun IrType.isPrimitive(): Boolean =
 fun IrType.substituteTypeVariable(container: IrTypeParametersContainer, arguments: List<IrTypeArgument>) =
     if (isTypeParameter()) {
         val mapping = container.typeParameters.zip(arguments).toMap()
-        mapping[classifierOrNull!!.owner]?.typeOrNull ?: panic("Could not resolve generic type", container)
+        mapping[classifierOrNull!!.owner]?.typeOrNull ?: compilationException("Could not resolve generic type", container)
     } else {
         this
     }

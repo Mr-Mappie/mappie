@@ -1,5 +1,6 @@
 package tech.mappie.ir.generation.classes
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
@@ -12,7 +13,6 @@ import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.getKFunctionType
 import tech.mappie.ir.MappieContext
-import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.generation.ClassMappieCodeGenerationModel
 import tech.mappie.ir.generation.MappieCodeGenerator
 import tech.mappie.ir.generation.constructTransformation
@@ -90,7 +90,7 @@ class ClassMappieCodeGenerator(
             is ExplicitPropertyMappingSource -> {
                 val receiver = source.reference.dispatchReceiver
                         ?: irGet(parameters.singleOrNull { it.type == (source.reference.type as IrSimpleType).arguments[0].typeOrFail }
-                            ?: panic("Could not determine value parameter for property reference.", source.reference))
+                            ?: compilationException("Could not determine value parameter for property reference.", source.reference))
 
                 val getter = if (source.forceNonNull) {
                     irCall(referenceFunctionRequireNotNull(), source.reference.getter!!.owner.returnType.makeNotNull()).apply {

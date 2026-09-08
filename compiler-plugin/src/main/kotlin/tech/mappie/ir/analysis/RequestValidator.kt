@@ -1,13 +1,14 @@
 package tech.mappie.ir.analysis
 
+import org.jetbrains.kotlin.diagnostics.Severity
 import tech.mappie.ir.MappieContext
-import tech.mappie.ir.resolving.*
 import tech.mappie.ir.analysis.problems.classes.*
+import tech.mappie.ir.resolving.*
 import tech.mappie.ir.analysis.problems.enums.AllSourcesMappedProblems
 
 data class ValidationResult(val problems: List<Problem>) {
-    val errors = problems.filter { it.severity == Problem.Severity.ERROR }
-    val warnings = problems.filter { it.severity == Problem.Severity.WARNING }
+    val errors = problems.filter { it.severity == Severity.ERROR }
+    val warnings = problems.filter { it.severity == Severity.WARNING }
 
     val isValid = errors.isEmpty()
 }

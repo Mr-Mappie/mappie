@@ -1,5 +1,6 @@
 package tech.mappie.ir.preprocessing
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import tech.mappie.api.PredefinedMappieProvider
@@ -7,7 +8,6 @@ import tech.mappie.api.builtin.BuiltInMappieProvider
 import tech.mappie.api.kotlinx.collections.immutable.KotlinxCollectionsImmutableMappieProvider
 import tech.mappie.api.kotlinx.datetime.KotlinxDateTimeMappieProvider
 import tech.mappie.config.MappieModule
-import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.ExternalMappieDefinition
 import tech.mappie.ir.MappieContext
 
@@ -40,5 +40,5 @@ class ExternalDefinitionsCollector(val context: MappieContext) {
         context.pluginContext.finderForBuiltins().findClass(ClassId.fromString(name))
             ?.owner
             ?.let { ExternalMappieDefinition.of(it) }
-            ?: panic("Could not find registered mapper $name on classpath.")
+            ?: compilationException("Could not find registered mapper $name on classpath.", null)
 }

@@ -1,14 +1,14 @@
 package tech.mappie.ir.util
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
-import tech.mappie.exceptions.MappiePanicException.Companion.panic
 
 abstract class BaseVisitor<R, D> : IrVisitor<R, D>() {
 
     override fun visitElement(element: IrElement, data: D): R {
-        panic("Unexpected element ${element.dump()}", element)
+        compilationException("Unexpected element ${element.dump()}", element)
     }
 
     fun IrElement.accept(data: D): R =

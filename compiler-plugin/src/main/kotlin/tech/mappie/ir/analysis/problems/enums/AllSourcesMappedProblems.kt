@@ -4,14 +4,15 @@ import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 import tech.mappie.ir.MappieContext
 import tech.mappie.config.options.useStrictEnums
+import tech.mappie.ir.analysis.MappieIrAnalysisProblems.MAPPIE_MULTIPLE_MAPPING_TARGETS
+import tech.mappie.ir.analysis.MappieIrAnalysisProblems.MAPPIE_NO_MAPPING_TARGET
+import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.resolving.EnumMappingRequest
 import tech.mappie.ir.resolving.enums.EnumMappingTarget
 import tech.mappie.ir.resolving.enums.ExplicitEnumMappingTarget
 import tech.mappie.ir.resolving.enums.ThrowingEnumMappingTarget
-import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.resolving.SourcesTargetEnumMappings
 import tech.mappie.ir.resolving.SuperCallEnumMappings
-import tech.mappie.ir.util.location
 
 class AllSourcesMappedProblems(
     private val mapping: EnumMappingRequest,
@@ -20,14 +21,17 @@ class AllSourcesMappedProblems(
 
     fun all(): List<Problem> = mappings.map { (source, targets) ->
         val name = "${source.parent.kotlinFqName.shortName().asString()}.${source.name.asString()}"
-        when {
-            targets.isEmpty() -> Problem.error("Source $name has no target defined", location(mapping.origin.referenceMapFunction()))
-            else -> Problem.error("Source $name has multiple targets defined", location(mapping.origin.referenceMapFunction()))
+        return when {
+            targets.isEmpty() -> listOf(
+                Problem.Problem1(MAPPIE_NO_MAPPING_TARGET, mapping.origin.referenceMapFunction(), name)
+            )
+            else -> listOf(
+                Problem.Problem1(MAPPIE_MULTIPLE_MAPPING_TARGETS, mapping.origin.referenceMapFunction(), name)
+            )
         }
     }
 
     companion object {
-
         context(context: MappieContext)
         fun of(mapping: EnumMappingRequest): AllSourcesMappedProblems {
             val mappings = mapping.mappings

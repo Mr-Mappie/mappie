@@ -25,6 +25,6 @@ class MavenEnumStrictnessTest : MavenTestBase() {
 
         assertThat(execute()).isFailure()
         assertThat(logs.lines())
-            .anyMatch { it.matches(Regex("\\[ERROR\\] .+ Source Input.C has no target defined")) }
+            .anyMatch { it.matches(Regex("\\[ERROR\\] .+ Source 'Input.C' has no target defined.")) }
     }
 }

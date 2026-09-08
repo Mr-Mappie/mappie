@@ -1,12 +1,11 @@
 package tech.mappie.ir.analysis.problems.classes
 
-import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import org.jetbrains.kotlin.ir.util.fileEntry
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.isNullable
+import tech.mappie.ir.analysis.MappieIrAnalysisProblems.MAPPIE_UNNECESSARY_SAFE_CALL
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.ExplicitPropertyMappingSource
 import tech.mappie.util.filterSingle
-import tech.mappie.ir.util.location
 import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.resolving.TargetSourcesClassMappings
 
@@ -16,10 +15,11 @@ class UnnecessaryFromPropertyNotNullProblems(
 ) {
 
     fun all(): List<Problem> = mappings.map {
-        Problem.warning(
-            "Unnecessary fromPropertyNotNull for non-nullable type ${it.source.dumpKotlinLike()}",
-            location(mapping.origin.clazz.fileEntry, it.origin),
-            listOf("Use fromProperty instead of fromPropertyNotNull")
+        Problem.Problem1(
+            MAPPIE_UNNECESSARY_SAFE_CALL,
+            mapping.origin.clazz.file,
+            it.origin,
+            it.source
         )
     }
 

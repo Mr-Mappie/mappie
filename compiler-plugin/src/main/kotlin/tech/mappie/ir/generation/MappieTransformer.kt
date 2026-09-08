@@ -1,13 +1,13 @@
 package tech.mappie.ir.generation
 
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.generation.classes.ClassMappieCodeGenerator
 import tech.mappie.ir.generation.enums.EnumMappieCodeGenerator
@@ -63,7 +63,7 @@ class MappieTransformer(private val context: MappieContext, private val model: C
             is EnumMappieCodeGenerationModel -> {
                 when (model.mappings) {
                     is SourcesTargetEnumMappings -> EnumMappieCodeGenerator(model)
-                    is SuperCallEnumMappings -> panic("Super call should be handled earlier")
+                    is SuperCallEnumMappings -> compilationException("Super call should be handled earlier", null)
                 }
             }
         }

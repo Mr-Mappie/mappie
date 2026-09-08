@@ -1,13 +1,13 @@
 package tech.mappie.ir.selection
 
-import org.jetbrains.kotlin.ir.util.dumpKotlinLike
+import org.jetbrains.kotlin.ir.types.classOrFail
 import tech.mappie.ir.MappieContext
-import tech.mappie.ir.analysis.Problem.Companion.error
 import tech.mappie.ir.analysis.RequestValidator
 import tech.mappie.ir.analysis.ValidationResult
 import tech.mappie.ir.MappieDefinition
+import tech.mappie.ir.analysis.MappieIrAnalysisProblems.MAPPIE_NO_VISIBLE_CONSTRUCTOR
+import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.resolving.MappingRequest
-import tech.mappie.ir.util.location
 
 /**
  * IR stage responsible for matching the sources and targets of all internal definitions.
@@ -21,9 +21,15 @@ object SelectionStage {
             val selected = MappingSelector.of(validations).select()
 
             if (selected == null) {
-                definition to MappingRequestProblemDecorator(null, ValidationResult(listOf(error("Target class ${definition.target.dumpKotlinLike()} has no visible constructor", location(definition.origin.clazz)))))
+                definition to MappingRequestProblemDecorator(
+                    null,
+                    ValidationResult(listOf(Problem.Problem1(MAPPIE_NO_VISIBLE_CONSTRUCTOR, definition.origin.clazz, definition.target.classOrFail)))
+                )
             } else {
-                definition to MappingRequestProblemDecorator(selected.first, selected.second)
+                definition to MappingRequestProblemDecorator(
+                    selected.first,
+                    selected.second
+                )
             }
         }.toMap()
 

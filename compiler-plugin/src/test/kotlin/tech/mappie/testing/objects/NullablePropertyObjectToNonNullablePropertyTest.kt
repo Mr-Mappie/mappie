@@ -22,7 +22,7 @@ class NullablePropertyObjectToNonNullablePropertyTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasSingleErrorMessage(4, "Target Output::value automatically resolved from Input::value but cannot assign source type BigDecimal? to target type BigDecimal")
+            hasSingleErrorMessage(4, "Target 'Output::value' of type 'BigDecimal' cannot be assigned from 'Input::value' of type 'BigDecimal?'.")
         }
     }
 }

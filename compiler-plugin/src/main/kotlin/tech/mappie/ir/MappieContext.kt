@@ -1,6 +1,8 @@
 package tech.mappie.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -16,12 +18,12 @@ import tech.mappie.config.MappieConfiguration
 import tech.mappie.util.*
 
 data class MappieContext(
+    val messageCollector: MessageCollector,
     val pluginContext: IrPluginContext,
-    val logger: MappieLogger,
     val configuration: MappieConfiguration,
     val definitions: MappieDefinitionCollection,
     val persistent: MappiePersistentState,
-)
+) : IrDiagnosticReporter by pluginContext.diagnosticReporter
 
 context(context: MappieContext)
 fun allMappieClasses(): Set<IrClassSymbol> = setOf(

@@ -37,6 +37,7 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
     @MessageCollectorAccess
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val config = MappieConfiguration(
+            configuration,
             modules = EnumSet.noneOf(MappieModule::class.java).apply {
                 if (configuration.isStartedWithDependency(MODULE_KOTLINX_DATETIME_REGEX)) {
                     add(MappieModule.KOTLINX_DATETIME)
@@ -57,7 +58,7 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
             reportDir = configuration[ARGUMENT_REPORT_DIR, ""],
         )
         FirExtensionRegistrarAdapter.registerExtension(MappieFirRegistrar())
-        IrGenerationExtension.registerExtension(MappieIrRegistrar(configuration[MESSAGE_COLLECTOR_KEY, NONE], config))
+        IrGenerationExtension.registerExtension(MappieIrRegistrar(configuration[MESSAGE_COLLECTOR_KEY]!!, config))
     }
 
     private fun CompilerConfiguration.isStartedWithDependency(pattern: Regex) =

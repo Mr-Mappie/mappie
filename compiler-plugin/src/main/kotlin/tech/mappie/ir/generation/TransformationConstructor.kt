@@ -1,5 +1,7 @@
 package tech.mappie.ir.generation
 
+import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.common.wrapWithCompilationException
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
@@ -10,15 +12,14 @@ import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.superClass
-import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.MappieContext
-import tech.mappie.ir.analysis.Problem.Companion.internal
 import tech.mappie.ir.referenceFunctionError
 import tech.mappie.ir.referenceFunctionLet
 import tech.mappie.ir.referenceMappieClass
@@ -96,7 +97,7 @@ fun IrBuilderWithScope.constructTransformation(
                 }
             } else {
                 if (definitions.isNotEmpty()) {
-                    context.logger.log(internal("failed to reference an unique generated mapper in ${origin.clazz.name}. Possible options: " + definitions.joinToString(prefix = "'", postfix = "'") { it.clazz.name.asString() }))
+                    compilationException("Failed to reference an unique generated mapper in ${origin.clazz.name}. Possible options: " + definitions.joinToString(prefix = "'", postfix = "'") { it.clazz.name.asString() }, null)
                 }
 
                 irCall(referenceFunctionError()).apply {
@@ -141,9 +142,9 @@ private fun IrBuilderWithScope.instance(origin: InternalMappieDefinition, source
         irCallConstructor(clazz.primaryConstructor!!.symbol, emptyList()).apply {
             clazz.primaryConstructor!!.parameters.forEach { parameter ->
                 val sourceType = runCatching { source.type.arguments.first().typeOrNull ?: context.pluginContext.irBuiltIns.anyType.makeNullable() }
-                    .getOrElse { panic("Failed to determine type of source argument for parameter ${parameter.name} in ${clazz.name} originating in ${origin.clazz.name}.", cause = it) }
+                    .getOrElse { throw it.wrapWithCompilationException("Failed to determine type of source argument for parameter ${parameter.name} in ${clazz.name} originating in ${origin.clazz.name}.", origin.clazz.file, origin.clazz) }
                 val targetType = runCatching { target.type.arguments.first().typeOrFail }
-                    .getOrElse { panic("Failed determine type of target argument for parameter ${parameter.name} in ${clazz.name} originating in ${origin.clazz.name}.", cause = it) }
+                    .getOrElse { throw it.wrapWithCompilationException("Failed determine type of target argument for parameter ${parameter.name} in ${clazz.name} originating in ${origin.clazz.name}.", origin.clazz.file, origin.clazz) }
 
                 val inner = context.definitions.matching(origin, sourceType, targetType).singleOrNull()
                 // TODO: should collect inner source and target.
@@ -164,5 +165,5 @@ private fun IrBuilderWithScope.instance(origin: InternalMappieDefinition, source
             }
         }
     } else {
-        panic("Class ${clazz.name.asString()} should either be an object or have a primary constructor without parameters.", clazz)
+        compilationException("Class ${clazz.name.asString()} should either be an object or have a primary constructor without parameters.", clazz)
     }

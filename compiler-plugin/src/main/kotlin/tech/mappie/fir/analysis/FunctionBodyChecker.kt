@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import tech.mappie.fir.analysis.MappieErrors.MULTIPLE_MAPPING_CALLS
+import tech.mappie.fir.analysis.MappieFirProblems.MULTIPLE_MAPPING_CALLS
 import tech.mappie.fir.util.isSubclassOfAnMappie
 import tech.mappie.util.IDENTIFIER_MAPPING
 

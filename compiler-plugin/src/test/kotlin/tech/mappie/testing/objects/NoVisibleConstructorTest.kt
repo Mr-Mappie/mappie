@@ -23,7 +23,7 @@ class NoVisibleConstructorTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasSingleErrorMessage(4, "Target class Output has no visible constructor")
+            hasSingleErrorMessage(4, "Target class 'Output' has no visible constructor.")
         }
     }
 }

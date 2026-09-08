@@ -1,5 +1,6 @@
 package tech.mappie.ir.resolving.classes
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -14,11 +15,9 @@ import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import tech.mappie.exceptions.MappieProblemException.Companion.fail
 import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.resolving.classes.targets.MappieTargetsCollector
-import tech.mappie.ir.util.location
 
 class ClassResolver(
     private val sources: List<Pair<Name, IrType>>,
@@ -34,7 +33,7 @@ class ClassResolver(
                 .sources(sources)
                 .apply {
                     mapping?.arguments?.firstIsInstanceOrNull<IrFunctionExpression>()?.function?.body?.statements?.forEach { statement ->
-                        statement.accept(ClassMappingStatementCollector(origin), context)
+                        statement.accept(ClassMappingStatementCollector(), context)
                             ?.let { explicit(it) }
                     }
                 }
@@ -42,11 +41,10 @@ class ClassResolver(
         }.toList()
     }
 
-    context(context: MappieContext)
     private fun constructors(origin: InternalMappieDefinition, call: IrCall?): Sequence<IrConstructor> {
         return if (call == null || call.arguments.size == 2) {
             target.getClass()?.constructors
-                ?: context.fail("Failed to resolve class for target type ${target.dumpKotlinLike()}", location(origin.clazz))
+                ?: compilationException("Failed to resolve class for target type ${target.dumpKotlinLike()}", origin.clazz)
         } else {
             sequenceOf(((call.arguments[1] as IrFunctionReference).symbol as IrConstructorSymbol).owner)
         }

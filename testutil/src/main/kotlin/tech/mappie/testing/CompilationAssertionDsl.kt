@@ -27,24 +27,17 @@ class CompilationAssertionDsl(private val result: CompilationResult) {
 
 	fun hasErrorMessages(vararg logs: Pair<Int, String>) {
 		assertThat(result.logs.errors).containsExactlyInAnyOrder(*logs
-			.map { Log(Log.Level.ERROR, it.first, it.second, emptyList()) }
+			.map { Log(Log.Level.ERROR, it.first, it.second) }
 			.toTypedArray()
 		)
 	}
 
-	fun hasErrorMessages(vararg logs: Triple<Int, String, List<String>>) {
-		assertThat(result.logs.errors).containsExactlyInAnyOrder(*logs
-			.map { Log(Log.Level.ERROR, it.first, it.second, it.third) }
-			.toTypedArray()
-		)
+	fun hasSingleErrorMessage(line: Int, message: String) {
+		assertThat(result.logs.errors).containsExactly(Log(Log.Level.ERROR, line, message))
 	}
 
-	fun hasSingleErrorMessage(line: Int, message: String, suggestions: List<String> = emptyList()) {
-		assertThat(result.logs.errors).containsExactly(Log(Log.Level.ERROR, line, message, suggestions))
-	}
-
-	fun hasSingleWarningMessage(line: Int, message: String, suggestions: List<String> = emptyList()) {
-		assertThat(result.logs.warnings).containsExactly(Log(Log.Level.WARNING, line, message, suggestions))
+	fun hasSingleWarningMessage(line: Int, message: String) {
+		assertThat(result.logs.warnings).containsExactly(Log(Log.Level.WARNING, line, message))
 	}
 
 	fun assertHasLogMessage(message: String) {

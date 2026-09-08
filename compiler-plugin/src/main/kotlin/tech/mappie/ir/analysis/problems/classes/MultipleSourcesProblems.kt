@@ -1,6 +1,8 @@
 package tech.mappie.ir.analysis.problems.classes
 
+import org.jetbrains.kotlin.build.joinToReadableString
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
+import tech.mappie.ir.analysis.MappieIrAnalysisProblems
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.ClassMappingSource
 import tech.mappie.ir.resolving.classes.sources.FunctionMappingSource
@@ -8,9 +10,7 @@ import tech.mappie.ir.resolving.classes.sources.ImplicitPropertyMappingSource
 import tech.mappie.ir.resolving.classes.sources.ParameterValueMappingSource
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.analysis.Problem
-import tech.mappie.ir.analysis.Problem.Companion.error
 import tech.mappie.ir.resolving.TargetSourcesClassMappings
-import tech.mappie.ir.util.location
 
 class MultipleSourcesProblems(
     private val mapping: ClassMappingRequest,
@@ -18,8 +18,14 @@ class MultipleSourcesProblems(
 ) {
 
     fun all(): List<Problem> = mappings.map { (target, sources) ->
-        val description = when {
-            sources.isEmpty() -> "Target ${mapping.target.dumpKotlinLike()}::${target.name.asString()} has no source defined"
+        when {
+            sources.isEmpty() -> {
+                Problem.Problem1(
+                    MappieIrAnalysisProblems.MAPPIE_NO_MAPPING_SOURCE,
+                    mapping.origin.referenceMapFunction(),
+                    "${mapping.target.dumpKotlinLike()}::${target.name.asString()}"
+                )
+            }
             else -> {
                 val sourceNames = sources.mapNotNull { source ->
                     when (source) {
@@ -30,14 +36,14 @@ class MultipleSourcesProblems(
                     }
                 }.distinct()
 
-                if (sourceNames.isNotEmpty()) {
-                    "Target ${mapping.target.dumpKotlinLike()}::${target.name.asString()} has multiple sources defined: ${sourceNames.joinToString(", ")}"
-                } else {
-                    "Target ${mapping.target.dumpKotlinLike()}::${target.name.asString()} has multiple sources defined"
-                }
+                Problem.Problem2(
+                    MappieIrAnalysisProblems.MAPPIE_MULTIPLE_MAPPING_SOURCES,
+                    mapping.origin.referenceMapFunction(),
+                    "${mapping.target.dumpKotlinLike()}::${target.name.asString()}",
+                    sourceNames.joinToReadableString()
+                )
             }
         }
-        error(description, location(mapping.origin.referenceMapFunction()))
     }
 
     companion object {

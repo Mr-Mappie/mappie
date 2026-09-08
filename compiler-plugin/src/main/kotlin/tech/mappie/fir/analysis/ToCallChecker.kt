@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
-import tech.mappie.fir.analysis.MappieErrors.NON_CONSTANT_ERROR
-import tech.mappie.fir.analysis.MappieErrors.UNKNOWN_NAME_ERROR
+import tech.mappie.fir.analysis.MappieFirProblems.NON_CONSTANT_ERROR
+import tech.mappie.fir.analysis.MappieFirProblems.UNKNOWN_NAME_ERROR
 import tech.mappie.fir.util.toConstant
 import tech.mappie.fir.util.hasCallableId
 import tech.mappie.fir.util.isJavaSetter
