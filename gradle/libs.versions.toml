@@ -20,7 +20,7 @@ kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collec
 
 [plugins]
 gradle-plugin-publish = { id = "com.gradle.plugin-publish", version = "2.2.1" }
-jreleaser = { id = "org.jreleaser", version = "1.19.0" }
+jreleaser = { id = "org.jreleaser", version = "1.26.0" }
 com-github-gmazzo-buildconfig = { id = "com.github.gmazzo.buildconfig", version = "6.0.10" }
 
 convention-mappie = { id = "convention-mappie" }

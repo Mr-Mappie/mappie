@@ -38,8 +38,8 @@ jreleaser {
                 create("mappie") {
                     active = org.jreleaser.model.Active.ALWAYS
                     url = "https://central.sonatype.com/api/v1/publisher"
-                    username = properties["mavenCentralUsername"] as? String
-                    password = properties["mavenCentralPassword"] as? String
+                    username = providers.gradleProperty("mavenCentralUsername")
+                    password = providers.gradleProperty("mavenCentralPassword")
                     applyMavenCentralRules = true
                     verifyPom = false
                     retryDelay = 20
