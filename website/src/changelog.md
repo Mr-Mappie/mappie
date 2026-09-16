@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "tbd"
+    title: "next"
+    items:
+      - "Removed option to treat warnings as errors. Use standard kotlin compiler configuration options instead."
   - date: "2026-09-16"
     title: "v2.4.20-2.4.4"
     items:

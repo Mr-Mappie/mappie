@@ -20,9 +20,6 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
             val extension = extensions.getByType(MappieExtension::class.java)
 
-            // Register the persistent state directory as a task output, such that it is restored from the
-            // build cache together with the compiled classes it was generated with. The state is stored
-            // per compilation to prevent compilations of the same project overwriting each others state.
             val stateDirectory = stateDirectoryOf(kotlinCompilation)
             kotlinCompilation.compileTaskProvider.configure { task ->
                 task.outputs.dir(stateDirectory).withPropertyName("mappieStateDirectory")
@@ -30,9 +27,6 @@ class MappieGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
             return provider {
                 buildList {
-                    extension.warningsAsErrors.orNull?.apply {
-                        add(SubpluginOption("warnings-as-errors", this.toString()))
-                    }
                     extension.useDefaultArguments.orNull?.apply {
                         add(SubpluginOption("use-default-arguments", this.toString()))
                     }

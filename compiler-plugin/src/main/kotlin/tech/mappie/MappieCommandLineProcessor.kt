@@ -20,12 +20,6 @@ class MappieCommandLineProcessor : CommandLineProcessor {
             required = false,
         ),
         CliOption(
-            optionName = OPTION_WARNINGS_AS_ERRORS,
-            valueDescription = "boolean",
-            description = "report all warnings as errors instead",
-            required = false,
-        ),
-        CliOption(
             optionName = OPTION_STRICTNESS_ENUMS,
             valueDescription = "boolean",
             description = "strictness of enum validation",
@@ -71,7 +65,6 @@ class MappieCommandLineProcessor : CommandLineProcessor {
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         return when (option.optionName) {
-            OPTION_WARNINGS_AS_ERRORS -> configuration.put(ARGUMENT_WARNINGS_AS_ERRORS, value.toBooleanStrict())
             OPTION_USE_DEFAULT_ARGUMENTS -> configuration.put(ARGUMENT_USE_DEFAULT_ARGUMENTS, value.toBooleanStrict())
             OPTION_STRICTNESS_ENUMS -> configuration.put(ARGUMENT_STRICTNESS_ENUMS, value.toBooleanStrict())
             OPTION_STRICTNESS_JAVA_NULLABILITY -> configuration.put(ARGUMENT_STRICTNESS_JAVA_NULLABILITY, value.toBooleanStrict())
@@ -85,7 +78,6 @@ class MappieCommandLineProcessor : CommandLineProcessor {
     }
 
     companion object {
-        const val OPTION_WARNINGS_AS_ERRORS = "warnings-as-errors"
         const val OPTION_USE_DEFAULT_ARGUMENTS = "use-default-arguments"
         const val OPTION_STRICTNESS_ENUMS = "strict-enums"
         const val OPTION_STRICTNESS_JAVA_NULLABILITY = "strict-platform-type-nullability"
@@ -95,7 +87,6 @@ class MappieCommandLineProcessor : CommandLineProcessor {
         const val OPTION_REPORT_DIR = "report-dir"
         const val OPTION_OUTPUT_DIR = "output-dir"
 
-        val ARGUMENT_WARNINGS_AS_ERRORS = CompilerConfigurationKey<Boolean>(OPTION_WARNINGS_AS_ERRORS)
         val ARGUMENT_USE_DEFAULT_ARGUMENTS = CompilerConfigurationKey<Boolean>(OPTION_USE_DEFAULT_ARGUMENTS)
         val ARGUMENT_STRICTNESS_ENUMS = CompilerConfigurationKey<Boolean>(OPTION_STRICTNESS_ENUMS)
         val ARGUMENT_STRICTNESS_JAVA_NULLABILITY = CompilerConfigurationKey<Boolean>(OPTION_STRICTNESS_JAVA_NULLABILITY)
