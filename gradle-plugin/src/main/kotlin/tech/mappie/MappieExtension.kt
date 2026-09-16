@@ -21,11 +21,6 @@ abstract class MappieExtension(private val project: Project) {
     private val extensions = mutableMapOf<String, Any>()
 
     /**
-     * Whether to report all warnings as errors.
-     */
-    abstract val warningsAsErrors: Property<Boolean>
-
-    /**
      * Use default arguments if no mapping exists.
      */
     abstract val useDefaultArguments: Property<Boolean>
