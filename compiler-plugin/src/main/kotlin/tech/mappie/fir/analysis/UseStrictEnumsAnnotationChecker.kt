@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
-import tech.mappie.fir.analysis.MappieErrors.ANNOTATION_USE_STRICT_ENUMS_NOT_APPLICABLE
+import tech.mappie.fir.analysis.MappieFirProblems.ANNOTATION_USE_STRICT_ENUMS_NOT_APPLICABLE
 import tech.mappie.fir.util.isSubclassOfAnObjectMappie
 import tech.mappie.util.CLASS_ID_USE_STRICT_ENUMS
 

@@ -24,10 +24,7 @@ class GeneratedClassFailTest : MappieTestCase() {
             isCompilationError()
             hasSingleErrorMessage(
                 4,
-                "No implicit mapping can be generated from InnerInput to InnerOutput",
-                listOf(
-                    "Target InnerOutput::value automatically resolved from InnerInput::value but cannot assign source type String to target type Int"
-                )
+                "No implicit mapping can be generated from 'InnerInput' to 'InnerOutput'.",
             )
         }
     }

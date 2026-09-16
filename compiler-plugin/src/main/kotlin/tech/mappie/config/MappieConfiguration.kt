@@ -1,9 +1,11 @@
 package tech.mappie.config
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import tech.mappie.config.options.NamingConventionMode
 import java.util.EnumSet
 
 data class MappieConfiguration(
+    val configuration: CompilerConfiguration,
     val modules: EnumSet<MappieModule>,
     val isMappieDebugMode: Boolean,
     val warningsAsErrors: Boolean,

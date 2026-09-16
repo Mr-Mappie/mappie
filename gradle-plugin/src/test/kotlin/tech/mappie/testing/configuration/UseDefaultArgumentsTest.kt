@@ -46,7 +46,7 @@ class UseDefaultArgumentsTest : TestBase() {
         val result = runner.withArguments("build").buildAndFail()
 
         assertThat(result.output.lines())
-            .anyMatch { it.matches(Regex("e: .+ Target Output::second has no source defined")) }
+            .anyMatch { it.matches(Regex("e: .+ Target 'Output::second' has no source defined.")) }
     }
 
     @Test

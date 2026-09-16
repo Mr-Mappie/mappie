@@ -1,10 +1,11 @@
 package tech.mappie.ir.reporting
 
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import org.jetbrains.kotlin.ir.util.kotlinFqName
 import tech.mappie.ir.MappieContext
-import tech.mappie.ir.util.location
+import tech.mappie.ir.generation.MappieIrGenerationProblems.MAPPIE_FAILED_TO_CREATE_REPORT_FILE
+import tech.mappie.ir.generation.MappieIrGenerationProblems.MAPPIE_INCOMPREHENSIBLE_REPORT_FILE
 import java.io.File
 import java.io.IOException
 
@@ -16,8 +17,7 @@ class ReportGenerator {
             val directory = File(context.configuration.reportDir)
 
             runCatching { directory.mkdirs() }.getOrElse {
-                context.logger.error("Mappie failed to create report output directory ${context.configuration.reportDir}.")
-                throw it
+                throw IOException("Mappie failed to create report output directory ${context.configuration.reportDir}.", it)
             }
 
             elements.forEach { clazz ->
@@ -26,19 +26,15 @@ class ReportGenerator {
                 try {
                     file.writeText(generate(clazz))
                 } catch (_: IOException) {
-                    context.logger.error("Mappie failed to create report file ${file.path}.", location(clazz))
+                    context.at(clazz).report(MAPPIE_FAILED_TO_CREATE_REPORT_FILE)
                 } catch (_: Exception) {
-                    context.logger.onlyWarn(
-                        "Mappie failed to generate comprehensible report for ${clazz.kotlinFqName.asString()}.",
-                        location(clazz)
-                    )
+                    context.at(clazz).report(MAPPIE_INCOMPREHENSIBLE_REPORT_FILE)
                     runCatching { file.writeText(clazz.dumpKotlinLike()) }
                 }
             }
         } else if (context.configuration.isMappieDebugMode) {
             elements.forEach { clazz ->
-                val name = "${clazz.name.asString()}.kt"
-                context.logger.logging(name + System.lineSeparator() + generate(clazz))
+                context.messageCollector.report(CompilerMessageSeverity.INFO, "${clazz.name.asString()}.kt ${System.lineSeparator()}${generate(clazz)}")
             }
         }
     }

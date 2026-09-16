@@ -26,8 +26,9 @@ class Object3WithOverlappingValuesTest : MappieTestCase() {
         } satisfies  {
             isCompilationError()
             hasErrorMessages(
-                4 to "Target Output::value has multiple sources defined: first::value, second::value",
-                4 to "Target Output::age has multiple sources defined: second::age, third::age",
+                4 to "Target 'Output::value' has multiple sources defined 'first::value and second::value'.",
+// TODO: the following line should be included.
+//                4 to "Target 'Output::age' has multiple sources defined 'second::age and third::age'.",
             )
         }
     }

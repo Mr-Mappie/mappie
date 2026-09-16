@@ -1,6 +1,6 @@
 package tech.mappie.ir.selection
 
-import tech.mappie.exceptions.MappiePanicException.Companion.panic
+import org.jetbrains.kotlin.backend.common.compilationException
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.EnumMappingRequest
 import tech.mappie.ir.resolving.MappingRequest
@@ -51,7 +51,7 @@ interface MappingSelector {
             when {
                 options.keys.all { it is ClassMappingRequest } -> ConstructorMappingSelector(options as Map<ClassMappingRequest, ValidationResult>)
                 options.keys.all { it is EnumMappingRequest } -> EnumMappingSelector(options as Map<EnumMappingRequest, ValidationResult>)
-                else -> panic("Not all mappings are of the same type")
+                else -> compilationException("Not all mappings are of the same type", null)
             }
     }
 }

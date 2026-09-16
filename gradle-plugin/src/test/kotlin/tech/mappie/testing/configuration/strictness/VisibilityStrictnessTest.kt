@@ -74,7 +74,7 @@ class VisibilityStrictnessTest : TestBase() {
         val result = runner.withArguments("build").buildAndFail()
 
         assertThat(result.output.lines())
-            .anyMatch { it.matches(Regex("e: .+ Constructor Output\\(value: String\\) is not visible from the current scope")) }
+            .anyMatch { it.matches(Regex("e: .+ Target class 'Output' has no visible constructor.")) }
     }
 
     @Test

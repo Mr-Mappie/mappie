@@ -82,9 +82,7 @@ class NestedNonNullToNullPropertyTest : MappieTestCase() {
             )
         } satisfies {
             isOk()
-            hasSingleWarningMessage(6, "Unnecessary fromPropertyNotNull for non-nullable type InnerInput",
-                listOf("Use fromProperty instead of fromPropertyNotNull")
-            )
+            hasSingleWarningMessage(6, "Unnecessary call to fromPropertyNotNull for non-null type 'InnerInput'.")
 
             val mapper = objectMappie<Input, Output>()
 

@@ -1,5 +1,6 @@
 package tech.mappie.ir.resolving.classes
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.jvm.ir.upperBound
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
@@ -10,10 +11,10 @@ import tech.mappie.ir.MappieContext
 import tech.mappie.config.options.NamingConventionMode
 import tech.mappie.config.options.namingConvention
 import tech.mappie.config.options.useDefaultArguments
-import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.PrioritizationMap.Companion.prioritize
 import tech.mappie.ir.resolving.*
+import tech.mappie.ir.resolving.MappieIrResolvingProblems.MAPPIE_MULTIPLE_IMPLICIT_MAPPERS
 import tech.mappie.ir.resolving.classes.sources.*
 import tech.mappie.ir.resolving.classes.sources.FunctionMappingSource
 import tech.mappie.ir.resolving.classes.sources.ImplicitClassMappingSource
@@ -23,10 +24,9 @@ import tech.mappie.ir.resolving.classes.sources.ParameterValueMappingSource
 import tech.mappie.ir.resolving.classes.sources.PropertyMappingViaLocalMethodTransformation
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.ir.resolving.classes.targets.ValueParameterTarget
-import tech.mappie.ir.analysis.Problem
+import tech.mappie.ir.util.firstRealParent
 import tech.mappie.ir.util.isPrimitive
 import tech.mappie.ir.util.isSubtypeOf
-import tech.mappie.ir.util.location
 import tech.mappie.util.normalize
 
 class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
@@ -98,7 +98,7 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
                         is ImplicitPropertyMappingSource -> source.copy(transformation = transformation(origin, source, target))
                         is FunctionMappingSource -> source.copy(transformation = transformation(origin, source, target))
                         is ParameterValueMappingSource -> source.copy(transformation = transformation(origin, source, target))
-                        is ParameterDefaultValueMappingSource -> panic("ParameterDefaultValueMappingSource should not occur when resolving a transformation.")
+                        is ParameterDefaultValueMappingSource -> compilationException("ParameterDefaultValueMappingSource should not occur when resolving a transformation.", origin.clazz)
                     }
                 }
             }
@@ -131,12 +131,16 @@ class ClassMappingRequestBuilder(private val constructor: IrConstructor) {
                 PropertyMappingViaMapperTransformation(selected, null, target.type)
             }
             prioritized.size > 1 -> {
-                val location = when (source) {
-                    is ExplicitClassMappingSource -> location(origin.referenceMapFunction().fileEntry, source.origin)
-                    else -> location(origin.referenceMapFunction())
+                val names = mappers.map { it.clazz.name }.joinToString()
+                when (source) {
+                    is ExplicitClassMappingSource -> context
+                        .at(source.origin, origin.clazz)
+                        .report(MAPPIE_MULTIPLE_IMPLICIT_MAPPERS, names)
+                    else -> context
+                        .at(firstRealParent(origin.referenceMapFunction()))
+                        .report(MAPPIE_MULTIPLE_IMPLICIT_MAPPERS, names)
+
                 }
-                val error = Problem.error("Multiple mappers resolved to be used in an implicit via", location)
-                context.logger.log(error)
                 null
             }
             !source.type.isPrimitive() && !target.type.isPrimitive() -> {

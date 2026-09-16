@@ -53,7 +53,7 @@ class ConstructorSelectionTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasSingleErrorMessage(5, "Target Output::first automatically resolved parameter first but cannot assign source type Input to target type String")
+            hasSingleErrorMessage(5, "Target 'Output::first' of type 'String' cannot be assigned from 'first' of type 'Input'.")
         }
     }
 

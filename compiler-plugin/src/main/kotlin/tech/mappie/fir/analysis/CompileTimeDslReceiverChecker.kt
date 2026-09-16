@@ -8,8 +8,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChec
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
-import tech.mappie.fir.analysis.MappieErrors.COMPILE_TIME_EXTENSION_RECEIVER
-import tech.mappie.fir.analysis.MappieErrors.COMPILE_TIME_RECEIVER
+import tech.mappie.fir.analysis.MappieFirProblems.COMPILE_TIME_EXTENSION_RECEIVER
+import tech.mappie.fir.analysis.MappieFirProblems.COMPILE_TIME_RECEIVER
 import tech.mappie.util.ALL_MAPPING_FUNCTIONS
 import tech.mappie.util.CLASS_ID_MULTIPLE_OBJECT_MAPPING_CONSTRUCTOR
 import tech.mappie.util.CLASS_ID_OBJECT_MAPPING_CONSTRUCTOR

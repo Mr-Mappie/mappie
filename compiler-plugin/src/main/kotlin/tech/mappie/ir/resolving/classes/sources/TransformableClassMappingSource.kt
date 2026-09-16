@@ -1,5 +1,6 @@
 package tech.mappie.ir.resolving.classes.sources
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
@@ -8,7 +9,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.addAnnotations
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.isNullable
-import tech.mappie.exceptions.MappiePanicException.Companion.panic
 import tech.mappie.ir.LocalConversionMethod
 import tech.mappie.ir.MappieDefinition
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
@@ -65,7 +65,7 @@ data class PropertyReferenceMappingTransformTransformation(
     val property: IrPropertyReference,
 ) : PropertyMappingTransformation {
     override val type = property.getter?.owner?.returnType
-        ?: panic("Could not determine return type of getter ${property.symbol.owner.name}")
+        ?: compilationException("Could not determine return type of getter", property)
 }
 
 data class PropertyMappingViaMapperTransformation(

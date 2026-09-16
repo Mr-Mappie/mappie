@@ -1,5 +1,6 @@
 package tech.mappie.ir.resolving.classes
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.getClass
@@ -9,20 +10,17 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.Name.identifier
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.util.BaseVisitor
-import tech.mappie.exceptions.MappiePanicException.Companion.panic
-import tech.mappie.exceptions.MappieProblemException.Companion.fail
 import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.resolving.classes.sources.*
 import tech.mappie.ir.util.isMappieMapFunction
-import tech.mappie.ir.util.location
 import tech.mappie.util.*
 
-class ClassMappingStatementCollector(private val origin: InternalMappieDefinition)
+class ClassMappingStatementCollector
     : BaseVisitor<Pair<Name, ExplicitClassMappingSource>?, MappieContext>() {
 
     override fun visitCall(expression: IrCall, data: MappieContext) = when (expression.symbol.owner.name) {
         IDENTIFIER_FROM_PROPERTY, IDENTIFIER_FROM_PROPERTY_NOT_NULL -> {
-            val target = expression.arguments[1]!!.accept(TargetNameCollector(origin), data)
+            val target = expression.arguments[1]!!.accept(TargetNameCollector(), Unit)
             target to ExplicitPropertyMappingSource(
                 expression.arguments[2]!! as IrPropertyReference,
                 null,
@@ -30,11 +28,11 @@ class ClassMappingStatementCollector(private val origin: InternalMappieDefinitio
             )
         }
         IDENTIFIER_FROM_VALUE -> {
-            val target = expression.arguments[1]!!.accept(TargetNameCollector(origin), data)
+            val target = expression.arguments[1]!!.accept(TargetNameCollector(), Unit)
             target to ValueMappingSource(expression.arguments[2]!!)
         }
         IDENTIFIER_FROM_EXPRESSION -> {
-            val target = expression.arguments[1]!!.accept(TargetNameCollector(origin), data)
+            val target = expression.arguments[1]!!.accept(TargetNameCollector(), Unit)
             target to ExpressionMappingSource(expression.arguments[2]!!)
         }
         IDENTIFIER_VIA -> {
@@ -52,7 +50,7 @@ class ClassMappingStatementCollector(private val origin: InternalMappieDefinitio
                             is IrFunctionExpression -> PropertyMappingTransformTransformation(it)
                             is IrFunctionReference -> PropertyMappingTransformTransformation(it)
                             is IrPropertyReference -> PropertyReferenceMappingTransformTransformation(it)
-                            else -> panic("Unexpected expression type: ${expression.dumpKotlinLike()}", expression)
+                            else -> compilationException("Unexpected expression type: ${expression.dumpKotlinLike()}", expression)
                         }
                     }
                 )
@@ -123,25 +121,20 @@ private class MapperReferenceCollector : BaseVisitor<PropertyMappingViaMapperTra
     }
 }
 
-private class TargetNameCollector(private val origin: InternalMappieDefinition)
-    : BaseVisitor<Name, MappieContext>() {
+private class TargetNameCollector : BaseVisitor<Name, Unit>() {
 
-    override fun visitPropertyReference(expression: IrPropertyReference, data: MappieContext): Name {
+    override fun visitPropertyReference(expression: IrPropertyReference, data: Unit): Name {
         return expression.symbol.owner.name
     }
 
-    override fun visitCall(expression: IrCall, data: MappieContext): Name {
+    override fun visitCall(expression: IrCall, data: Unit): Name {
         return when (expression.symbol.owner.name) {
             IDENTIFIER_TO -> {
                 val value = expression.arguments[1]!!
                 if (value.isConstantLike && value is IrConst) {
                     identifier(value.value as String)
                 } else {
-                    data.fail(
-                        "Identifier must be a compile-time constant",
-                        expression,
-                        location(origin.clazz.fileEntry, expression)
-                    )
+                    compilationException("Identifier must be a compile-time constant", expression)
                 }
             }
             else -> {

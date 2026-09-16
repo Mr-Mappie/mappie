@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirAnonymousObjectChecker
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
-import tech.mappie.fir.analysis.MappieErrors.INVALID_ANONYMOUS_OBJECT
+import tech.mappie.fir.analysis.MappieFirProblems.INVALID_ANONYMOUS_OBJECT
 import tech.mappie.fir.util.isSubclassOfAnMappie
 
 class AnonymousMappieObjectChecker : FirAnonymousObjectChecker(MppCheckerKind.Common) {

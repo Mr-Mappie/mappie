@@ -22,7 +22,7 @@ class NullablePropertyToNonNullablePropertyTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasSingleErrorMessage(4, "Target Output::value automatically resolved from Input::value but cannot assign source type String? to target type String")
+            hasSingleErrorMessage(4, "Target 'Output::value' of type 'String' cannot be assigned from 'Input::value' of type 'String?'.")
         }
     }
 

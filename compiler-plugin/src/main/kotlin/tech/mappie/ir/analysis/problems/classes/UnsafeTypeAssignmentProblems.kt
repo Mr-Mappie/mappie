@@ -2,11 +2,11 @@ package tech.mappie.ir.analysis.problems.classes
 
 import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.ir.MappieContext
+import tech.mappie.ir.analysis.MappieIrAnalysisProblems.MAPPIE_UNSAFE_TYPE_ASSIGNMENT
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.*
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.util.filterSingle
-import tech.mappie.ir.util.location
 import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.reporting.pretty
 import tech.mappie.ir.resolving.TargetSourcesClassMappings
@@ -26,32 +26,60 @@ class UnsafeTypeAssignmentProblems(
 
         return when (source) {
             is ExplicitPropertyMappingSource -> {
-                val via = if (source.transformation != null && source.transformation is PropertyMappingViaMapperTransformation) "via ${source.transformation.mapper.clazz.name.asString()} " else ""
-                val description = "Target $targetString of type $targetTypeString cannot be assigned from ${source.reference.pretty()} ${via}of type $sourceTypeString"
-                Problem.error(description, location(mapping.origin.clazz.fileEntry, source.reference))
+                val via = if (source.transformation != null && source.transformation is PropertyMappingViaMapperTransformation) " via '${source.transformation.mapper.clazz.name.asString()}'" else ""
+
+                Problem.Problem2(
+                    MAPPIE_UNSAFE_TYPE_ASSIGNMENT,
+                    mapping.origin.clazz.file,
+                    source.reference,
+                    "'$targetString' of type '$targetTypeString'",
+                    "'${source.reference.pretty()}'$via of type '$sourceTypeString'"
+                )
             }
             is ExpressionMappingSource -> {
-                val description = "Target $targetString of type $targetTypeString cannot be assigned from expression of type $sourceTypeString"
-                Problem.error(description, location(mapping.origin.clazz.fileEntry, source.expression))
+                Problem.Problem2(
+                    MAPPIE_UNSAFE_TYPE_ASSIGNMENT,
+                    mapping.origin.clazz.file,
+                    source.expression,
+                    "'$targetString' of type '$targetTypeString'",
+                    "expression of type '$sourceTypeString'"
+                )
             }
             is ValueMappingSource -> {
-                val description = "Target $targetString of type $targetTypeString cannot be assigned from value of type $sourceTypeString"
-                Problem.error(description, location(mapping.origin.clazz.fileEntry, source.expression))
+                Problem.Problem2(
+                    MAPPIE_UNSAFE_TYPE_ASSIGNMENT,
+                    mapping.origin.clazz.file,
+                    source.expression,
+                    "'$targetString' of type '$targetTypeString'",
+                    "value of type '$sourceTypeString'"
+                )
             }
             is FunctionMappingSource -> {
-                val function = "${source.parameterType.dumpKotlinLike()}::${source.function.name.asString()}"
-                val description = "Target $targetString automatically resolved from $function but cannot assign source type $sourceTypeString to target type $targetTypeString"
-                Problem.error(description, location(mapping.origin.referenceMapFunction()))
+                Problem.Problem2(
+                    MAPPIE_UNSAFE_TYPE_ASSIGNMENT,
+                    mapping.origin.referenceMapFunction(),
+                    "'$targetString' of type '$targetTypeString'",
+                    "'${source.parameterType.dumpKotlinLike()}::${source.function.name.asString()}' of type '$sourceTypeString'"
+                )
             }
             is ImplicitPropertyMappingSource -> {
                 val property = "${source.parameterType.dumpKotlinLike()}::${source.property.name.asString()}"
-                val via = if (source.transformation != null && source.transformation is PropertyMappingViaMapperTransformation) "via ${source.transformation.mapper.clazz.name.asString()} " else ""
-                val description = "Target $targetString automatically resolved from $property ${via}but cannot assign source type $sourceTypeString to target type $targetTypeString"
-                Problem.error(description, location(mapping.origin.referenceMapFunction()))
+                val via = if (source.transformation != null && source.transformation is PropertyMappingViaMapperTransformation) " via '${source.transformation.mapper.clazz.name.asString()}'" else ""
+
+                Problem.Problem2(
+                    MAPPIE_UNSAFE_TYPE_ASSIGNMENT,
+                    mapping.origin.referenceMapFunction(),
+                    "'$targetString' of type '$targetTypeString'",
+                    "'$property'$via of type '$sourceTypeString'"
+                )
             }
             is ParameterValueMappingSource -> {
-                val description = "Target $targetString automatically resolved parameter ${source.parameter.asString()} but cannot assign source type $sourceTypeString to target type $targetTypeString"
-                Problem.error(description, location(mapping.origin.referenceMapFunction()))
+                Problem.Problem2(
+                    MAPPIE_UNSAFE_TYPE_ASSIGNMENT,
+                    mapping.origin.referenceMapFunction(),
+                    "'$targetString' of type '$targetTypeString'",
+                    "'${source.parameter.asString()}' of type '$sourceTypeString'"
+                )
             }
             is ParameterDefaultValueMappingSource -> {
                 null

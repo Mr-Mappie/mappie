@@ -30,7 +30,7 @@ class FromExpressionFlexibleNullableTest : MappieTestCase() {
             isOk()
             hasSingleWarningMessage(
                 7,
-                "Target Output::value of type Output is unsafe to be assigned from expression of platform type LocalDateTime?"
+                "Target 'Output::value' of type 'Output' is unsafe to assign from expression of type 'LocalDateTime?' due to platform type."
             )
 
             val mapper = objectMappie<Input, Output>("Mapper")

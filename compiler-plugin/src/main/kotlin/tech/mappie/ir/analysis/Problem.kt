@@ -1,28 +1,58 @@
 package tech.mappie.ir.analysis
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryN
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.util.file
+import tech.mappie.ir.analysis.Problem.Problem0
+import tech.mappie.ir.util.firstRealParent
 
-data class Problem(
-    val description: String,
-    val severity: Severity,
-    val suggestions: List<String>,
-    val location: CompilerMessageLocation?
-) {
-    enum class Severity { ERROR, WARNING; }
+sealed interface Problem {
+    val problem: KtDiagnosticFactoryN
+    val file: IrFile
+    val location: IrElement
 
-    companion object {
-        private const val ISSUES_URL = "https://github.com/Mr-Mappie/mappie/issues"
+    val severity: Severity
+        get() = problem.severity
 
-        fun exception(description: String): Exception =
-            IllegalStateException("Internal Mappie error: $description. Please report this bug at $ISSUES_URL.")
+    data class Problem0(
+        override val problem: KtDiagnosticFactory0,
+        override val file: IrFile,
+        override val location: IrElement,
+    ): Problem
 
-        fun internal(description: String) =
-            Problem("Internal Mappie error: $description", Severity.ERROR, listOf("Please report this bug at $ISSUES_URL."), null)
+    data class Problem1<A : Any>(
+        override val problem: KtDiagnosticFactory1<A>,
+        override val file: IrFile,
+        override val location: IrElement,
+        val first: A,
+    ): Problem {
+        constructor(problem: KtDiagnosticFactory1<A>, declaration: IrDeclaration, first: A)
+            : this(problem, declaration.file, firstRealParent(declaration), first)
+    }
 
-        fun error(description: String, location: CompilerMessageLocation? = null, suggestions: List<String> = emptyList()) =
-            Problem(description, Severity.ERROR, suggestions, location)
+    data class Problem2<A : Any, B : Any>(
+        override val problem: KtDiagnosticFactory2<A, B>,
+        override val file: IrFile,
+        override val location: IrElement,
+        val first: A,
+        val second: B,
+    ): Problem {
+        constructor(problem: KtDiagnosticFactory2<A, B>, declaration: IrDeclaration, first: A, second: B)
+            : this(problem, declaration.file, firstRealParent(declaration), first, second)
+    }
+}
 
-        fun warning(description: String, location: CompilerMessageLocation? = null, suggestions: List<String> = emptyList()) =
-            Problem(description, Severity.WARNING, suggestions, location)
+fun IrDiagnosticReporter.IrDiagnosticContext.report(problem: Problem) {
+    when (problem) {
+        is Problem0 -> report(problem.problem)
+        is Problem.Problem1<*> -> report(problem.problem, problem.first)
+        is Problem.Problem2<*, *> -> report(problem.problem, problem.first, problem.second)
     }
 }

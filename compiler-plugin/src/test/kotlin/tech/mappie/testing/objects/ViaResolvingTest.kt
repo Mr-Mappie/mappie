@@ -55,8 +55,8 @@ class ViaResolvingTest : MappieTestCase() {
         } satisfies {
             isCompilationError()
             hasErrorMessages(
-                6 to "Multiple mappers resolved to be used in an implicit via",
-                6 to "Target Output::text of type InnerOutput cannot be assigned from from::text of type InnerInput",
+                6 to "More than one mapper resolved which can be called implicitly 'InnerMapperA, InnerMapperB'.",
+                6 to "Target 'Output::text' of type 'InnerOutput' cannot be assigned from 'from::text' of type 'InnerInput'."
             )
         }
     }
@@ -78,8 +78,8 @@ class ViaResolvingTest : MappieTestCase() {
         } satisfies {
             isCompilationError()
             hasErrorMessages(
-                4 to "Multiple mappers resolved to be used in an implicit via",
-                4 to "Target Output::text automatically resolved from Input::text but cannot assign source type InnerInput to target type InnerOutput",
+                4 to "More than one mapper resolved which can be called implicitly 'InnerMapperA, InnerMapperB'.",
+                4 to "Target 'Output::text' of type 'InnerOutput' cannot be assigned from 'Input::text' of type 'InnerInput'.",
             )
         }
     }

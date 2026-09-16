@@ -2,15 +2,17 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-  - date: "tbd"
-    title: "v2.4.10-2.4.4"
+  - date: "2026-09-16"
+    title: "v2.4.20-2.4.4"
     items:
+      - "Bumped Kotlin to version 2.4.20."
       - "[#408](https://github.com/Mr-Mappie/mappie/issues/408) Fixed incremental compilation state being inconsistent with the Gradle build cache, and compilations of the same project overwriting each others state."
       - "[#408](https://github.com/Mr-Mappie/mappie/issues/408) Mappers defined in the main source set are no longer resolved implicitly in the test source set, which was an undocumented side effect of the state of all compilations being stored in a single file."
       - "Improved support for nullable mapping sources and targets."
   - date: "2026-07-18"
     title: "v2.4.10-2.4.3"
     items:
+      - "Bumped Kotlin to version 2.4.10."
       - "Fixed several duplicate error messages."
       - "[#395](https://github.com/Mr-Mappie/mappie/issues/395) Fixed exception when transforming using a property reference."
   - date: "2026-06-17"

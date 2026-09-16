@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.name.CallableId
-import tech.mappie.fir.analysis.MappieErrors.UNNECESSARY_EXPLICIT_MAPPING
+import tech.mappie.fir.analysis.MappieFirProblems.UNNECESSARY_EXPLICIT_MAPPING
 import tech.mappie.fir.util.hasCallableId
 import tech.mappie.util.CLASS_ID_ENUM_MAPPING_CONSTRUCTOR
 import tech.mappie.util.IDENTIFIER_FROM_ENUM_ENTRY

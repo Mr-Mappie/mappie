@@ -27,7 +27,7 @@ class EnumToEnumWithFewerEntriesTest : MappieTestCase() {
                 }
                 """
             )
-        } satisfies  {
+        } satisfies {
             isOk()
             hasNoWarningsOrErrors()
 
@@ -77,9 +77,9 @@ class EnumToEnumWithFewerEntriesTest : MappieTestCase() {
                 class Mapper : EnumMappie<Input, Output>()
                 """
             )
-        } satisfies  {
+        } satisfies {
             isCompilationError()
-            hasSingleErrorMessage(4, "Source Input.THIRD has no target defined")
+            hasSingleErrorMessage(4, "Source 'Input.THIRD' has no target defined.")
         }
     }
 
@@ -96,9 +96,9 @@ class EnumToEnumWithFewerEntriesTest : MappieTestCase() {
                 class Mapper : EnumMappie<Input, Output>()
                 """
             )
-        } satisfies  {
+        } satisfies {
             isCompilationError()
-            hasSingleErrorMessage(5, "Source Input.THIRD has no target defined")
+            hasSingleErrorMessage(5, "Source 'Input.THIRD' has no target defined.")
         }
     }
 
@@ -115,7 +115,7 @@ class EnumToEnumWithFewerEntriesTest : MappieTestCase() {
                 class Mapper : EnumMappie<Input, Output>()
                 """
             )
-        } satisfies  {
+        } satisfies {
             isOk()
             hasNoWarningsOrErrors()
 

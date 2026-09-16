@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
+import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.parentDeclarationsWithSelf
 import org.jetbrains.kotlin.name.Name
 import tech.mappie.util.*
 
@@ -68,3 +70,6 @@ fun IrBuilderWithScope.irLambda(
     }
     return IrFunctionExpressionImpl(startOffset, endOffset, lambdaType, lambda, IrStatementOrigin.LAMBDA)
 }
+
+fun firstRealParent(declaration: IrDeclaration): IrDeclaration =
+    if (declaration.isFakeOverride) firstRealParent(declaration.parentDeclarationsWithSelf.drop(1).first()) else declaration

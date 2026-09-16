@@ -3,15 +3,15 @@ package tech.mappie.ir.analysis.problems.classes
 import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import org.jetbrains.kotlin.ir.util.fileEntry
+import org.jetbrains.kotlin.ir.util.file
 import tech.mappie.config.options.useStrictPlatformTypeNullabilityValidation
 import tech.mappie.ir.MappieContext
+import tech.mappie.ir.analysis.MappieIrAnalysisProblems.MAPPIE_UNSAFE_PLATFORM_TYPE_ASSIGNMENT
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.*
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
 import tech.mappie.util.filterSingle
 import tech.mappie.ir.util.hasFlexibleNullabilityAnnotation
-import tech.mappie.ir.util.location
 import tech.mappie.ir.analysis.Problem
 import tech.mappie.ir.reporting.pretty
 import tech.mappie.ir.resolving.TargetSourcesClassMappings
@@ -30,35 +30,61 @@ class UnsafePlatformTypeAssignmentProblems(
         }
 
     private fun validate(target: ClassMappingTarget, source: ClassMappingSource): Problem? {
-        val sourceTypeString = source.type.removeAnnotations().dumpKotlinLike()
-        val targetTypeString = mapping.target.dumpKotlinLike()
-        val targetString = "$targetTypeString::${target.name.asString()}"
+        val targetString = "${mapping.target.dumpKotlinLike()}::${target.name.asString()}"
+        val sourceType = source.type.removeAnnotations().dumpKotlinLike()
 
         return when (source) {
             is ExplicitPropertyMappingSource -> {
-                val description = "Target $targetString of type $targetTypeString is unsafe to assign from ${source.reference.pretty()} of platform type $sourceTypeString"
-                Problem.warning(description, location(mapping.origin.clazz.fileEntry, source.reference))
+                Problem.Problem2(
+                    MAPPIE_UNSAFE_PLATFORM_TYPE_ASSIGNMENT,
+                    mapping.origin.clazz.file,
+                    source.reference,
+                    "'$targetString' of type '${mapping.target.dumpKotlinLike()}'",
+                    "'${source.reference.pretty()}' of type '$sourceType'",
+                )
             }
             is ExpressionMappingSource -> {
-                val description = "Target $targetString of type $targetTypeString is unsafe to be assigned from expression of platform type $sourceTypeString"
-                Problem.warning(description, location(mapping.origin.clazz.fileEntry, source.expression))
+                Problem.Problem2(
+                    MAPPIE_UNSAFE_PLATFORM_TYPE_ASSIGNMENT,
+                    mapping.origin.clazz.file,
+                    source.expression,
+                    "'${targetString}' of type '${mapping.target.dumpKotlinLike()}'",
+                    "expression of type '$sourceType'",
+                )
             }
             is ValueMappingSource -> {
-                val description = "Target $targetString of type $targetTypeString is unsafe to be assigned from value of platform type $sourceTypeString"
-                Problem.warning(description, location(mapping.origin.clazz.fileEntry, source.expression))
+                Problem.Problem2(
+                    MAPPIE_UNSAFE_PLATFORM_TYPE_ASSIGNMENT,
+                    mapping.origin.clazz.file,
+                    source.expression,
+                    "'${targetString}' of type '${mapping.target.dumpKotlinLike()}'",
+                    "value '$sourceType'",
+                )
             }
             is FunctionMappingSource -> {
-                val function = "${source.parameterType}::${source.function.name.asString()}"
-                val description = "Target $targetString automatically resolved from $function but it is unsafe to assign source platform type $sourceTypeString to target type $targetTypeString"
-                Problem.warning(description, location(mapping.origin.clazz))
+                Problem.Problem2(
+                    MAPPIE_UNSAFE_PLATFORM_TYPE_ASSIGNMENT,
+                    mapping.origin.referenceMapFunction(),
+                    "'${targetString}' of type '${mapping.target.dumpKotlinLike()}'",
+                    "'${source.parameterType}::${source.function.name.asString()}' of type '$sourceType'",
+                )
             }
             is ImplicitPropertyMappingSource -> {
-                val description = "Target $targetString automatically resolved from ${source.property.dumpKotlinLike()} but it is unsafe to assign source platform type $sourceTypeString to target type ${target.type.dumpKotlinLike()}"
-                Problem.warning(description, location(mapping.origin.clazz))
+                Problem.Problem2(
+                    MAPPIE_UNSAFE_PLATFORM_TYPE_ASSIGNMENT,
+                    mapping.origin.referenceMapFunction(),
+                    "'${targetString}' of type '${mapping.target.dumpKotlinLike()}'",
+                    "'${source.property.dumpKotlinLike()}' of type '$sourceType'",
+
+                )
             }
             is ParameterValueMappingSource -> {
-                val description = "Target $targetString automatically resolved parameter ${source.parameter.asString()} but it is unsafe to assign source platform type $sourceTypeString to target type ${target.type.dumpKotlinLike()}"
-                Problem.warning(description, location(mapping.origin.clazz))
+                Problem.Problem2(
+                    MAPPIE_UNSAFE_PLATFORM_TYPE_ASSIGNMENT,
+                    mapping.origin.referenceMapFunction(),
+                    "'${targetString}' of type '${mapping.target.dumpKotlinLike()}'",
+                    "'${source.parameter.asString()}' of type '${source.type.dumpKotlinLike()}'",
+                )
             }
             is ParameterDefaultValueMappingSource -> {
                 null
