@@ -8,7 +8,7 @@ import kotlin.test.Test
 
 class EnumToEnumWithFewerEntriesTest : MappieTestCase() {
 
-    enum class Input { FIRST, SECOND, THIRD }
+    enum class Input { FIRST, SECOND, THIRD, FOURTH }
     enum class Output { FIRST, SECOND }
 
     @Test
@@ -23,6 +23,7 @@ class EnumToEnumWithFewerEntriesTest : MappieTestCase() {
                 class Mapper : EnumMappie<Input, Output>() {
                     override fun map(from: Input) = mapping {
                         Output.FIRST fromEnumEntry Input.THIRD
+                        Output.FIRST fromEnumEntry Input.FOURTH
                     }
                 }
                 """
@@ -50,6 +51,7 @@ class EnumToEnumWithFewerEntriesTest : MappieTestCase() {
                 class Mapper : EnumMappie<Input, Output>() {
                     override fun map(from: Input) = mapping {
                         kotlin.IllegalStateException() thrownByEnumEntry Input.THIRD
+                        kotlin.IllegalStateException() thrownByEnumEntry Input.FOURTH
                     }
                 }
                 """
@@ -63,6 +65,7 @@ class EnumToEnumWithFewerEntriesTest : MappieTestCase() {
             assertThat(mapper.map(Input.FIRST)).isEqualTo(Output.FIRST)
             assertThat(mapper.map(Input.SECOND)).isEqualTo(Output.SECOND)
             assertThatThrownBy { mapper.map(Input.THIRD) }.isInstanceOf(IllegalStateException::class.java)
+            assertThatThrownBy { mapper.map(Input.FOURTH) }.isInstanceOf(IllegalStateException::class.java)
         }
     }
 
@@ -79,7 +82,30 @@ class EnumToEnumWithFewerEntriesTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasSingleErrorMessage(4, "Source 'Input.THIRD' has no target defined.")
+            hasSingleErrorMessage(4, "Source(s) 'Input.THIRD' and 'Input.FOURTH' has/have no target defined.")
+        }
+    }
+
+    @Test
+    fun `map enums with the same target set twice should fail`() {
+        compile {
+            file("Test.kt",
+                """
+                import tech.mappie.api.EnumMappie
+                import tech.mappie.testing.enums.EnumToEnumWithFewerEntriesTest.*
+
+                class Mapper : EnumMappie<Input, Output>() {
+                    override fun map(from: Input) = mapping {
+                        Output.FIRST fromEnumEntry Input.THIRD
+                        Output.FIRST fromEnumEntry Input.FOURTH
+                        Output.FIRST fromEnumEntry Input.FOURTH
+                    }
+                }
+                """
+            )
+        } satisfies {
+            isCompilationError()
+            hasSingleErrorMessage(5, "Source(s) 'Input.FOURTH' has/have multiple targets defined.")
         }
     }
 
@@ -98,7 +124,7 @@ class EnumToEnumWithFewerEntriesTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasSingleErrorMessage(5, "Source 'Input.THIRD' has no target defined.")
+            hasSingleErrorMessage(5, "Source(s) 'Input.THIRD' and 'Input.FOURTH' has/have no target defined.")
         }
     }
 

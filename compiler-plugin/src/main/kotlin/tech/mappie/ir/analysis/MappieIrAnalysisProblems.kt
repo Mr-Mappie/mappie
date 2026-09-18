@@ -13,14 +13,15 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.psi.KtElement
 import tech.mappie.util.MappieRenderers.IR_CLASS
 import tech.mappie.util.MappieRenderers.IR_TYPE
+import tech.mappie.util.MappieRenderers.STRINGS
 import kotlin.getValue
 
 object MappieIrAnalysisProblems  : KtDiagnosticsContainer() {
     val MAPPIE_NO_VISIBLE_CONSTRUCTOR by error1<KtElement, IrClassSymbol>()
     val MAPPIE_MULTIPLE_MAPPING_SOURCES by error2<KtElement, String, String>()
-    val MAPPIE_MULTIPLE_MAPPING_TARGETS by error1<KtElement, String>()
+    val MAPPIE_MULTIPLE_MAPPING_TARGETS by error1<KtElement, List<String>>()
     val MAPPIE_NO_MAPPING_SOURCE by error1<KtElement, String>()
-    val MAPPIE_NO_MAPPING_TARGET by error1<KtElement, String>()
+    val MAPPIE_NO_MAPPING_TARGET by error1<KtElement, List<String>>()
     val MAPPIE_INCORRECT_TARGET_TYPE by error1<KtElement, IrType>()
     val MAPPIE_UNNECESSARY_SAFE_CALL by warning1<KtElement, IrType>()
     val MAPPIE_UNSAFE_PLATFORM_TYPE_ASSIGNMENT by warning2<KtElement, String, String>()
@@ -33,9 +34,9 @@ object MappieIrAnalysisMessages : BaseDiagnosticRendererFactory() {
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("MappieIrAnalysisMessages") { map ->
         map.put(MappieIrAnalysisProblems.MAPPIE_NO_VISIBLE_CONSTRUCTOR, "Target class ''{0}'' has no visible constructor.", IR_CLASS)
         map.put(MappieIrAnalysisProblems.MAPPIE_MULTIPLE_MAPPING_SOURCES, "Target ''{0}'' has multiple sources defined ''{1}''.", STRING, STRING)
-        map.put(MappieIrAnalysisProblems.MAPPIE_MULTIPLE_MAPPING_TARGETS, "Source ''{0}'' has multiple targets defined.", STRING)
+        map.put(MappieIrAnalysisProblems.MAPPIE_MULTIPLE_MAPPING_TARGETS, "Source(s) {0} has/have multiple targets defined.", STRINGS)
         map.put(MappieIrAnalysisProblems.MAPPIE_NO_MAPPING_SOURCE, "Target ''{0}'' has no source defined.", STRING)
-        map.put(MappieIrAnalysisProblems.MAPPIE_NO_MAPPING_TARGET, "Source ''{0}'' has no target defined.", STRING)
+        map.put(MappieIrAnalysisProblems.MAPPIE_NO_MAPPING_TARGET, "Source(s) {0} has/have no target defined.", STRINGS)
         map.put(MappieIrAnalysisProblems.MAPPIE_INCORRECT_TARGET_TYPE, "Target type ''{0}'' cannot be an enum class.", IR_TYPE)
         map.put(MappieIrAnalysisProblems.MAPPIE_UNNECESSARY_SAFE_CALL, "Unnecessary call to fromPropertyNotNull for non-null type ''{0}''.", IR_TYPE)
         map.put(MappieIrAnalysisProblems.MAPPIE_UNSAFE_PLATFORM_TYPE_ASSIGNMENT, "Target {0} is unsafe to assign from {1} due to platform type.", STRING, STRING)
