@@ -19,15 +19,22 @@ class AllSourcesMappedProblems(
     private val mappings: Map<IrEnumEntry, List<EnumMappingTarget>>,
 ) {
 
-    fun all(): List<Problem> = mappings.map { (source, targets) ->
-        val name = "${source.parent.kotlinFqName.shortName().asString()}.${source.name.asString()}"
-        return when {
-            targets.isEmpty() -> listOf(
-                Problem.Problem1(MAPPIE_NO_MAPPING_TARGET, mapping.origin.referenceMapFunction(), name)
-            )
-            else -> listOf(
-                Problem.Problem1(MAPPIE_MULTIPLE_MAPPING_TARGETS, mapping.origin.referenceMapFunction(), name)
-            )
+    fun all(): List<Problem> = buildList {
+        val (withoutTarget, multipleTargets) =
+            mappings.entries.partition { it.value.isEmpty() }
+
+        if (withoutTarget.isNotEmpty()) {
+            val names = withoutTarget.map { (source, _) ->
+                "${source.parent.kotlinFqName.shortName().asString()}.${source.name.asString()}"
+            }
+            add(Problem.Problem1(MAPPIE_NO_MAPPING_TARGET, mapping.origin.referenceMapFunction(), names))
+        }
+
+        if (multipleTargets.isNotEmpty()) {
+            val names = multipleTargets.map { (source, _) ->
+                "${source.parent.kotlinFqName.shortName().asString()}.${source.name.asString()}"
+            }
+            add(Problem.Problem1(MAPPIE_MULTIPLE_MAPPING_TARGETS, mapping.origin.referenceMapFunction(), names))
         }
     }
 

@@ -52,10 +52,9 @@ class ConstructorSelectionTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasErrorMessages(
-                5 to "Target 'Output::first' has no source defined.",
-// TODO: the following line should be included.
-//                5 to "Target 'Output::second' has no source defined.",
+            hasSingleErrorMessage(
+                5,
+                "Target(s) 'Output::first' and 'Output::second' has/have no source defined."
             )
         }
     }
