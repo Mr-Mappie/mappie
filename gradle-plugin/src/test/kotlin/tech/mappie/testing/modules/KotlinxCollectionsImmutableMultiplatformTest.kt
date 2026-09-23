@@ -12,7 +12,7 @@ class KotlinxCollectionsImmutableMultiplatformTest : TestBase() {
     override val modules = setOf(MODULE_KOTLINX_COLLECTIONS_IMMUTABLE)
 
     @Test
-    fun `module kotlinx-datetime can be used in multiplatform`() {
+    fun `module kotlinx-datetime can be used in multiplatform JVM`() {
         kotlin("src/jvmMain/kotlin/Mapper.kt",
             """
             import tech.mappie.api.ObjectMappie
@@ -26,6 +26,41 @@ class KotlinxCollectionsImmutableMultiplatformTest : TestBase() {
         )
 
         kotlin("src/jvmTest/kotlin/MapperTest.kt",
+            """
+            import kotlin.test.*
+            import kotlinx.collections.immutable.*
+
+            class JvmMapperTest {
+
+                @Test
+                fun `map Input to Output`() {
+                    assertEquals(
+                        Output(immutableListOf("value")),
+                        Mapper.map(Input(listOf("value"))),
+                    )
+                }
+            }
+            """.trimIndent()
+        )
+
+        runner.withArguments("build").build()
+    }
+
+    @Test
+    fun `module kotlinx-datetime can be used in multiplatform MinGWX64`() {
+        kotlin("src/mingwX64Main/kotlin/Mapper.kt",
+            """
+            import tech.mappie.api.ObjectMappie
+            import kotlinx.collections.immutable.*
+            
+            data class Input(val first: List<String>)
+            data class Output(val first: ImmutableList<String>)
+    
+            object Mapper : ObjectMappie<Input, Output>()
+            """.trimIndent()
+        )
+
+        kotlin("src/mingwX64Test/kotlin/MapperTest.kt",
             """
             import kotlin.test.*
             import kotlinx.collections.immutable.*
