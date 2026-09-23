@@ -2,7 +2,8 @@ package tech.mappie.ir.analysis.problems.classes
 
 import org.jetbrains.kotlin.ir.util.*
 import tech.mappie.ir.MappieContext
-import tech.mappie.ir.analysis.MappieIrAnalysisProblems.MAPPIE_UNSAFE_TYPE_ASSIGNMENT
+import tech.mappie.ir.analysis.MappieIrAnalysisProblems.MAPPIE_MULTIPLE_UNSAFE_TYPE_ASSIGNMENTS
+import tech.mappie.ir.analysis.MappieIrAnalysisProblems.MAPPIE_SINGLE_UNSAFE_TYPE_ASSIGNMENT
 import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.resolving.classes.sources.*
 import tech.mappie.ir.resolving.classes.targets.ClassMappingTarget
@@ -17,9 +18,33 @@ class UnsafeTypeAssignmentProblems(
     private val mappings: Map<ClassMappingTarget, ClassMappingSource>,
 ) {
 
-    fun all(): List<Problem> = mappings.mapNotNull { validate(it.key, it.value) }
+    // TODO: needs tests
+    fun all(): List<Problem> = buildList {
+        val problems = mappings.mapNotNull { validate(it.key, it.value) }
+        val (implicit, explicit) = problems
+            .partition { it.location == mapping.origin.referenceMapFunction() }
 
-    private fun validate(target: ClassMappingTarget, source: ClassMappingSource): Problem? {
+        addAll(explicit)
+        when (implicit.size) {
+            0 -> Unit
+            1 -> addAll(implicit)
+            else -> {
+                val messages = implicit.map {
+                    "Target ${it.first} cannot be assigned from ${it.second}."
+                }
+                add(
+                    Problem.Problem1(
+                        MAPPIE_MULTIPLE_UNSAFE_TYPE_ASSIGNMENTS,
+                        mapping.origin.clazz.file,
+                        mapping.origin.referenceMapFunction(),
+                        messages
+                    )
+                )
+            }
+        }
+    }
+
+    private fun validate(target: ClassMappingTarget, source: ClassMappingSource): Problem.Problem2<String, String>? {
         val targetTypeString = target.type.dumpKotlinLike()
         val sourceTypeString = source.type.dumpKotlinLike()
         val targetString = "${mapping.target.dumpKotlinLike()}::${target.name.asString()}"
@@ -29,7 +54,7 @@ class UnsafeTypeAssignmentProblems(
                 val via = if (source.transformation != null && source.transformation is PropertyMappingViaMapperTransformation) " via '${source.transformation.mapper.clazz.name.asString()}'" else ""
 
                 Problem.Problem2(
-                    MAPPIE_UNSAFE_TYPE_ASSIGNMENT,
+                    MAPPIE_SINGLE_UNSAFE_TYPE_ASSIGNMENT,
                     mapping.origin.clazz.file,
                     source.reference,
                     "'$targetString' of type '$targetTypeString'",
@@ -38,7 +63,7 @@ class UnsafeTypeAssignmentProblems(
             }
             is ExpressionMappingSource -> {
                 Problem.Problem2(
-                    MAPPIE_UNSAFE_TYPE_ASSIGNMENT,
+                    MAPPIE_SINGLE_UNSAFE_TYPE_ASSIGNMENT,
                     mapping.origin.clazz.file,
                     source.expression,
                     "'$targetString' of type '$targetTypeString'",
@@ -47,7 +72,7 @@ class UnsafeTypeAssignmentProblems(
             }
             is ValueMappingSource -> {
                 Problem.Problem2(
-                    MAPPIE_UNSAFE_TYPE_ASSIGNMENT,
+                    MAPPIE_SINGLE_UNSAFE_TYPE_ASSIGNMENT,
                     mapping.origin.clazz.file,
                     source.expression,
                     "'$targetString' of type '$targetTypeString'",
@@ -56,7 +81,7 @@ class UnsafeTypeAssignmentProblems(
             }
             is FunctionMappingSource -> {
                 Problem.Problem2(
-                    MAPPIE_UNSAFE_TYPE_ASSIGNMENT,
+                    MAPPIE_SINGLE_UNSAFE_TYPE_ASSIGNMENT,
                     mapping.origin.referenceMapFunction(),
                     "'$targetString' of type '$targetTypeString'",
                     "'${source.parameterType.dumpKotlinLike()}::${source.function.name.asString()}' of type '$sourceTypeString'"
@@ -67,7 +92,7 @@ class UnsafeTypeAssignmentProblems(
                 val via = if (source.transformation != null && source.transformation is PropertyMappingViaMapperTransformation) " via '${source.transformation.mapper.clazz.name.asString()}'" else ""
 
                 Problem.Problem2(
-                    MAPPIE_UNSAFE_TYPE_ASSIGNMENT,
+                    MAPPIE_SINGLE_UNSAFE_TYPE_ASSIGNMENT,
                     mapping.origin.referenceMapFunction(),
                     "'$targetString' of type '$targetTypeString'",
                     "'$property'$via of type '$sourceTypeString'"
@@ -75,7 +100,7 @@ class UnsafeTypeAssignmentProblems(
             }
             is ParameterValueMappingSource -> {
                 Problem.Problem2(
-                    MAPPIE_UNSAFE_TYPE_ASSIGNMENT,
+                    MAPPIE_SINGLE_UNSAFE_TYPE_ASSIGNMENT,
                     mapping.origin.referenceMapFunction(),
                     "'$targetString' of type '$targetTypeString'",
                     "'${source.parameter.asString()}' of type '$sourceTypeString'"

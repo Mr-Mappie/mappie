@@ -22,7 +22,7 @@ class EnumStrictnessTest : TestBase() {
         val result = runner.withArguments("build").buildAndFail()
 
         assertThat(result.output.lines())
-            .anyMatch { it.matches(Regex("e: .+ Source 'Input.C' has no target defined.")) }
+            .anyMatch { it.matches(Regex("e: .+ Source(s) 'Input.C' has/have no target defined.")) }
     }
 
     @Test
@@ -51,7 +51,7 @@ class EnumStrictnessTest : TestBase() {
         val result = runner.withArguments("build").buildAndFail()
 
         assertThat(result.output.lines())
-            .anyMatch { it.matches(Regex("e: .+ Source 'Input.C' has no target defined.")) }
+            .anyMatch { it.matches(Regex("e: .+ Source(s) 'Input.C' has/have no target defined.")) }
     }
 
     @Test
