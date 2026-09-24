@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.konan.config.konanLibraries
 import org.jetbrains.kotlin.konan.file.File
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_OUTPUT_DIR
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_REPORT_DIR
@@ -65,6 +66,7 @@ class MappieCompilerPluginRegistrar : CompilerPluginRegistrar() {
             ?.flatMap { it.getClasspathRoots() }
             ?.any { it.matches(pattern) }
             ?: false
+        || konanLibraries.any { it.matches(pattern) }
 
     companion object {
         private val SEPARATOR = Regex.escapeReplacement(File.separator)
