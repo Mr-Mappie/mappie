@@ -22,7 +22,7 @@ class NamingConventionTest : TestBase() {
         val result = runner.withArguments("build").buildAndFail()
 
         assertThat(result.output.lines())
-            .anyMatch { it.matches(Regex("e: .+ Target(s) 'Output::userName' has/have no source defined.")) }
+            .anyMatch { it.matches(Regex("e: .+ Target\\(s\\) 'Output::userName' has/have no source defined\\.")) }
     }
 
     @Test
@@ -95,7 +95,7 @@ class NamingConventionTest : TestBase() {
         val result = runner.withArguments("build").buildAndFail()
 
         assertThat(result.output.lines())
-            .anyMatch { it.matches(Regex("e: .+ Target(s) 'Output::userName' has/have no source defined.")) }
+            .anyMatch { it.matches(Regex("e: .+ Target\\(s\\) 'Output::userName' has/have no source defined\\.")) }
     }
 
     @Test

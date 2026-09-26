@@ -25,6 +25,6 @@ class MavenUseDefaultArgumentsTest : MavenTestBase() {
 
         assertThat(execute()).isFailure()
         assertThat(logs.lines())
-            .anyMatch { it.matches(Regex("\\[ERROR\\] .+ arget(s) 'Output::second' has/have no source defined.")) }
+            .anyMatch { it.matches(Regex("\\[ERROR\\] .+ Target\\(s\\) 'Output::second' has/have no source defined\\.")) }
     }
 }
