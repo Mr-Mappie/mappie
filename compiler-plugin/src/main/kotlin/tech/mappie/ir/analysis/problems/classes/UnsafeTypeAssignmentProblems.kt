@@ -18,24 +18,23 @@ class UnsafeTypeAssignmentProblems(
     private val mappings: Map<ClassMappingTarget, ClassMappingSource>,
 ) {
 
-    // TODO: needs tests
     fun all(): List<Problem> = buildList {
-        val problems = mappings.mapNotNull { validate(it.key, it.value) }
-        val (implicit, explicit) = problems
-            .partition { it.location == mapping.origin.referenceMapFunction() }
+        val (implicit, explicit) =
+            mappings
+            .mapNotNull { validate(it.key, it.value)?.let { v -> it to v } }
+            .partition { it.first.value is ImplicitClassMappingSource }
 
-        addAll(explicit)
+        addAll(explicit.map { it.second })
         when (implicit.size) {
             0 -> Unit
-            1 -> addAll(implicit)
+            1 -> addAll(implicit.map { it.second })
             else -> {
-                val messages = implicit.map {
-                    "Target ${it.first} cannot be assigned from ${it.second}."
+                val messages = implicit.map { (_, problem) ->
+                    "Target ${problem.first} cannot be assigned from ${problem.second}."
                 }
                 add(
                     Problem.Problem1(
                         MAPPIE_MULTIPLE_UNSAFE_TYPE_ASSIGNMENTS,
-                        mapping.origin.clazz.file,
                         mapping.origin.referenceMapFunction(),
                         messages
                     )
