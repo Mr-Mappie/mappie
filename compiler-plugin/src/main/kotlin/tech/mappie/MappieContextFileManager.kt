@@ -15,7 +15,7 @@ object MappieContextFileManager {
     private const val FILE = "context.xml"
 
     fun load(dir: String?): MappiePersistentState =
-        if (dir != null) {
+        if (dir != null && file(dir).let { it.exists() && it.length() > 0 }) {
             runCatching { xmlToMappiePersistentState(file(dir).readText()) }
                 .getOrElse { MappiePersistentState() }
         } else {

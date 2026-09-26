@@ -6,6 +6,8 @@ changelog:
     title: "next"
     items:
       - "Removed option to treat warnings as errors. Use standard kotlin compiler configuration options instead."
+      - "[#436](https://github.com/Mr-Mappie/mappie/issues/436) Fixed mappie modules not being loaded in Kotlin native compilations."
+      - "[#437](https://github.com/Mr-Mappie/mappie/issues/436) Fixed error log about premature end of file on clean compilation."
   - date: "2026-09-16"
     title: "v2.4.20-2.4.4"
     items:
