@@ -3,7 +3,7 @@ title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
   - date: "2026-10-10"
-    title: "v2.4.20-2.4.4"
+    title: "v2.4.20-2.4.5"
     items:
       - "Removed option to treat warnings as errors. Use standard kotlin compiler configuration options instead."
       - "[#436](https://github.com/Mr-Mappie/mappie/issues/436) Fixed mappie modules not being loaded in Kotlin native compilations."
