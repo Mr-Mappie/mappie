@@ -2,14 +2,15 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
-  - date: "tbd"
-    title: "next"
+  - date: "2026-10-10"
+    title: "v2.4.20-2.4.4"
     items:
       - "Removed option to treat warnings as errors. Use standard kotlin compiler configuration options instead."
       - "[#436](https://github.com/Mr-Mappie/mappie/issues/436) Fixed mappie modules not being loaded in Kotlin native compilations."
       - "[#437](https://github.com/Mr-Mappie/mappie/issues/436) Fixed error log about premature end of file on clean compilation."
+      - "[#430](https://github.com/Mr-Mappie/mappie/issues/430) Grouped multiple errors or warnings occur when they occur on the same location."
   - date: "2026-09-16"
-    title: "v2.4.20-2.4.4"
+    title: "v2.4.20-2.4.3"
     items:
       - "Bumped Kotlin to version 2.4.20."
       - "[#408](https://github.com/Mr-Mappie/mappie/issues/408) Fixed incremental compilation state being inconsistent with the Gradle build cache, and compilations of the same project overwriting each others state."
