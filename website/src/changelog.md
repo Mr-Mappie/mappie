@@ -2,6 +2,10 @@
 title: "Changelog"
 layout: "layouts/changelog.html"
 changelog:
+  - date: "2026-10-16"
+    title: "v2.4.21-2.4.5"
+    items:
+      - "Bumped Kotlin to version 2.4.21."
   - date: "2026-10-10"
     title: "v2.4.20-2.4.5"
     items:

@@ -52,7 +52,7 @@ class Object5WithFromValueTest : MappieTestCase() {
         } satisfies {
             isCompilationError()
             hasSingleErrorMessage(6,
-            "The function 'run' was called as an extension method on the mapping dsl which does not exist after compilation")
+            "The function 'run' was called as an extension function on the mapping dsl which does not exist after compilation.")
         }
     }
 }

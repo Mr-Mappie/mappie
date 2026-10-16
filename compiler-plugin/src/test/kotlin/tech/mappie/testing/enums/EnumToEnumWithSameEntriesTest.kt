@@ -56,7 +56,7 @@ class EnumToEnumWithSameEntriesTest : MappieTestCase() {
             )
         } satisfies {
             isOk()
-            hasSingleWarningMessage(6, "Unnecessary explicit mapping of source 'Input.SOME'")
+            hasSingleWarningMessage(6, "Unnecessary explicit mapping of source 'Input.SOME'.")
 
             val mapper = enumMappie<Input, Output>()
 

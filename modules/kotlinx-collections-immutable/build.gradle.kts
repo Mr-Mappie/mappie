@@ -21,7 +21,6 @@ kotlin {
     iosSimulatorArm64()
     iosX64()
 
-    tvosX64()
     tvosSimulatorArm64()
     tvosArm64()
 
@@ -38,7 +37,6 @@ kotlin {
 
     mingwX64()
 
-    macosX64()
     macosArm64()
 
     linuxX64()
