@@ -158,7 +158,7 @@ class ConstructorSelectionTest : MappieTestCase() {
             )
         } satisfies {
             isCompilationError()
-            hasSingleErrorMessage(6, "Multiple calls of the function 'mapping' while only one is allowed")
+            hasSingleErrorMessage(6, "Multiple calls of the function 'mapping' while only one is allowed.")
         }
     }
 }

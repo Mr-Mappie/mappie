@@ -42,7 +42,7 @@ fun IrType.mappieSourceAndTarget(): Pair<IrType, IrType> {
 }
 
 fun IrType.hasFlexibleNullabilityAnnotation(): Boolean =
-    annotations.any { it.symbol.owner.parentAsClass.classId == FlexibleNullability }
+    annotations.any { it.classSymbol.classIdWhenAvailable == FlexibleNullability }
 
 fun IrType.isPrimitive(): Boolean =
     isBoolean() || isByte() || isShort() || isInt() || isLong() || isChar() || isFloat() || isDouble()

@@ -40,7 +40,7 @@ class UnsafePlatformTypeAssignmentProblems(
                     mapping.origin.clazz.file,
                     source.reference,
                     "'$targetString' of type '${mapping.target.dumpKotlinLike()}'",
-                    "'${source.reference.pretty()}' of type '$sourceType'",
+                    "'${source.reference.pretty()}' of platform type '$sourceType'",
                 )
             }
             is ExpressionMappingSource -> {
@@ -49,7 +49,7 @@ class UnsafePlatformTypeAssignmentProblems(
                     mapping.origin.clazz.file,
                     source.expression,
                     "'${targetString}' of type '${mapping.target.dumpKotlinLike()}'",
-                    "expression of type '$sourceType'",
+                    "expression of platform type '$sourceType'",
                 )
             }
             is ValueMappingSource -> {
@@ -57,7 +57,7 @@ class UnsafePlatformTypeAssignmentProblems(
                     MAPPIE_UNSAFE_PLATFORM_TYPE_ASSIGNMENT,
                     mapping.origin.clazz.file,
                     source.expression,
-                    "'${targetString}' of type '${mapping.target.dumpKotlinLike()}'",
+                    "'${targetString}' of platform type '${mapping.target.dumpKotlinLike()}'",
                     "value '$sourceType'",
                 )
             }
@@ -66,7 +66,7 @@ class UnsafePlatformTypeAssignmentProblems(
                     MAPPIE_UNSAFE_PLATFORM_TYPE_ASSIGNMENT,
                     mapping.origin.referenceMapFunction(),
                     "'${targetString}' of type '${mapping.target.dumpKotlinLike()}'",
-                    "'${source.parameterType}::${source.function.name.asString()}' of type '$sourceType'",
+                    "'${source.parameterType.dumpKotlinLike()}::${source.function.name.asString()}' of platform type '$sourceType'",
                 )
             }
             is ImplicitPropertyMappingSource -> {
@@ -74,7 +74,7 @@ class UnsafePlatformTypeAssignmentProblems(
                     MAPPIE_UNSAFE_PLATFORM_TYPE_ASSIGNMENT,
                     mapping.origin.referenceMapFunction(),
                     "'${targetString}' of type '${mapping.target.dumpKotlinLike()}'",
-                    "'${source.property.dumpKotlinLike()}' of type '$sourceType'",
+                    "'${source.property.dumpKotlinLike()}' of platform type '$sourceType'",
 
                 )
             }
@@ -83,7 +83,7 @@ class UnsafePlatformTypeAssignmentProblems(
                     MAPPIE_UNSAFE_PLATFORM_TYPE_ASSIGNMENT,
                     mapping.origin.referenceMapFunction(),
                     "'${targetString}' of type '${mapping.target.dumpKotlinLike()}'",
-                    "'${source.parameter.asString()}' of type '${source.type.dumpKotlinLike()}'",
+                    "'${source.parameter.asString()}' of platform type '${source.type.dumpKotlinLike()}'",
                 )
             }
             is ParameterDefaultValueMappingSource -> {

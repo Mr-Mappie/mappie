@@ -43,7 +43,7 @@ object MappieIrAnalysisMessages : BaseDiagnosticRendererFactory() {
         map.put(MappieIrAnalysisProblems.MAPPIE_NO_MAPPING_TARGET, "Source(s) {0} has/have no target defined.", QUOTED_STRINGS)
         map.put(MappieIrAnalysisProblems.MAPPIE_INCORRECT_TARGET_TYPE, "Target type ''{0}'' cannot be an enum class.", IR_TYPE)
         map.put(MappieIrAnalysisProblems.MAPPIE_UNNECESSARY_SAFE_CALL, "Unnecessary call to fromPropertyNotNull for non-null type ''{0}''.", IR_TYPE)
-        map.put(MappieIrAnalysisProblems.MAPPIE_UNSAFE_PLATFORM_TYPE_ASSIGNMENT, "Target {0} is unsafe to assign from {1} due to platform type.", STRING, STRING)
+        map.put(MappieIrAnalysisProblems.MAPPIE_UNSAFE_PLATFORM_TYPE_ASSIGNMENT, "Target {0} is unsafe to assign from {1}.", STRING, STRING)
         map.put(MappieIrAnalysisProblems.MAPPIE_SINGLE_UNSAFE_TYPE_ASSIGNMENT, "Target {0} cannot be assigned from {1}.", STRING, STRING)
         map.put(MappieIrAnalysisProblems.MAPPIE_MULTIPLE_UNSAFE_TYPE_ASSIGNMENTS, "Multiple targets cannot be assigned:${System.lineSeparator()}{0}", INDENTED_LINES)
 

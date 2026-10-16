@@ -26,7 +26,7 @@ abstract class TestBase {
 
     protected open val gradleVersion: String? = null
 
-    protected open val kotlinVersion = "2.4.20"
+    protected open val kotlinVersion = "2.4.21"
 
     private lateinit var settings: SettingsGradleBuilder
 
@@ -48,7 +48,7 @@ abstract class TestBase {
             """
             org.gradle.jvmargs=-Xmx1024M -XX:MaxMetaspaceSize=512m
             # For debugging purposes uncomment
-            # kotlin.compiler.execution.strategy=in-process
+            kotlin.compiler.execution.strategy=in-process
             """.trimIndent()
         )
 

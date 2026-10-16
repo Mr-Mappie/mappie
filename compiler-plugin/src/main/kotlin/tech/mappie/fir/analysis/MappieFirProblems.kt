@@ -29,15 +29,15 @@ object MappieFirProblems : KtDiagnosticsContainer() {
 
 object MappieFirMessages : BaseDiagnosticRendererFactory() {
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("MappieFirMessages") { map ->
-        map.put(MappieFirProblems.MULTIPLE_MAPPING_CALLS, "Multiple calls of the function 'mapping' while only one is allowed")
-        map.put(MappieFirProblems.INVALID_ANONYMOUS_OBJECT, "Anonymous Mappie objects are not supported")
-        map.put(MappieFirProblems.COMPILE_TIME_RECEIVER, "The function ''{0}'' was called on the mapping dsl which does not exist after compilation", CommonRenderers.NAME)
-        map.put(MappieFirProblems.COMPILE_TIME_EXTENSION_RECEIVER, "The function ''{0}'' was called as an extension method on the mapping dsl which does not exist after compilation", CommonRenderers.NAME)
-        map.put(MappieFirProblems.NON_CONSTANT_ERROR, "Argument must be a compile-time constant")
-        map.put(MappieFirProblems.UNKNOWN_NAME_ERROR, "Identifier ''{0}'' does not occur as a setter or as a parameter in constructor", CommonRenderers.STRING)
-        map.put(MappieFirProblems.ANNOTATION_USE_DEFAULT_ARGUMENTS_NOT_APPLICABLE, "Annotation @UseDefaultArguments has no effect on subclass of EnumMappie")
-        map.put(MappieFirProblems.ANNOTATION_USE_STRICT_ENUMS_NOT_APPLICABLE, "Annotation @UseStrictEnums has no effect on subclass of ObjectMappie")
-        map.put(MappieFirProblems.ANNOTATION_USE_STRICT_VISIBILITY_NOT_APPLICABLE, "Annotation @UseStrictVisibility has no effect on subclass of EnumMappie")
-        map.put(MappieFirProblems.UNNECESSARY_EXPLICIT_MAPPING, "Unnecessary explicit mapping of source ''{0}''", CommonRenderers.STRING)
+        map.put(MappieFirProblems.MULTIPLE_MAPPING_CALLS, "Multiple calls of the function 'mapping' while only one is allowed.")
+        map.put(MappieFirProblems.INVALID_ANONYMOUS_OBJECT, "Anonymous Mappie objects are not supported.")
+        map.put(MappieFirProblems.COMPILE_TIME_RECEIVER, "The function ''{0}'' was called on the mapping dsl which does not exist after compilation.", CommonRenderers.NAME)
+        map.put(MappieFirProblems.COMPILE_TIME_EXTENSION_RECEIVER, "The function ''{0}'' was called as an extension function on the mapping dsl which does not exist after compilation.", CommonRenderers.NAME)
+        map.put(MappieFirProblems.NON_CONSTANT_ERROR, "Argument must be a compile-time constant.")
+        map.put(MappieFirProblems.UNKNOWN_NAME_ERROR, "Identifier ''{0}'' does not occur as a setter or as a parameter in constructor.", CommonRenderers.STRING)
+        map.put(MappieFirProblems.ANNOTATION_USE_DEFAULT_ARGUMENTS_NOT_APPLICABLE, "Annotation @UseDefaultArguments has no effect on subclass of EnumMappie.")
+        map.put(MappieFirProblems.ANNOTATION_USE_STRICT_ENUMS_NOT_APPLICABLE, "Annotation @UseStrictEnums has no effect on subclass of ObjectMappie.")
+        map.put(MappieFirProblems.ANNOTATION_USE_STRICT_VISIBILITY_NOT_APPLICABLE, "Annotation @UseStrictVisibility has no effect on subclass of EnumMappie.")
+        map.put(MappieFirProblems.UNNECESSARY_EXPLICIT_MAPPING, "Unnecessary explicit mapping of source ''{0}''.", CommonRenderers.STRING)
     }
 }

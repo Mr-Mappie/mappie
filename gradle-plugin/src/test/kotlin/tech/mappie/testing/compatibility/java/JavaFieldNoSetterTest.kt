@@ -67,6 +67,6 @@ class JavaFieldNoSetterTest : TestBase() {
         val result = runner.withArguments("build").buildAndFail()
 
         assertThat(result.output.lines())
-            .anyMatch { it.matches(Regex("e: .+ Identifier 'value' does not occur as a setter or as a parameter in constructor")) }
+            .anyMatch { it.matches(Regex("e: .+ Identifier 'value' does not occur as a setter or as a parameter in constructor.")) }
     }
 }
