@@ -2,16 +2,16 @@ package tech.mappie.buildlogic
 
 import org.gradle.api.publish.maven.MavenPublication
 
-fun MavenPublication.mappiePom(name: String) {
+fun MavenPublication.mappiePom(project: String) {
     pom {
-        this.name.set(name)
+        name.set(project)
         description.set("Kotlin Compiler Plugin for generating object mappers")
         url.set("https://github.com/Mr-Mappie/mappie")
 
         developers {
             developer {
                 id.set("stefankoppier")
-                this.name.set("Stefan Koppier")
+                name.set("Stefan Koppier")
             }
         }
 
@@ -23,7 +23,7 @@ fun MavenPublication.mappiePom(name: String) {
 
         licenses {
             license {
-                this.name.set("The Apache License, Version 2.0")
+                name.set("The Apache License, Version 2.0")
                 url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
             }
         }
