@@ -6,10 +6,6 @@ plugins {
     alias(libs.plugins.jreleaser)
 }
 
-tasks.jreleaserFullRelease.configure {
-    notCompatibleWithConfigurationCache("Disable configuration-cache for jreleaser")
-}
-
 jreleaser {
     project {
         authors.add("Stefan Koppier")

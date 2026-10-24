@@ -31,11 +31,6 @@ class MappieApiConventionPlugin : Plugin<Project> {
             from(dokkaHtml.flatMap { it.outputDirectory })
             dependsOn(dokkaHtml)
         }
-
-        tasks.register("emptyJar", Jar::class.java) {
-            group = LifecycleBasePlugin.BUILD_GROUP
-            description = "Assemble an empty jar."
-        }
     }
 
     private fun Project.configureTests() {
