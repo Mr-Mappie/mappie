@@ -15,7 +15,8 @@ updates:
         patterns:
           - "*"
     ignore:
-      - dependency-name: "org.jreleaser"
+      - dependency-name: "io.github.classgraph:classgraph"
+        update-types: ["version-update:semver-major"]
     labels:
       - "dependencies"
   - package-ecosystem: "npm"
