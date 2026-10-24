@@ -55,11 +55,7 @@ kotlin {
 publishing {
     publications.withType(MavenPublication::class.java).configureEach {
         artifact(tasks.named("javadocJar"))
-        // jreleaser workaround
-        if (name != "jvm" && name != "kotlinMultiplatform") {
-            artifact(tasks.named("emptyJar"))
-        }
-        mappiePom(name = "tech.mappie:mappie-api")
+        mappiePom(project = "tech.mappie:mappie-api")
     }
 
     if (System.getenv("RELEASE_API").toBoolean()) {

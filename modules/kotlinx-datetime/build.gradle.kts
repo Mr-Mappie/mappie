@@ -36,11 +36,7 @@ publishing {
     publications.withType(MavenPublication::class.java).configureEach {
         artifactId = artifactId.replace("kotlinx-datetime", "module-kotlinx-datetime")
         artifact(tasks.named("javadocJar"))
-        // jreleaser workaround
-        if (name != "jvm" && name != "kotlinMultiplatform") {
-            artifact(tasks.named("emptyJar"))
-        }
-        mappiePom(name = "tech.mappie:module-kotlinx-datetime")
+        mappiePom(project = "tech.mappie:module-kotlinx-datetime")
     }
 
     if (System.getenv("RELEASE_MODULE_KOTLINX_DATETIME").toBoolean()) {
