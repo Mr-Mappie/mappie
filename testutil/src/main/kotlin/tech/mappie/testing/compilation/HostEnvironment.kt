@@ -2,6 +2,7 @@ package tech.mappie.testing.compilation
 
 import io.github.classgraph.ClassGraph
 import java.io.File
+import kotlin.jvm.optionals.getOrNull
 
 /**
  * Utility object to provide everything we might discover from the host environment.
@@ -40,11 +41,12 @@ object HostEnvironment {
 
     private fun getHostClasspaths(): List<File> {
         val classGraph = ClassGraph()
-            .enableSystemJarsAndModules()
-            .removeTemporaryFilesAfterScan()
+            .enableSystemJars()
+            .enableClasspath()
 
         val classpaths = classGraph.classpathFiles
-        val modules = classGraph.modules.mapNotNull { it.locationFile }
+        val modules = classGraph.moduleReferences.mapNotNull { it.location().getOrNull() }
+            .map { File(it) }
         val klibs = System.getProperty("java.class.path")
             .split(File.pathSeparator)
             .filter { it.endsWith(".klib") }

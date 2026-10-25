@@ -6,10 +6,6 @@ plugins {
     alias(libs.plugins.jreleaser)
 }
 
-tasks.jreleaserFullRelease.configure {
-    notCompatibleWithConfigurationCache("Disable configuration-cache for jreleaser")
-}
-
 jreleaser {
     project {
         authors.add("Stefan Koppier")
@@ -21,9 +17,13 @@ jreleaser {
     }
     signing {
         active = org.jreleaser.model.Active.ALWAYS
-        armored = true
-        mode = Signing.Mode.COMMAND
-        verify = false
+
+        pgp {
+            active = org.jreleaser.model.Active.ALWAYS
+            armored = true
+            mode = Signing.Mode.COMMAND
+            verify = false
+        }
     }
     release {
         github {

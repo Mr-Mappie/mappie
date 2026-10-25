@@ -38,7 +38,7 @@ publishing {
         create<MavenPublication>("java-maven-plugin") {
             artifactId = "mappie-maven-plugin"
             from(components["java"])
-            mappiePom(name = "tech.mappie:maven-plugin")
+            mappiePom(project = "tech.mappie:maven-plugin")
         }
     }
 

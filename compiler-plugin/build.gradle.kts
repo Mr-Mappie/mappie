@@ -42,7 +42,7 @@ publishing {
         create<MavenPublication>("kotlin") {
             from(components["java"])
             artifactId = "mappie-compiler-plugin"
-            mappiePom(name = "tech.mappie:mappie-compiler-plugin")
+            mappiePom(project = "tech.mappie:mappie-compiler-plugin")
         }
     }
 
