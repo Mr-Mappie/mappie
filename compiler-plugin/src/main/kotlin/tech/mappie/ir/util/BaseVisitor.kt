@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 abstract class BaseVisitor<R, D> : IrVisitor<R, D>() {
 
     override fun visitElement(element: IrElement, data: D): R {
-        compilationException("Unexpected element ${element.dump()}", element)
+        compilationException("Unexpected element in visitor ${this::class} ${element.dump()}", element)
     }
 
     fun IrElement.accept(data: D): R =

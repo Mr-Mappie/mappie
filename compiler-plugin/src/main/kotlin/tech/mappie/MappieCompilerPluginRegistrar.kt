@@ -4,7 +4,6 @@ import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_STRICTNESS_ENUM
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_STRICTNESS_VISIBILITY
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_NAMING_CONVENTION
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector.Companion.NONE
 import org.jetbrains.kotlin.cli.common.moduleChunk
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
@@ -13,7 +12,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.konan.config.konanLibraries
-import org.jetbrains.kotlin.konan.file.File
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_OUTPUT_DIR
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_REPORT_DIR
 import tech.mappie.MappieCommandLineProcessor.Companion.ARGUMENT_REPORT_ENABLED
@@ -25,6 +23,7 @@ import tech.mappie.config.MappieModule
 import tech.mappie.config.options.NamingConventionMode
 import tech.mappie.fir.MappieFirRegistrar
 import tech.mappie.ir.MappieIrRegistrar
+import java.io.File
 import java.util.EnumSet
 
 @OptIn(ExperimentalCompilerApi::class)

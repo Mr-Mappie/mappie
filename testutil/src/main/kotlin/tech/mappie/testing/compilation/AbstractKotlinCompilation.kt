@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
-import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.util.ServiceLoaderLite
 import tech.mappie.MappieCommandLineProcessor
@@ -29,7 +28,6 @@ import kotlin.io.path.absolutePathString
  * functionality. Should not be used outside of this library as it is an
  * implementation detail.
  */
-@ExperimentalCompilerApi
 abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal constructor(val workingDir: File) {
 
     /**
@@ -86,9 +84,6 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
     /** Enable experimental multiplatform support */
     var multiplatform: Boolean = false
 
-    /** Do not check presence of 'actual' modifier in multi-platform projects */
-    var noCheckActual: Boolean = false
-
     /** Enable usages of APIs that requires opt-in with an opt-in requirement marker with the given fully qualified name */
     var optIn: MutableList<String> = mutableListOf()
 
@@ -129,7 +124,6 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
         args.reportOutputFiles = reportOutputFiles
         args.reportPerf = reportPerformance
         args.multiPlatform = multiplatform
-        args.noCheckActual = noCheckActual
         args.optIn = optIn.toTypedArray()
 
         if (languageVersion != null) {
@@ -252,7 +246,6 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
     internal val resourceName = "META-INF/services/org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar"
 }
 
-@ExperimentalCompilerApi
 internal fun convertKotlinExitCode(code: ExitCode) = when(code) {
     ExitCode.OK -> KotlinCompilation.ExitCode.OK
     ExitCode.INTERNAL_ERROR -> KotlinCompilation.ExitCode.INTERNAL_ERROR

@@ -14,9 +14,6 @@ kotlin {
         withSourcesJar(publish = true)
     }
 
-    androidNativeX64()
-    androidNativeArm64()
-
     iosArm64()
     iosSimulatorArm64()
     iosX64()
