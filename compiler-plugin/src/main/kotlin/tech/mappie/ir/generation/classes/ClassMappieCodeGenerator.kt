@@ -89,8 +89,8 @@ class ClassMappieCodeGenerator(
         when (source) {
             is ExplicitPropertyMappingSource -> {
                 val receiver = source.reference.dispatchReceiver
-                        ?: irGet(parameters.singleOrNull { it.type == (source.reference.type as IrSimpleType).arguments[0].typeOrFail }
-                            ?: compilationException("Could not determine value parameter for property reference.", source.reference))
+                    ?: irGet(parameters.singleOrNull { it.type == (source.reference.type as IrSimpleType).arguments[0].typeOrFail }
+                    ?: compilationException("Could not determine value parameter for property reference.", source.reference))
 
                 val getter = if (source.forceNonNull) {
                     irCall(referenceFunctionRequireNotNull(), source.reference.getter!!.owner.returnType.makeNotNull()).apply {

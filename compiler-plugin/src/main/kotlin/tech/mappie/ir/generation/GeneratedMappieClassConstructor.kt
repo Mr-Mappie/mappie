@@ -1,17 +1,21 @@
 package tech.mappie.ir.generation
 
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.types.typeWithParameters
 import org.jetbrains.kotlin.ir.util.addChild
-import org.jetbrains.kotlin.ir.util.addSimpleDelegatingConstructor
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
 import tech.mappie.ir.MappieContext
@@ -29,47 +33,17 @@ class GeneratedMappieClassConstructor {
             name = definition.clazz.name
             kind = ClassKind.OBJECT
         }.let { clazz ->
-            val base = when (request) {
+            val superClass = when (request) {
                 is ClassMappieCodeGenerationModel -> referenceObjectMappieClass()
                 is EnumMappieCodeGenerationModel -> referenceEnumMappieClass()
             }
 
-            clazz.parent = parent
-            clazz.thisReceiver = clazz.buildReceiverParameter {
-                type = clazz.symbol.typeWithParameters(emptyList())
-            }
-            clazz.superTypes = listOf(base.owner.symbol.typeWith(definition.source, definition.target))
-
-            clazz.addSimpleDelegatingConstructor(
-                base.constructors.single().owner,
-                context.pluginContext.irBuiltIns,
-                true
-            )
-
-            base.functions.single { it.owner.name == IDENTIFIER_MAP }.let { function ->
-                clazz.addFunction {
-                    name = function.owner.name
-                    returnType = clazz.superTypes.first().arguments.last().typeOrFail
-                    updateFrom(function.owner)
-                }.apply {
-                    overriddenSymbols = listOf(function)
-                    isFakeOverride = false
-
-                    parameters += buildReceiverParameter {
-                        kind = IrParameterKind.DispatchReceiver
-                        type = function.owner.dispatchReceiverParameter!!.type
-                    }
-
-                    function.owner.parameters.filter { it.kind == IrParameterKind.Regular }.forEach { parameter ->
-                        addValueParameter {
-                            name = parameter.name
-                            type = clazz.superTypes.first().arguments.first().typeOrFail
-                        }
-                    }
-                }
-            }
+            clazz.configureClass(parent, superClass, definition)
+            clazz.addDelegatingConstructor(superClass)
+            clazz.addFunctionMap(superClass)
 
             parent.addChild(clazz)
+
             definition.copy(clazz = clazz).also { newDefinition ->
                 context.definitions.generated.apply {
                     remove(definition)
@@ -77,4 +51,48 @@ class GeneratedMappieClassConstructor {
                 }
             }
         }
+
+    private fun IrClass.configureClass(parent: IrClass, superClass: IrClassSymbol, definition: GeneratedMappieDefinition) {
+        this.parent = parent
+        this.thisReceiver = buildReceiverParameter {
+            type = symbol.typeWithParameters(emptyList())
+        }
+        this.superTypes = listOf(superClass.owner.symbol.typeWith(definition.source, definition.target))
+    }
+
+    context(context: MappieContext)
+    private fun IrClass.addDelegatingConstructor(superClass: IrClassSymbol) {
+        val constructor = superClass.constructors.single().owner
+        addConstructor {
+            isPrimary = true
+        }.apply {
+            body = context.pluginContext.irBuiltIns.createIrBuilder(symbol).irBlockBody {
+                +irDelegatingConstructorCall(constructor)
+            }
+        }
+    }
+
+    private fun IrClass.addFunctionMap(superClass: IrClassSymbol) {
+        val function = superClass.functions.single { it.owner.name == IDENTIFIER_MAP }
+        addFunction {
+            name = function.owner.name
+            returnType = superTypes.first().arguments.last().typeOrFail
+            updateFrom(function.owner)
+        }.apply {
+            overriddenSymbols = listOf(function)
+            isFakeOverride = false
+
+            parameters += buildReceiverParameter {
+                kind = IrParameterKind.DispatchReceiver
+                type = function.owner.dispatchReceiverParameter!!.type
+            }
+
+            function.owner.parameters.filter { it.kind == IrParameterKind.Regular }.forEach { parameter ->
+                addValueParameter {
+                    name = parameter.name
+                    type = superTypes.first().arguments.first().typeOrFail
+                }
+            }
+        }
+    }
 }
