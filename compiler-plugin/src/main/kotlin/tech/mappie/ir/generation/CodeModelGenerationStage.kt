@@ -15,21 +15,20 @@ object CodeModelGenerationStage {
     context(context: MappieContext)
     fun execute(mappings: Map<MappieDefinition, MappingRequest>): CodeModelGenerationResult {
         val models = mappings.mapValues { (definition, request) ->
-            when (request) {
-                is ClassMappingRequest -> execute(definition, request)
-                is EnumMappingRequest -> execute(definition, request)
-            }
+            val factory = ClassMappieCodeGenerationModelFactory()
+            construct(definition, request, factory).also { factory.reportMissingMappings(request.origin) }
         }
         return CodeModelGenerationResult(models)
     }
 
     context(context: MappieContext)
-    private fun execute(definition: MappieDefinition, request: ClassMappingRequest): ClassMappieCodeGenerationModel {
-        return ClassMappieCodeGenerationModelFactory().construct(request, definition)
-    }
-
-    private fun execute(definition: MappieDefinition, request: EnumMappingRequest): EnumMappieCodeGenerationModel {
-        return EnumMappieCodeGenerationModelFactory().construct(request, definition)
+    internal fun construct(
+        definition: MappieDefinition,
+        request: MappingRequest,
+        factory: ClassMappieCodeGenerationModelFactory,
+    ): CodeGenerationModel = when (request) {
+        is ClassMappingRequest -> factory.construct(request, definition)
+        is EnumMappingRequest -> EnumMappieCodeGenerationModelFactory().construct(request, definition)
     }
 }
 

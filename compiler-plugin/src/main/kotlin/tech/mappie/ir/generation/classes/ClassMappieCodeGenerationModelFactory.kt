@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
+import org.jetbrains.kotlin.ir.util.render
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.generation.ClassMappieCodeGenerationModel
 import tech.mappie.ir.generation.CodeGenerationModel
@@ -14,6 +15,7 @@ import tech.mappie.ir.resolving.ClassMappingRequest
 import tech.mappie.ir.GeneratedMappieDefinition
 import tech.mappie.ir.InternalMappieDefinition
 import tech.mappie.ir.MappieDefinition
+import tech.mappie.ir.generation.MappieIrGenerationProblems.MAPPIE_MULTIPLE_MISSING_IMPLICIT_MAPPINGS
 import tech.mappie.ir.generation.MappieIrGenerationProblems.MAPPIE_NO_IMPLICIT_MAPPING
 import tech.mappie.ir.resolving.TargetSourcesClassMappings
 import tech.mappie.ir.resolving.ResolvingStage
@@ -30,6 +32,25 @@ import tech.mappie.ir.selection.SelectionStage
 import tech.mappie.ir.util.arguments
 
 class ClassMappieCodeGenerationModelFactory {
+
+    private val missingMappings = mutableSetOf<Pair<IrType, IrType>>()
+
+    context(context: MappieContext)
+    fun reportMissingMappings(origin: InternalMappieDefinition) {
+        if (missingMappings.isEmpty()) return
+        val location = context.at(origin.clazz)
+        val single = missingMappings.singleOrNull()
+        if (single != null) {
+            location.report(MAPPIE_NO_IMPLICIT_MAPPING, single.first.dumpKotlinLike(), single.second.dumpKotlinLike())
+        } else {
+            fun lines(renderType: (IrType) -> String) = missingMappings.map { (source, target) ->
+                "from '${renderType(source)}' to '${renderType(target)}'"
+            }
+            val shortNames = lines { it.dumpKotlinLike() }
+            val descriptions = if (shortNames.distinct().size == shortNames.size) shortNames else lines { it.render() }
+            location.report(MAPPIE_MULTIPLE_MISSING_IMPLICIT_MAPPINGS, descriptions)
+        }
+    }
 
     @Suppress("UNCHECKED_CAST")
     context (context: MappieContext)
@@ -108,9 +129,7 @@ class ClassMappieCodeGenerationModelFactory {
         selected.mappings
             .filter { !it.value.validation.isValid || (it.value.request as? ClassMappingRequest)?.mappings?.isEmpty() ?: false }
             .forEach { (_, _) ->
-                context
-                    .at(origin.clazz)
-                    .report(MAPPIE_NO_IMPLICIT_MAPPING, source.dumpKotlinLike(), target.dumpKotlinLike())
+                missingMappings.add(source to target)
             }
 
         val requests = selected.mappings
@@ -119,8 +138,8 @@ class ClassMappieCodeGenerationModelFactory {
             .toMap()
 
         return if (requests.isNotEmpty()) {
-            CodeModelGenerationStage.execute(requests).models.mapKeys { it.key as GeneratedMappieDefinition }.toList()
-                .single()
+            val (nested, request) = requests.entries.single()
+            nested as GeneratedMappieDefinition to CodeModelGenerationStage.construct(nested, request, this)
         } else {
             // Generation failed, so remove the definition again to prevent dangling references to a
             // mapper which will never exist, and duplicates on subsequent generation attempts.
