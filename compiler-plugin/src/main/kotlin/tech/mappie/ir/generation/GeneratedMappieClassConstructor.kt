@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.typeOrFail
@@ -17,20 +18,31 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.types.typeWithParameters
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import tech.mappie.ir.MappieContext
 import tech.mappie.ir.referenceEnumMappieClass
 import tech.mappie.ir.referenceObjectMappieClass
 import tech.mappie.ir.GeneratedMappieDefinition
 import tech.mappie.ir.util.arguments
 import tech.mappie.util.IDENTIFIER_MAP
+import java.util.UUID
 
 class GeneratedMappieClassConstructor {
 
     context (context: MappieContext)
-    fun construct(parent: IrClass, definition: GeneratedMappieDefinition, request: CodeGenerationModel): GeneratedMappieDefinition =
-        context.pluginContext.irFactory.buildClass {
-            name = definition.clazz.name
+    fun construct(parent: IrClass, definition: GeneratedMappieDefinition, request: CodeGenerationModel): GeneratedMappieDefinition {
+        val (container, className) = if (context.pluginContext.platform in JvmPlatforms.allJvmPlatforms) {
+            jvmLocation(parent, definition.requestedName)
+        } else {
+            parent to definition.requestedName
+        }
+
+        return context.pluginContext.irFactory.buildClass {
+            name = className
             kind = ClassKind.OBJECT
         }.let { clazz ->
             val superClass = when (request) {
@@ -38,11 +50,11 @@ class GeneratedMappieClassConstructor {
                 is EnumMappieCodeGenerationModel -> referenceEnumMappieClass()
             }
 
-            clazz.configureClass(parent, superClass, definition)
+            clazz.configureClass(container, superClass, definition)
             clazz.addDelegatingConstructor(superClass)
             clazz.addFunctionMap(superClass)
 
-            parent.addChild(clazz)
+            container.addChild(clazz)
 
             definition.copy(clazz = clazz).also { newDefinition ->
                 context.definitions.generated.apply {
@@ -52,7 +64,31 @@ class GeneratedMappieClassConstructor {
             }
         }
 
-    private fun IrClass.configureClass(parent: IrClass, superClass: IrClassSymbol, definition: GeneratedMappieDefinition) {
+    }
+
+    private fun jvmLocation(parent: IrClass, name: Name): Pair<IrDeclarationContainer, Name> {
+        val owners = generateSequence(parent) { it.parentClassOrNull }.toList().asReversed()
+        val binaryName = (owners.map { it.name.asString() } + name.asString()).joinToString("$")
+        val binaryNameBytes = binaryName.encodeToByteArray()
+        val suffixLength = ".class".length
+        val maxFilenameBytes = 255
+        if (binaryNameBytes.size + suffixLength <= maxFilenameBytes) {
+            return parent to name
+        }
+
+        val hash = UUID.nameUUIDFromBytes(binaryNameBytes).toString().replace("-", "")
+        val shortName = "Mapper_$hash"
+
+        // A short name alone may not fit when the enclosing generated classes are deeply nested.
+        var remaining = maxFilenameBytes - shortName.length - suffixLength
+        val container = owners.takeWhile {
+            remaining -= it.name.asString().encodeToByteArray().size + 1
+            remaining >= 0
+        }.lastOrNull() ?: parent.file
+        return container to Name.identifier(shortName)
+    }
+
+    private fun IrClass.configureClass(parent: IrDeclarationContainer, superClass: IrClassSymbol, definition: GeneratedMappieDefinition) {
         this.parent = parent
         this.thisReceiver = buildReceiverParameter {
             type = symbol.typeWithParameters(emptyList())

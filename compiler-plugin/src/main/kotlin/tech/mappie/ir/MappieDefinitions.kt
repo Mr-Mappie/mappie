@@ -43,7 +43,7 @@ data class MappieDefinitionCollection(
         }
 
     fun named(name: Name, origin: InternalMappieDefinition): MappieDefinition =
-        generated.single { it.clazz.name == name && it.isGeneratedWithin(origin) }
+        generated.single { it.requestedName == name && it.isGeneratedWithin(origin) }
 
     private fun MappieDefinition.isGeneratedWithin(origin: InternalMappieDefinition): Boolean =
         this !is GeneratedMappieDefinition || this.origin == origin
@@ -167,7 +167,8 @@ data class GeneratedMappieDefinition(
     override val origin: InternalMappieDefinition,
     override val clazz: IrClass,
     override val source: IrType,
-    override val target: IrType
+    override val target: IrType,
+    val requestedName: Name = clazz.name,
 ) : MappieDefinition {
     override fun toString() = "${clazz.name} ${source.dumpKotlinLike()} to ${target.dumpKotlinLike()}"
 }
